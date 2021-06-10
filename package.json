@@ -1,0 +1,19 @@
+{
+  "name": "scanoss-cli-jslib",
+  "version": "1.0.0",
+  "description": "Implementation of the SCANOSS API that identifies files against the free OSSKB",
+  "main": "index.js",
+  "repository": "https://github.com/scanoss/scanoss-cli-jslib",
+  "author": "SCANOSS",
+  "license": "MIT",
+  "devDependencies": {
+    "cli-progress": "^3.9.0"
+  },
+  "dependencies": {
+    "form-data": "^4.0.0",
+    "fs": "^0.0.1-security",
+    "isbinaryfile": "^4.0.8",
+    "node-blob": "^0.0.2",
+    "node-fetch": "^2.6.1"
+  }
+}
