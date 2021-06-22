@@ -7,7 +7,7 @@ let results = [];
 
 
 
-scan("./scanFolder");
+//scan("./scanFolder");
 
 
 
