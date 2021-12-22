@@ -1,9 +1,9 @@
 export class DispatcherResponse {
-  private serverResponse;
+  serverResponse: any;
 
-  private wfpContent;
+  wfpContent: string;
 
-  private filesScanned;
+  filesScanned: Array<string>;
 
   constructor(serverResponse, wfpContent) {
     this.serverResponse = serverResponse;

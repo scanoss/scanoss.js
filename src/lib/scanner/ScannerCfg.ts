@@ -1,8 +1,6 @@
-import { app } from 'electron';
-
 export class ScannerCfg {
   // Client Timestamp
-  CLIENT_TIMESTAMP = app.getVersion();
+  CLIENT_TIMESTAMP = "SCANNER JS"
 
   // API URL
   API_URL = 'https://osskb.org/api/scan/direct';
@@ -28,4 +26,4 @@ export class ScannerCfg {
   DISPATCHER_QUEUE_SIZE_MAX_LIMIT = 100;
 
   DISPATCHER_QUEUE_SIZE_MIN_LIMIT = 40;
-}
+};

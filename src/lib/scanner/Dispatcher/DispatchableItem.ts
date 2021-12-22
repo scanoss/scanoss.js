@@ -1,23 +1,17 @@
 import { WinnowerResponse } from "../Winnower/WinnowerResponse";
 
 export class DispatchableItem {
-  private item: any;
+  private winnowerResponse: WinnowerResponse;
 
   private errorCounter: number;
 
-  private winnowerResponse;
-
-  constructor(item: any) {
-    this.winnowerResponse = item as WinnowerResponse;
+  constructor(winnowerResponse) {
+    this.winnowerResponse = winnowerResponse;
     this.errorCounter = 0;
   }
 
-  public increaseErrorCounter() {
+  increaseErrorCounter() {
     this.errorCounter += 1;
-  }
-
-  getItem() {
-    return this.item;
   }
 
   getWinnowerResponse() {

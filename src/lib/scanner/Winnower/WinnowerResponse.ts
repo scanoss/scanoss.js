@@ -1,24 +1,24 @@
 export class WinnowerResponse {
-  wfpContent;
+  private wfpContent: string;
 
-  date;
+  // private date: any;
 
-  scanRoot;
+  private scanRoot: string;
 
   constructor(wfpContent, scanRoot = '') {
     this.wfpContent = wfpContent;
     this.scanRoot = scanRoot;
   }
 
-  isEqual(winnowerResponse) {
+  public isEqual(winnowerResponse) {
     return this.getContent() === winnowerResponse.getContent();
   }
 
-  getContent() {
+  public getContent() {
     return this.wfpContent;
   }
 
-  getFilesWinnowed() {
+  public getFilesWinnowed() {
     const files = [];
     const regExp = new RegExp(/,(\/.*)/g);
     let result;
@@ -27,3 +27,4 @@ export class WinnowerResponse {
     return files || '';
   }
 }
+
