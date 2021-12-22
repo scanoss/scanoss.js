@@ -1,5 +1,7 @@
 .idea/*
 .nyc_output
+.vscode
+.circleci
 build
 node_modules
 test
