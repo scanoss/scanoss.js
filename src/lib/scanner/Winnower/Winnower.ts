@@ -1,10 +1,13 @@
-import { Worker, isMainThread, parentPort } from 'worker_threads';
-import fs from 'fs';
 import EventEmitter from 'events';
-import { ScannerEvents } from '../ScannerEvents';
+import fs from 'fs';
+import { Worker } from 'worker_threads';
+
 import { ScannableItem } from '../Scannable/ScannableItem';
 import { ScannerCfg } from '../ScannerCfg';
+import { ScannerEvents } from '../ScannerEvents';
+
 import { WinnowerResponse } from './WinnowerResponse';
+
 
 
 const stringWorker = `
@@ -230,21 +233,21 @@ function crc32c_hex(str) {
 `;
 
 export class Winnower extends EventEmitter {
-  scannerCfg;
+  private scannerCfg: ScannerCfg;
 
-  fileList;
+  private fileList: any;
 
-  fileListIndex;
+  private fileListIndex: number;
 
-  scanRoot;
+  private scanRoot: string;
 
-  wfp;
+  private wfp: string;
 
-  worker;
+  private worker: Worker;
 
-  continue;
+  private continue: boolean;
 
-  isRunning;
+  private isRunning: boolean;
 
   constructor(scannerCfg = new ScannerCfg()) {
     super();
@@ -384,3 +387,7 @@ export class Winnower extends EventEmitter {
   }
 
 }
+
+module.exports = {
+  Winnower,
+};

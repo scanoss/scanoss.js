@@ -2,19 +2,18 @@
 // 2.0
 import EventEmitter from 'eventemitter3';
 import os from 'os';
-import fs, { unlink, unlinkSync } from 'fs';
+import fs from 'fs';
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import path from 'path';
 import { Winnower } from './Winnower/Winnower';
 import { Dispatcher } from './Dispatcher/Dispatcher';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { DispatcherResponse } from './Dispatcher/DispatcherResponse';
-import { ScannerEvents } from './ScannerEvents';
-import { ScannerCfg } from './ScannerCfg';
-import { DispatchableItem } from './Dispatcher/DispatchableItem';
 
-const sortPaths = require ('sort-paths');
+import { DispatchableItem } from './Dispatcher/DispatchableItem';
+import { DispatcherResponse } from './Dispatcher/DispatcherResponse';
+import { ScannerCfg } from './ScannerCfg';
+import { ScannerEvents } from './ScannerEvents';
+
+
+import sortPaths from 'sort-paths';
 
 
 // TO DO:
@@ -22,39 +21,40 @@ const sortPaths = require ('sort-paths');
 // - Implement a static atribute to keep track of the scannerId
 
 export class Scanner extends EventEmitter {
+  scannerCfg;
 
-  private scannerCfg: ScannerCfg;
+  workDirectory;
 
-  private workDirectory: string;
+  scanRoot;
 
-  private scannerId: string;
+  scannerId;
 
-  private winnower: Winnower;
+  winnower;
 
-  private dispatcher: Dispatcher;
+  dispatcher;
 
-  private resultFilePath: string;
+  resultFilePath;
 
-  private wfpFilePath: string;
+  wfpFilePath;
 
-  private scanFinished: boolean; // Both flags are used to prevent a race condition between DISPATCHER.NEW_DATA and DISPATCHER_FINISHED
+  scanFinished; // Both flags are used to prevent a race condition between DISPATCHER.NEW_DATA and DISPATCHER_FINISHED
 
-  private processingNewData: boolean; // Both flags are used to prevent a race condition between DISPATCHER.NEW_DATA and DISPATCHER_FINISHED
+  processingNewData; // Both flags are used to prevent a race condition between DISPATCHER.NEW_DATA and DISPATCHER_FINISHED
 
-  private responseBuffer: Array<any>;
+  responseBuffer;
 
-  private processedFiles;
+  processedFiles;
 
-  private running: boolean;
+  running;
 
-  private filesToScan;
+  filesToScan;
 
-  private filesNotScanned;
+  filesNotScanned;
 
   constructor(scannerCfg = new ScannerCfg()) {
     super();
     this.scannerCfg = scannerCfg;
-    this.scannerId = new Date().getTime().toString();
+    this.scannerId = new Date().getTime();
   }
 
   init() {
@@ -70,6 +70,8 @@ export class Scanner extends EventEmitter {
 
     this.setWinnowerListeners();
     this.setDispatcherListeners();
+
+    if (this.workDirectory === undefined) this.setWorkDirectory(`${os.tmpdir()}/scanner-${this.getScannerId()}`);
   }
 
   setWinnowerListeners() {
@@ -191,8 +193,12 @@ export class Scanner extends EventEmitter {
     const resultSorted = {};
     // eslint-disable-next-line no-restricted-syntax
     for (const key of sortedPaths) resultSorted[key] = results[key];
-    await fs.promises.writeFile(this.resultFilePath, JSON.stringify(resultSorted, null,2));
-    this.reportLog(`[ SCANNER ]: Scan finished (Scanned: ${this.processedFiles}, Not Scanned: ${Object.keys(this.filesNotScanned).length})`);
+    await fs.promises.writeFile(this.resultFilePath, JSON.stringify(resultSorted, null, 2));
+    this.reportLog(
+      `[ SCANNER ]: Scan finished (Scanned: ${this.processedFiles}, Not Scanned: ${
+        Object.keys(this.filesNotScanned).length
+      })`
+    );
     this.reportLog(`[ SCANNER ]: Results on: ${this.resultFilePath}`);
     this.running = false;
     this.emit(ScannerEvents.SCAN_DONE, this.resultFilePath, this.filesNotScanned);
@@ -204,8 +210,10 @@ export class Scanner extends EventEmitter {
 
   errorHandler(error, origin) {
     this.stop();
-    if (origin === ScannerEvents.MODULE_DISPATCHER) {}
-    if (origin === ScannerEvents.MODULE_WINNOWER) {}
+    if (origin === ScannerEvents.MODULE_DISPATCHER) {
+    }
+    if (origin === ScannerEvents.MODULE_WINNOWER) {
+    }
 
     this.reportLog(`[ SCANNER ]: Error reason ${error}`);
 
@@ -219,7 +227,7 @@ export class Scanner extends EventEmitter {
 
   appendOutputFiles(wfpContent, serverResponse) {
     fs.appendFileSync(this.wfpFilePath, wfpContent);
-    const storedResultStr = fs.readFileSync(this.resultFilePath);
+    const storedResultStr = fs.readFileSync(this.resultFilePath, 'utf-8');
     const storedResultObj = JSON.parse(storedResultStr);
     Object.assign(storedResultObj, serverResponse);
     const newResultStr = JSON.stringify(storedResultObj);
@@ -229,14 +237,15 @@ export class Scanner extends EventEmitter {
   async scanList(files, scanRoot = '') {
     this.init();
 
+    this.filesToScan = files;
+    this.scanRoot = scanRoot;
+    this.createOutputFiles();
+
     if (!Object.entries(files).length) {
       await this.finishScan();
       return;
     }
 
-    this.filesToScan = files;
-    if (this.workDirectory === undefined) await this.setWorkDirectory(`${os.tmpdir()}/scanner-${this.getScannerId()}`);
-    this.createOutputFiles();
     this.winnower.startWinnowing(this.filesToScan, scanRoot);
   }
 
@@ -269,5 +278,6 @@ export class Scanner extends EventEmitter {
     return this.running;
   }
 
-
 }
+
+

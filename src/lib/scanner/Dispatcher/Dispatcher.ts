@@ -2,17 +2,18 @@
 /* eslint-disable no-restricted-syntax */
 import EventEmitter from 'eventemitter3';
 import fetch from 'node-fetch';
-import FormData from 'form-data';
-import PQueue from 'p-queue';
-import { ScannerEvents } from '../ScannerEvents';
-import { DispatcherResponse } from './DispatcherResponse';
-import { ScannerCfg } from '../ScannerCfg';
-import { GlobalControllerAborter } from './GlobalControllerAborter';
+import PQueue from "p-queue";
+import FormData from "form-data";
+
+import { ScannerEvents } from "../ScannerEvents";
+import { DispatcherResponse } from "./DispatcherResponse";
+import { ScannerCfg } from "../ScannerCfg";
+import { GlobalControllerAborter } from "./GlobalControllerAborter";
 
 export class Dispatcher extends EventEmitter {
   private scannerCfg: ScannerCfg;
 
-  private pQueue: PQueue;
+  private pQueue;
 
   private globalAbortController: GlobalControllerAborter;
 
@@ -20,7 +21,7 @@ export class Dispatcher extends EventEmitter {
 
   private queueMinLimitReached: boolean;
 
-  private recoverableErrors: Set<string>;
+  private recoverableErrors;
 
   constructor(scannerCfg = new ScannerCfg()) {
     super();
@@ -75,7 +76,7 @@ export class Dispatcher extends EventEmitter {
     }
   }
 
-  handleUnrecoverableError(error: Error ,disptItem) {
+  handleUnrecoverableError(error,disptItem) {
     this.emit('error', error, disptItem);
   }
 
@@ -84,7 +85,7 @@ export class Dispatcher extends EventEmitter {
     this.emit(ScannerEvents.DISPATCHER_ITEM_NO_DISPATCHED, disptItem);
   }
 
-  errorHandler(error: Error, disptItem) {
+  errorHandler(error, disptItem) {
     if (!this.globalAbortController.isAborting()) {
       if (error.name === 'AbortError') error.name = 'TIMEOUT';
       if (this.recoverableErrors.has(error.code) || this.recoverableErrors.has(error.name)) {
@@ -94,7 +95,7 @@ export class Dispatcher extends EventEmitter {
           if (this.scannerCfg.ABORT_ON_MAX_RETRIES) this.handleUnrecoverableError(error, disptItem);
           return;
         }
-        const leftRetry = this.scannerCfg.MAX_RETRIES_FOR_RECOVERABLES_ERRORS - disptItem.getErrorCounter();
+       // const leftRetry = this.scannerCfg.MAX_RETRIES_FOR_RECOVERABLES_ERRORS - disptItem.getErrorCounter();
         this.emit(ScannerEvents.DISPATCHER_LOG,`[ SCANNER ]: Recoverable error happened sending WFP content to server. Reason: ${error.code || error.name}`);
         this.dispatchItem(disptItem);
         return;
@@ -124,7 +125,7 @@ export class Dispatcher extends EventEmitter {
       if (!response.ok) {
         const msg = await response.text();
         const err = new Error(msg);
-        err.code = response.status;
+        err["code"] = response.status;
         err.name = ScannerEvents.ERROR_SERVER_SIDE;
         throw err;
       }
@@ -136,10 +137,11 @@ export class Dispatcher extends EventEmitter {
       this.emit(ScannerEvents.DISPATCHER_NEW_DATA, dispatcherResponse);
       return Promise.resolve();
     } catch (e) {
-      clearTimeout(timeoutId);
-      this.globalAbortController.removeAbortController(timeoutController);
-      this.errorHandler(e as Error, disptItem);
-      return Promise.resolve();
+        clearTimeout(timeoutId);
+        this.globalAbortController.removeAbortController(timeoutController);
+        this.errorHandler(e, disptItem);
+        return Promise.resolve();
+
     }
   }
 }
