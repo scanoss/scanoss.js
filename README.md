@@ -8,7 +8,7 @@ You can install the Scanoss package using npm (the Node Package Manager). Note t
 
 To download and install the Scanoss package in your project run the following command:
 
-```js 
+```
 npm install scanoss.js
 ```
 
