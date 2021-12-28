@@ -20,10 +20,10 @@ A simple example that scans two files and writes the result in the project folde
 
 ```typescript
 // Import as ES6
-import { Scanner, ScannerEvents } from 'scanoss-ts';
+import { Scanner, ScannerEvents } from 'scanoss.js';
 
 // Import as CommonJS
-// const { Scanner, ScannerEvents } = require('scanoss-ts');
+// const { Scanner, ScannerEvents } = require('scanoss.js');
   
 const scanner = new  Scanner();
 
