@@ -47,6 +47,7 @@
   "dependencies": {
     "@bitauth/libauth": "^1.17.1",
     "abort-controller": "^3.0.0",
+    "cli-progress": "^3.9.1",
     "commander": "^8.3.0",
     "eventemitter3": "^4.0.7",
     "form-data": "^4.0.0",

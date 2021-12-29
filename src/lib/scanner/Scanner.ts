@@ -14,11 +14,15 @@ import { ScannerEvents } from './ScannerEvents';
 
 
 import sortPaths from 'sort-paths';
+import { WinnowerResponse } from './Winnower/WinnowerResponse';
 
 
 // TO DO:
 // - Split ScannerEvents into ExternalEvents and InternalEvents
 // - Implement a static atribute to keep track of the scannerId
+
+let finishPromiseResolve;
+let finishPromiseReject;
 
 export class Scanner extends EventEmitter {
   scannerCfg;
@@ -51,6 +55,8 @@ export class Scanner extends EventEmitter {
 
   filesNotScanned;
 
+  finishPromise: Promise<void>;
+
   constructor(scannerCfg = new ScannerCfg()) {
     super();
     this.scannerCfg = scannerCfg;
@@ -68,6 +74,11 @@ export class Scanner extends EventEmitter {
     this.winnower = new Winnower(this.scannerCfg);
     this.dispatcher = new Dispatcher(this.scannerCfg);
 
+    this.finishPromise = new Promise((resolve, reject) =>{
+      finishPromiseResolve = resolve;
+      finishPromiseReject = reject;
+    });
+
     this.setWinnowerListeners();
     this.setDispatcherListeners();
 
@@ -75,7 +86,8 @@ export class Scanner extends EventEmitter {
   }
 
   setWinnowerListeners() {
-    this.winnower.on(ScannerEvents.WINNOWING_NEW_CONTENT, (winnowerResponse) => {
+    this.winnower.on(ScannerEvents.WINNOWING_NEW_CONTENT, (winnowerResponse: WinnowerResponse) => {
+      this.emit(ScannerEvents.WINNOWING_NEW_CONTENT, winnowerResponse);
       this.reportLog(`[ SCANNER ]: New WFP content`);
       const disptItem = new DispatchableItem(winnowerResponse);
       this.dispatcher.dispatchItem(disptItem);
@@ -173,12 +185,16 @@ export class Scanner extends EventEmitter {
     return responses;
   }
 
-  setWorkDirectory(workDirectory) {
+  public setWorkDirectory(workDirectory: string) {
     this.workDirectory = workDirectory;
     this.resultFilePath = `${this.workDirectory}/result.json`;
     this.wfpFilePath = `${this.workDirectory}/winnowing.wfp`;
 
     if (!fs.existsSync(this.workDirectory)) fs.mkdirSync(this.workDirectory);
+  }
+
+  public getWorkDirectory(): string {
+    return this.workDirectory;
   }
 
   cleanWorkDirectory() {
@@ -202,6 +218,7 @@ export class Scanner extends EventEmitter {
     this.reportLog(`[ SCANNER ]: Results on: ${this.resultFilePath}`);
     this.running = false;
     this.emit(ScannerEvents.SCAN_DONE, this.resultFilePath, this.filesNotScanned);
+    finishPromiseResolve();
   }
 
   reportLog(txt, level = 'info') {
@@ -234,7 +251,8 @@ export class Scanner extends EventEmitter {
     fs.writeFileSync(this.resultFilePath, newResultStr);
   }
 
-  async scanList(files, scanRoot = '') {
+
+  public scanList(files, scanRoot = ''): Promise<void> {
     this.init();
 
     this.filesToScan = files;
@@ -242,11 +260,12 @@ export class Scanner extends EventEmitter {
     this.createOutputFiles();
 
     if (!Object.entries(files).length) {
-      await this.finishScan();
-      return;
+      this.finishScan();
+      return this.finishPromise;
     }
 
     this.winnower.startWinnowing(this.filesToScan, scanRoot);
+    return this.finishPromise;
   }
 
   getScannerId() {
