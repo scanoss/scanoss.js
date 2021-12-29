@@ -1,6 +1,6 @@
 {
   "name": "scanoss.js",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "The SCANOSS JS package provides a simple, easy to consume module for interacting with SCANOSS APIs/Engine.",
   "main": "build/main/index.js",
   "typings": "build/main/index.d.ts",
@@ -8,6 +8,9 @@
   "repository": "https://github.com/scanoss/scanoss.js",
   "license": "MIT",
   "keywords": [],
+  "bin": {
+    "scanoss-js": "build/main/bin/cli-bin.js"
+  },
   "scripts": {
     "build": "run-p build:*",
     "build:main": "tsc -p tsconfig.json",
@@ -44,6 +47,8 @@
   "dependencies": {
     "@bitauth/libauth": "^1.17.1",
     "abort-controller": "^3.0.0",
+    "cli-progress": "^3.9.1",
+    "commander": "^8.3.0",
     "eventemitter3": "^4.0.7",
     "form-data": "^4.0.0",
     "node-fetch": "2.6.1",
