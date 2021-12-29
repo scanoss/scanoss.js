@@ -12,17 +12,9 @@ To download and install the Scanoss package in your project run the following co
 npm install scanoss.js
 ```
 
-# Using as a CLI
-
-Run the following command to start the Scanoss CLI:
-
-```
-scanoss-js scan --help
-```
-
 # Using as a Module
 
-The Scanoss package can used programmatically as a standard Node module.
+The Scanoss package can be used programmatically as a standard Node module.
 A simple example that scans two files and writes the result in the project folder is shown below:
 
 ```typescript
