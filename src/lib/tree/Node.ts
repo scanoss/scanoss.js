@@ -15,7 +15,7 @@ export default abstract class Node {
 
   public abstract getNode(path: string): Node;
 
-  public abstract getFiles(): Array<any> ;
+  public abstract getFiles(): Array<string> ;
 
 
   public getName(): string {
