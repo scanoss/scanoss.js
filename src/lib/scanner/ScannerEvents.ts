@@ -24,4 +24,6 @@ export enum ScannerEvents {
   RESULTS_APPENDED = 'RESULTS_APPENDED',
 
   SCANNER_LOG = 'SCANNER_LOG',
+
+  ERROR = 'error',
 };

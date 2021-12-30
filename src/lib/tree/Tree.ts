@@ -7,6 +7,7 @@ import { NodeType } from './Node';
 import Node from './Node';
 import File from './File';
 import Folder from './Folder';
+import { FilterList } from '../filters/filtering';
 
 
 export class Tree {
@@ -15,6 +16,8 @@ export class Tree {
   private rootName: string;
 
   private rootPath: string;
+
+  private filter: FilterList;
 
   constructor(path: string) {
     const pathParts = path.split(pathLib.sep);
@@ -28,6 +31,10 @@ export class Tree {
     return this.rootFolder;
   }
 
+  public loadFilter(f: FilterList){
+    this.filter = f;
+  }
+
   private buildTreeRec(path: string, root: Folder): Node {
     const dirEntries = fs
       .readdirSync(path, { withFileTypes: true }) // Returns a list of files and folders
@@ -35,12 +42,14 @@ export class Tree {
       .filter((dirent: any) => !dirent.isSymbolicLink());
 
     for (const dirEntry of dirEntries) {
+      const fullPath = `${path}/${dirEntry.name}`;
       const relativePath = `${path}/${dirEntry.name}`.replace(this.rootPath, '');
-      if (dirEntry.isDirectory()) {
-        const f: Folder = new Folder(relativePath, dirEntry.name);
-        const subTree = this.buildTreeRec(`${path}/${dirEntry.name}`, f);
-        root.addChild(subTree);
-      } else root.addChild(new File(relativePath, dirEntry.name));
+      if (this.filter && this.filter.include(fullPath))
+        if (dirEntry.isDirectory()) {
+          const f: Folder = new Folder(relativePath, dirEntry.name);
+          const subTree = this.buildTreeRec(`${path}/${dirEntry.name}`, f);
+          root.addChild(subTree);
+        } else root.addChild(new File(relativePath, dirEntry.name));
     }
     return root;
   }
@@ -68,12 +77,13 @@ export class Tree {
     return this.rootFolder;
   }
 
-  public getNode(path: string) {
-    return this.rootFolder.getNode(path);
-  }
-
   public getRootPath(): string {
     return this.rootPath;
   }
 
+  public getFileList(): Array<string> {
+    const rootPath = this.rootPath.substring(0, this.rootPath.length - 1);
+    const fList = this.rootFolder.getFiles();
+    return fList.map((fileRelativePath: string) => {return (rootPath + fileRelativePath)});
+  }
 }

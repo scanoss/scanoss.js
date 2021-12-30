@@ -199,11 +199,6 @@
     "@babel/helper-validator-identifier" "^7.15.7"
     to-fast-properties "^2.0.0"
 
-"@bitauth/libauth@^1.17.1":
-  version "1.19.0"
-  resolved "https://registry.yarnpkg.com/@bitauth/libauth/-/libauth-1.19.0.tgz#61193fb44d95ececd195a4feadfce0b0ba9f981d"
-  integrity sha512-UtfCijrCcPCQdstlxiv29hBNuYs/1hqeDMgS6CPjxps7r7/y/0p9TRGDx65fczlO12Pa5rQdWO/GzwsXo03uIg==
-
 "@commitlint/execute-rule@^15.0.0":
   version "15.0.0"
   resolved "https://registry.yarnpkg.com/@commitlint/execute-rule/-/execute-rule-15.0.0.tgz#6bff7962df38e89ff9fdbc00abd79b8849c7e9f9"
@@ -3227,6 +3222,11 @@ isarray@~1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/isarray/-/isarray-1.0.0.tgz#bb935d48582cba168c06834957a54a3e07124f11"
   integrity sha1-u5NdSFgsuhaMBoNJV6VKPgcSTxE=
+
+isbinaryfile@^4.0.8:
+  version "4.0.8"
+  resolved "https://registry.yarnpkg.com/isbinaryfile/-/isbinaryfile-4.0.8.tgz#5d34b94865bd4946633ecc78a026fc76c5b11fcf"
+  integrity sha512-53h6XFniq77YdW+spoRrebh0mnmTxRPTlcuIArO57lmMdq4uBKFKaeTjnb92oYWrSn/LVL+LT+Hap2tFQj8V+w==
 
 isexe@^2.0.0:
   version "2.0.0"

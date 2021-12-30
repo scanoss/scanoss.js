@@ -268,6 +268,11 @@ export class Scanner extends EventEmitter {
     return this.finishPromise;
   }
 
+  public scan(scanInput: Array<any>): Promise<void> {
+    return new Promise((resolve, reject) => {});
+  }
+
+
   getScannerId() {
     return this.scannerId;
   }

@@ -40,8 +40,8 @@ export default class Folder extends Node {
     return true;
   }
 
-  public getFiles(): Array<any> {
-    const files: Array<any> = [];
+  public getFiles(): Array<string> {
+    const files: Array<string> = [];
     this.children.forEach((child) => {
       files.push(...child.getFiles());
     });

@@ -12,7 +12,8 @@ async function main() {
   program
     .command('scan <source>')
     .description('Scan a folder/file')
-    //.option('-e, --exec_mode <mode>', 'Which exec mode to use', 'fast')
+    .option('-f, --filter <path>', 'Loads an user defined filter')
+    .option('-v, --verbose', 'Makes scan operation verbose')
     .action((source, options) => {scanHandler(source, options)})
     .addHelpText('after', `
   Examples:

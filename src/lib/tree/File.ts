@@ -13,8 +13,8 @@ export default class File extends Node {
     return null;
   }
 
-  public getFiles(): Array<any> {
-    return [this];
+  public getFiles(): Array<string> {
+    return [this.getPath()];
   }
 
 }
