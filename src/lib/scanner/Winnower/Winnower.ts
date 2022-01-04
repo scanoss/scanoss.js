@@ -5,6 +5,7 @@ import { Worker } from 'worker_threads';
 import { ScannableItem } from '../Scannable/ScannableItem';
 import { ScannerCfg } from '../ScannerCfg';
 import { ScannerEvents } from '../ScannerEvents';
+import { WinnowerExtractor } from './WinnowerExtractor';
 
 import { WinnowerResponse } from './WinnowerResponse';
 
@@ -249,6 +250,10 @@ export class Winnower extends EventEmitter {
 
   private isRunning: boolean;
 
+  private readingFromFile: boolean;
+
+  private winnowingExtractor: WinnowerExtractor;
+
   constructor(scannerCfg = new ScannerCfg()) {
     super();
     this.scannerCfg = scannerCfg;
@@ -261,6 +266,7 @@ export class Winnower extends EventEmitter {
     this.scanRoot = '';
     this.continue = true;
     this.isRunning = false;
+    this.readingFromFile = false;
     this.fileList = [];
     this.fileListIndex = 0;
   }
@@ -284,7 +290,7 @@ export class Winnower extends EventEmitter {
       }
       // If file already winnowed cannot be found in fileList emit an error.
       if (i > files.length) {
-        this.emit('error', new Error('Cannot recovery index on winnower'));
+        this.emit(ScannerEvents.ERROR, new Error('Cannot recovery index on winnower'));
         return -1;
       }
       this.fileListIndex -= i;
@@ -298,7 +304,7 @@ export class Winnower extends EventEmitter {
     this.worker.terminate();
   }
 
-  async winnowerPacker(winnowingResult) {
+  async winnowerPacker(winnowingResult: string) {
     // When the fingerprint of one file is bigger than 64Kb, truncate to the last 64Kb line.
     if (winnowingResult.length > this.scannerCfg.WFP_FILE_MAX_SIZE) {
       let truncateStringOnIndex = this.scannerCfg.WFP_FILE_MAX_SIZE;
@@ -340,43 +346,72 @@ export class Winnower extends EventEmitter {
   async nextStepMachine() {
     if (!this.continue) return;
     const scannableItem = await this.getNextScannableItem();
-    if (scannableItem) {
-      this.worker.postMessage(scannableItem);
-    } else {
-      if (this.wfp.length !== 0) {
-        this.processPackedWfp(this.wfp);
-      }
-      this.isRunning = false;
-      this.emit(ScannerEvents.WINNOWER_LOG, '[ SCANNER ]: Winnowing Finished...');
-      this.forceStopWorker();
-    }
+    if (scannableItem) this.worker.postMessage(scannableItem);
+    else this.finishWinnowing();
   }
 
-  async startWinnowing(files, scanRoot) {
+  public startWinnowingFromFile(filePath: string) {
+    this.emit(ScannerEvents.WINNOWER_LOG, '[ SCANNER ]: Starting Winnowing from file...');
+    this.readingFromFile = true;
+    this.isRunning = true;
+    this.winnowingExtractor = new WinnowerExtractor();
+    this.winnowingExtractor.loadFile(filePath);
+    this.extractionProcess();
+  }
+
+  private extractionProcess() {
+    let winBlock = '-';
+    while(this.continue && winBlock !== '') { // this.continue will change on method pause();
+      winBlock = this.winnowingExtractor.extractWinBlock();
+      if(winBlock !== '') this.winnowerPacker(winBlock);
+    }
+
+    // Last winnowing block
+    if(winBlock === '') this.finishWinnowing();
+  }
+
+  public async startWinnowing(files, scanRoot) {
     this.emit(ScannerEvents.WINNOWER_LOG, '[ SCANNER ]: Starting Winnowing...');
+    this.readingFromFile = false;
     this.scanRoot = scanRoot;
     this.isRunning = true;
     this.fileList = Object.entries(files);
     this.nextStepMachine();
   }
 
+  private finishWinnowing() {
+    if (this.wfp.length !== 0) {
+      this.processPackedWfp(this.wfp);
+    }
+    this.isRunning = false;
+    this.emit(ScannerEvents.WINNOWER_LOG, '[ SCANNER ]: Winnowing Finished...');
+    this.forceStopWorker();
+  }
+
   pause() {
     this.emit(ScannerEvents.WINNOWER_LOG, '[ SCANNER ]: Winnowing paused...');
     this.continue = false;
-    this.forceStopWorker();
-    this.prepareWorker();
+    if (!this.readingFromFile) {
+      this.forceStopWorker();
+      this.prepareWorker();
+    }
   }
 
   resume() {
     this.emit(ScannerEvents.WINNOWER_LOG, '[ SCANNER ]: Winnowing resumed...');
     this.continue = true;
-    this.recoveryIndex();
-    this.nextStepMachine();
+    if (!this.readingFromFile) {
+      this.recoveryIndex();
+      this.nextStepMachine();
+    } else {
+      this.extractionProcess();
+    }
   }
 
   stop() {
     this.continue = false;
     this.isRunning = false;
+    this.winnowingExtractor = null;
     this.forceStopWorker();
     this.prepareWorker();
     this.init();
