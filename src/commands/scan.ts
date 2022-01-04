@@ -10,12 +10,13 @@ import { DispatcherResponse } from '../lib/scanner/Dispatcher/DispatcherResponse
 import { defaultFilter } from '../lib/filters/defaultFilter';
 import { FilterList } from '../lib/filters/filtering';
 
+import fs from 'fs';
+
 enum FilterTypes {
   BANNED = 'BANNED',
   WHITELIST = 'WHITELIST',
   FULL_SCAN = 'FULL_SCAN',
   QUICK_SCAN = 'QUICK_SCAN',
-
 }
 
 
@@ -23,7 +24,7 @@ interface ScannerInput {
   EngineFlags: string;
   FolderRoot?: string;
   FileList: Array<string>;
-  OnlyMD5: boolean;
+  Snippets: boolean;
 };
 
 const clearLastLines = (count) => {
@@ -31,11 +32,29 @@ const clearLastLines = (count) => {
   process.stdout.clearScreenDown()
 }
 
+// Async function that verify if a path is a folder. If the path is not valid the promise will be rejected
+const isFolder = (path: string): Promise<boolean> => {
+  return new Promise((resolve, reject) => {
+    fs.stat(path, (err, stats) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(stats.isDirectory());
+      }
+    });
+  });
+}
+
+
 
 export async function scanHandler(rootPath: string, options: any): Promise<void> {
 
   //TODO: Sanitize inputs
+  isFolder(rootPath)
 
+
+
+  // rootPath is a folder or file
 
   const filter = new FilterList('');
   if (options.filter) {
@@ -64,7 +83,18 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
     scannerInput = Object.assign(scannerInput, {[f]: 'FULL_SCAN'});
   }
 
-  const scanner = new Scanner();
+  // Create scanner and set connections parameters
+  const scannerCfg = new ScannerCfg();
+  if(options.concurrency) scannerCfg.CONCURRENCY_LIMIT = parseInt(options.concurrency);
+  if(options.postSize) scannerCfg.WFP_FILE_MAX_SIZE = parseInt(options.postSize) * 1024;
+  if(options.apiUrl) scannerCfg.API_URL = options.apiurl;
+  if(options.key) scannerCfg.API_KEY = options.key;
+  if(options.timeout) scannerCfg.TIMEOUT = options.timeout * 1000;
+  if(options.maxRetry) scannerCfg.MAX_RETRIES_FOR_RECOVERABLES_ERRORS = options.maxRetry;
+
+  const scanner = new Scanner(scannerCfg);
+
+  if(options.output) scanner.setWorkDirectory(options.output);
 
   if (!options.verbose) {
     clearLastLines(2);
@@ -86,7 +116,9 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
     scanner.on(ScannerEvents.SCANNER_LOG, (logText) => console.log(logText));
   }
 
-  scanner.on(ScannerEvents.ERROR, (e) => {throw e;});
+  //scanner.on(ScannerEvents.ERROR, (e) => {console.error(e)});
+
+
   await scanner.scanList(scannerInput);
 
 }

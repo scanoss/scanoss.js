@@ -97,7 +97,7 @@ export class Scanner extends EventEmitter {
       this.reportLog(msg);
     });
 
-    this.winnower.on('error', (error) => {
+    this.winnower.on(ScannerEvents.ERROR, (error) => {
       this.errorHandler(error, ScannerEvents.MODULE_WINNOWER);
     });
   }
@@ -140,7 +140,7 @@ export class Scanner extends EventEmitter {
       this.reportLog(msg);
     });
 
-    this.dispatcher.on('error', (error, disptItem) => {
+    this.dispatcher.on(ScannerEvents.ERROR, (error, disptItem) => {
       const wfpContent = disptItem.getWinnowerResponse().getContent();
       fs.writeFileSync(`${this.workDirectory}/failed.wfp`, wfpContent, 'utf8');
       this.errorHandler(error, ScannerEvents.MODULE_DISPATCHER);
@@ -234,7 +234,8 @@ export class Scanner extends EventEmitter {
 
     this.reportLog(`[ SCANNER ]: Error reason ${error}`);
 
-    this.emit('error', error);
+    this.emit(ScannerEvents.ERROR, error);
+    if(this.finishPromise) finishPromiseReject(error);
   }
 
   createOutputFiles() {
