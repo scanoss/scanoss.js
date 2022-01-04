@@ -5,8 +5,8 @@ import { scanHandler } from '../commands/scan';
 
 
 function CLIErrorHandler(e: Error) {
-  console.log('');
-  console.error(e);
+  console.log(' ');
+  console.log(e);
   process.exit(1);
 }
 
@@ -18,6 +18,7 @@ async function main() {
   program
     .command('scan <source>')
     .description('Scan a folder/file')
+    .option('-w, --wfp', 'Scan a .wfp file instead of a folder')
     .option('-c, --concurrency <number>', 'Number of concurrent connections to use while scanning (optional -default 10)')
     .option('-f, --filter <path>', 'Loads an user defined filter (optional)')
     .option('-o, --output <path>', 'Output result directory (optional - default tmp directory)')

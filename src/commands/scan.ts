@@ -49,39 +49,10 @@ const isFolder = (path: string): Promise<boolean> => {
 
 export async function scanHandler(rootPath: string, options: any): Promise<void> {
 
-  //TODO: Sanitize inputs
-  isFolder(rootPath)
-
-
-
-  // rootPath is a folder or file
-
-  const filter = new FilterList('');
-  if (options.filter) {
-    console.log('Loading filter from file: ' + options.filter);
-    filter.loadFromFile(options.filter);
-  } else {
-    console.log('Loading default filters...');
-    filter.load(defaultFilter as FilterList);
-  }
-
-
-
-
-  console.log('Reading directory...  ');
-  const tree = new Tree(rootPath);
-  tree.loadFilter(filter);
-  tree.buildTree();
-
-  const fileList = tree.getFileList();
-
-
-  // Converts to scanner input format
-  // This is temporary, until the scanner is ready to receive a ScannerInput object
+  let fileList = [];
   let scannerInput = {};
-  for(let f of fileList) {
-    scannerInput = Object.assign(scannerInput, {[f]: 'FULL_SCAN'});
-  }
+
+  let filesCounter = 0; // Used by the progress bar
 
   // Create scanner and set connections parameters
   const scannerCfg = new ScannerCfg();
@@ -96,11 +67,39 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
 
   if(options.output) scanner.setWorkDirectory(options.output);
 
+
+  if(!options.wfp) {
+    const filter = new FilterList('');
+    if (options.filter) {
+      console.log('Loading filter from file: ' + options.filter);
+      filter.loadFromFile(options.filter);
+    } else {
+      console.log('Loading default filters...');
+      filter.load(defaultFilter as FilterList);
+    }
+
+    console.log('Reading directory...  ');
+    const tree = new Tree(rootPath);
+    tree.loadFilter(filter);
+    tree.buildTree();
+
+    fileList = tree.getFileList();
+    filesCounter = fileList.length;
+
+    // Converts to scanner input format
+    // This is temporary, until the scanner is ready to receive a ScannerInput object
+    for(let f of fileList) scannerInput = Object.assign(scannerInput, {[f]: 'FULL_SCAN'});
+
+  } else {
+    const winnowing = fs.readFileSync(rootPath, {encoding: 'utf-8'});
+    const reg = /file=/g;
+    filesCounter = [...winnowing.matchAll(reg)].length;
+  }
+
   if (!options.verbose) {
-    clearLastLines(2);
     const optBar1 = { format: 'Scan Progress: [{bar}] {percentage}% | Scanned {value} files of {total}' };
     const bar1 = new cliProgress.SingleBar(optBar1, cliProgress.Presets.shades_classic);
-    bar1.start(fileList.length, 0);
+    bar1.start(filesCounter, 0);
 
     let totalFilesScanned = 0;
     scanner.on(ScannerEvents.DISPATCHER_NEW_DATA, (dispResp: DispatcherResponse) => {
@@ -116,10 +115,8 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
     scanner.on(ScannerEvents.SCANNER_LOG, (logText) => console.log(logText));
   }
 
-  //scanner.on(ScannerEvents.ERROR, (e) => {console.error(e)});
-
-
-  await scanner.scanList(scannerInput);
+  if (options.wfp) await scanner.scanFromWinnowingFile(rootPath);
+  else await scanner.scanList(scannerInput);
 
 }
 

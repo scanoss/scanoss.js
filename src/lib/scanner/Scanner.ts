@@ -33,7 +33,7 @@ export class Scanner extends EventEmitter {
 
   scannerId;
 
-  winnower;
+  winnower: Winnower;
 
   dispatcher;
 
@@ -255,23 +255,31 @@ export class Scanner extends EventEmitter {
 
   public scanList(files, scanRoot = ''): Promise<void> {
     this.init();
-
     this.filesToScan = files;
     this.scanRoot = scanRoot;
     this.createOutputFiles();
-
     if (!Object.entries(files).length) {
       this.finishScan();
       return this.finishPromise;
     }
-
     this.winnower.startWinnowing(this.filesToScan, scanRoot);
     return this.finishPromise;
   }
 
+
+  public scanFromWinnowingFile(wfpFilePath: string): Promise<void> {
+    this.init();
+    this.createOutputFiles();
+    this.winnower.startWinnowingFromFile(wfpFilePath);
+    return this.finishPromise;
+  }
+
+
   public scan(scanInput: Array<any>): Promise<void> {
     return new Promise((resolve, reject) => {});
   }
+
+
 
 
   getScannerId() {
