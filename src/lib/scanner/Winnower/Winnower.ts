@@ -304,7 +304,8 @@ export class Winnower extends EventEmitter {
     this.worker.terminate();
   }
 
-  async winnowerPacker(winnowingResult: string) {
+  // returns true if the a winnowing packet was sended
+  private winnowerPacker(winnowingResult: string): boolean {
     // When the fingerprint of one file is bigger than 64Kb, truncate to the last 64Kb line.
     if (winnowingResult.length > this.scannerCfg.WFP_FILE_MAX_SIZE) {
       let truncateStringOnIndex = this.scannerCfg.WFP_FILE_MAX_SIZE;
@@ -325,6 +326,9 @@ export class Winnower extends EventEmitter {
       this.wfp = '';
     }
     this.wfp += winnowingResult;
+
+    if(this.wfp !== winnowingResult) return false;
+    return true;
   }
 
   processPackedWfp(content) {
@@ -356,14 +360,17 @@ export class Winnower extends EventEmitter {
     this.isRunning = true;
     this.winnowingExtractor = new WinnowerExtractor();
     this.winnowingExtractor.loadFile(filePath);
-    this.extractionProcess();
+    this.extractionProcess(this.scannerCfg.DISPATCHER_QUEUE_SIZE_MAX_LIMIT);
   }
 
-  private extractionProcess() {
+  private extractionProcess(n: number) {
     let winBlock = '-';
-    while(this.continue && winBlock !== '') { // this.continue will change on method pause();
+    while(winBlock !== '' && n>=0) { // this.continue will change on method pause();
       winBlock = this.winnowingExtractor.extractWinBlock();
-      if(winBlock !== '') this.winnowerPacker(winBlock);
+      if(winBlock !== '') {
+        if (this.winnowerPacker(winBlock))
+          n-=1;
+      }
     }
 
     // Last winnowing block
@@ -404,7 +411,7 @@ export class Winnower extends EventEmitter {
       this.recoveryIndex();
       this.nextStepMachine();
     } else {
-      this.extractionProcess();
+      this.extractionProcess(this.scannerCfg.DISPATCHER_QUEUE_SIZE_MAX_LIMIT *2 );
     }
   }
 
