@@ -75,14 +75,14 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
 
       const filter = new FilterList('');
       if (options.filter) {
-        console.log('Loading filter from file: ' + options.filter);
+        console.error('Loading filter from file: ' + options.filter);
         filter.loadFromFile(options.filter);
       } else {
-        console.log('Loading default filters...');
+        console.error('Loading default filters...');
         filter.load(defaultFilter as FilterList);
       }
 
-      console.log('Reading directory...  ');
+      console.error('Reading directory...  ');
       const tree = new Tree(rootPath);
       tree.loadFilter(filter);
       tree.buildTree();
@@ -116,7 +116,7 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
 
     scanner.on(ScannerEvents.SCAN_DONE, async (resultPath) => {
       bar1.stop();
-      console.log(`Results saved in ${resultPath}`);
+      console.error(`Results saved in ${resultPath}`);
     });
   } else {
     scanner.on(ScannerEvents.SCANNER_LOG, (logText) => console.log(logText));
