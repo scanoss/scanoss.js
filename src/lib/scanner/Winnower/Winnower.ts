@@ -363,10 +363,10 @@ export class Winnower extends EventEmitter {
     this.extractionProcess(this.scannerCfg.DISPATCHER_QUEUE_SIZE_MAX_LIMIT);
   }
 
-  private extractionProcess(n: number) {
+  private async extractionProcess(n: number) {
     let winBlock = '-';
     while(winBlock !== '' && n>=0) { // this.continue will change on method pause();
-      winBlock = this.winnowingExtractor.extractWinBlock();
+      winBlock = this.winnowingExtractor.extractWinBlock(); // TODO Make async funcion
       if(winBlock !== '') {
         if (this.winnowerPacker(winBlock))
           n-=1;
@@ -395,7 +395,7 @@ export class Winnower extends EventEmitter {
     this.forceStopWorker();
   }
 
-  pause() {
+  public pause(): void {
     this.emit(ScannerEvents.WINNOWER_LOG, '[ SCANNER ]: Winnowing paused...');
     this.continue = false;
     if (!this.readingFromFile) {
@@ -404,7 +404,7 @@ export class Winnower extends EventEmitter {
     }
   }
 
-  resume() {
+  public resume(): void {
     this.emit(ScannerEvents.WINNOWER_LOG, '[ SCANNER ]: Winnowing resumed...');
     this.continue = true;
     if (!this.readingFromFile) {
@@ -415,7 +415,7 @@ export class Winnower extends EventEmitter {
     }
   }
 
-  stop() {
+  public stop(): void {
     this.continue = false;
     this.isRunning = false;
     this.winnowingExtractor = null;
@@ -424,12 +424,8 @@ export class Winnower extends EventEmitter {
     this.init();
   }
 
-  hasPendingFiles() {
+  public hasPendingFiles(): boolean {
     return this.isRunning;
   }
 
 }
-
-module.exports = {
-  Winnower,
-};

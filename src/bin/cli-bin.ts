@@ -5,8 +5,8 @@ import { scanHandler } from '../commands/scan';
 
 
 function CLIErrorHandler(e: Error) {
-  console.log(' ');
-  console.log(e);
+  console.error(' ');
+  console.error(e);
   process.exit(1);
 }
 
@@ -45,6 +45,6 @@ async function main() {
 try {
   main();
 } catch (e) {
-  console.log(e);
+  console.error(e);
   process.exit(1);
 }
