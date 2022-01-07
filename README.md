@@ -1,4 +1,4 @@
-# Scanoss.js
+# Scanoss
 
 The SCANOSS JS package provides a simple, easy to consume module for interacting with SCANOSS APIs/Engine.
 
@@ -9,7 +9,7 @@ You can install the Scanoss package using npm (the Node Package Manager). Note t
 To download and install the Scanoss package in your project run the following command:
 
 ```
-npm install scanoss.js
+npm install scanoss
 ```
 
 # Using as a Module
@@ -19,10 +19,10 @@ A simple example that scans two files and writes the result in the project folde
 
 ```typescript
 // Import as ES6
-import { Scanner, ScannerEvents } from 'scanoss.js';
+import { Scanner, ScannerEvents } from 'scanoss';
 
 // Import as CommonJS
-// const { Scanner, ScannerEvents } = require('scanoss.js');
+// const { Scanner, ScannerEvents } = require('scanoss');
 
 const scanner = new Scanner();
 
