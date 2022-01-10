@@ -1,28 +1,49 @@
-# Scanoss
+# Scanoss JS Package
 
 The SCANOSS JS package provides a simple, easy to consume module for interacting with SCANOSS APIs/Engine.
 
-# Installation
+It can be installed on your system and used as a CLI or installed directly into your Node.js project.
+
+## Installation
 
 You can install the Scanoss package using npm (the Node Package Manager). Note that you will need to install Node.js and npm. Installing Node.js should install npm as well.
 
-To download and install the Scanoss package in your project run the following command:
+To download and install the Scanoss CLI run the following command: `npm install -g scanoss.js`
 
-```
-npm install scanoss
+On the other hand, if you need to install the module in your own Node.js project and consume it as a dependency, execute the following command `npm install scanoss.js`
+
+## CLI Usage
+
+Running the bare command will list the available sub-commands:
+
+```Usage: scanoss-js [options] [command]
+
+The SCANOSS JS package provides a simple, easy to consume module for interacting with SCANOSS APIs/Engine.
+
+Options:
+  -V, --version            output the version number
+  -h, --help               display help for command
+
+Commands:
+  scan [options] <source>  Scan a folder/file
+  help [command]           display help for command
 ```
 
-# Using as a Module
+From there it is possible to scan a source code folder:
+
+`scanoss-js scan -o scan-output.json <source-folder>`
+
+## Package Usage
 
 The Scanoss package can be used programmatically as a standard Node module.
 A simple example that scans two files and writes the result in the project folder is shown below:
 
 ```typescript
 // Import as ES6
-import { Scanner, ScannerEvents } from 'scanoss';
+import { Scanner, ScannerEvents } from 'scanoss.js';
 
 // Import as CommonJS
-// const { Scanner, ScannerEvents } = require('scanoss');
+// const { Scanner, ScannerEvents } = require('scanoss.js');
 
 const scanner = new Scanner();
 
@@ -46,7 +67,7 @@ scanner.scanList({
 });
 ```
 
-## Events
+### Events
 
 The module provides a set of events that can be used to trigger actions.
 Some events are shown in the example above.

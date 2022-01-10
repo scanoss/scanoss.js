@@ -18,11 +18,10 @@ async function main() {
   program
     .command('scan <source>')
     .description('Scan a folder/file')
-    //.option('-w, --wfp', 'Scan a .wfp file instead of a folder')
+    //.option('-w, --wfp', 'Scan a .wfp file instead of a folder') // In progress
     .option('-c, --concurrency <number>', 'Number of concurrent connections to use while scanning (optional -default 10)')
     .option('-f, --filter <path>', 'Loads an user defined filter (optional)')
-    .option('-o, --output <path>', 'Output result directory (optional - default tmp directory)')
-    .option('-p, --print', 'Prints results to stdout (optional - default disabled)')
+    .option('-o, --output <filename>', 'Output result file name (optional - default stdout)')
     .option('-P, --post-size <postsize>', 'Number of kilobytes to limit the post to while scanning (optional - default 64)')
     .option('-R, --max-retry <retry>', 'Max number of retries for each POST (optional -default 5)')
     .option('-M, --timeout <timeout>', 'Timeout (in seconds) for API communication (optional -default 120)')
@@ -32,7 +31,7 @@ async function main() {
     .action((source, options) => {scanHandler(source, options).catch((e) => {CLIErrorHandler(e)})})
     .addHelpText('after', `
   Examples:
-    $ scanoss-js scan <yourProjectPath>`
+    $ scanoss-js scan -o scan-output.json <source-folder>`
     );
 
 
