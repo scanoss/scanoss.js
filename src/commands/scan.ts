@@ -65,15 +65,13 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
 
   const scanner = new Scanner(scannerCfg);
 
-  if(options.output) scanner.setWorkDirectory(options.output);
-
-
-  if(!options.wfp) {  // If the user does not specify a wfp file, the path is whether a folder or a file
+  if(!options.wfp) {  // --wfp change the behaviour of the scanner. Scan a WFP File instead of a folder
     if(pathIsFolder) { // If a folder is specified, we scan the folder and all its subfolders
-
       if(rootPath.charAt(rootPath.length -1) !== '/') rootPath += '/';
 
+      const tree = new Tree(rootPath);
       const filter = new FilterList('');
+
       if (options.filter) {
         console.error('Loading filter from file: ' + options.filter);
         filter.loadFromFile(options.filter);
@@ -83,7 +81,6 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
       }
 
       console.error('Reading directory...  ');
-      const tree = new Tree(rootPath);
       tree.loadFilter(filter);
       tree.buildTree();
 
@@ -108,23 +105,20 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
     const bar1 = new cliProgress.SingleBar(optBar1, cliProgress.Presets.shades_classic);
     bar1.start(filesCounter, 0);
 
-    let totalFilesScanned = 0;
     scanner.on(ScannerEvents.DISPATCHER_NEW_DATA, (dispResp: DispatcherResponse) => {
-      totalFilesScanned += dispResp.getFilesScanned().length;
-      bar1.update(totalFilesScanned);
+      bar1.increment(dispResp.getFilesScanned().length);
     });
 
-    scanner.on(ScannerEvents.SCAN_DONE, async (resultPath) => {
-      bar1.stop();
-      console.error(`Results saved in ${resultPath}`);
-    });
+    scanner.on(ScannerEvents.SCAN_DONE, async (resultPath) => {bar1.stop();});
   } else {
-    scanner.on(ScannerEvents.SCANNER_LOG, (logText) => console.log(logText));
+    scanner.on(ScannerEvents.SCANNER_LOG, (logText) => console.error(logText));
   }
 
   scanner.on(ScannerEvents.SCAN_DONE, async (resultPath) => {
-    console.log('');
-    if(options.print || !pathIsFolder) await printJSON(resultPath)
+    if(options.output)
+      await fs.promises.copyFile(resultPath, options.output);
+    else
+      console.log(await fs.promises.readFile(resultPath, 'utf8'));
   });
 
   if (options.wfp) await scanner.scanFromWinnowingFile(rootPath);
