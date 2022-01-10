@@ -8,9 +8,9 @@ It can be installed on your system and used as a CLI or installed directly into 
 
 You can install the Scanoss package using npm (the Node Package Manager). Note that you will need to install Node.js and npm. Installing Node.js should install npm as well.
 
-To download and install the Scanoss CLI run the following command: `npm install -g scanoss.js`
+To download and install the Scanoss CLI run the following command: `npm install -g scanoss`
 
-On the other hand, if you need to install the module in your own Node.js project and consume it as a dependency, execute the following command `npm install scanoss.js`
+On the other hand, if you need to install the module in your own Node.js project and consume it as a dependency, execute the following command `npm install scanoss`
 
 ## CLI Usage
 
@@ -40,10 +40,10 @@ A simple example that scans two files and writes the result in the project folde
 
 ```typescript
 // Import as ES6
-import { Scanner, ScannerEvents } from 'scanoss.js';
+import { Scanner, ScannerEvents } from 'scanoss';
 
 // Import as CommonJS
-// const { Scanner, ScannerEvents } = require('scanoss.js');
+// const { Scanner, ScannerEvents } = require('scanoss');
 
 const scanner = new Scanner();
 
