@@ -1,18 +1,21 @@
+import { WinnowingMode } from "../ScannerTypes";
+
+
 export class ScannableItem {
   private contentSource: string;
 
   private content: Buffer;
 
-  private scanMode: any;
+  private winnowingMode: WinnowingMode;
 
   private fingerprint: any;
 
   private maxSizeWfp: any;
 
-  constructor(content: Buffer, contentSource: string, scanMode: any, maxSizeWfp: number) {
+  constructor(content: Buffer, contentSource: string, winnowingMode: any, maxSizeWfp: number) {
     this.contentSource = contentSource;
     this.content = content;
-    this.scanMode = scanMode;
+    this.winnowingMode = winnowingMode;
     this.maxSizeWfp = maxSizeWfp;
   }
 
@@ -24,12 +27,12 @@ export class ScannableItem {
     return this.contentSource;
   }
 
-  public getScanMode() {
-    return this.scanMode;
-  }
-
   public getFingerprint() {
     return this.fingerprint;
+  }
+
+  public getWinnowingMode(): WinnowingMode {
+    return this.winnowingMode;
   }
 
   public getMaxSizeWfp() {

@@ -3,16 +3,18 @@
 import { program } from 'commander';
 import { scanHandler } from '../commands/scan';
 
-
 function CLIErrorHandler(e: Error) {
   console.error(' ');
   console.error(e);
   process.exit(1);
 }
 
+
+
+
 async function main() {
   program
-    .version('0.2.0')
+    .version("0.2.9")
     .description('The SCANOSS JS package provides a simple, easy to consume module for interacting with SCANOSS APIs/Engine.')
 
   program

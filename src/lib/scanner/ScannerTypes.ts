@@ -27,3 +27,15 @@ export enum ScannerEvents {
 
   ERROR = 'error',
 };
+
+export enum WinnowingMode {
+  FULL_WINNOWING = 'FULL_WINNOWING',
+  WINNOWING_ONLY_MD5 = 'WINNOWING_ONLY_MD5',
+};
+
+export interface ScannerInput {
+  engineFlags?: number;
+  folderRoot?: string;
+  fileList: Array<string>;
+  winnowingMode?: WinnowingMode;  // Enable winnowing algorithm, otherwise is scanned only MD5
+};

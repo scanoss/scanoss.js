@@ -21,7 +21,7 @@ export class Tree {
 
   constructor(path: string) {
     const pathParts = path.split(pathLib.sep);
-    this.rootName = pathParts[pathParts.length - 1];
+    this.rootName = pathLib.basename(path);
     this.rootPath = path;
     this.rootFolder = new Folder('/', this.rootName);
   }
@@ -82,7 +82,7 @@ export class Tree {
   }
 
   public getFileList(): Array<string> {
-    const rootPath = this.rootPath.substring(0, this.rootPath.length - 1);
+    const rootPath = this.rootPath.substring(0, this.rootPath.length);
     const fList = this.rootFolder.getFiles();
     return fList.map((fileRelativePath: string) => {return (rootPath + fileRelativePath)});
   }

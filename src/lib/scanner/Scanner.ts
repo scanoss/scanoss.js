@@ -10,16 +10,12 @@ import { Dispatcher } from './Dispatcher/Dispatcher';
 import { DispatchableItem } from './Dispatcher/DispatchableItem';
 import { DispatcherResponse } from './Dispatcher/DispatcherResponse';
 import { ScannerCfg } from './ScannerCfg';
-import { ScannerEvents } from './ScannerEvents';
+import { ScannerEvents, ScannerInput } from './ScannerTypes';
 
 
 import sortPaths from 'sort-paths';
 import { WinnowerResponse } from './Winnower/WinnowerResponse';
 
-
-// TO DO:
-// - Split ScannerEvents into ExternalEvents and InternalEvents
-// - Implement a static atribute to keep track of the scannerId
 
 let finishPromiseResolve;
 let finishPromiseReject;
@@ -33,9 +29,9 @@ export class Scanner extends EventEmitter {
 
   scannerId;
 
-  winnower: Winnower;
+  private winnower: Winnower;
 
-  dispatcher;
+  private dispatcher: Dispatcher;
 
   resultFilePath;
 
@@ -56,6 +52,8 @@ export class Scanner extends EventEmitter {
   filesNotScanned;
 
   finishPromise: Promise<void>;
+
+  private scannerInput: ScannerInput;
 
   constructor(scannerCfg = new ScannerCfg()) {
     super();
@@ -89,6 +87,7 @@ export class Scanner extends EventEmitter {
     this.winnower.on(ScannerEvents.WINNOWING_NEW_CONTENT, (winnowerResponse: WinnowerResponse) => {
       this.emit(ScannerEvents.WINNOWING_NEW_CONTENT, winnowerResponse);
       this.reportLog(`[ SCANNER ]: New WFP content`);
+      winnowerResponse.setEngineFlags(this.scannerInput.engineFlags);
       const disptItem = new DispatchableItem(winnowerResponse);
       this.dispatcher.dispatchItem(disptItem);
     });
@@ -253,20 +252,6 @@ export class Scanner extends EventEmitter {
   }
 
 
-  public scanList(files, scanRoot = ''): Promise<void> {
-    this.init();
-    this.filesToScan = files;
-    this.scanRoot = scanRoot;
-    this.createOutputFiles();
-    if (!Object.entries(files).length) {
-      this.finishScan();
-      return this.finishPromise;
-    }
-    this.winnower.startWinnowing(this.filesToScan, scanRoot);
-    return this.finishPromise;
-  }
-
-
   public scanFromWinnowingFile(wfpFilePath: string): Promise<void> {
     this.init();
     this.createOutputFiles();
@@ -275,8 +260,20 @@ export class Scanner extends EventEmitter {
   }
 
 
-  public scan(scanInput: Array<any>): Promise<void> {
-    return new Promise((resolve, reject) => {});
+  public scan(scannerInput: ScannerInput): Promise<void> {
+    this.init();
+    this.createOutputFiles();
+    this.scannerInput = scannerInput;
+
+    // No file to scan, create empty result file and exit
+    if (!this.scannerInput.fileList.length) {
+      this.finishScan();
+      return this.finishPromise;
+    }
+
+    if(this.scannerInput.winnowingMode) this.winnower.setWinnowingMode(scannerInput.winnowingMode);
+    this.winnower.startWinnowing(this.scannerInput);
+    return this.finishPromise;
   }
 
 
@@ -289,13 +286,13 @@ export class Scanner extends EventEmitter {
   pause() {
     this.running = false;
     this.winnower.pause();
-    this.dispatcher.pause();
+    // this.dispatcher.pause();
   }
 
   resume() {
     this.running = true;
     this.winnower.resume();
-    this.dispatcher.resume();
+    // this.dispatcher.resume();
   }
 
   stop() {

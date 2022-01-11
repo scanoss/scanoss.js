@@ -5,10 +5,11 @@ import fetch from 'node-fetch';
 import PQueue from "p-queue";
 import FormData from "form-data";
 
-import { ScannerEvents } from "../ScannerEvents";
+import { ScannerEvents } from "../ScannerTypes";
 import { DispatcherResponse } from "./DispatcherResponse";
 import { ScannerCfg } from "../ScannerCfg";
 import { GlobalControllerAborter } from "./GlobalControllerAborter";
+import { DispatchableItem } from './DispatchableItem';
 
 export class Dispatcher extends EventEmitter {
   private scannerCfg: ScannerCfg;
@@ -63,7 +64,7 @@ export class Dispatcher extends EventEmitter {
     this.globalAbortController.abortAll();
   }
 
-  dispatchItem(disptItem) {
+  public dispatchItem(disptItem: DispatchableItem): void {
     this.pQueue.add(() => this.dispatch(disptItem));
 
     if (
@@ -104,13 +105,17 @@ export class Dispatcher extends EventEmitter {
     }
   }
 
-  async dispatch(disptItem) {
+  async dispatch(disptItem: DispatchableItem) {
     const timeoutController = this.globalAbortController.getAbortController();
     const timeoutId = setTimeout(() => timeoutController.abort(), this.scannerCfg.TIMEOUT);
     try {
       const form = new FormData();
-      const wfpContent = disptItem.getContent();
-      form.append('filename', Buffer.from(wfpContent), 'data.wfp');
+
+      form.append('filename', Buffer.from(disptItem.getContent()), 'data.wfp');
+
+      const engineFlag = disptItem.getWinnowerResponse().getEngineFlags();
+      if(engineFlag) form.append('flags', engineFlag);
+
       this.emit(ScannerEvents.DISPATCHER_WFP_SENDED);
       const response = await fetch(this.scannerCfg.API_URL, {
         method: 'post',
@@ -141,7 +146,6 @@ export class Dispatcher extends EventEmitter {
         this.globalAbortController.removeAbortController(timeoutController);
         this.errorHandler(e, disptItem);
         return Promise.resolve();
-
     }
   }
 }
