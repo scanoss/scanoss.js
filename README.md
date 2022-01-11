@@ -40,7 +40,7 @@ A simple example that scans two files and writes the result in the project folde
 
 ```typescript
 // Import as ES6
-import { Scanner, ScannerEvents } from 'scanoss';
+import { Scanner, ScannerEvents, ScannerTypes } from 'scanoss';
 
 // Import as CommonJS
 // const { Scanner, ScannerEvents } = require('scanoss');
@@ -60,11 +60,12 @@ scanner.on(ScannerEvents.SCAN_DONE, (resultPath) => {
   console.log('Path to results: ', resultPath);
 });
 
+const scannerInput = {
+  fileList: ['/yourProjectFolder/example1.c', '/yourProjectFolder/example2.c'],
+};
+
 // Launch the scanner
-scanner.scanList({
-  '/yourProjectFolder/example1.c': 'FULL_SCAN',
-  '/yourProjectFolder/example2.c': 'FULL_SCAN',
-});
+scanner.scan(scannerInput);
 ```
 
 ### Events
