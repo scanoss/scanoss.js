@@ -22,8 +22,9 @@ async function main() {
     .description('Scan a folder/file')
     //.option('-w, --wfp', 'Scan a .wfp file instead of a folder') // In progress
     .option('-c, --concurrency <number>', 'Number of concurrent connections to use while scanning (optional -default 10)')
-    .option('-f, --filter <path>', 'Loads an user defined filter (optional)')
+    .option('--filter <path>', 'Loads an user defined filter (optional)')
     .option('-o, --output <filename>', 'Output result file name (optional - default stdout)')
+    .option('-F, --flags <flags>', 'Scanning engine flags (1: disable snippet matching, 2 enable snippet ids, 4: disable dependencies, 8: disable licenses, 16: disable copyrights,32: disable vulnerabilities, 64: disable quality, 128: disable cryptography,256: disable best match, 512: Report identified files)')
     .option('-P, --post-size <postsize>', 'Number of kilobytes to limit the post to while scanning (optional - default 64)')
     .option('-R, --max-retry <retry>', 'Max number of retries for each POST (optional -default 5)')
     .option('-M, --timeout <timeout>', 'Timeout (in seconds) for API communication (optional -default 120)')

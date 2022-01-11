@@ -2,24 +2,13 @@ import { Scanner } from '../lib/scanner/Scanner';
 import { ScannerEvents, ScannerInput } from '../lib/scanner/ScannerTypes';
 import { ScannerCfg } from '../lib/scanner/ScannerCfg';
 import { Tree } from '../lib/tree/Tree';
-import File from '../lib/tree/File';
 
 import cliProgress from 'cli-progress';
-import { WinnowerResponse } from '../lib/scanner/Winnower/WinnowerResponse';
 import { DispatcherResponse } from '../lib/scanner/Dispatcher/DispatcherResponse';
 import { defaultFilter } from '../lib/filters/defaultFilter';
 import { FilterList } from '../lib/filters/filtering';
 
 import fs from 'fs';
-
-enum FilterTypes {
-  BANNED = 'BANNED',
-  WHITELIST = 'WHITELIST',
-  FULL_SCAN = 'FULL_SCAN',
-  QUICK_SCAN = 'QUICK_SCAN',
-}
-
-
 
 // Async function that verify if a path is a folder. If the path is not valid the promise will be rejected
 const isFolder = (path: string): Promise<boolean> => {
@@ -33,9 +22,6 @@ const isFolder = (path: string): Promise<boolean> => {
     });
   });
 }
-
-
-
 
 export async function scanHandler(rootPath: string, options: any): Promise<void> {
 
@@ -56,6 +42,7 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
   const scanner = new Scanner(scannerCfg);
 
   scannerInput.folderRoot = rootPath + '/'; // This will remove the project root path from the results.
+  if(options.flags) scannerInput.engineFlags = options.flags;
 
   if(!options.wfp) {
     if(pathIsFolder) {
@@ -101,8 +88,6 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
     else
       console.log(await fs.promises.readFile(resultPath, 'utf8'));
   });
-
-
 
   if (options.wfp) await scanner.scanFromWinnowingFile(rootPath);
   else await scanner.scan(scannerInput);
