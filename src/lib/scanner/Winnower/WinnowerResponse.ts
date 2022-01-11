@@ -1,7 +1,7 @@
 export class WinnowerResponse {
   private wfpContent: string;
 
-  // private date: any;
+  private engineFlags: number;
 
   private scanRoot: string;
 
@@ -16,6 +16,14 @@ export class WinnowerResponse {
 
   public getContent() {
     return this.wfpContent;
+  }
+
+  public setEngineFlags(engineFlags: number): void {
+    this.engineFlags = engineFlags;
+  }
+
+  public getEngineFlags(): number {
+    return this.engineFlags;
   }
 
   public getFilesWinnowed() {

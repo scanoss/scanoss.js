@@ -4,7 +4,7 @@ import { Worker } from 'worker_threads';
 
 import { ScannableItem } from '../Scannable/ScannableItem';
 import { ScannerCfg } from '../ScannerCfg';
-import { ScannerEvents } from '../ScannerEvents';
+import { ScannerEvents, ScannerInput, WinnowingMode } from '../ScannerTypes';
 import { WinnowerExtractor } from './WinnowerExtractor';
 
 import { WinnowerResponse } from './WinnowerResponse';
@@ -17,7 +17,7 @@ const { parentPort } = require('worker_threads');
 parentPort.on('message', async (scannableItem) => {
 
   let fingerprint;
-  if ( scannableItem.scanMode === "FULL_SCAN") {
+  if ( scannableItem.winnowingMode === "FULL_WINNOWING") {
     fingerprint = wfp_for_content(
       scannableItem.content,
       scannableItem.contentSource,
@@ -240,7 +240,7 @@ export class Winnower extends EventEmitter {
 
   private fileListIndex: number;
 
-  private scanRoot: string;
+  private folderRoot: string;
 
   private wfp: string;
 
@@ -249,6 +249,8 @@ export class Winnower extends EventEmitter {
   private continue: boolean;
 
   private isRunning: boolean;
+
+  private winnowingMode: WinnowingMode;
 
   private readingFromFile: boolean;
 
@@ -263,12 +265,13 @@ export class Winnower extends EventEmitter {
 
   init() {
     this.wfp = '';
-    this.scanRoot = '';
+    this.folderRoot = '';
     this.continue = true;
     this.isRunning = false;
     this.readingFromFile = false;
     this.fileList = [];
     this.fileListIndex = 0;
+    this.winnowingMode = WinnowingMode.FULL_WINNOWING;
   }
 
   prepareWorker() {
@@ -281,11 +284,11 @@ export class Winnower extends EventEmitter {
 
   recoveryIndex() {
     // Files: contains all files winnowed but not packed yet
-    const files = new WinnowerResponse(this.wfp, this.scanRoot).getFilesWinnowed();
+    const files = new WinnowerResponse(this.wfp, this.folderRoot).getFilesWinnowed();
     if (files.length) {
       const lastFileWinnowed = files[files.length - 1];
       let i = 0;
-      while (i <= files.length && lastFileWinnowed !== this.fileList[this.fileListIndex - i][0]) {
+      while (i <= files.length && lastFileWinnowed !== this.fileList[this.fileListIndex - i]) {
         i += 1;
       }
       // If file already winnowed cannot be found in fileList emit an error.
@@ -294,7 +297,7 @@ export class Winnower extends EventEmitter {
         return -1;
       }
       this.fileListIndex -= i;
-      if (this.fileList[this.fileListIndex][0] === lastFileWinnowed) this.fileListIndex += 1;
+      if (this.fileList[this.fileListIndex] === lastFileWinnowed) this.fileListIndex += 1;
     }
     return 0;
   }
@@ -332,18 +335,17 @@ export class Winnower extends EventEmitter {
   }
 
   processPackedWfp(content) {
-    const wnRsp = new WinnowerResponse(content, this.scanRoot);
+    const wnRsp = new WinnowerResponse(content, this.folderRoot);
     this.emit(ScannerEvents.WINNOWING_NEW_CONTENT, wnRsp);
   }
 
   async getNextScannableItem() {
     if (this.fileListIndex >= this.fileList.length) return null;
-    const path = this.fileList[this.fileListIndex][0];
-    const scanMode = this.fileList[this.fileListIndex][1];
-    const contentSource = path.replace(`${this.scanRoot}`, '');
+    const path = this.fileList[this.fileListIndex];
+    const contentSource = path.replace(`${this.folderRoot}`, '');
     const content = await fs.promises.readFile(path);
     this.fileListIndex += 1;
-    const scannable = new ScannableItem(content, contentSource, scanMode, this.scannerCfg.WFP_FILE_MAX_SIZE);
+    const scannable = new ScannableItem(content, contentSource, this.winnowingMode, this.scannerCfg.WFP_FILE_MAX_SIZE);
     return scannable;
   }
 
@@ -377,12 +379,13 @@ export class Winnower extends EventEmitter {
     if(winBlock === '') this.finishWinnowing();
   }
 
-  public async startWinnowing(files, scanRoot) {
+  public async startWinnowing(scanInput: ScannerInput): Promise<void> {
     this.emit(ScannerEvents.WINNOWER_LOG, '[ SCANNER ]: Starting Winnowing...');
     this.readingFromFile = false;
-    this.scanRoot = scanRoot;
     this.isRunning = true;
-    this.fileList = Object.entries(files);
+
+    this.folderRoot = scanInput.folderRoot;
+    this.fileList = scanInput.fileList;
     this.nextStepMachine();
   }
 
@@ -428,4 +431,7 @@ export class Winnower extends EventEmitter {
     return this.isRunning;
   }
 
+  public setWinnowingMode(mode: WinnowingMode): void {
+    this.winnowingMode = mode;
+  }
 }

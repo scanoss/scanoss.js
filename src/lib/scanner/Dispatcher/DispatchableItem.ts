@@ -14,7 +14,7 @@ export class DispatchableItem {
     this.errorCounter += 1;
   }
 
-  getWinnowerResponse() {
+  public getWinnowerResponse(): WinnowerResponse {
     return this.winnowerResponse;
   }
 
