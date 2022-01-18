@@ -53,7 +53,7 @@ export class Scanner extends EventEmitter {
 
   finishPromise: Promise<void>;
 
-  private scannerInput: ScannerInput;
+  private scannerInput: Array<ScannerInput>;
 
   constructor(scannerCfg = new ScannerCfg()) {
     super();
@@ -87,7 +87,7 @@ export class Scanner extends EventEmitter {
     this.winnower.on(ScannerEvents.WINNOWING_NEW_CONTENT, (winnowerResponse: WinnowerResponse) => {
       this.emit(ScannerEvents.WINNOWING_NEW_CONTENT, winnowerResponse);
       this.reportLog(`[ SCANNER ]: New WFP content`);
-      winnowerResponse.setEngineFlags(this.scannerInput.engineFlags);
+      winnowerResponse.setEngineFlags(this.scannerInput[0].engineFlags);
       const disptItem = new DispatchableItem(winnowerResponse);
       this.dispatcher.dispatchItem(disptItem);
     });
@@ -120,13 +120,13 @@ export class Scanner extends EventEmitter {
       this.insertIntoBuffer(response);
       if (this.bufferReachedLimit()) this.bufferToFiles();
       this.processingNewData = false;
-      if (this.scanFinished) await this.finishScan();
+      if (this.scanFinished) await this.finishJob();
     });
 
     this.dispatcher.on(ScannerEvents.DISPATCHER_FINISHED, async () => {
       if (!this.winnower.hasPendingFiles()) {
         if (this.processingNewData) this.scanFinished = true;
-        else await this.finishScan();
+        else await this.finishJob();
       }
     });
 
@@ -196,12 +196,20 @@ export class Scanner extends EventEmitter {
     return this.workDirectory;
   }
 
-  cleanWorkDirectory() {
+  public cleanWorkDirectory(): void {
     if (fs.existsSync(this.resultFilePath)) fs.unlinkSync(this.resultFilePath);
     if (fs.existsSync(this.wfpFilePath)) fs.unlinkSync(this.wfpFilePath);
   }
 
-  async finishScan() {
+  private async finishJob() {
+    this.scannerInput.shift();
+    this.reportLog(`[ SCANNER ]: Job finished. ${this.scannerInput.length} pendings`);
+
+    if(this.scannerInput.length) this.winnower.startWinnowing(this.scannerInput[0]);
+    else await this.finishScan();
+  }
+
+  private async finishScan() {
     if (!this.isBufferEmpty()) this.bufferToFiles();
     const results = JSON.parse(await fs.promises.readFile(this.resultFilePath, 'utf8'));
     const sortedPaths = sortPaths(Object.keys(results), '/');
@@ -260,19 +268,17 @@ export class Scanner extends EventEmitter {
   }
 
 
-  public scan(scannerInput: ScannerInput): Promise<void> {
+  public scan(scannerInput: Array<ScannerInput>): Promise<void> {
     this.init();
     this.createOutputFiles();
     this.scannerInput = scannerInput;
-
-    // No file to scan, create empty result file and exit
-    if (!this.scannerInput.fileList.length) {
+    // If some jobs have no files to scan, we return
+    if (this.scannerInput.some((input) => !input.fileList.length)){
       this.finishScan();
       return this.finishPromise;
     }
 
-    if(this.scannerInput.winnowingMode) this.winnower.setWinnowingMode(scannerInput.winnowingMode);
-    this.winnower.startWinnowing(this.scannerInput);
+    this.winnower.startWinnowing(this.scannerInput[0]);
     return this.finishPromise;
   }
 

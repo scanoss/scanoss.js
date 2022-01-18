@@ -65,7 +65,7 @@ const scannerInput = {
 };
 
 // Launch the scanner
-scanner.scan(scannerInput);
+scanner.scan([scannerInput]);
 ```
 
 ### Events
