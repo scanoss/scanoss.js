@@ -259,8 +259,6 @@ export class Winnower extends EventEmitter {
   constructor(scannerCfg = new ScannerCfg()) {
     super();
     this.scannerCfg = scannerCfg;
-    this.init();
-    this.prepareWorker();
   }
 
   init() {
@@ -381,9 +379,13 @@ export class Winnower extends EventEmitter {
 
   public async startWinnowing(scanInput: ScannerInput): Promise<void> {
     this.emit(ScannerEvents.WINNOWER_LOG, '[ SCANNER ]: Starting Winnowing...');
+
+    this.init();
+    this.prepareWorker();
+
+    if(scanInput.winnowingMode) this.setWinnowingMode(scanInput.winnowingMode);
     this.readingFromFile = false;
     this.isRunning = true;
-
     this.folderRoot = scanInput.folderRoot;
     this.fileList = scanInput.fileList;
     this.nextStepMachine();

@@ -90,7 +90,7 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
   });
 
   if (options.wfp) await scanner.scanFromWinnowingFile(rootPath);
-  else await scanner.scan(scannerInput);
+  else await scanner.scan([scannerInput]);
 
 }
 
