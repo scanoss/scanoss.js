@@ -44,7 +44,7 @@ export class Tree {
     for (const dirEntry of dirEntries) {
       const fullPath = `${path}/${dirEntry.name}`;
       const relativePath = `${path}/${dirEntry.name}`.replace(this.rootPath, '');
-      if (this.filter && this.filter.include(fullPath))
+      if (!this.filter || this.filter.include(fullPath))
         if (dirEntry.isDirectory()) {
           const f: Folder = new Folder(relativePath, dirEntry.name);
           const subTree = this.buildTreeRec(`${path}/${dirEntry.name}`, f);

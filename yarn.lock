@@ -4179,6 +4179,11 @@
     "registry-url" "^5.0.0"
     "semver" "^6.2.0"
 
+"packageurl-js@^0.0.5":
+  "integrity" "sha512-BISQVKLiu7EsWF5Qhx8OvX6K5vOfFcYuQBggFfrF2dHu+/Z2snuabilb0EyLvHZH0XXqbEz20pqFRonTt8z6QA=="
+  "resolved" "https://registry.npmjs.org/packageurl-js/-/packageurl-js-0.0.5.tgz"
+  "version" "0.0.5"
+
 "parent-module@^1.0.0":
   "integrity" "sha512-GQ2EWRpQV8/o+Aw8YqtfZZPfNRWZYkbidE9k5rpl/hC3vtHHBfGm2Ifi6qWV+coDGkrUKZAxE3Lot5kcsRlh+g=="
   "resolved" "https://registry.npmjs.org/parent-module/-/parent-module-1.0.1.tgz"
