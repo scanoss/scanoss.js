@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import { program } from 'commander';
+import { depHandler } from '../commands/dep';
 import { scanHandler } from '../commands/scan';
 
 function CLIErrorHandler(e: Error) {
@@ -14,7 +15,7 @@ function CLIErrorHandler(e: Error) {
 
 async function main() {
   program
-    .version("0.2.9")
+    .version("0.2.11")
     .description('The SCANOSS JS package provides a simple, easy to consume module for interacting with SCANOSS APIs/Engine.')
 
   program
@@ -37,10 +38,13 @@ async function main() {
     $ scanoss-js scan -o scan-output.json <source-folder>`
     );
 
+    program
+    .command('dep <source>')
+    .description('Scan for dependencies [ BETA ]')
+    .option('-o, --output <filename>', 'Output result file name (optional - default stdout)')
+    .action((source, options) => {depHandler(source, options).catch((e) => {CLIErrorHandler(e)})})
 
     await program.parseAsync(process.argv);
-
-
 }
 
 
