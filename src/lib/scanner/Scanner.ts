@@ -272,8 +272,8 @@ export class Scanner extends EventEmitter {
     this.init();
     this.createOutputFiles();
     this.scannerInput = scannerInput;
-    // If some jobs have no files to scan, we return
-    if (this.scannerInput.some((input) => !input.fileList.length)){
+
+    if (!this.isValidInput(scannerInput)) {
       this.finishScan();
       return this.finishPromise;
     }
@@ -283,6 +283,29 @@ export class Scanner extends EventEmitter {
   }
 
 
+  private isValidInput(scannerInput: Array<ScannerInput>): boolean {
+    if (!scannerInput) {
+      this.reportLog('[ SCANNER ]: No input provided', 'warning');
+      return false;
+    }
+
+    if (!Array.isArray(scannerInput)) {
+      this.reportLog('[ SCANNER ]: Input must be an array','warning');
+      return false;
+    }
+
+    if (!scannerInput.length) {
+      this.reportLog('[ SCANNER ]: Input array is empty', 'warning');
+      return false;
+    }
+
+    if (scannerInput.some((input) => !input.fileList.length)) {
+      this.reportLog('[ SCANNER ]: Input array contains an element with no file list','warning');
+      return false;
+    }
+
+    return true;
+  }
 
 
   getScannerId() {
