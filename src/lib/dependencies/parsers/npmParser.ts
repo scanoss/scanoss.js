@@ -28,7 +28,7 @@ export function packageParser(fileContent: string, filePath: string): FileDepend
 
 // Parse a package-lock.json file from node projects
 // See reference on: https://docs.npmjs.com/cli/v8/configuring-npm/package-json
-const MANIFEST_FILE_1 = 'package-loc.json';
+const MANIFEST_FILE_1 = 'package-lock.json';
 export function packagelockParser(fileContent: string, filePath: string): FileDependency {
 
     const results: FileDependency = {file: filePath, purls: []};
@@ -41,4 +41,5 @@ export function packagelockParser(fileContent: string, filePath: string): FileDe
         let purl = new PackageURL(PURL_TYPE, undefined, key,value['version'], undefined, undefined).toString();
         results.purls.push({purl});
     }
+    return results;
 }

@@ -31,10 +31,11 @@ export class Dependency {
   private adapterToDependencyResponse (dependencies: FileListDependency): IDependencyResponse {
     const results = <IDependencyResponse>{files: []};
 
-    const depArr: Array<IDependency> = [];
-    let fileArr = <IFile>{};
+
+
 
     for (const dependency of dependencies.files){
+      let depArr: Array<IDependency> = [];
       for (const purl of dependency.purls) {
         depArr.push({
           component: null,
@@ -44,6 +45,7 @@ export class Dependency {
         });
       }
 
+      let fileArr = <IFile>{};
       fileArr = ({
         file: dependency.file,
         id: "dependency",
