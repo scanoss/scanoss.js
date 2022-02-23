@@ -4,6 +4,7 @@ import fs from "fs";
 import { IDependencyResponse, IFile, IDependency } from "./DependencyTypes";
 import { FileListDependency } from "./parsers/types";
 import { generateDependenciesPurls } from "./PurlGenerator";
+import { PackageURL } from "packageurl-js";
 
 export class Dependency {
 
@@ -31,16 +32,15 @@ export class Dependency {
   private adapterToDependencyResponse (dependencies: FileListDependency): IDependencyResponse {
     const results = <IDependencyResponse>{files: []};
 
-
-
-
     for (const dependency of dependencies.files){
       let depArr: Array<IDependency> = [];
       for (const purl of dependency.purls) {
+        const pkg = PackageURL.fromString(purl.purl);
+
         depArr.push({
           component: null,
           purl: purl.purl,
-          version: null,
+          version: pkg.version,
           licenses: [{name: null}]
         });
       }
