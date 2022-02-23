@@ -34,8 +34,7 @@ export function pomParser(fileContent: string, filePath: string): FileDependency
         let version = versionReg ? versionReg[1] : '';
 
         const ver = version.match(/\${(.*?)}/);
-        console.log(ver[1]);
-        if(!ver || ver.length != 0) {
+        if(ver && ver.length >= 1) {
           if(ver[1] === 'project.version') { // TODO: Add support for project.version
             version = undefined;
           } else {

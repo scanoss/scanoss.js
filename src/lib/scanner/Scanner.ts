@@ -12,13 +12,14 @@ import { DispatcherResponse } from './Dispatcher/DispatcherResponse';
 import { ScannerCfg } from './ScannerCfg';
 import { ScannerEvents, ScannerInput } from './ScannerTypes';
 
-
 import sortPaths from 'sort-paths';
 import { WinnowerResponse } from './Winnower/WinnowerResponse';
 
 
 let finishPromiseResolve;
 let finishPromiseReject;
+
+
 
 export class Scanner extends EventEmitter {
   scannerCfg;
