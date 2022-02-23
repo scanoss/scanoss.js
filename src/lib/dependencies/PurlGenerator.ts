@@ -26,14 +26,17 @@ const Parser: ParserDefinitions = {
 
 export async function generateDependenciesPurls(files: Array<string>): Promise<FileListDependency> {
     let results: FileListDependency = {files: []};
-
     for (const filePath of files) {
         const fileName = path.basename(filePath);
         if(Parser[fileName] != null) {
+          try {
             const fileContent = await fs.promises.readFile(filePath, 'utf8');
             const dependency = Parser[fileName](fileContent, filePath);
             if(dependency.purls.length != 0)
                 results.files.push(dependency);
+          } catch (error) {
+            console.error(`Error parsing file: ${filePath}\n`,error);
+          }
         }
     }
     return results;
