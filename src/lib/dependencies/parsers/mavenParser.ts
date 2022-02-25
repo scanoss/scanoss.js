@@ -1,7 +1,6 @@
 import path from "path";
 import { PackageURL } from "packageurl-js";
-import { FileDependency } from "./types";
-import { isValidPath, isValidUrl } from './utils';
+import { ILocalFile } from "../DependencyTypes";
 
 const PURL_TYPE = 'maven';
 
@@ -10,10 +9,10 @@ const PURL_TYPE = 'maven';
 // See reference on: https://maven.apache.org/guides/introduction/introduction-to-the-pom.html
 // and https://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html
 const MANIFEST_FILE = 'pom.xml';
-export function pomParser(fileContent: string, filePath: string): FileDependency {
+export function pomParser(fileContent: string, filePath: string): ILocalFile {
 
     // If the file is not a python manifest file, return an empty results
-    const results: FileDependency = {file: filePath, purls: []};
+    const results: ILocalFile = {file: filePath, purls: []};
     if(path.basename(filePath) != MANIFEST_FILE)
         return results;
 

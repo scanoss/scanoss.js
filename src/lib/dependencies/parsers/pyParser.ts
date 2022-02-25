@@ -1,6 +1,6 @@
 import path from "path";
 import { PackageURL } from "packageurl-js";
-import { FileDependency } from "./types";
+import { ILocalDependencies, ILocalFile } from "../DependencyTypes";
 import { isValidPath, isValidUrl } from './utils';
 
 const PURL_TYPE = 'pypi';
@@ -8,10 +8,10 @@ const PURL_TYPE = 'pypi';
 // Parse a requirements.txt file from python projects
 // See reference on: https://pip.pypa.io/en/stable/reference/requirements-file-format/
 const MANIFEST_FILE = 'requirements.txt';
-export function requirementsParser(fileContent: string, filePath: string): FileDependency {
-    
+export function requirementsParser(fileContent: string, filePath: string): ILocalFile {
+
     // If the file is not a python manifest file, return an empty results
-    const results: FileDependency = {file: filePath, purls: []};
+    const results: ILocalFile = {file: filePath, purls: []};
     if(path.basename(filePath) != MANIFEST_FILE)
         return results;
 
@@ -27,8 +27,8 @@ export function requirementsParser(fileContent: string, filePath: string): FileD
                 // For reference about the regex see https://www.rfc-editor.org/rfc/rfc3986#appendix-B
                 const res = line.match(/^(([^:\/?#]+):)?(\/\/([^\/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?/);
                 continue;
-            } 
-            else if(isValidPath(line)) {continue;}   
+            }
+            else if(isValidPath(line)) {continue;}
             else if(line.startsWith('-r')) {continue;} // recursive dependencies (NOT SUPPORTED YET)
             else {
                 // Line contains a package name and/or version.
@@ -36,7 +36,7 @@ export function requirementsParser(fileContent: string, filePath: string): FileD
                 if (res) {
                     compName = res.length > 1 ? res[1] : ' ';
                     compVer = undefined;
-                }              
+                }
             }
             const purlString = new PackageURL(PURL_TYPE, undefined, compName, compVer, undefined, undefined).toString();
             results.purls.push({purl: purlString});

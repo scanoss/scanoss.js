@@ -1,22 +1,22 @@
-
-interface ILicense {
-  name: string;
-}
-
-export interface IDependency {
-  component: string;
+export interface ILocalPurl {
   purl: string;
-  version: string;
-  licenses: Array<ILicense>;
+  requirements?: string;
 }
 
-export interface IFile {
+export interface ILocalFile {
   file: string;
-  id: string;
-  status: string;
-  dependencies: Array<IDependency>;
+  purls: Array<ILocalPurl>;
 }
 
-export interface IDependencyResponse {
-  files: Array<IFile>;
+export interface ILocalDependencies{
+  files: Array<ILocalFile>;
 }
+
+
+/* Parser funcion definition */
+type ParserFuncType = (fileContent: string, filePath: string) => ILocalFile;
+
+export interface ParserDefinitions {
+  [key: string]: ParserFuncType;
+}
+

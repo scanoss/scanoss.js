@@ -1,7 +1,6 @@
 import path from "path";
 import { PackageURL } from "packageurl-js";
-import { FileDependency } from "./types";
-import { isValidPath, isValidUrl } from './utils';
+import { ILocalFile } from "../DependencyTypes";
 
 const PURL_TYPE = 'npm';
 
@@ -9,9 +8,9 @@ const PURL_TYPE = 'npm';
 // Parse a package.json file from node projects
 // See reference on: https://docs.npmjs.com/cli/v8/configuring-npm/package-json
 const MANIFEST_FILE = 'package.json';
-export function packageParser(fileContent: string, filePath: string): FileDependency {
+export function packageParser(fileContent: string, filePath: string): ILocalFile {
     // If the file is not manifest file, return an empty results
-    const results: FileDependency = {file: filePath, purls: []};
+    const results: ILocalFile = {file: filePath, purls: []};
     if(path.basename(filePath) != MANIFEST_FILE)
         return results;
     const o = JSON.parse(fileContent);
@@ -29,9 +28,9 @@ export function packageParser(fileContent: string, filePath: string): FileDepend
 // Parse a package-lock.json file from node projects
 // See reference on: https://docs.npmjs.com/cli/v8/configuring-npm/package-json
 const MANIFEST_FILE_1 = 'package-lock.json';
-export function packagelockParser(fileContent: string, filePath: string): FileDependency {
+export function packagelockParser(fileContent: string, filePath: string): ILocalFile {
 
-    const results: FileDependency = {file: filePath, purls: []};
+    const results: ILocalFile = {file: filePath, purls: []};
     if(path.basename(filePath) != MANIFEST_FILE_1)
         return results;
 
