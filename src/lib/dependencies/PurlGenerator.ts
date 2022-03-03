@@ -7,7 +7,7 @@ import { pomParser } from './parsers/mavenParser';
 import { packagelockParser, packageParser } from './parsers/npmParser';
 import { requirementsParser } from './parsers/pyParser';
 import { gemfilelockParser, gemfileParser } from './parsers/rubyParser';
-
+import { goModParser } from './parsers/golangParser';
 
 
 /*
@@ -20,7 +20,8 @@ const Parser: ParserDefinitions = {
     'package.json': packageParser,
     'package-lock.json': packagelockParser,
     'Gemfile': gemfileParser,
-    'Gemfile.lock': gemfilelockParser
+    'Gemfile.lock': gemfilelockParser,
+    'go.mod': goModParser,
 };
 
 
