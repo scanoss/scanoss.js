@@ -28,9 +28,9 @@
 // Dependency definition details
 // *
 'use strict';
-const grpc = require('@grpc/grpc-js');
-const scanoss_api_dependencies_v2_scanoss$dependencies_pb = require('../../../../scanoss/api/dependencies/v2/scanoss-dependencies_pb.js');
-const scanoss_api_common_v2_scanoss$common_pb = require('../../../../scanoss/api/common/v2/scanoss-common_pb.js');
+var grpc = require('@grpc/grpc-js');
+var scanoss_api_dependencies_v2_scanoss$dependencies_pb = require('../../../../scanoss/api/dependencies/v2/scanoss-dependencies_pb.js');
+var scanoss_api_common_v2_scanoss$common_pb = require('../../../../scanoss/api/common/v2/scanoss-common_pb.js');
 
 function serialize_scanoss_api_common_v2_EchoRequest(arg) {
   if (!(arg instanceof scanoss_api_common_v2_scanoss$common_pb.EchoRequest)) {
@@ -79,9 +79,9 @@ function deserialize_scanoss_api_dependencies_v2_DependencyResponse(buffer_arg) 
 
 //
 // Expose all of the SCANOSS Dependency RPCs here
-const DependenciesService = exports.DependenciesService = {
+var DependenciesService = exports.DependenciesService = {
   // Standard echo
-  echo: {
+echo: {
     path: '/scanoss.api.dependencies.v2.Dependencies/Echo',
     requestStream: false,
     responseStream: false,
@@ -93,7 +93,7 @@ const DependenciesService = exports.DependenciesService = {
     responseDeserialize: deserialize_scanoss_api_common_v2_EchoResponse,
   },
   // Get dependency details
-  getDependencies: {
+getDependencies: {
     path: '/scanoss.api.dependencies.v2.Dependencies/GetDependencies',
     requestStream: false,
     responseStream: false,

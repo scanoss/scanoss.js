@@ -111,6 +111,12 @@ export namespace DependencyResponse {
     getName(): string;
     setName(value: string): void;
 
+    getSpdxId(): string;
+    setSpdxId(value: string): void;
+
+    getIsSpdxApproved(): boolean;
+    setIsSpdxApproved(value: boolean): void;
+
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): Licenses.AsObject;
     static toObject(includeInstance: boolean, msg: Licenses): Licenses.AsObject;
@@ -124,6 +130,8 @@ export namespace DependencyResponse {
   export namespace Licenses {
     export type AsObject = {
       name: string,
+      spdxId: string,
+      isSpdxApproved: boolean,
     }
   }
 

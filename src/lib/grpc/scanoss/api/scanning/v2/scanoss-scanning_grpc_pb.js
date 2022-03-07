@@ -1,4 +1,3 @@
-// @ts-nocheck
 // GENERATED CODE -- DO NOT EDIT!
 
 // Original file comments:
@@ -29,8 +28,8 @@
 // Scanning definition details
 // *
 'use strict';
-const grpc = require('@grpc/grpc-js');
-const scanoss_api_common_v2_scanoss$common_pb = require('../../../../scanoss/api/common/v2/scanoss-common_pb.js');
+var grpc = require('@grpc/grpc-js');
+var scanoss_api_common_v2_scanoss$common_pb = require('../../../../scanoss/api/common/v2/scanoss-common_pb.js');
 
 function serialize_scanoss_api_common_v2_EchoRequest(arg) {
   if (!(arg instanceof scanoss_api_common_v2_scanoss$common_pb.EchoRequest)) {
@@ -56,9 +55,9 @@ function deserialize_scanoss_api_common_v2_EchoResponse(buffer_arg) {
 
 
 // Expose all of the SCANOSS Scanning RPCs here
-const ScanningService = exports.ScanningService = {
+var ScanningService = exports.ScanningService = {
   // Standard echo
-  echo: {
+echo: {
     path: '/scanoss.api.scanning.v2.Scanning/Echo',
     requestStream: false,
     responseStream: false,

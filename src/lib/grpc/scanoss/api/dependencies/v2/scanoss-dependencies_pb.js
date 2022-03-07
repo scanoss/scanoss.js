@@ -7,11 +7,11 @@
  */
 // GENERATED CODE -- DO NOT EDIT!
 
-const jspb = require('google-protobuf');
-const goog = jspb;
-const global = Function('return this')();
+var jspb = require('google-protobuf');
+var goog = jspb;
+var global = Function('return this')();
 
-const scanoss_api_common_v2_scanoss$common_pb = require('../../../../scanoss/api/common/v2/scanoss-common_pb.js');
+var scanoss_api_common_v2_scanoss$common_pb = require('../../../../scanoss/api/common/v2/scanoss-common_pb.js');
 goog.exportSymbol('proto.scanoss.api.dependencies.v2.DependencyRequest', null, global);
 goog.exportSymbol('proto.scanoss.api.dependencies.v2.DependencyRequest.Files', null, global);
 goog.exportSymbol('proto.scanoss.api.dependencies.v2.DependencyRequest.Purls', null, global);
@@ -30,7 +30,7 @@ goog.exportSymbol('proto.scanoss.api.dependencies.v2.DependencyResponse.Licenses
  * @extends {jspb.Message}
  * @constructor
  */
-proto.scanoss.api.dependencies.v2.DependencyRequest = function (opt_data) {
+proto.scanoss.api.dependencies.v2.DependencyRequest = function(opt_data) {
   jspb.Message.initialize(this, opt_data, 0, -1, proto.scanoss.api.dependencies.v2.DependencyRequest.repeatedFields_, null);
 };
 goog.inherits(proto.scanoss.api.dependencies.v2.DependencyRequest, jspb.Message);
@@ -47,42 +47,42 @@ proto.scanoss.api.dependencies.v2.DependencyRequest.repeatedFields_ = [1];
 
 
 if (jspb.Message.GENERATE_TO_OBJECT) {
-  /**
-   * Creates an object representation of this proto suitable for use in Soy templates.
-   * Field names that are reserved in JavaScript and will be renamed to pb_name.
-   * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
-   * For the list of reserved names please see:
-   *     com.google.apps.jspb.JsClassTemplate.JS_RESERVED_WORDS.
-   * @param {boolean=} opt_includeInstance Whether to include the JSPB instance
-   *     for transitional soy proto support: http://goto/soy-param-migration
-   * @return {!Object}
-   */
-  proto.scanoss.api.dependencies.v2.DependencyRequest.prototype.toObject = function (opt_includeInstance) {
-    return proto.scanoss.api.dependencies.v2.DependencyRequest.toObject(opt_includeInstance, this);
+/**
+ * Creates an object representation of this proto suitable for use in Soy templates.
+ * Field names that are reserved in JavaScript and will be renamed to pb_name.
+ * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
+ * For the list of reserved names please see:
+ *     com.google.apps.jspb.JsClassTemplate.JS_RESERVED_WORDS.
+ * @param {boolean=} opt_includeInstance Whether to include the JSPB instance
+ *     for transitional soy proto support: http://goto/soy-param-migration
+ * @return {!Object}
+ */
+proto.scanoss.api.dependencies.v2.DependencyRequest.prototype.toObject = function(opt_includeInstance) {
+  return proto.scanoss.api.dependencies.v2.DependencyRequest.toObject(opt_includeInstance, this);
+};
+
+
+/**
+ * Static version of the {@see toObject} method.
+ * @param {boolean|undefined} includeInstance Whether to include the JSPB
+ *     instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
+ * @param {!proto.scanoss.api.dependencies.v2.DependencyRequest} msg The msg instance to transform.
+ * @return {!Object}
+ * @suppress {unusedLocalVariables} f is only used for nested messages
+ */
+proto.scanoss.api.dependencies.v2.DependencyRequest.toObject = function(includeInstance, msg) {
+  var f, obj = {
+    filesList: jspb.Message.toObjectList(msg.getFilesList(),
+    proto.scanoss.api.dependencies.v2.DependencyRequest.Files.toObject, includeInstance),
+    depth: jspb.Message.getFieldWithDefault(msg, 2, 0)
   };
 
-
-  /**
-   * Static version of the {@see toObject} method.
-   * @param {boolean|undefined} includeInstance Whether to include the JSPB
-   *     instance for transitional soy proto support:
-   *     http://goto/soy-param-migration
-   * @param {!proto.scanoss.api.dependencies.v2.DependencyRequest} msg The msg instance to transform.
-   * @return {!Object}
-   * @suppress {unusedLocalVariables} f is only used for nested messages
-   */
-  proto.scanoss.api.dependencies.v2.DependencyRequest.toObject = function (includeInstance, msg) {
-    let f, obj = {
-      filesList: jspb.Message.toObjectList(msg.getFilesList(),
-        proto.scanoss.api.dependencies.v2.DependencyRequest.Files.toObject, includeInstance),
-      depth: jspb.Message.getFieldWithDefault(msg, 2, 0)
-    };
-
-    if (includeInstance) {
-      obj.$jspbMessageInstance = msg;
-    }
-    return obj;
-  };
+  if (includeInstance) {
+    obj.$jspbMessageInstance = msg;
+  }
+  return obj;
+};
 }
 
 
@@ -91,9 +91,9 @@ if (jspb.Message.GENERATE_TO_OBJECT) {
  * @param {jspb.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.scanoss.api.dependencies.v2.DependencyRequest}
  */
-proto.scanoss.api.dependencies.v2.DependencyRequest.deserializeBinary = function (bytes) {
-  const reader = new jspb.BinaryReader(bytes);
-  const msg = new proto.scanoss.api.dependencies.v2.DependencyRequest;
+proto.scanoss.api.dependencies.v2.DependencyRequest.deserializeBinary = function(bytes) {
+  var reader = new jspb.BinaryReader(bytes);
+  var msg = new proto.scanoss.api.dependencies.v2.DependencyRequest;
   return proto.scanoss.api.dependencies.v2.DependencyRequest.deserializeBinaryFromReader(msg, reader);
 };
 
@@ -105,25 +105,25 @@ proto.scanoss.api.dependencies.v2.DependencyRequest.deserializeBinary = function
  * @param {!jspb.BinaryReader} reader The BinaryReader to use.
  * @return {!proto.scanoss.api.dependencies.v2.DependencyRequest}
  */
-proto.scanoss.api.dependencies.v2.DependencyRequest.deserializeBinaryFromReader = function (msg, reader) {
+proto.scanoss.api.dependencies.v2.DependencyRequest.deserializeBinaryFromReader = function(msg, reader) {
   while (reader.nextField()) {
     if (reader.isEndGroup()) {
       break;
     }
-    const field = reader.getFieldNumber();
+    var field = reader.getFieldNumber();
     switch (field) {
-      case 1:
-        var value = new proto.scanoss.api.dependencies.v2.DependencyRequest.Files;
-        reader.readMessage(value, proto.scanoss.api.dependencies.v2.DependencyRequest.Files.deserializeBinaryFromReader);
-        msg.addFiles(value);
-        break;
-      case 2:
-        var value = /** @type {number} */ (reader.readInt32());
-        msg.setDepth(value);
-        break;
-      default:
-        reader.skipField();
-        break;
+    case 1:
+      var value = new proto.scanoss.api.dependencies.v2.DependencyRequest.Files;
+      reader.readMessage(value,proto.scanoss.api.dependencies.v2.DependencyRequest.Files.deserializeBinaryFromReader);
+      msg.addFiles(value);
+      break;
+    case 2:
+      var value = /** @type {number} */ (reader.readInt32());
+      msg.setDepth(value);
+      break;
+    default:
+      reader.skipField();
+      break;
     }
   }
   return msg;
@@ -134,8 +134,8 @@ proto.scanoss.api.dependencies.v2.DependencyRequest.deserializeBinaryFromReader 
  * Serializes the message to binary data (in protobuf wire format).
  * @return {!Uint8Array}
  */
-proto.scanoss.api.dependencies.v2.DependencyRequest.prototype.serializeBinary = function () {
-  const writer = new jspb.BinaryWriter();
+proto.scanoss.api.dependencies.v2.DependencyRequest.prototype.serializeBinary = function() {
+  var writer = new jspb.BinaryWriter();
   proto.scanoss.api.dependencies.v2.DependencyRequest.serializeBinaryToWriter(this, writer);
   return writer.getResultBuffer();
 };
@@ -148,8 +148,8 @@ proto.scanoss.api.dependencies.v2.DependencyRequest.prototype.serializeBinary = 
  * @param {!jspb.BinaryWriter} writer
  * @suppress {unusedLocalVariables} f is only used for nested messages
  */
-proto.scanoss.api.dependencies.v2.DependencyRequest.serializeBinaryToWriter = function (message, writer) {
-  let f = undefined;
+proto.scanoss.api.dependencies.v2.DependencyRequest.serializeBinaryToWriter = function(message, writer) {
+  var f = undefined;
   f = message.getFilesList();
   if (f.length > 0) {
     writer.writeRepeatedMessage(
@@ -179,7 +179,7 @@ proto.scanoss.api.dependencies.v2.DependencyRequest.serializeBinaryToWriter = fu
  * @extends {jspb.Message}
  * @constructor
  */
-proto.scanoss.api.dependencies.v2.DependencyRequest.Purls = function (opt_data) {
+proto.scanoss.api.dependencies.v2.DependencyRequest.Purls = function(opt_data) {
   jspb.Message.initialize(this, opt_data, 0, -1, null, null);
 };
 goog.inherits(proto.scanoss.api.dependencies.v2.DependencyRequest.Purls, jspb.Message);
@@ -189,41 +189,41 @@ if (goog.DEBUG && !COMPILED) {
 
 
 if (jspb.Message.GENERATE_TO_OBJECT) {
-  /**
-   * Creates an object representation of this proto suitable for use in Soy templates.
-   * Field names that are reserved in JavaScript and will be renamed to pb_name.
-   * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
-   * For the list of reserved names please see:
-   *     com.google.apps.jspb.JsClassTemplate.JS_RESERVED_WORDS.
-   * @param {boolean=} opt_includeInstance Whether to include the JSPB instance
-   *     for transitional soy proto support: http://goto/soy-param-migration
-   * @return {!Object}
-   */
-  proto.scanoss.api.dependencies.v2.DependencyRequest.Purls.prototype.toObject = function (opt_includeInstance) {
-    return proto.scanoss.api.dependencies.v2.DependencyRequest.Purls.toObject(opt_includeInstance, this);
+/**
+ * Creates an object representation of this proto suitable for use in Soy templates.
+ * Field names that are reserved in JavaScript and will be renamed to pb_name.
+ * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
+ * For the list of reserved names please see:
+ *     com.google.apps.jspb.JsClassTemplate.JS_RESERVED_WORDS.
+ * @param {boolean=} opt_includeInstance Whether to include the JSPB instance
+ *     for transitional soy proto support: http://goto/soy-param-migration
+ * @return {!Object}
+ */
+proto.scanoss.api.dependencies.v2.DependencyRequest.Purls.prototype.toObject = function(opt_includeInstance) {
+  return proto.scanoss.api.dependencies.v2.DependencyRequest.Purls.toObject(opt_includeInstance, this);
+};
+
+
+/**
+ * Static version of the {@see toObject} method.
+ * @param {boolean|undefined} includeInstance Whether to include the JSPB
+ *     instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
+ * @param {!proto.scanoss.api.dependencies.v2.DependencyRequest.Purls} msg The msg instance to transform.
+ * @return {!Object}
+ * @suppress {unusedLocalVariables} f is only used for nested messages
+ */
+proto.scanoss.api.dependencies.v2.DependencyRequest.Purls.toObject = function(includeInstance, msg) {
+  var f, obj = {
+    purl: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    requirement: jspb.Message.getFieldWithDefault(msg, 2, "")
   };
 
-
-  /**
-   * Static version of the {@see toObject} method.
-   * @param {boolean|undefined} includeInstance Whether to include the JSPB
-   *     instance for transitional soy proto support:
-   *     http://goto/soy-param-migration
-   * @param {!proto.scanoss.api.dependencies.v2.DependencyRequest.Purls} msg The msg instance to transform.
-   * @return {!Object}
-   * @suppress {unusedLocalVariables} f is only used for nested messages
-   */
-  proto.scanoss.api.dependencies.v2.DependencyRequest.Purls.toObject = function (includeInstance, msg) {
-    let f, obj = {
-      purl: jspb.Message.getFieldWithDefault(msg, 1, ""),
-      requirement: jspb.Message.getFieldWithDefault(msg, 2, "")
-    };
-
-    if (includeInstance) {
-      obj.$jspbMessageInstance = msg;
-    }
-    return obj;
-  };
+  if (includeInstance) {
+    obj.$jspbMessageInstance = msg;
+  }
+  return obj;
+};
 }
 
 
@@ -232,9 +232,9 @@ if (jspb.Message.GENERATE_TO_OBJECT) {
  * @param {jspb.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.scanoss.api.dependencies.v2.DependencyRequest.Purls}
  */
-proto.scanoss.api.dependencies.v2.DependencyRequest.Purls.deserializeBinary = function (bytes) {
-  const reader = new jspb.BinaryReader(bytes);
-  const msg = new proto.scanoss.api.dependencies.v2.DependencyRequest.Purls;
+proto.scanoss.api.dependencies.v2.DependencyRequest.Purls.deserializeBinary = function(bytes) {
+  var reader = new jspb.BinaryReader(bytes);
+  var msg = new proto.scanoss.api.dependencies.v2.DependencyRequest.Purls;
   return proto.scanoss.api.dependencies.v2.DependencyRequest.Purls.deserializeBinaryFromReader(msg, reader);
 };
 
@@ -246,24 +246,24 @@ proto.scanoss.api.dependencies.v2.DependencyRequest.Purls.deserializeBinary = fu
  * @param {!jspb.BinaryReader} reader The BinaryReader to use.
  * @return {!proto.scanoss.api.dependencies.v2.DependencyRequest.Purls}
  */
-proto.scanoss.api.dependencies.v2.DependencyRequest.Purls.deserializeBinaryFromReader = function (msg, reader) {
+proto.scanoss.api.dependencies.v2.DependencyRequest.Purls.deserializeBinaryFromReader = function(msg, reader) {
   while (reader.nextField()) {
     if (reader.isEndGroup()) {
       break;
     }
-    const field = reader.getFieldNumber();
+    var field = reader.getFieldNumber();
     switch (field) {
-      case 1:
-        var value = /** @type {string} */ (reader.readString());
-        msg.setPurl(value);
-        break;
-      case 2:
-        var value = /** @type {string} */ (reader.readString());
-        msg.setRequirement(value);
-        break;
-      default:
-        reader.skipField();
-        break;
+    case 1:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setPurl(value);
+      break;
+    case 2:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setRequirement(value);
+      break;
+    default:
+      reader.skipField();
+      break;
     }
   }
   return msg;
@@ -274,8 +274,8 @@ proto.scanoss.api.dependencies.v2.DependencyRequest.Purls.deserializeBinaryFromR
  * Serializes the message to binary data (in protobuf wire format).
  * @return {!Uint8Array}
  */
-proto.scanoss.api.dependencies.v2.DependencyRequest.Purls.prototype.serializeBinary = function () {
-  const writer = new jspb.BinaryWriter();
+proto.scanoss.api.dependencies.v2.DependencyRequest.Purls.prototype.serializeBinary = function() {
+  var writer = new jspb.BinaryWriter();
   proto.scanoss.api.dependencies.v2.DependencyRequest.Purls.serializeBinaryToWriter(this, writer);
   return writer.getResultBuffer();
 };
@@ -288,8 +288,8 @@ proto.scanoss.api.dependencies.v2.DependencyRequest.Purls.prototype.serializeBin
  * @param {!jspb.BinaryWriter} writer
  * @suppress {unusedLocalVariables} f is only used for nested messages
  */
-proto.scanoss.api.dependencies.v2.DependencyRequest.Purls.serializeBinaryToWriter = function (message, writer) {
-  let f = undefined;
+proto.scanoss.api.dependencies.v2.DependencyRequest.Purls.serializeBinaryToWriter = function(message, writer) {
+  var f = undefined;
   f = message.getPurl();
   if (f.length > 0) {
     writer.writeString(
@@ -311,13 +311,13 @@ proto.scanoss.api.dependencies.v2.DependencyRequest.Purls.serializeBinaryToWrite
  * optional string purl = 1;
  * @return {string}
  */
-proto.scanoss.api.dependencies.v2.DependencyRequest.Purls.prototype.getPurl = function () {
+proto.scanoss.api.dependencies.v2.DependencyRequest.Purls.prototype.getPurl = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
 };
 
 
 /** @param {string} value */
-proto.scanoss.api.dependencies.v2.DependencyRequest.Purls.prototype.setPurl = function (value) {
+proto.scanoss.api.dependencies.v2.DependencyRequest.Purls.prototype.setPurl = function(value) {
   jspb.Message.setProto3StringField(this, 1, value);
 };
 
@@ -326,13 +326,13 @@ proto.scanoss.api.dependencies.v2.DependencyRequest.Purls.prototype.setPurl = fu
  * optional string requirement = 2;
  * @return {string}
  */
-proto.scanoss.api.dependencies.v2.DependencyRequest.Purls.prototype.getRequirement = function () {
+proto.scanoss.api.dependencies.v2.DependencyRequest.Purls.prototype.getRequirement = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
 };
 
 
 /** @param {string} value */
-proto.scanoss.api.dependencies.v2.DependencyRequest.Purls.prototype.setRequirement = function (value) {
+proto.scanoss.api.dependencies.v2.DependencyRequest.Purls.prototype.setRequirement = function(value) {
   jspb.Message.setProto3StringField(this, 2, value);
 };
 
@@ -348,7 +348,7 @@ proto.scanoss.api.dependencies.v2.DependencyRequest.Purls.prototype.setRequireme
  * @extends {jspb.Message}
  * @constructor
  */
-proto.scanoss.api.dependencies.v2.DependencyRequest.Files = function (opt_data) {
+proto.scanoss.api.dependencies.v2.DependencyRequest.Files = function(opt_data) {
   jspb.Message.initialize(this, opt_data, 0, -1, proto.scanoss.api.dependencies.v2.DependencyRequest.Files.repeatedFields_, null);
 };
 goog.inherits(proto.scanoss.api.dependencies.v2.DependencyRequest.Files, jspb.Message);
@@ -365,42 +365,42 @@ proto.scanoss.api.dependencies.v2.DependencyRequest.Files.repeatedFields_ = [2];
 
 
 if (jspb.Message.GENERATE_TO_OBJECT) {
-  /**
-   * Creates an object representation of this proto suitable for use in Soy templates.
-   * Field names that are reserved in JavaScript and will be renamed to pb_name.
-   * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
-   * For the list of reserved names please see:
-   *     com.google.apps.jspb.JsClassTemplate.JS_RESERVED_WORDS.
-   * @param {boolean=} opt_includeInstance Whether to include the JSPB instance
-   *     for transitional soy proto support: http://goto/soy-param-migration
-   * @return {!Object}
-   */
-  proto.scanoss.api.dependencies.v2.DependencyRequest.Files.prototype.toObject = function (opt_includeInstance) {
-    return proto.scanoss.api.dependencies.v2.DependencyRequest.Files.toObject(opt_includeInstance, this);
+/**
+ * Creates an object representation of this proto suitable for use in Soy templates.
+ * Field names that are reserved in JavaScript and will be renamed to pb_name.
+ * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
+ * For the list of reserved names please see:
+ *     com.google.apps.jspb.JsClassTemplate.JS_RESERVED_WORDS.
+ * @param {boolean=} opt_includeInstance Whether to include the JSPB instance
+ *     for transitional soy proto support: http://goto/soy-param-migration
+ * @return {!Object}
+ */
+proto.scanoss.api.dependencies.v2.DependencyRequest.Files.prototype.toObject = function(opt_includeInstance) {
+  return proto.scanoss.api.dependencies.v2.DependencyRequest.Files.toObject(opt_includeInstance, this);
+};
+
+
+/**
+ * Static version of the {@see toObject} method.
+ * @param {boolean|undefined} includeInstance Whether to include the JSPB
+ *     instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
+ * @param {!proto.scanoss.api.dependencies.v2.DependencyRequest.Files} msg The msg instance to transform.
+ * @return {!Object}
+ * @suppress {unusedLocalVariables} f is only used for nested messages
+ */
+proto.scanoss.api.dependencies.v2.DependencyRequest.Files.toObject = function(includeInstance, msg) {
+  var f, obj = {
+    file: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    purlsList: jspb.Message.toObjectList(msg.getPurlsList(),
+    proto.scanoss.api.dependencies.v2.DependencyRequest.Purls.toObject, includeInstance)
   };
 
-
-  /**
-   * Static version of the {@see toObject} method.
-   * @param {boolean|undefined} includeInstance Whether to include the JSPB
-   *     instance for transitional soy proto support:
-   *     http://goto/soy-param-migration
-   * @param {!proto.scanoss.api.dependencies.v2.DependencyRequest.Files} msg The msg instance to transform.
-   * @return {!Object}
-   * @suppress {unusedLocalVariables} f is only used for nested messages
-   */
-  proto.scanoss.api.dependencies.v2.DependencyRequest.Files.toObject = function (includeInstance, msg) {
-    let f, obj = {
-      file: jspb.Message.getFieldWithDefault(msg, 1, ""),
-      purlsList: jspb.Message.toObjectList(msg.getPurlsList(),
-        proto.scanoss.api.dependencies.v2.DependencyRequest.Purls.toObject, includeInstance)
-    };
-
-    if (includeInstance) {
-      obj.$jspbMessageInstance = msg;
-    }
-    return obj;
-  };
+  if (includeInstance) {
+    obj.$jspbMessageInstance = msg;
+  }
+  return obj;
+};
 }
 
 
@@ -409,9 +409,9 @@ if (jspb.Message.GENERATE_TO_OBJECT) {
  * @param {jspb.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.scanoss.api.dependencies.v2.DependencyRequest.Files}
  */
-proto.scanoss.api.dependencies.v2.DependencyRequest.Files.deserializeBinary = function (bytes) {
-  const reader = new jspb.BinaryReader(bytes);
-  const msg = new proto.scanoss.api.dependencies.v2.DependencyRequest.Files;
+proto.scanoss.api.dependencies.v2.DependencyRequest.Files.deserializeBinary = function(bytes) {
+  var reader = new jspb.BinaryReader(bytes);
+  var msg = new proto.scanoss.api.dependencies.v2.DependencyRequest.Files;
   return proto.scanoss.api.dependencies.v2.DependencyRequest.Files.deserializeBinaryFromReader(msg, reader);
 };
 
@@ -423,25 +423,25 @@ proto.scanoss.api.dependencies.v2.DependencyRequest.Files.deserializeBinary = fu
  * @param {!jspb.BinaryReader} reader The BinaryReader to use.
  * @return {!proto.scanoss.api.dependencies.v2.DependencyRequest.Files}
  */
-proto.scanoss.api.dependencies.v2.DependencyRequest.Files.deserializeBinaryFromReader = function (msg, reader) {
+proto.scanoss.api.dependencies.v2.DependencyRequest.Files.deserializeBinaryFromReader = function(msg, reader) {
   while (reader.nextField()) {
     if (reader.isEndGroup()) {
       break;
     }
-    const field = reader.getFieldNumber();
+    var field = reader.getFieldNumber();
     switch (field) {
-      case 1:
-        var value = /** @type {string} */ (reader.readString());
-        msg.setFile(value);
-        break;
-      case 2:
-        var value = new proto.scanoss.api.dependencies.v2.DependencyRequest.Purls;
-        reader.readMessage(value, proto.scanoss.api.dependencies.v2.DependencyRequest.Purls.deserializeBinaryFromReader);
-        msg.addPurls(value);
-        break;
-      default:
-        reader.skipField();
-        break;
+    case 1:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setFile(value);
+      break;
+    case 2:
+      var value = new proto.scanoss.api.dependencies.v2.DependencyRequest.Purls;
+      reader.readMessage(value,proto.scanoss.api.dependencies.v2.DependencyRequest.Purls.deserializeBinaryFromReader);
+      msg.addPurls(value);
+      break;
+    default:
+      reader.skipField();
+      break;
     }
   }
   return msg;
@@ -452,8 +452,8 @@ proto.scanoss.api.dependencies.v2.DependencyRequest.Files.deserializeBinaryFromR
  * Serializes the message to binary data (in protobuf wire format).
  * @return {!Uint8Array}
  */
-proto.scanoss.api.dependencies.v2.DependencyRequest.Files.prototype.serializeBinary = function () {
-  const writer = new jspb.BinaryWriter();
+proto.scanoss.api.dependencies.v2.DependencyRequest.Files.prototype.serializeBinary = function() {
+  var writer = new jspb.BinaryWriter();
   proto.scanoss.api.dependencies.v2.DependencyRequest.Files.serializeBinaryToWriter(this, writer);
   return writer.getResultBuffer();
 };
@@ -466,8 +466,8 @@ proto.scanoss.api.dependencies.v2.DependencyRequest.Files.prototype.serializeBin
  * @param {!jspb.BinaryWriter} writer
  * @suppress {unusedLocalVariables} f is only used for nested messages
  */
-proto.scanoss.api.dependencies.v2.DependencyRequest.Files.serializeBinaryToWriter = function (message, writer) {
-  let f = undefined;
+proto.scanoss.api.dependencies.v2.DependencyRequest.Files.serializeBinaryToWriter = function(message, writer) {
+  var f = undefined;
   f = message.getFile();
   if (f.length > 0) {
     writer.writeString(
@@ -490,13 +490,13 @@ proto.scanoss.api.dependencies.v2.DependencyRequest.Files.serializeBinaryToWrite
  * optional string file = 1;
  * @return {string}
  */
-proto.scanoss.api.dependencies.v2.DependencyRequest.Files.prototype.getFile = function () {
+proto.scanoss.api.dependencies.v2.DependencyRequest.Files.prototype.getFile = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
 };
 
 
 /** @param {string} value */
-proto.scanoss.api.dependencies.v2.DependencyRequest.Files.prototype.setFile = function (value) {
+proto.scanoss.api.dependencies.v2.DependencyRequest.Files.prototype.setFile = function(value) {
   jspb.Message.setProto3StringField(this, 1, value);
 };
 
@@ -505,14 +505,14 @@ proto.scanoss.api.dependencies.v2.DependencyRequest.Files.prototype.setFile = fu
  * repeated Purls purls = 2;
  * @return {!Array<!proto.scanoss.api.dependencies.v2.DependencyRequest.Purls>}
  */
-proto.scanoss.api.dependencies.v2.DependencyRequest.Files.prototype.getPurlsList = function () {
+proto.scanoss.api.dependencies.v2.DependencyRequest.Files.prototype.getPurlsList = function() {
   return /** @type{!Array<!proto.scanoss.api.dependencies.v2.DependencyRequest.Purls>} */ (
     jspb.Message.getRepeatedWrapperField(this, proto.scanoss.api.dependencies.v2.DependencyRequest.Purls, 2));
 };
 
 
 /** @param {!Array<!proto.scanoss.api.dependencies.v2.DependencyRequest.Purls>} value */
-proto.scanoss.api.dependencies.v2.DependencyRequest.Files.prototype.setPurlsList = function (value) {
+proto.scanoss.api.dependencies.v2.DependencyRequest.Files.prototype.setPurlsList = function(value) {
   jspb.Message.setRepeatedWrapperField(this, 2, value);
 };
 
@@ -522,12 +522,12 @@ proto.scanoss.api.dependencies.v2.DependencyRequest.Files.prototype.setPurlsList
  * @param {number=} opt_index
  * @return {!proto.scanoss.api.dependencies.v2.DependencyRequest.Purls}
  */
-proto.scanoss.api.dependencies.v2.DependencyRequest.Files.prototype.addPurls = function (opt_value, opt_index) {
+proto.scanoss.api.dependencies.v2.DependencyRequest.Files.prototype.addPurls = function(opt_value, opt_index) {
   return jspb.Message.addToRepeatedWrapperField(this, 2, opt_value, proto.scanoss.api.dependencies.v2.DependencyRequest.Purls, opt_index);
 };
 
 
-proto.scanoss.api.dependencies.v2.DependencyRequest.Files.prototype.clearPurlsList = function () {
+proto.scanoss.api.dependencies.v2.DependencyRequest.Files.prototype.clearPurlsList = function() {
   this.setPurlsList([]);
 };
 
@@ -536,14 +536,14 @@ proto.scanoss.api.dependencies.v2.DependencyRequest.Files.prototype.clearPurlsLi
  * repeated Files files = 1;
  * @return {!Array<!proto.scanoss.api.dependencies.v2.DependencyRequest.Files>}
  */
-proto.scanoss.api.dependencies.v2.DependencyRequest.prototype.getFilesList = function () {
+proto.scanoss.api.dependencies.v2.DependencyRequest.prototype.getFilesList = function() {
   return /** @type{!Array<!proto.scanoss.api.dependencies.v2.DependencyRequest.Files>} */ (
     jspb.Message.getRepeatedWrapperField(this, proto.scanoss.api.dependencies.v2.DependencyRequest.Files, 1));
 };
 
 
 /** @param {!Array<!proto.scanoss.api.dependencies.v2.DependencyRequest.Files>} value */
-proto.scanoss.api.dependencies.v2.DependencyRequest.prototype.setFilesList = function (value) {
+proto.scanoss.api.dependencies.v2.DependencyRequest.prototype.setFilesList = function(value) {
   jspb.Message.setRepeatedWrapperField(this, 1, value);
 };
 
@@ -553,12 +553,12 @@ proto.scanoss.api.dependencies.v2.DependencyRequest.prototype.setFilesList = fun
  * @param {number=} opt_index
  * @return {!proto.scanoss.api.dependencies.v2.DependencyRequest.Files}
  */
-proto.scanoss.api.dependencies.v2.DependencyRequest.prototype.addFiles = function (opt_value, opt_index) {
+proto.scanoss.api.dependencies.v2.DependencyRequest.prototype.addFiles = function(opt_value, opt_index) {
   return jspb.Message.addToRepeatedWrapperField(this, 1, opt_value, proto.scanoss.api.dependencies.v2.DependencyRequest.Files, opt_index);
 };
 
 
-proto.scanoss.api.dependencies.v2.DependencyRequest.prototype.clearFilesList = function () {
+proto.scanoss.api.dependencies.v2.DependencyRequest.prototype.clearFilesList = function() {
   this.setFilesList([]);
 };
 
@@ -567,13 +567,13 @@ proto.scanoss.api.dependencies.v2.DependencyRequest.prototype.clearFilesList = f
  * optional int32 depth = 2;
  * @return {number}
  */
-proto.scanoss.api.dependencies.v2.DependencyRequest.prototype.getDepth = function () {
+proto.scanoss.api.dependencies.v2.DependencyRequest.prototype.getDepth = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
 };
 
 
 /** @param {number} value */
-proto.scanoss.api.dependencies.v2.DependencyRequest.prototype.setDepth = function (value) {
+proto.scanoss.api.dependencies.v2.DependencyRequest.prototype.setDepth = function(value) {
   jspb.Message.setProto3IntField(this, 2, value);
 };
 
@@ -589,7 +589,7 @@ proto.scanoss.api.dependencies.v2.DependencyRequest.prototype.setDepth = functio
  * @extends {jspb.Message}
  * @constructor
  */
-proto.scanoss.api.dependencies.v2.DependencyResponse = function (opt_data) {
+proto.scanoss.api.dependencies.v2.DependencyResponse = function(opt_data) {
   jspb.Message.initialize(this, opt_data, 0, -1, proto.scanoss.api.dependencies.v2.DependencyResponse.repeatedFields_, null);
 };
 goog.inherits(proto.scanoss.api.dependencies.v2.DependencyResponse, jspb.Message);
@@ -606,42 +606,42 @@ proto.scanoss.api.dependencies.v2.DependencyResponse.repeatedFields_ = [1];
 
 
 if (jspb.Message.GENERATE_TO_OBJECT) {
-  /**
-   * Creates an object representation of this proto suitable for use in Soy templates.
-   * Field names that are reserved in JavaScript and will be renamed to pb_name.
-   * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
-   * For the list of reserved names please see:
-   *     com.google.apps.jspb.JsClassTemplate.JS_RESERVED_WORDS.
-   * @param {boolean=} opt_includeInstance Whether to include the JSPB instance
-   *     for transitional soy proto support: http://goto/soy-param-migration
-   * @return {!Object}
-   */
-  proto.scanoss.api.dependencies.v2.DependencyResponse.prototype.toObject = function (opt_includeInstance) {
-    return proto.scanoss.api.dependencies.v2.DependencyResponse.toObject(opt_includeInstance, this);
+/**
+ * Creates an object representation of this proto suitable for use in Soy templates.
+ * Field names that are reserved in JavaScript and will be renamed to pb_name.
+ * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
+ * For the list of reserved names please see:
+ *     com.google.apps.jspb.JsClassTemplate.JS_RESERVED_WORDS.
+ * @param {boolean=} opt_includeInstance Whether to include the JSPB instance
+ *     for transitional soy proto support: http://goto/soy-param-migration
+ * @return {!Object}
+ */
+proto.scanoss.api.dependencies.v2.DependencyResponse.prototype.toObject = function(opt_includeInstance) {
+  return proto.scanoss.api.dependencies.v2.DependencyResponse.toObject(opt_includeInstance, this);
+};
+
+
+/**
+ * Static version of the {@see toObject} method.
+ * @param {boolean|undefined} includeInstance Whether to include the JSPB
+ *     instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
+ * @param {!proto.scanoss.api.dependencies.v2.DependencyResponse} msg The msg instance to transform.
+ * @return {!Object}
+ * @suppress {unusedLocalVariables} f is only used for nested messages
+ */
+proto.scanoss.api.dependencies.v2.DependencyResponse.toObject = function(includeInstance, msg) {
+  var f, obj = {
+    filesList: jspb.Message.toObjectList(msg.getFilesList(),
+    proto.scanoss.api.dependencies.v2.DependencyResponse.Files.toObject, includeInstance),
+    status: (f = msg.getStatus()) && scanoss_api_common_v2_scanoss$common_pb.StatusResponse.toObject(includeInstance, f)
   };
 
-
-  /**
-   * Static version of the {@see toObject} method.
-   * @param {boolean|undefined} includeInstance Whether to include the JSPB
-   *     instance for transitional soy proto support:
-   *     http://goto/soy-param-migration
-   * @param {!proto.scanoss.api.dependencies.v2.DependencyResponse} msg The msg instance to transform.
-   * @return {!Object}
-   * @suppress {unusedLocalVariables} f is only used for nested messages
-   */
-  proto.scanoss.api.dependencies.v2.DependencyResponse.toObject = function (includeInstance, msg) {
-    let f, obj = {
-      filesList: jspb.Message.toObjectList(msg.getFilesList(),
-        proto.scanoss.api.dependencies.v2.DependencyResponse.Files.toObject, includeInstance),
-      status: (f = msg.getStatus()) && scanoss_api_common_v2_scanoss$common_pb.StatusResponse.toObject(includeInstance, f)
-    };
-
-    if (includeInstance) {
-      obj.$jspbMessageInstance = msg;
-    }
-    return obj;
-  };
+  if (includeInstance) {
+    obj.$jspbMessageInstance = msg;
+  }
+  return obj;
+};
 }
 
 
@@ -650,9 +650,9 @@ if (jspb.Message.GENERATE_TO_OBJECT) {
  * @param {jspb.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.scanoss.api.dependencies.v2.DependencyResponse}
  */
-proto.scanoss.api.dependencies.v2.DependencyResponse.deserializeBinary = function (bytes) {
-  const reader = new jspb.BinaryReader(bytes);
-  const msg = new proto.scanoss.api.dependencies.v2.DependencyResponse;
+proto.scanoss.api.dependencies.v2.DependencyResponse.deserializeBinary = function(bytes) {
+  var reader = new jspb.BinaryReader(bytes);
+  var msg = new proto.scanoss.api.dependencies.v2.DependencyResponse;
   return proto.scanoss.api.dependencies.v2.DependencyResponse.deserializeBinaryFromReader(msg, reader);
 };
 
@@ -664,26 +664,26 @@ proto.scanoss.api.dependencies.v2.DependencyResponse.deserializeBinary = functio
  * @param {!jspb.BinaryReader} reader The BinaryReader to use.
  * @return {!proto.scanoss.api.dependencies.v2.DependencyResponse}
  */
-proto.scanoss.api.dependencies.v2.DependencyResponse.deserializeBinaryFromReader = function (msg, reader) {
+proto.scanoss.api.dependencies.v2.DependencyResponse.deserializeBinaryFromReader = function(msg, reader) {
   while (reader.nextField()) {
     if (reader.isEndGroup()) {
       break;
     }
-    const field = reader.getFieldNumber();
+    var field = reader.getFieldNumber();
     switch (field) {
-      case 1:
-        var value = new proto.scanoss.api.dependencies.v2.DependencyResponse.Files;
-        reader.readMessage(value, proto.scanoss.api.dependencies.v2.DependencyResponse.Files.deserializeBinaryFromReader);
-        msg.addFiles(value);
-        break;
-      case 2:
-        var value = new scanoss_api_common_v2_scanoss$common_pb.StatusResponse;
-        reader.readMessage(value, scanoss_api_common_v2_scanoss$common_pb.StatusResponse.deserializeBinaryFromReader);
-        msg.setStatus(value);
-        break;
-      default:
-        reader.skipField();
-        break;
+    case 1:
+      var value = new proto.scanoss.api.dependencies.v2.DependencyResponse.Files;
+      reader.readMessage(value,proto.scanoss.api.dependencies.v2.DependencyResponse.Files.deserializeBinaryFromReader);
+      msg.addFiles(value);
+      break;
+    case 2:
+      var value = new scanoss_api_common_v2_scanoss$common_pb.StatusResponse;
+      reader.readMessage(value,scanoss_api_common_v2_scanoss$common_pb.StatusResponse.deserializeBinaryFromReader);
+      msg.setStatus(value);
+      break;
+    default:
+      reader.skipField();
+      break;
     }
   }
   return msg;
@@ -694,8 +694,8 @@ proto.scanoss.api.dependencies.v2.DependencyResponse.deserializeBinaryFromReader
  * Serializes the message to binary data (in protobuf wire format).
  * @return {!Uint8Array}
  */
-proto.scanoss.api.dependencies.v2.DependencyResponse.prototype.serializeBinary = function () {
-  const writer = new jspb.BinaryWriter();
+proto.scanoss.api.dependencies.v2.DependencyResponse.prototype.serializeBinary = function() {
+  var writer = new jspb.BinaryWriter();
   proto.scanoss.api.dependencies.v2.DependencyResponse.serializeBinaryToWriter(this, writer);
   return writer.getResultBuffer();
 };
@@ -708,8 +708,8 @@ proto.scanoss.api.dependencies.v2.DependencyResponse.prototype.serializeBinary =
  * @param {!jspb.BinaryWriter} writer
  * @suppress {unusedLocalVariables} f is only used for nested messages
  */
-proto.scanoss.api.dependencies.v2.DependencyResponse.serializeBinaryToWriter = function (message, writer) {
-  let f = undefined;
+proto.scanoss.api.dependencies.v2.DependencyResponse.serializeBinaryToWriter = function(message, writer) {
+  var f = undefined;
   f = message.getFilesList();
   if (f.length > 0) {
     writer.writeRepeatedMessage(
@@ -740,7 +740,7 @@ proto.scanoss.api.dependencies.v2.DependencyResponse.serializeBinaryToWriter = f
  * @extends {jspb.Message}
  * @constructor
  */
-proto.scanoss.api.dependencies.v2.DependencyResponse.Licenses = function (opt_data) {
+proto.scanoss.api.dependencies.v2.DependencyResponse.Licenses = function(opt_data) {
   jspb.Message.initialize(this, opt_data, 0, -1, null, null);
 };
 goog.inherits(proto.scanoss.api.dependencies.v2.DependencyResponse.Licenses, jspb.Message);
@@ -750,40 +750,42 @@ if (goog.DEBUG && !COMPILED) {
 
 
 if (jspb.Message.GENERATE_TO_OBJECT) {
-  /**
-   * Creates an object representation of this proto suitable for use in Soy templates.
-   * Field names that are reserved in JavaScript and will be renamed to pb_name.
-   * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
-   * For the list of reserved names please see:
-   *     com.google.apps.jspb.JsClassTemplate.JS_RESERVED_WORDS.
-   * @param {boolean=} opt_includeInstance Whether to include the JSPB instance
-   *     for transitional soy proto support: http://goto/soy-param-migration
-   * @return {!Object}
-   */
-  proto.scanoss.api.dependencies.v2.DependencyResponse.Licenses.prototype.toObject = function (opt_includeInstance) {
-    return proto.scanoss.api.dependencies.v2.DependencyResponse.Licenses.toObject(opt_includeInstance, this);
+/**
+ * Creates an object representation of this proto suitable for use in Soy templates.
+ * Field names that are reserved in JavaScript and will be renamed to pb_name.
+ * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
+ * For the list of reserved names please see:
+ *     com.google.apps.jspb.JsClassTemplate.JS_RESERVED_WORDS.
+ * @param {boolean=} opt_includeInstance Whether to include the JSPB instance
+ *     for transitional soy proto support: http://goto/soy-param-migration
+ * @return {!Object}
+ */
+proto.scanoss.api.dependencies.v2.DependencyResponse.Licenses.prototype.toObject = function(opt_includeInstance) {
+  return proto.scanoss.api.dependencies.v2.DependencyResponse.Licenses.toObject(opt_includeInstance, this);
+};
+
+
+/**
+ * Static version of the {@see toObject} method.
+ * @param {boolean|undefined} includeInstance Whether to include the JSPB
+ *     instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
+ * @param {!proto.scanoss.api.dependencies.v2.DependencyResponse.Licenses} msg The msg instance to transform.
+ * @return {!Object}
+ * @suppress {unusedLocalVariables} f is only used for nested messages
+ */
+proto.scanoss.api.dependencies.v2.DependencyResponse.Licenses.toObject = function(includeInstance, msg) {
+  var f, obj = {
+    name: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    spdxId: jspb.Message.getFieldWithDefault(msg, 2, ""),
+    isSpdxApproved: jspb.Message.getFieldWithDefault(msg, 3, false)
   };
 
-
-  /**
-   * Static version of the {@see toObject} method.
-   * @param {boolean|undefined} includeInstance Whether to include the JSPB
-   *     instance for transitional soy proto support:
-   *     http://goto/soy-param-migration
-   * @param {!proto.scanoss.api.dependencies.v2.DependencyResponse.Licenses} msg The msg instance to transform.
-   * @return {!Object}
-   * @suppress {unusedLocalVariables} f is only used for nested messages
-   */
-  proto.scanoss.api.dependencies.v2.DependencyResponse.Licenses.toObject = function (includeInstance, msg) {
-    let f, obj = {
-      name: jspb.Message.getFieldWithDefault(msg, 1, "")
-    };
-
-    if (includeInstance) {
-      obj.$jspbMessageInstance = msg;
-    }
-    return obj;
-  };
+  if (includeInstance) {
+    obj.$jspbMessageInstance = msg;
+  }
+  return obj;
+};
 }
 
 
@@ -792,9 +794,9 @@ if (jspb.Message.GENERATE_TO_OBJECT) {
  * @param {jspb.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.scanoss.api.dependencies.v2.DependencyResponse.Licenses}
  */
-proto.scanoss.api.dependencies.v2.DependencyResponse.Licenses.deserializeBinary = function (bytes) {
-  const reader = new jspb.BinaryReader(bytes);
-  const msg = new proto.scanoss.api.dependencies.v2.DependencyResponse.Licenses;
+proto.scanoss.api.dependencies.v2.DependencyResponse.Licenses.deserializeBinary = function(bytes) {
+  var reader = new jspb.BinaryReader(bytes);
+  var msg = new proto.scanoss.api.dependencies.v2.DependencyResponse.Licenses;
   return proto.scanoss.api.dependencies.v2.DependencyResponse.Licenses.deserializeBinaryFromReader(msg, reader);
 };
 
@@ -806,20 +808,28 @@ proto.scanoss.api.dependencies.v2.DependencyResponse.Licenses.deserializeBinary 
  * @param {!jspb.BinaryReader} reader The BinaryReader to use.
  * @return {!proto.scanoss.api.dependencies.v2.DependencyResponse.Licenses}
  */
-proto.scanoss.api.dependencies.v2.DependencyResponse.Licenses.deserializeBinaryFromReader = function (msg, reader) {
+proto.scanoss.api.dependencies.v2.DependencyResponse.Licenses.deserializeBinaryFromReader = function(msg, reader) {
   while (reader.nextField()) {
     if (reader.isEndGroup()) {
       break;
     }
-    const field = reader.getFieldNumber();
+    var field = reader.getFieldNumber();
     switch (field) {
-      case 1:
-        var value = /** @type {string} */ (reader.readString());
-        msg.setName(value);
-        break;
-      default:
-        reader.skipField();
-        break;
+    case 1:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setName(value);
+      break;
+    case 2:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setSpdxId(value);
+      break;
+    case 3:
+      var value = /** @type {boolean} */ (reader.readBool());
+      msg.setIsSpdxApproved(value);
+      break;
+    default:
+      reader.skipField();
+      break;
     }
   }
   return msg;
@@ -830,8 +840,8 @@ proto.scanoss.api.dependencies.v2.DependencyResponse.Licenses.deserializeBinaryF
  * Serializes the message to binary data (in protobuf wire format).
  * @return {!Uint8Array}
  */
-proto.scanoss.api.dependencies.v2.DependencyResponse.Licenses.prototype.serializeBinary = function () {
-  const writer = new jspb.BinaryWriter();
+proto.scanoss.api.dependencies.v2.DependencyResponse.Licenses.prototype.serializeBinary = function() {
+  var writer = new jspb.BinaryWriter();
   proto.scanoss.api.dependencies.v2.DependencyResponse.Licenses.serializeBinaryToWriter(this, writer);
   return writer.getResultBuffer();
 };
@@ -844,12 +854,26 @@ proto.scanoss.api.dependencies.v2.DependencyResponse.Licenses.prototype.serializ
  * @param {!jspb.BinaryWriter} writer
  * @suppress {unusedLocalVariables} f is only used for nested messages
  */
-proto.scanoss.api.dependencies.v2.DependencyResponse.Licenses.serializeBinaryToWriter = function (message, writer) {
-  let f = undefined;
+proto.scanoss.api.dependencies.v2.DependencyResponse.Licenses.serializeBinaryToWriter = function(message, writer) {
+  var f = undefined;
   f = message.getName();
   if (f.length > 0) {
     writer.writeString(
       1,
+      f
+    );
+  }
+  f = message.getSpdxId();
+  if (f.length > 0) {
+    writer.writeString(
+      2,
+      f
+    );
+  }
+  f = message.getIsSpdxApproved();
+  if (f) {
+    writer.writeBool(
+      3,
       f
     );
   }
@@ -860,14 +884,46 @@ proto.scanoss.api.dependencies.v2.DependencyResponse.Licenses.serializeBinaryToW
  * optional string name = 1;
  * @return {string}
  */
-proto.scanoss.api.dependencies.v2.DependencyResponse.Licenses.prototype.getName = function () {
+proto.scanoss.api.dependencies.v2.DependencyResponse.Licenses.prototype.getName = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
 };
 
 
 /** @param {string} value */
-proto.scanoss.api.dependencies.v2.DependencyResponse.Licenses.prototype.setName = function (value) {
+proto.scanoss.api.dependencies.v2.DependencyResponse.Licenses.prototype.setName = function(value) {
   jspb.Message.setProto3StringField(this, 1, value);
+};
+
+
+/**
+ * optional string spdx_id = 2;
+ * @return {string}
+ */
+proto.scanoss.api.dependencies.v2.DependencyResponse.Licenses.prototype.getSpdxId = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
+};
+
+
+/** @param {string} value */
+proto.scanoss.api.dependencies.v2.DependencyResponse.Licenses.prototype.setSpdxId = function(value) {
+  jspb.Message.setProto3StringField(this, 2, value);
+};
+
+
+/**
+ * optional bool is_spdx_approved = 3;
+ * Note that Boolean fields may be set to 0/1 when serialized from a Java server.
+ * You should avoid comparisons like {@code val === true/false} in those cases.
+ * @return {boolean}
+ */
+proto.scanoss.api.dependencies.v2.DependencyResponse.Licenses.prototype.getIsSpdxApproved = function() {
+  return /** @type {boolean} */ (jspb.Message.getFieldWithDefault(this, 3, false));
+};
+
+
+/** @param {boolean} value */
+proto.scanoss.api.dependencies.v2.DependencyResponse.Licenses.prototype.setIsSpdxApproved = function(value) {
+  jspb.Message.setProto3BooleanField(this, 3, value);
 };
 
 
@@ -882,7 +938,7 @@ proto.scanoss.api.dependencies.v2.DependencyResponse.Licenses.prototype.setName 
  * @extends {jspb.Message}
  * @constructor
  */
-proto.scanoss.api.dependencies.v2.DependencyResponse.Dependencies = function (opt_data) {
+proto.scanoss.api.dependencies.v2.DependencyResponse.Dependencies = function(opt_data) {
   jspb.Message.initialize(this, opt_data, 0, -1, proto.scanoss.api.dependencies.v2.DependencyResponse.Dependencies.repeatedFields_, null);
 };
 goog.inherits(proto.scanoss.api.dependencies.v2.DependencyResponse.Dependencies, jspb.Message);
@@ -899,44 +955,44 @@ proto.scanoss.api.dependencies.v2.DependencyResponse.Dependencies.repeatedFields
 
 
 if (jspb.Message.GENERATE_TO_OBJECT) {
-  /**
-   * Creates an object representation of this proto suitable for use in Soy templates.
-   * Field names that are reserved in JavaScript and will be renamed to pb_name.
-   * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
-   * For the list of reserved names please see:
-   *     com.google.apps.jspb.JsClassTemplate.JS_RESERVED_WORDS.
-   * @param {boolean=} opt_includeInstance Whether to include the JSPB instance
-   *     for transitional soy proto support: http://goto/soy-param-migration
-   * @return {!Object}
-   */
-  proto.scanoss.api.dependencies.v2.DependencyResponse.Dependencies.prototype.toObject = function (opt_includeInstance) {
-    return proto.scanoss.api.dependencies.v2.DependencyResponse.Dependencies.toObject(opt_includeInstance, this);
+/**
+ * Creates an object representation of this proto suitable for use in Soy templates.
+ * Field names that are reserved in JavaScript and will be renamed to pb_name.
+ * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
+ * For the list of reserved names please see:
+ *     com.google.apps.jspb.JsClassTemplate.JS_RESERVED_WORDS.
+ * @param {boolean=} opt_includeInstance Whether to include the JSPB instance
+ *     for transitional soy proto support: http://goto/soy-param-migration
+ * @return {!Object}
+ */
+proto.scanoss.api.dependencies.v2.DependencyResponse.Dependencies.prototype.toObject = function(opt_includeInstance) {
+  return proto.scanoss.api.dependencies.v2.DependencyResponse.Dependencies.toObject(opt_includeInstance, this);
+};
+
+
+/**
+ * Static version of the {@see toObject} method.
+ * @param {boolean|undefined} includeInstance Whether to include the JSPB
+ *     instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
+ * @param {!proto.scanoss.api.dependencies.v2.DependencyResponse.Dependencies} msg The msg instance to transform.
+ * @return {!Object}
+ * @suppress {unusedLocalVariables} f is only used for nested messages
+ */
+proto.scanoss.api.dependencies.v2.DependencyResponse.Dependencies.toObject = function(includeInstance, msg) {
+  var f, obj = {
+    component: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    purl: jspb.Message.getFieldWithDefault(msg, 2, ""),
+    version: jspb.Message.getFieldWithDefault(msg, 3, ""),
+    licensesList: jspb.Message.toObjectList(msg.getLicensesList(),
+    proto.scanoss.api.dependencies.v2.DependencyResponse.Licenses.toObject, includeInstance)
   };
 
-
-  /**
-   * Static version of the {@see toObject} method.
-   * @param {boolean|undefined} includeInstance Whether to include the JSPB
-   *     instance for transitional soy proto support:
-   *     http://goto/soy-param-migration
-   * @param {!proto.scanoss.api.dependencies.v2.DependencyResponse.Dependencies} msg The msg instance to transform.
-   * @return {!Object}
-   * @suppress {unusedLocalVariables} f is only used for nested messages
-   */
-  proto.scanoss.api.dependencies.v2.DependencyResponse.Dependencies.toObject = function (includeInstance, msg) {
-    let f, obj = {
-      component: jspb.Message.getFieldWithDefault(msg, 1, ""),
-      purl: jspb.Message.getFieldWithDefault(msg, 2, ""),
-      version: jspb.Message.getFieldWithDefault(msg, 3, ""),
-      licensesList: jspb.Message.toObjectList(msg.getLicensesList(),
-        proto.scanoss.api.dependencies.v2.DependencyResponse.Licenses.toObject, includeInstance)
-    };
-
-    if (includeInstance) {
-      obj.$jspbMessageInstance = msg;
-    }
-    return obj;
-  };
+  if (includeInstance) {
+    obj.$jspbMessageInstance = msg;
+  }
+  return obj;
+};
 }
 
 
@@ -945,9 +1001,9 @@ if (jspb.Message.GENERATE_TO_OBJECT) {
  * @param {jspb.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.scanoss.api.dependencies.v2.DependencyResponse.Dependencies}
  */
-proto.scanoss.api.dependencies.v2.DependencyResponse.Dependencies.deserializeBinary = function (bytes) {
-  const reader = new jspb.BinaryReader(bytes);
-  const msg = new proto.scanoss.api.dependencies.v2.DependencyResponse.Dependencies;
+proto.scanoss.api.dependencies.v2.DependencyResponse.Dependencies.deserializeBinary = function(bytes) {
+  var reader = new jspb.BinaryReader(bytes);
+  var msg = new proto.scanoss.api.dependencies.v2.DependencyResponse.Dependencies;
   return proto.scanoss.api.dependencies.v2.DependencyResponse.Dependencies.deserializeBinaryFromReader(msg, reader);
 };
 
@@ -959,33 +1015,33 @@ proto.scanoss.api.dependencies.v2.DependencyResponse.Dependencies.deserializeBin
  * @param {!jspb.BinaryReader} reader The BinaryReader to use.
  * @return {!proto.scanoss.api.dependencies.v2.DependencyResponse.Dependencies}
  */
-proto.scanoss.api.dependencies.v2.DependencyResponse.Dependencies.deserializeBinaryFromReader = function (msg, reader) {
+proto.scanoss.api.dependencies.v2.DependencyResponse.Dependencies.deserializeBinaryFromReader = function(msg, reader) {
   while (reader.nextField()) {
     if (reader.isEndGroup()) {
       break;
     }
-    const field = reader.getFieldNumber();
+    var field = reader.getFieldNumber();
     switch (field) {
-      case 1:
-        var value = /** @type {string} */ (reader.readString());
-        msg.setComponent(value);
-        break;
-      case 2:
-        var value = /** @type {string} */ (reader.readString());
-        msg.setPurl(value);
-        break;
-      case 3:
-        var value = /** @type {string} */ (reader.readString());
-        msg.setVersion(value);
-        break;
-      case 4:
-        var value = new proto.scanoss.api.dependencies.v2.DependencyResponse.Licenses;
-        reader.readMessage(value, proto.scanoss.api.dependencies.v2.DependencyResponse.Licenses.deserializeBinaryFromReader);
-        msg.addLicenses(value);
-        break;
-      default:
-        reader.skipField();
-        break;
+    case 1:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setComponent(value);
+      break;
+    case 2:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setPurl(value);
+      break;
+    case 3:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setVersion(value);
+      break;
+    case 4:
+      var value = new proto.scanoss.api.dependencies.v2.DependencyResponse.Licenses;
+      reader.readMessage(value,proto.scanoss.api.dependencies.v2.DependencyResponse.Licenses.deserializeBinaryFromReader);
+      msg.addLicenses(value);
+      break;
+    default:
+      reader.skipField();
+      break;
     }
   }
   return msg;
@@ -996,8 +1052,8 @@ proto.scanoss.api.dependencies.v2.DependencyResponse.Dependencies.deserializeBin
  * Serializes the message to binary data (in protobuf wire format).
  * @return {!Uint8Array}
  */
-proto.scanoss.api.dependencies.v2.DependencyResponse.Dependencies.prototype.serializeBinary = function () {
-  const writer = new jspb.BinaryWriter();
+proto.scanoss.api.dependencies.v2.DependencyResponse.Dependencies.prototype.serializeBinary = function() {
+  var writer = new jspb.BinaryWriter();
   proto.scanoss.api.dependencies.v2.DependencyResponse.Dependencies.serializeBinaryToWriter(this, writer);
   return writer.getResultBuffer();
 };
@@ -1010,8 +1066,8 @@ proto.scanoss.api.dependencies.v2.DependencyResponse.Dependencies.prototype.seri
  * @param {!jspb.BinaryWriter} writer
  * @suppress {unusedLocalVariables} f is only used for nested messages
  */
-proto.scanoss.api.dependencies.v2.DependencyResponse.Dependencies.serializeBinaryToWriter = function (message, writer) {
-  let f = undefined;
+proto.scanoss.api.dependencies.v2.DependencyResponse.Dependencies.serializeBinaryToWriter = function(message, writer) {
+  var f = undefined;
   f = message.getComponent();
   if (f.length > 0) {
     writer.writeString(
@@ -1048,13 +1104,13 @@ proto.scanoss.api.dependencies.v2.DependencyResponse.Dependencies.serializeBinar
  * optional string component = 1;
  * @return {string}
  */
-proto.scanoss.api.dependencies.v2.DependencyResponse.Dependencies.prototype.getComponent = function () {
+proto.scanoss.api.dependencies.v2.DependencyResponse.Dependencies.prototype.getComponent = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
 };
 
 
 /** @param {string} value */
-proto.scanoss.api.dependencies.v2.DependencyResponse.Dependencies.prototype.setComponent = function (value) {
+proto.scanoss.api.dependencies.v2.DependencyResponse.Dependencies.prototype.setComponent = function(value) {
   jspb.Message.setProto3StringField(this, 1, value);
 };
 
@@ -1063,13 +1119,13 @@ proto.scanoss.api.dependencies.v2.DependencyResponse.Dependencies.prototype.setC
  * optional string purl = 2;
  * @return {string}
  */
-proto.scanoss.api.dependencies.v2.DependencyResponse.Dependencies.prototype.getPurl = function () {
+proto.scanoss.api.dependencies.v2.DependencyResponse.Dependencies.prototype.getPurl = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
 };
 
 
 /** @param {string} value */
-proto.scanoss.api.dependencies.v2.DependencyResponse.Dependencies.prototype.setPurl = function (value) {
+proto.scanoss.api.dependencies.v2.DependencyResponse.Dependencies.prototype.setPurl = function(value) {
   jspb.Message.setProto3StringField(this, 2, value);
 };
 
@@ -1078,13 +1134,13 @@ proto.scanoss.api.dependencies.v2.DependencyResponse.Dependencies.prototype.setP
  * optional string version = 3;
  * @return {string}
  */
-proto.scanoss.api.dependencies.v2.DependencyResponse.Dependencies.prototype.getVersion = function () {
+proto.scanoss.api.dependencies.v2.DependencyResponse.Dependencies.prototype.getVersion = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
 };
 
 
 /** @param {string} value */
-proto.scanoss.api.dependencies.v2.DependencyResponse.Dependencies.prototype.setVersion = function (value) {
+proto.scanoss.api.dependencies.v2.DependencyResponse.Dependencies.prototype.setVersion = function(value) {
   jspb.Message.setProto3StringField(this, 3, value);
 };
 
@@ -1093,14 +1149,14 @@ proto.scanoss.api.dependencies.v2.DependencyResponse.Dependencies.prototype.setV
  * repeated Licenses licenses = 4;
  * @return {!Array<!proto.scanoss.api.dependencies.v2.DependencyResponse.Licenses>}
  */
-proto.scanoss.api.dependencies.v2.DependencyResponse.Dependencies.prototype.getLicensesList = function () {
+proto.scanoss.api.dependencies.v2.DependencyResponse.Dependencies.prototype.getLicensesList = function() {
   return /** @type{!Array<!proto.scanoss.api.dependencies.v2.DependencyResponse.Licenses>} */ (
     jspb.Message.getRepeatedWrapperField(this, proto.scanoss.api.dependencies.v2.DependencyResponse.Licenses, 4));
 };
 
 
 /** @param {!Array<!proto.scanoss.api.dependencies.v2.DependencyResponse.Licenses>} value */
-proto.scanoss.api.dependencies.v2.DependencyResponse.Dependencies.prototype.setLicensesList = function (value) {
+proto.scanoss.api.dependencies.v2.DependencyResponse.Dependencies.prototype.setLicensesList = function(value) {
   jspb.Message.setRepeatedWrapperField(this, 4, value);
 };
 
@@ -1110,12 +1166,12 @@ proto.scanoss.api.dependencies.v2.DependencyResponse.Dependencies.prototype.setL
  * @param {number=} opt_index
  * @return {!proto.scanoss.api.dependencies.v2.DependencyResponse.Licenses}
  */
-proto.scanoss.api.dependencies.v2.DependencyResponse.Dependencies.prototype.addLicenses = function (opt_value, opt_index) {
+proto.scanoss.api.dependencies.v2.DependencyResponse.Dependencies.prototype.addLicenses = function(opt_value, opt_index) {
   return jspb.Message.addToRepeatedWrapperField(this, 4, opt_value, proto.scanoss.api.dependencies.v2.DependencyResponse.Licenses, opt_index);
 };
 
 
-proto.scanoss.api.dependencies.v2.DependencyResponse.Dependencies.prototype.clearLicensesList = function () {
+proto.scanoss.api.dependencies.v2.DependencyResponse.Dependencies.prototype.clearLicensesList = function() {
   this.setLicensesList([]);
 };
 
@@ -1131,7 +1187,7 @@ proto.scanoss.api.dependencies.v2.DependencyResponse.Dependencies.prototype.clea
  * @extends {jspb.Message}
  * @constructor
  */
-proto.scanoss.api.dependencies.v2.DependencyResponse.Files = function (opt_data) {
+proto.scanoss.api.dependencies.v2.DependencyResponse.Files = function(opt_data) {
   jspb.Message.initialize(this, opt_data, 0, -1, proto.scanoss.api.dependencies.v2.DependencyResponse.Files.repeatedFields_, null);
 };
 goog.inherits(proto.scanoss.api.dependencies.v2.DependencyResponse.Files, jspb.Message);
@@ -1148,44 +1204,44 @@ proto.scanoss.api.dependencies.v2.DependencyResponse.Files.repeatedFields_ = [4]
 
 
 if (jspb.Message.GENERATE_TO_OBJECT) {
-  /**
-   * Creates an object representation of this proto suitable for use in Soy templates.
-   * Field names that are reserved in JavaScript and will be renamed to pb_name.
-   * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
-   * For the list of reserved names please see:
-   *     com.google.apps.jspb.JsClassTemplate.JS_RESERVED_WORDS.
-   * @param {boolean=} opt_includeInstance Whether to include the JSPB instance
-   *     for transitional soy proto support: http://goto/soy-param-migration
-   * @return {!Object}
-   */
-  proto.scanoss.api.dependencies.v2.DependencyResponse.Files.prototype.toObject = function (opt_includeInstance) {
-    return proto.scanoss.api.dependencies.v2.DependencyResponse.Files.toObject(opt_includeInstance, this);
+/**
+ * Creates an object representation of this proto suitable for use in Soy templates.
+ * Field names that are reserved in JavaScript and will be renamed to pb_name.
+ * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
+ * For the list of reserved names please see:
+ *     com.google.apps.jspb.JsClassTemplate.JS_RESERVED_WORDS.
+ * @param {boolean=} opt_includeInstance Whether to include the JSPB instance
+ *     for transitional soy proto support: http://goto/soy-param-migration
+ * @return {!Object}
+ */
+proto.scanoss.api.dependencies.v2.DependencyResponse.Files.prototype.toObject = function(opt_includeInstance) {
+  return proto.scanoss.api.dependencies.v2.DependencyResponse.Files.toObject(opt_includeInstance, this);
+};
+
+
+/**
+ * Static version of the {@see toObject} method.
+ * @param {boolean|undefined} includeInstance Whether to include the JSPB
+ *     instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
+ * @param {!proto.scanoss.api.dependencies.v2.DependencyResponse.Files} msg The msg instance to transform.
+ * @return {!Object}
+ * @suppress {unusedLocalVariables} f is only used for nested messages
+ */
+proto.scanoss.api.dependencies.v2.DependencyResponse.Files.toObject = function(includeInstance, msg) {
+  var f, obj = {
+    file: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    id: jspb.Message.getFieldWithDefault(msg, 2, ""),
+    status: jspb.Message.getFieldWithDefault(msg, 3, ""),
+    dependenciesList: jspb.Message.toObjectList(msg.getDependenciesList(),
+    proto.scanoss.api.dependencies.v2.DependencyResponse.Dependencies.toObject, includeInstance)
   };
 
-
-  /**
-   * Static version of the {@see toObject} method.
-   * @param {boolean|undefined} includeInstance Whether to include the JSPB
-   *     instance for transitional soy proto support:
-   *     http://goto/soy-param-migration
-   * @param {!proto.scanoss.api.dependencies.v2.DependencyResponse.Files} msg The msg instance to transform.
-   * @return {!Object}
-   * @suppress {unusedLocalVariables} f is only used for nested messages
-   */
-  proto.scanoss.api.dependencies.v2.DependencyResponse.Files.toObject = function (includeInstance, msg) {
-    let f, obj = {
-      file: jspb.Message.getFieldWithDefault(msg, 1, ""),
-      id: jspb.Message.getFieldWithDefault(msg, 2, ""),
-      status: jspb.Message.getFieldWithDefault(msg, 3, ""),
-      dependenciesList: jspb.Message.toObjectList(msg.getDependenciesList(),
-        proto.scanoss.api.dependencies.v2.DependencyResponse.Dependencies.toObject, includeInstance)
-    };
-
-    if (includeInstance) {
-      obj.$jspbMessageInstance = msg;
-    }
-    return obj;
-  };
+  if (includeInstance) {
+    obj.$jspbMessageInstance = msg;
+  }
+  return obj;
+};
 }
 
 
@@ -1194,9 +1250,9 @@ if (jspb.Message.GENERATE_TO_OBJECT) {
  * @param {jspb.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.scanoss.api.dependencies.v2.DependencyResponse.Files}
  */
-proto.scanoss.api.dependencies.v2.DependencyResponse.Files.deserializeBinary = function (bytes) {
-  const reader = new jspb.BinaryReader(bytes);
-  const msg = new proto.scanoss.api.dependencies.v2.DependencyResponse.Files;
+proto.scanoss.api.dependencies.v2.DependencyResponse.Files.deserializeBinary = function(bytes) {
+  var reader = new jspb.BinaryReader(bytes);
+  var msg = new proto.scanoss.api.dependencies.v2.DependencyResponse.Files;
   return proto.scanoss.api.dependencies.v2.DependencyResponse.Files.deserializeBinaryFromReader(msg, reader);
 };
 
@@ -1208,33 +1264,33 @@ proto.scanoss.api.dependencies.v2.DependencyResponse.Files.deserializeBinary = f
  * @param {!jspb.BinaryReader} reader The BinaryReader to use.
  * @return {!proto.scanoss.api.dependencies.v2.DependencyResponse.Files}
  */
-proto.scanoss.api.dependencies.v2.DependencyResponse.Files.deserializeBinaryFromReader = function (msg, reader) {
+proto.scanoss.api.dependencies.v2.DependencyResponse.Files.deserializeBinaryFromReader = function(msg, reader) {
   while (reader.nextField()) {
     if (reader.isEndGroup()) {
       break;
     }
-    const field = reader.getFieldNumber();
+    var field = reader.getFieldNumber();
     switch (field) {
-      case 1:
-        var value = /** @type {string} */ (reader.readString());
-        msg.setFile(value);
-        break;
-      case 2:
-        var value = /** @type {string} */ (reader.readString());
-        msg.setId(value);
-        break;
-      case 3:
-        var value = /** @type {string} */ (reader.readString());
-        msg.setStatus(value);
-        break;
-      case 4:
-        var value = new proto.scanoss.api.dependencies.v2.DependencyResponse.Dependencies;
-        reader.readMessage(value, proto.scanoss.api.dependencies.v2.DependencyResponse.Dependencies.deserializeBinaryFromReader);
-        msg.addDependencies(value);
-        break;
-      default:
-        reader.skipField();
-        break;
+    case 1:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setFile(value);
+      break;
+    case 2:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setId(value);
+      break;
+    case 3:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setStatus(value);
+      break;
+    case 4:
+      var value = new proto.scanoss.api.dependencies.v2.DependencyResponse.Dependencies;
+      reader.readMessage(value,proto.scanoss.api.dependencies.v2.DependencyResponse.Dependencies.deserializeBinaryFromReader);
+      msg.addDependencies(value);
+      break;
+    default:
+      reader.skipField();
+      break;
     }
   }
   return msg;
@@ -1245,8 +1301,8 @@ proto.scanoss.api.dependencies.v2.DependencyResponse.Files.deserializeBinaryFrom
  * Serializes the message to binary data (in protobuf wire format).
  * @return {!Uint8Array}
  */
-proto.scanoss.api.dependencies.v2.DependencyResponse.Files.prototype.serializeBinary = function () {
-  const writer = new jspb.BinaryWriter();
+proto.scanoss.api.dependencies.v2.DependencyResponse.Files.prototype.serializeBinary = function() {
+  var writer = new jspb.BinaryWriter();
   proto.scanoss.api.dependencies.v2.DependencyResponse.Files.serializeBinaryToWriter(this, writer);
   return writer.getResultBuffer();
 };
@@ -1259,8 +1315,8 @@ proto.scanoss.api.dependencies.v2.DependencyResponse.Files.prototype.serializeBi
  * @param {!jspb.BinaryWriter} writer
  * @suppress {unusedLocalVariables} f is only used for nested messages
  */
-proto.scanoss.api.dependencies.v2.DependencyResponse.Files.serializeBinaryToWriter = function (message, writer) {
-  let f = undefined;
+proto.scanoss.api.dependencies.v2.DependencyResponse.Files.serializeBinaryToWriter = function(message, writer) {
+  var f = undefined;
   f = message.getFile();
   if (f.length > 0) {
     writer.writeString(
@@ -1297,13 +1353,13 @@ proto.scanoss.api.dependencies.v2.DependencyResponse.Files.serializeBinaryToWrit
  * optional string file = 1;
  * @return {string}
  */
-proto.scanoss.api.dependencies.v2.DependencyResponse.Files.prototype.getFile = function () {
+proto.scanoss.api.dependencies.v2.DependencyResponse.Files.prototype.getFile = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
 };
 
 
 /** @param {string} value */
-proto.scanoss.api.dependencies.v2.DependencyResponse.Files.prototype.setFile = function (value) {
+proto.scanoss.api.dependencies.v2.DependencyResponse.Files.prototype.setFile = function(value) {
   jspb.Message.setProto3StringField(this, 1, value);
 };
 
@@ -1312,13 +1368,13 @@ proto.scanoss.api.dependencies.v2.DependencyResponse.Files.prototype.setFile = f
  * optional string id = 2;
  * @return {string}
  */
-proto.scanoss.api.dependencies.v2.DependencyResponse.Files.prototype.getId = function () {
+proto.scanoss.api.dependencies.v2.DependencyResponse.Files.prototype.getId = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
 };
 
 
 /** @param {string} value */
-proto.scanoss.api.dependencies.v2.DependencyResponse.Files.prototype.setId = function (value) {
+proto.scanoss.api.dependencies.v2.DependencyResponse.Files.prototype.setId = function(value) {
   jspb.Message.setProto3StringField(this, 2, value);
 };
 
@@ -1327,13 +1383,13 @@ proto.scanoss.api.dependencies.v2.DependencyResponse.Files.prototype.setId = fun
  * optional string status = 3;
  * @return {string}
  */
-proto.scanoss.api.dependencies.v2.DependencyResponse.Files.prototype.getStatus = function () {
+proto.scanoss.api.dependencies.v2.DependencyResponse.Files.prototype.getStatus = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
 };
 
 
 /** @param {string} value */
-proto.scanoss.api.dependencies.v2.DependencyResponse.Files.prototype.setStatus = function (value) {
+proto.scanoss.api.dependencies.v2.DependencyResponse.Files.prototype.setStatus = function(value) {
   jspb.Message.setProto3StringField(this, 3, value);
 };
 
@@ -1342,14 +1398,14 @@ proto.scanoss.api.dependencies.v2.DependencyResponse.Files.prototype.setStatus =
  * repeated Dependencies dependencies = 4;
  * @return {!Array<!proto.scanoss.api.dependencies.v2.DependencyResponse.Dependencies>}
  */
-proto.scanoss.api.dependencies.v2.DependencyResponse.Files.prototype.getDependenciesList = function () {
+proto.scanoss.api.dependencies.v2.DependencyResponse.Files.prototype.getDependenciesList = function() {
   return /** @type{!Array<!proto.scanoss.api.dependencies.v2.DependencyResponse.Dependencies>} */ (
     jspb.Message.getRepeatedWrapperField(this, proto.scanoss.api.dependencies.v2.DependencyResponse.Dependencies, 4));
 };
 
 
 /** @param {!Array<!proto.scanoss.api.dependencies.v2.DependencyResponse.Dependencies>} value */
-proto.scanoss.api.dependencies.v2.DependencyResponse.Files.prototype.setDependenciesList = function (value) {
+proto.scanoss.api.dependencies.v2.DependencyResponse.Files.prototype.setDependenciesList = function(value) {
   jspb.Message.setRepeatedWrapperField(this, 4, value);
 };
 
@@ -1359,12 +1415,12 @@ proto.scanoss.api.dependencies.v2.DependencyResponse.Files.prototype.setDependen
  * @param {number=} opt_index
  * @return {!proto.scanoss.api.dependencies.v2.DependencyResponse.Dependencies}
  */
-proto.scanoss.api.dependencies.v2.DependencyResponse.Files.prototype.addDependencies = function (opt_value, opt_index) {
+proto.scanoss.api.dependencies.v2.DependencyResponse.Files.prototype.addDependencies = function(opt_value, opt_index) {
   return jspb.Message.addToRepeatedWrapperField(this, 4, opt_value, proto.scanoss.api.dependencies.v2.DependencyResponse.Dependencies, opt_index);
 };
 
 
-proto.scanoss.api.dependencies.v2.DependencyResponse.Files.prototype.clearDependenciesList = function () {
+proto.scanoss.api.dependencies.v2.DependencyResponse.Files.prototype.clearDependenciesList = function() {
   this.setDependenciesList([]);
 };
 
@@ -1373,14 +1429,14 @@ proto.scanoss.api.dependencies.v2.DependencyResponse.Files.prototype.clearDepend
  * repeated Files files = 1;
  * @return {!Array<!proto.scanoss.api.dependencies.v2.DependencyResponse.Files>}
  */
-proto.scanoss.api.dependencies.v2.DependencyResponse.prototype.getFilesList = function () {
+proto.scanoss.api.dependencies.v2.DependencyResponse.prototype.getFilesList = function() {
   return /** @type{!Array<!proto.scanoss.api.dependencies.v2.DependencyResponse.Files>} */ (
     jspb.Message.getRepeatedWrapperField(this, proto.scanoss.api.dependencies.v2.DependencyResponse.Files, 1));
 };
 
 
 /** @param {!Array<!proto.scanoss.api.dependencies.v2.DependencyResponse.Files>} value */
-proto.scanoss.api.dependencies.v2.DependencyResponse.prototype.setFilesList = function (value) {
+proto.scanoss.api.dependencies.v2.DependencyResponse.prototype.setFilesList = function(value) {
   jspb.Message.setRepeatedWrapperField(this, 1, value);
 };
 
@@ -1390,12 +1446,12 @@ proto.scanoss.api.dependencies.v2.DependencyResponse.prototype.setFilesList = fu
  * @param {number=} opt_index
  * @return {!proto.scanoss.api.dependencies.v2.DependencyResponse.Files}
  */
-proto.scanoss.api.dependencies.v2.DependencyResponse.prototype.addFiles = function (opt_value, opt_index) {
+proto.scanoss.api.dependencies.v2.DependencyResponse.prototype.addFiles = function(opt_value, opt_index) {
   return jspb.Message.addToRepeatedWrapperField(this, 1, opt_value, proto.scanoss.api.dependencies.v2.DependencyResponse.Files, opt_index);
 };
 
 
-proto.scanoss.api.dependencies.v2.DependencyResponse.prototype.clearFilesList = function () {
+proto.scanoss.api.dependencies.v2.DependencyResponse.prototype.clearFilesList = function() {
   this.setFilesList([]);
 };
 
@@ -1404,19 +1460,19 @@ proto.scanoss.api.dependencies.v2.DependencyResponse.prototype.clearFilesList = 
  * optional scanoss.api.common.v2.StatusResponse status = 2;
  * @return {?proto.scanoss.api.common.v2.StatusResponse}
  */
-proto.scanoss.api.dependencies.v2.DependencyResponse.prototype.getStatus = function () {
+proto.scanoss.api.dependencies.v2.DependencyResponse.prototype.getStatus = function() {
   return /** @type{?proto.scanoss.api.common.v2.StatusResponse} */ (
     jspb.Message.getWrapperField(this, scanoss_api_common_v2_scanoss$common_pb.StatusResponse, 2));
 };
 
 
 /** @param {?proto.scanoss.api.common.v2.StatusResponse|undefined} value */
-proto.scanoss.api.dependencies.v2.DependencyResponse.prototype.setStatus = function (value) {
+proto.scanoss.api.dependencies.v2.DependencyResponse.prototype.setStatus = function(value) {
   jspb.Message.setWrapperField(this, 2, value);
 };
 
 
-proto.scanoss.api.dependencies.v2.DependencyResponse.prototype.clearStatus = function () {
+proto.scanoss.api.dependencies.v2.DependencyResponse.prototype.clearStatus = function() {
   this.setStatus(undefined);
 };
 
@@ -1425,7 +1481,7 @@ proto.scanoss.api.dependencies.v2.DependencyResponse.prototype.clearStatus = fun
  * Returns whether this field is set.
  * @return {!boolean}
  */
-proto.scanoss.api.dependencies.v2.DependencyResponse.prototype.hasStatus = function () {
+proto.scanoss.api.dependencies.v2.DependencyResponse.prototype.hasStatus = function() {
   return jspb.Message.getField(this, 2) != null;
 };
 

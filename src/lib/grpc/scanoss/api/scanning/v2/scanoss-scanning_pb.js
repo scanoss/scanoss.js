@@ -1,4 +1,3 @@
-// @ts-nocheck
 /**
  * @fileoverview
  * @enhanceable
@@ -8,9 +7,9 @@
  */
 // GENERATED CODE -- DO NOT EDIT!
 
-const jspb = require('google-protobuf');
-const goog = jspb;
-const global = Function('return this')();
+var jspb = require('google-protobuf');
+var goog = jspb;
+var global = Function('return this')();
 
-const scanoss_api_common_v2_scanoss$common_pb = require('../../../../scanoss/api/common/v2/scanoss-common_pb.js');
+var scanoss_api_common_v2_scanoss$common_pb = require('../../../../scanoss/api/common/v2/scanoss-common_pb.js');
 goog.object.extend(exports, proto.scanoss.api.scanning.v2);
