@@ -42,6 +42,9 @@ async function main() {
     .command('dep <source>')
     .description('Scan for dependencies [ BETA ]')
     .option('-o, --output <filename>', 'Output result file name (optional - default stdout)')
+    .option('-a, --grpc-host <host>', 'SCANOSS GRPC HOST (optional - default: scanoss.com)')
+    .option('-p, --grpc-port <port>', 'SCANOSS GRPC PORT  (optional - default: 443)')
+
     .action((source, options) => {depHandler(source, options).catch((e) => {CLIErrorHandler(e)})})
 
     await program.parseAsync(process.argv);

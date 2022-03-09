@@ -1,22 +1,24 @@
-
-interface ILicense {
-  name: string;
+export interface LicensesList {
+    name: string;
+    spdxId: string;
+    isSpdxApproved: boolean;
 }
 
-export interface IDependency {
-  component: string;
-  purl: string;
-  version: string;
-  licenses: Array<ILicense>;
+export interface DependenciesList {
+    component: string;
+    purl: string;
+    version?: string;
+    scope?: string;
+    licensesList: LicensesList[];
 }
 
-export interface IFile {
-  file: string;
-  id: string;
-  status: string;
-  dependencies: Array<IDependency>;
+export interface FilesList {
+    file: string;
+    id: string;
+    status: string;
+    dependenciesList: DependenciesList[];
 }
 
 export interface IDependencyResponse {
-  files: Array<IFile>;
+    filesList: FilesList[];
 }

@@ -8,20 +8,11 @@ import { DispatcherResponse } from '../lib/scanner/Dispatcher/DispatcherResponse
 import { defaultFilter } from '../lib/filters/defaultFilter';
 import { FilterList } from '../lib/filters/filtering';
 
+import { isFolder } from './helpers';
+
 import fs from 'fs';
 
-// Async function that verify if a path is a folder. If the path is not valid the promise will be rejected
-const isFolder = (path: string): Promise<boolean> => {
-  return new Promise((resolve, reject) => {
-    fs.stat(path, (err, stats) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(stats.isDirectory());
-      }
-    });
-  });
-}
+
 
 export async function scanHandler(rootPath: string, options: any): Promise<void> {
 
