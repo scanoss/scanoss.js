@@ -1,18 +1,19 @@
 import path from "path";
 import { PackageURL } from "packageurl-js";
-import { ILocalFile } from "../DependencyTypes";
+import { ILocalDependency } from "../DependencyTypes";
 
 const PURL_TYPE = 'maven';
+
 
 
 // Parse a pom.txt file from maven manifest file
 // See reference on: https://maven.apache.org/guides/introduction/introduction-to-the-pom.html
 // and https://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html
 const MANIFEST_FILE = 'pom.xml';
-export function pomParser(fileContent: string, filePath: string): ILocalFile {
+export function pomParser(fileContent: string, filePath: string): ILocalDependency {
 
     // If the file is not a python manifest file, return an empty results
-    const results: ILocalFile = {file: filePath, purls: []};
+    const results: ILocalDependency = {file: filePath, purls: []};
     if(path.basename(filePath) != MANIFEST_FILE)
         return results;
 
@@ -49,8 +50,12 @@ export function pomParser(fileContent: string, filePath: string): ILocalFile {
             purlQualifiers['type'] = type[1]
         }
 
+        // Extract scope.
+        const scopeRes = dependency.match(/<scope>([^<]*)<\/scope>/);
+        const scope = scopeRes ? scopeRes[1] : undefined;
+
         const purlString = new PackageURL(PURL_TYPE, namespace, name, version, purlQualifiers, undefined).toString();
-        results.purls.push({purl: purlString});
+        results.purls.push({purl: purlString, scope: scope});
       });
     }
     return results;

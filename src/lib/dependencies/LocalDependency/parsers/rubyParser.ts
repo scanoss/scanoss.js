@@ -1,6 +1,6 @@
 import path from "path";
 import { PackageURL } from "packageurl-js";
-import { ILocalFile } from "../DependencyTypes";
+import { ILocalDependency } from "../DependencyTypes";
 
 
 const PURL_TYPE = 'gem';
@@ -10,10 +10,10 @@ const PURL_TYPE = 'gem';
 // See reference on: https://bundler.io/gemfile.html
 // and https://bundler.io/man/gemfile.5.html
 const MANIFEST_FILE = 'Gemfile';
-export function gemfileParser(fileContent: string, filePath: string): ILocalFile {
+export function gemfileParser(fileContent: string, filePath: string): ILocalDependency {
 
     // If the file is not a manifest file, return an empty results
-    const results: ILocalFile = {file: filePath, purls: []};
+    const results: ILocalDependency = {file: filePath, purls: []};
     if(path.basename(filePath) != MANIFEST_FILE)
         return results;
 
@@ -39,10 +39,10 @@ export function gemfileParser(fileContent: string, filePath: string): ILocalFile
 
 
 const MANIFEST_FILE_1 = 'Gemfile.lock';
-export function gemfilelockParser(fileContent: string, filePath: string): ILocalFile {
+export function gemfilelockParser(fileContent: string, filePath: string): ILocalDependency {
 
     // If the file is not a manifest file, return an empty results
-    const results: ILocalFile = {file: filePath, purls: []};
+    const results: ILocalDependency = {file: filePath, purls: []};
     if(path.basename(filePath) != MANIFEST_FILE_1)
         return results;
 

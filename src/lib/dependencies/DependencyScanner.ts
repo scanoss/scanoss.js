@@ -1,46 +1,33 @@
-import path from "path";
-import fs from 'fs';
-
-import { ILocalDependencies, ParserDefinitions } from "./DependencyTypes";
-import { pomParser } from "./parsers/mavenParser";
-import { packageParser, packagelockParser } from "./parsers/npmParser";
-import { requirementsParser } from "./parsers/pyParser";
-import { gemfileParser, gemfilelockParser } from "./parsers/rubyParser";
+import { ILocalDependencies } from "./LocalDependency/DependencyTypes";
 import { GrpcDependencyService } from "../grpc/GrpcDependencyService";
-import { DependencyResponse, DependencyRequest } from "../grpc/scanoss/api/dependencies/v2/scanoss-dependencies_pb";
-
-/*
- This is a hash map that connect a filename with it's own parser function
- Any parser function must return a ILocalDependencies object (See DependencyTypes.ts)
-*/
-const Parser: ParserDefinitions = {
-  'requirements.txt': requirementsParser,
-  'pom.xml': pomParser,
-  'package.json': packageParser,
-  'package-lock.json': packagelockParser,
-  'Gemfile': gemfileParser,
-  'Gemfile.lock': gemfilelockParser
-};
-
+import { DependencyRequest } from "../grpc/scanoss/api/dependencies/v2/scanoss-dependencies_pb";
+import { LocalDependencies } from "./LocalDependency/LocalDependency";
+import { DependencyScannerCfg } from "./DependencyScannerCfg";
+import { IDependencyResponse } from "./DependencyTypes";
 
 export class DependencyScanner {
 
+  private localDependency: LocalDependencies;
+
   private grpcDependencyService: GrpcDependencyService;
 
-  constructor() {
-    this.grpcDependencyService = new GrpcDependencyService();
+  constructor(cfg = new DependencyScannerCfg()) {
+    this.grpcDependencyService = new GrpcDependencyService(cfg.DEFAULT_GRPC_HOST, cfg.DEFAULT_GRPC_PORT);
+    this.localDependency = new LocalDependencies();
   }
 
 
-  public async scan(files: Array<string>): Promise<DependencyResponse> {
-    try {
-      const localDependencies = await this.localDependencySearch(files);
-      const request = this.buildRequest(localDependencies);
-      return await this.grpcDependencyService.get(request);
-    } catch(e) {
-      console.error(e);
-      return null;
-    }
+  public async scan(files: Array<string>): Promise<IDependencyResponse> {
+    const localDependencies = await this.localDependency.search(files);
+    if (localDependencies.files.length === 0) return null;
+
+    const request = this.buildRequest(localDependencies);
+    const grpcResponse = await this.grpcDependencyService.get(request);
+    const response = grpcResponse.toObject();
+
+    //TODO: Extract scope from localDependencies and add it to response
+
+    return response;
   }
 
 
@@ -53,7 +40,7 @@ export class DependencyScanner {
         for (const purl of file.purls) {
           const purlMsg = new DependencyRequest.Purls();
           purlMsg.setPurl(purl.purl);
-          purlMsg.setRequirement(purl.requirements);
+          purlMsg.setRequirement(purl?.requirements);
           fileMsg.addPurls(purlMsg);
         }
         depRequest.addFiles(fileMsg);
@@ -65,23 +52,5 @@ export class DependencyScanner {
     }
   }
 
-  public async localDependencySearch(files: Array<string>): Promise<ILocalDependencies> {
-    let results: ILocalDependencies = {files: []};
-    for (const filePath of files) {
-        const fileName = path.basename(filePath);
-        if(Parser[fileName] != null) {
-          try{
-            const fileContent = await fs.promises.readFile(filePath, 'utf8');
-            const dependency = Parser[fileName](fileContent, filePath);
-            if(dependency.purls.length != 0)
-                results.files.push(dependency);
-          } catch(e) {
-            console.error(e);
-            continue;
-          }
-        }
-    }
-    return results;
-  }
 
 }

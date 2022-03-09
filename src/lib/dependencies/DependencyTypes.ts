@@ -1,22 +1,24 @@
-export interface ILocalPurl {
-  purl: string;
-  requirements?: string;
+export interface LicensesList {
+    name: string;
+    spdxId: string;
+    isSpdxApproved: boolean;
 }
 
-export interface ILocalFile {
-  file: string;
-  purls: Array<ILocalPurl>;
+export interface DependenciesList {
+    component: string;
+    purl: string;
+    version?: string;
+    scope?: string;
+    licensesList: LicensesList[];
 }
 
-export interface ILocalDependencies{
-  files: Array<ILocalFile>;
+export interface FilesList {
+    file: string;
+    id: string;
+    status: string;
+    dependenciesList: DependenciesList[];
 }
 
-
-/* Parser funcion definition */
-type ParserFuncType = (fileContent: string, filePath: string) => ILocalFile;
-
-export interface ParserDefinitions {
-  [key: string]: ParserFuncType;
+export interface IDependencyResponse {
+    filesList: FilesList[];
 }
-
