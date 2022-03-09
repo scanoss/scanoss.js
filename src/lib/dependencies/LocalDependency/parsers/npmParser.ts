@@ -1,7 +1,6 @@
 import path from "path";
 import { PackageURL } from "packageurl-js";
-import { FileDependency } from "./types";
-import { isValidPath, isValidUrl } from './utils';
+import { ILocalDependency } from "../DependencyTypes";
 
 const PURL_TYPE = 'npm';
 
@@ -9,19 +8,26 @@ const PURL_TYPE = 'npm';
 // Parse a package.json file from node projects
 // See reference on: https://docs.npmjs.com/cli/v8/configuring-npm/package-json
 const MANIFEST_FILE = 'package.json';
-export function packageParser(fileContent: string, filePath: string): FileDependency {
+export function packageParser(fileContent: string, filePath: string): ILocalDependency {
     // If the file is not manifest file, return an empty results
-    const results: FileDependency = {file: filePath, purls: []};
+    const results: ILocalDependency = {file: filePath, purls: []};
     if(path.basename(filePath) != MANIFEST_FILE)
         return results;
     const o = JSON.parse(fileContent);
     let devDeps = Object.keys(o.devDependencies || {});
     let deps = Object.keys(o.dependencies || {});
     let listDeps = [...deps, ...devDeps];
-    for(const name of listDeps){
+
+    for(const name of deps){
         const purlString = new PackageURL(PURL_TYPE, undefined, name, undefined, undefined, undefined).toString();
-        results.purls.push({purl: purlString});
+        results.purls.push({purl: purlString, scope: "dependencies", requirements: o.dependencies[name]});
     }
+
+    for(const name of devDeps){
+      const purlString = new PackageURL(PURL_TYPE, undefined, name, undefined, undefined, undefined).toString();
+      results.purls.push({purl: purlString, scope: "devDependencies", requirements: o.devDependencies[name]});
+    }
+
     return results;
 }
 
@@ -29,9 +35,9 @@ export function packageParser(fileContent: string, filePath: string): FileDepend
 // Parse a package-lock.json file from node projects
 // See reference on: https://docs.npmjs.com/cli/v8/configuring-npm/package-json
 const MANIFEST_FILE_1 = 'package-lock.json';
-export function packagelockParser(fileContent: string, filePath: string): FileDependency {
+export function packagelockParser(fileContent: string, filePath: string): ILocalDependency {
 
-    const results: FileDependency = {file: filePath, purls: []};
+    const results: ILocalDependency = {file: filePath, purls: []};
     if(path.basename(filePath) != MANIFEST_FILE_1)
         return results;
 
