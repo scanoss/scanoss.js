@@ -7,8 +7,15 @@ export class GrpcDependencyService {
 
   private client: DependenciesClient;
 
-  constructor(endpoint: string, port: string) {
+  private metadata;
+
+  constructor(endpoint: string, port: string, apiKey='') {
     this.client = new DependenciesClient(endpoint + ':' + port, grpc.credentials.createSsl());
+    if(apiKey) {
+      this.metadata = new grpc.Metadata();
+      console.log("Pased here")
+      this.metadata.add('x-api-key', apiKey);
+    }
   }
 
   public async get(req: DependenciesMessages.DependencyRequest): Promise<DependenciesMessages.DependencyResponse> {
@@ -20,7 +27,7 @@ export class GrpcDependencyService {
     });
   }
 
-  public buildDependencyRequestMsg(plainObj: any): DependenciesMessages.DependencyRequest {
+  public buildDependencyRequestMsg(plainObj: DependenciesMessages.DependencyRequest.AsObject): DependenciesMessages.DependencyRequest {
     try {
       const depMessage = new DependenciesMessages.DependencyRequest();
       for (const dependency of plainObj.filesList) {
@@ -52,7 +59,7 @@ export class GrpcDependencyService {
   }
 
 
-  public buildEchoRequestMsg(plainObj: any): CommonMessages.EchoRequest {
+  public buildEchoRequestMsg(plainObj: CommonMessages.EchoRequest.AsObject): CommonMessages.EchoRequest {
     try {
       const echoMessage = new CommonMessages.EchoRequest();
       echoMessage.setMessage(plainObj.message);
