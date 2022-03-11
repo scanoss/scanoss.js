@@ -1,6 +1,6 @@
 export interface ILocalPurl {
   purl: string;
-  requirements?: string;
+  requirement?: string;
   scope?: string;
 }
 

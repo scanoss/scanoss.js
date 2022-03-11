@@ -41,12 +41,15 @@ export function requirementsParser(fileContent: string, filePath: string): ILoca
             else {
 
                 const dep = parseDep(line);
-                if (dep.sym === '==') {
+                if (!dep.sym) {
+                  const purlString = new PackageURL(PURL_TYPE, undefined, dep.name, undefined, undefined, undefined).toString();
+                  results.purls.push({purl: purlString});
+                } else if (dep.sym === '==') {
                   const purlString = new PackageURL(PURL_TYPE, undefined, dep.name, dep.version, undefined, undefined).toString();
                   results.purls.push({purl: purlString});
                 } else {
                   const purlString = new PackageURL(PURL_TYPE, undefined, dep.name, undefined, undefined, undefined).toString();
-                  results.purls.push({purl: purlString, requirements: dep.sym+dep.version});
+                  results.purls.push({purl: purlString, requirement: dep.sym+dep.version});
                 }
             }
         }

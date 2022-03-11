@@ -39,7 +39,7 @@ export class DependencyScanner {
         for (const purl of file.purls) {
           const purlMsg = new DependencyRequest.Purls();
           purlMsg.setPurl(purl.purl);
-          purlMsg.setRequirement(purl?.requirements);
+          purlMsg.setRequirement(purl?.requirement);
           fileMsg.addPurls(purlMsg);
         }
         depRequest.addFiles(fileMsg);
