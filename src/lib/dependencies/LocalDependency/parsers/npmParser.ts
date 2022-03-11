@@ -20,12 +20,12 @@ export function packageParser(fileContent: string, filePath: string): ILocalDepe
 
     for(const name of deps){
         const purlString = new PackageURL(PURL_TYPE, undefined, name, undefined, undefined, undefined).toString();
-        results.purls.push({purl: purlString, scope: "dependencies", requirements: o.dependencies[name]});
+        results.purls.push({purl: purlString, scope: "dependencies", requirement: o.dependencies[name]});
     }
 
     for(const name of devDeps){
       const purlString = new PackageURL(PURL_TYPE, undefined, name, undefined, undefined, undefined).toString();
-      results.purls.push({purl: purlString, scope: "devDependencies", requirements: o.devDependencies[name]});
+      results.purls.push({purl: purlString, scope: "devDependencies", requirement: o.devDependencies[name]});
     }
 
     return results;

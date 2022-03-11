@@ -13,7 +13,6 @@ export class GrpcDependencyService {
     this.client = new DependenciesClient(endpoint + ':' + port, grpc.credentials.createSsl());
     if(apiKey) {
       this.metadata = new grpc.Metadata();
-      console.log("Pased here")
       this.metadata.add('x-api-key', apiKey);
     }
   }
