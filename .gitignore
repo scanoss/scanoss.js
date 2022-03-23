@@ -3,6 +3,7 @@
 .vscode
 .circleci
 build
+dist
 node_modules
 test
 src/**.js
