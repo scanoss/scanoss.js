@@ -19,10 +19,11 @@ export class DependencyScanner {
 
   public async scan(files: Array<string>): Promise<IDependencyResponse> {
     const localDependencies = await this.localDependency.search(files);
-    if (localDependencies.files.length === 0) return null;
+    if (localDependencies.files.length === 0) return {filesList: []};
     const request = this.buildRequest(localDependencies);
     const grpcResponse = await this.grpcDependencyService.get(request);
     const response = grpcResponse.toObject();
+
 
     // Extract scope from localDependencies and add it to response
     this.mergeScopeField(localDependencies, response);
@@ -33,13 +34,14 @@ export class DependencyScanner {
   private buildRequest(localDependencies: ILocalDependencies): DependencyRequest {
     try {
       const depRequest = new DependencyRequest();
+      depRequest.setDepth(1);
       for (const file of localDependencies.files) {
         const fileMsg = new DependencyRequest.Files();
         fileMsg.setFile(file.file);
         for (const purl of file.purls) {
           const purlMsg = new DependencyRequest.Purls();
           purlMsg.setPurl(purl.purl);
-          purlMsg.setRequirement(purl?.requirement);
+          if(purl?.requirement) purlMsg.setRequirement(purl.requirement);
           fileMsg.addPurls(purlMsg);
         }
         depRequest.addFiles(fileMsg);
