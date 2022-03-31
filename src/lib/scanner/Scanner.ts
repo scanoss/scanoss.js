@@ -17,6 +17,7 @@ import sortPaths from 'sort-paths';
 import { WfpProvider } from './WfpProvider/WfpProvider';
 import { FingerprintPacket } from './WfpProvider/FingerprintPacket';
 import { WfpCalculator } from './WfpProvider/WfpCalculator/WfpCalculator';
+import { WfpSplitter } from './WfpProvider/WfpSplitter/WfpSplitter';
 
 let finishPromiseResolve;
 let finishPromiseReject;
@@ -208,7 +209,10 @@ export class Scanner extends EventEmitter {
     this.scannerInput.shift();
     this.reportLog(`[ SCANNER ]: Job finished. ${this.scannerInput.length} pendings`);
 
-    if(this.scannerInput.length) this.wfpProvider.start({scannerInput: this.scannerInput[0]});
+    const folderRoot = this.scannerInput[0].folderRoot;
+    const winnowingMode = this.scannerInput[0].winnowingMode;
+    const fileList = this.scannerInput[0].fileList;
+    if(this.scannerInput.length) this.wfpProvider.start({folderRoot, winnowingMode, fileList});
     else await this.finishScan();
   }
 
@@ -275,13 +279,25 @@ export class Scanner extends EventEmitter {
     this.createOutputFiles();
     this.scannerInput = scannerInput;
 
-    if (!this.isValidInput(scannerInput)) {
-      this.finishScan();
-      return this.finishPromise;
+    // if (!this.isValidInput(scannerInput)) {
+    //   this.finishScan();
+    //   return this.finishPromise;
+    // }
+
+    if (scannerInput[0].wfpPath) {
+      this.wfpProvider = new WfpSplitter();
+      this.setWinnowerListeners();
+      this.wfpProvider.start({wfpPath: scannerInput[0].wfpPath});
+    } else {
+      const folderRoot = this.scannerInput[0].folderRoot;
+      const winnowingMode = this.scannerInput[0].winnowingMode;
+      const fileList = this.scannerInput[0].fileList;
+      this.wfpProvider.start({folderRoot, winnowingMode, fileList});
     }
-    this.wfpProvider.start({scannerInput: this.scannerInput[0]});
     return this.finishPromise;
   }
+
+
 
 
   private isValidInput(scannerInput: Array<ScannerInput>): boolean {

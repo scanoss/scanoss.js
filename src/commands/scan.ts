@@ -80,8 +80,9 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
       console.log(await fs.promises.readFile(resultPath, 'utf8'));
   });
 
-  if (options.wfp) await scanner.scanFromWinnowingFile(rootPath);
-  else await scanner.scan([scannerInput]);
+  if (options.wfp) scannerInput.wfpPath = '/home/ubuntu/scanoss-workspace/linux/winnowing.wfp';
+
+  await scanner.scan([scannerInput]);
 
 }
 

@@ -1,13 +1,15 @@
 import { Worker } from 'worker_threads';
 import { EventEmitter } from "stream";
 import { ScannerCfg } from "../ScannerCfg";
-import { ScannerEvents, ScannerInput } from "../ScannerTypes";
+import { ScannerEvents, ScannerInput, WinnowingMode } from "../ScannerTypes";
 import { FingerprintPacket } from "./FingerprintPacket";
 
 
 export interface IWfpProviderInput {
-  scannerInput?: ScannerInput;
   wfpPath?: string;
+  folderRoot?: string;
+  fileList?: Array<string>;
+  winnowingMode?: WinnowingMode;  // Enable winnowing algorithm, otherwise is scanned only MD5
 }
 
 export abstract class WfpProvider extends EventEmitter {
@@ -17,6 +19,14 @@ export abstract class WfpProvider extends EventEmitter {
   protected folderRoot: string;
   protected worker: Worker;
   protected isRunning: boolean;
+  protected winnowingMode: WinnowingMode;
+
+  protected init(): void {
+    this.wfp = '';
+    this.folderRoot = '';
+    this.isRunning = false;
+    this.winnowingMode = WinnowingMode.FULL_WINNOWING;
+  }
 
   // returns true if the function emitted a new fingerprint packet
   protected fingerprintPacker(fingerprint: string): boolean {
@@ -58,6 +68,9 @@ export abstract class WfpProvider extends EventEmitter {
     this.emit(ScannerEvents.ERROR, new Error(errorMsg));
   }
 
+  protected setWinnowingMode(mode: WinnowingMode): void {
+    this.winnowingMode = mode;
+  }
 
   public abstract start(params: IWfpProviderInput): void;
   public abstract stop(): void;

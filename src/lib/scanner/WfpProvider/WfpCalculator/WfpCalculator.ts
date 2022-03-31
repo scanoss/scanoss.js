@@ -238,21 +238,16 @@ export class WfpCalculator extends WfpProvider {
 
   private continue: boolean;
 
-  private winnowingMode: WinnowingMode;
-
   constructor(scannerCfg = new ScannerCfg()) {
     super();
     this.scannerCfg = scannerCfg;
   }
 
   init() {
-    this.wfp = '';
-    this.folderRoot = '';
+    super.init();
     this.continue = true;
-    this.isRunning = false;
     this.fileList = [];
     this.fileListIndex = 0;
-    this.winnowingMode = WinnowingMode.FULL_WINNOWING;
   }
 
   prepareWorker() {
@@ -312,33 +307,21 @@ export class WfpCalculator extends WfpProvider {
 
 
   public start(params: IWfpProviderInput): void {
-    const scanInput = params.scannerInput;
-    if(!scanInput) this.sendError('Scanner input is required');
+
+    if(!params.fileList) this.sendError('File list is required');
 
     this.sendLog('[ SCANNER ]: WFP Calculator starting...');
 
     this.init();
     this.prepareWorker();
 
-    if(scanInput.winnowingMode) this.setWinnowingMode(scanInput.winnowingMode);
+    if(params.winnowingMode) this.setWinnowingMode(params.winnowingMode);
     this.isRunning = true;
-    this.folderRoot = scanInput.folderRoot;
-    this.fileList = scanInput.fileList;
+    this.folderRoot = params.folderRoot;
+    this.fileList = params.fileList;
     this.nextStepMachine();
   }
 
-  public async startWinnowing(scanInput: ScannerInput): Promise<void> {
-    this.emit(ScannerEvents.WINNOWER_LOG, '[ SCANNER ]: Starting Winnowing...');
-
-    this.init();
-    this.prepareWorker();
-
-    if(scanInput.winnowingMode) this.setWinnowingMode(scanInput.winnowingMode);
-    this.isRunning = true;
-    this.folderRoot = scanInput.folderRoot;
-    this.fileList = scanInput.fileList;
-    this.nextStepMachine();
-  }
 
   private finishWinnowing() {
     if (this.wfp.length !== 0) {
@@ -369,9 +352,4 @@ export class WfpCalculator extends WfpProvider {
     this.init();
   }
 
-
-
-  public setWinnowingMode(mode: WinnowingMode): void {
-    this.winnowingMode = mode;
-  }
 }
