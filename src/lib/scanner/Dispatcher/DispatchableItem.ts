@@ -1,12 +1,11 @@
-import { WinnowerResponse } from "../Winnower/WinnowerResponse";
-
+import { FingerprintPacket } from "../WfpProvider/FingerprintPacket";
 export class DispatchableItem {
-  private winnowerResponse: WinnowerResponse;
+  private fingerprintPacket: FingerprintPacket;
 
   private errorCounter: number;
 
-  constructor(winnowerResponse) {
-    this.winnowerResponse = winnowerResponse;
+  constructor(fingerprintPacket: FingerprintPacket) {
+    this.fingerprintPacket = fingerprintPacket;
     this.errorCounter = 0;
   }
 
@@ -14,12 +13,12 @@ export class DispatchableItem {
     this.errorCounter += 1;
   }
 
-  public getWinnowerResponse(): WinnowerResponse {
-    return this.winnowerResponse;
+  public getWinnowerResponse(): FingerprintPacket {
+    return this.fingerprintPacket;
   }
 
   getContent() {
-    return this.winnowerResponse.getContent();
+    return this.fingerprintPacket.getContent();
   }
 
   getErrorCounter() {

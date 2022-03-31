@@ -10,6 +10,7 @@
     "codecov",
     "commitlint",
     "dependabot",
+    "Dispatchable",
     "editorconfig",
     "esnext",
     "execa",
