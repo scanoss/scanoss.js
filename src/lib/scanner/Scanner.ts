@@ -209,11 +209,18 @@ export class Scanner extends EventEmitter {
     this.scannerInput.shift();
     this.reportLog(`[ SCANNER ]: Job finished. ${this.scannerInput.length} pendings`);
 
-    const folderRoot = this.scannerInput[0].folderRoot;
-    const winnowingMode = this.scannerInput[0].winnowingMode;
-    const fileList = this.scannerInput[0].fileList;
-    if(this.scannerInput.length) this.wfpProvider.start({folderRoot, winnowingMode, fileList});
-    else await this.finishScan();
+    if(this.scannerInput.length) {
+      if (this.scannerInput[0].wfpPath) {
+        this.wfpProvider = new WfpSplitter();
+        this.setWinnowerListeners();
+        this.wfpProvider.start({wfpPath: this.scannerInput[0].wfpPath});
+      } else {
+        const folderRoot = this.scannerInput[0].folderRoot;
+        const winnowingMode = this.scannerInput[0].winnowingMode;
+        const fileList = this.scannerInput[0].fileList;
+        this.wfpProvider.start({folderRoot, winnowingMode, fileList});
+      }
+     } else await this.finishScan();
   }
 
   private async finishScan() {

@@ -56,7 +56,7 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
     }
   } else {
     const winnowing = fs.readFileSync(rootPath, {encoding: 'utf-8'});
-    //filesCounter = [...winnowing.matchAll(/file=/g)].length;
+    scannerInput.fileList.length = [...winnowing.matchAll(/file=/g)].length;
   }
 
   if (!options.verbose) {
@@ -80,8 +80,7 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
       console.log(await fs.promises.readFile(resultPath, 'utf8'));
   });
 
-  if (options.wfp) scannerInput.wfpPath = '/home/ubuntu/scanoss-workspace/linux/winnowing.wfp';
-
+  if (options.wfp) scannerInput.wfpPath = rootPath;
   await scanner.scan([scannerInput]);
 
 }

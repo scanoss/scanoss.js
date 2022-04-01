@@ -118,7 +118,6 @@ export class WfpSplitter extends WfpProvider {
 
     // 'end' will be triggered once when there is no more data available
     this.wfpStream.on('end', () => {
-      console.log('Reached end of stream.', this.fingerprints.length);
       this.wfpStreamEnd = true;
     });
   }
