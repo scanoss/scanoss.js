@@ -38,6 +38,8 @@ export class WfpSplitter extends WfpProvider {
 
   private wfpStream: Readable;
 
+  private wfpStreamEnd: boolean;
+
   private chunkDataRead: string;
 
   private fingerprints: Array<string>;
@@ -58,6 +60,7 @@ export class WfpSplitter extends WfpProvider {
     this.fingerprints = [];
     this.continue = true;
     this.fingerprintIndex = 0;
+    this.wfpStreamEnd = false;
     const wfpPath = params.wfpPath;
     if (!wfpPath) this.sendError('WFP path is not defined');
     this.wfpStream = fs.createReadStream(wfpPath, { encoding: 'utf8' });
@@ -73,30 +76,34 @@ export class WfpSplitter extends WfpProvider {
   }
 
   public resume(): void {
-    this.sendLog('[ SCANNER ]: WFP Splitter resumed');
     this.continue = true;
-    this.readStream();
+    this.sendFingerprints();
+    this.streamBufferFlush();
   }
 
 
   private sendFingerprints() {
-    this.timer = setInterval(() => {
-      if(this.fingerprintIndex < this.fingerprints.length && this.continue) {
-        this.fingerprintPacker(this.fingerprints[this.fingerprintIndex]);
-        this.fingerprintIndex++;
-      } else {
-        this.stopSendFingerprints();
-      }
-    });
+    if(this.timer === undefined) {
+      this.timer = setInterval(() => {
+        if(this.fingerprintIndex < this.fingerprints.length && this.continue) {
+          this.fingerprintPacker(this.fingerprints[this.fingerprintIndex]);
+          this.fingerprintIndex++;
+        } else {
+          this.stopSendFingerprints();
+        }
+      });
+    }
   }
 
   private stopSendFingerprints() {
     clearInterval(this.timer);
+    this.timer = undefined;
+    if(this.wfpStreamEnd) this.isRunning = false;
   }
 
-  private readStream(): void {
+  private streamBufferFlush(): void {
     // Use a loop to make sure we read all currently available data
-    while (this.continue && null !== (this.chunkDataRead = this.wfpStream.read(1 * 1024 * 1024))) {  // Read chunks of 1MB
+    while (this.continue && null !== (this.chunkDataRead = this.wfpStream.read(256 * 1024 ))) {  // Read chunks of 1MB
       this.fingerprints = [...this.fingerprints, ...this.splitFingerprints(this.chunkDataRead)];
       this.sendFingerprints();
     }
@@ -105,13 +112,14 @@ export class WfpSplitter extends WfpProvider {
   private setStreamListeners() {
     // 'readable' may be triggered multiple times as data is buffered in
     this.wfpStream.on('readable', () => {
-      this.readStream();
+      this.streamBufferFlush();
     });
 
 
     // 'end' will be triggered once when there is no more data available
     this.wfpStream.on('end', () => {
-      console.log('Reached end of stream.');
+      console.log('Reached end of stream.', this.fingerprints.length);
+      this.wfpStreamEnd = true;
     });
   }
 
