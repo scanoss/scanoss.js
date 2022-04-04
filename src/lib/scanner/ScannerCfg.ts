@@ -23,7 +23,7 @@ export class ScannerCfg {
   // Persist results after [ X ] number of server responses.
   MAX_RESPONSES_IN_BUFFER = 300;
 
-  DISPATCHER_QUEUE_SIZE_MAX_LIMIT = 10;
+  DISPATCHER_QUEUE_SIZE_MAX_LIMIT = 300;
 
-  DISPATCHER_QUEUE_SIZE_MIN_LIMIT = 8;
+  DISPATCHER_QUEUE_SIZE_MIN_LIMIT = 200;
 };

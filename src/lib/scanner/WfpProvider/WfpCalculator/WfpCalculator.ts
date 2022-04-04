@@ -302,7 +302,12 @@ export class WfpCalculator extends WfpProvider {
     if (!this.continue) return;
     const scannableItem = await this.getNextScannableItem();
     if (scannableItem) this.worker.postMessage(scannableItem);
-    else this.finishWinnowing();
+    else {
+      this.finishWinnowing();
+      this.forceStopWorker();
+      this.sendLog('[ SCANNER ]: WFP Calculator finished...');
+
+    }
   }
 
 
@@ -316,21 +321,14 @@ export class WfpCalculator extends WfpProvider {
     this.prepareWorker();
 
     if(params.winnowingMode) this.setWinnowingMode(params.winnowingMode);
-    this.isRunning = true;
+    this.pendingFiles = true;
     this.folderRoot = params.folderRoot;
     this.fileList = params.fileList;
     this.nextStepMachine();
   }
 
 
-  private finishWinnowing() {
-    if (this.wfp.length !== 0) {
-      this.processPackedWfp(this.wfp);
-    }
-    this.isRunning = false;
-    this.emit(ScannerEvents.WINNOWER_LOG, '[ SCANNER ]: Winnowing Finished...');
-    this.forceStopWorker();
-  }
+
 
   public pause(): void {
     this.sendLog('[ SCANNER ]: WFP Calculator paused...')
@@ -346,7 +344,7 @@ export class WfpCalculator extends WfpProvider {
 
   public stop(): void {
     this.continue = false;
-    this.isRunning = false;
+    this.pendingFiles = false;
     this.forceStopWorker();
     this.prepareWorker();
     this.init();

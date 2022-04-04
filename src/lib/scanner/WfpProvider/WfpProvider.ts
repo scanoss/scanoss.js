@@ -18,13 +18,13 @@ export abstract class WfpProvider extends EventEmitter {
   protected scannerCfg: ScannerCfg;
   protected folderRoot: string;
   protected worker: Worker;
-  protected isRunning: boolean;
+  protected pendingFiles: boolean;
   protected winnowingMode: WinnowingMode;
 
   protected init(): void {
     this.wfp = '';
     this.folderRoot = '';
-    this.isRunning = false;
+    this.pendingFiles = false;
     this.winnowingMode = WinnowingMode.FULL_WINNOWING;
   }
 
@@ -55,6 +55,11 @@ export abstract class WfpProvider extends EventEmitter {
     return true;
   }
 
+  protected finishWinnowing() {
+    if (this.wfp.length !== 0) this.sendFingerprint(new FingerprintPacket(this.wfp, this.folderRoot));
+    this.pendingFiles = false;
+  }
+
 
   protected sendFingerprint(fingerprintPacket: FingerprintPacket) {
     this.emit(ScannerEvents.WINNOWING_NEW_CONTENT, fingerprintPacket);
@@ -79,7 +84,7 @@ export abstract class WfpProvider extends EventEmitter {
 
 
   public hasPendingFiles(): boolean {
-    return this.isRunning;
+    return this.pendingFiles;
   }
 
 }
