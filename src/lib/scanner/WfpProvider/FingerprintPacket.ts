@@ -26,6 +26,12 @@ export class FingerprintPacket {
     return this.engineFlags;
   }
 
+  public getNumberFilesFingerprinted() {
+    const match = this.getContent().match(/file=/g);
+    if(!match) return 0;
+    return match.length;
+  }
+
   public getFilesFingerprinted() {
     const files = [];
     const regExp = new RegExp(/,(\/.*)/g);

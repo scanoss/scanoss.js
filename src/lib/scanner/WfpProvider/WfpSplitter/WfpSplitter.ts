@@ -76,8 +76,6 @@ export class WfpSplitter extends WfpProvider {
     if(this.fingerprintIndex === this.fingerprints.length){
       this.finishWinnowing();
       this.sendLog('[ SCANNER ]: WFP Splitter finished...');
-      console.log("Array length = ", this.fingerprints.length);
-      console.log("Index = ", this.fingerprintIndex);
     }
   }
 

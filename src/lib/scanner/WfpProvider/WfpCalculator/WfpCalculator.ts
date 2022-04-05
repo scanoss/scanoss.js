@@ -314,7 +314,6 @@ export class WfpCalculator extends WfpProvider {
   public start(params: IWfpProviderInput): void {
 
     if(!params.fileList) this.sendError('File list is required');
-
     this.sendLog('[ SCANNER ]: WFP Calculator starting...');
 
     this.init();
