@@ -1,14 +1,12 @@
-import EventEmitter from 'events';
 import fs from 'fs';
 import { Worker } from 'worker_threads';
 
-import { ScannableItem } from '../Scannable/ScannableItem';
-import { ScannerCfg } from '../ScannerCfg';
-import { ScannerEvents, ScannerInput, WinnowingMode } from '../ScannerTypes';
-import { WinnowerExtractor } from './WinnowerExtractor';
+import { ScannableItem } from '../../Scannable/ScannableItem';
+import { ScannerCfg } from '../../ScannerCfg';
+import { ScannerEvents, ScannerInput, WinnowingMode } from '../../ScannerTypes';
 
-import { WinnowerResponse } from './WinnowerResponse';
-
+import { FingerprintPacket } from '../FingerprintPacket';
+import { IWfpProviderInput, WfpProvider } from '../WfpProvider';
 
 
 const stringWorker = `
@@ -233,28 +231,12 @@ function crc32c_hex(str) {
 
 `;
 
-export class Winnower extends EventEmitter {
-  private scannerCfg: ScannerCfg;
-
+export class WfpCalculator extends WfpProvider {
   private fileList: any;
 
   private fileListIndex: number;
 
-  private folderRoot: string;
-
-  private wfp: string;
-
-  private worker: Worker;
-
   private continue: boolean;
-
-  private isRunning: boolean;
-
-  private winnowingMode: WinnowingMode;
-
-  private readingFromFile: boolean;
-
-  private winnowingExtractor: WinnowerExtractor;
 
   constructor(scannerCfg = new ScannerCfg()) {
     super();
@@ -262,27 +244,23 @@ export class Winnower extends EventEmitter {
   }
 
   init() {
-    this.wfp = '';
-    this.folderRoot = '';
+    super.init();
     this.continue = true;
-    this.isRunning = false;
-    this.readingFromFile = false;
     this.fileList = [];
     this.fileListIndex = 0;
-    this.winnowingMode = WinnowingMode.FULL_WINNOWING;
   }
 
   prepareWorker() {
     this.worker = new Worker(stringWorker, { eval: true });
     this.worker.on('message', async (scannableItem) => {
-      await this.winnowerPacker(scannableItem.fingerprint);
+      this.fingerprintPacker(scannableItem.fingerprint);
       await this.nextStepMachine();
     });
   }
 
   recoveryIndex() {
     // Files: contains all files winnowed but not packed yet
-    const files = new WinnowerResponse(this.wfp, this.folderRoot).getFilesWinnowed();
+    const files = new FingerprintPacket(this.wfp, this.folderRoot).getFilesFingerprinted();
     if (files.length) {
       const lastFileWinnowed = files[files.length - 1];
       let i = 0;
@@ -291,7 +269,7 @@ export class Winnower extends EventEmitter {
       }
       // If file already winnowed cannot be found in fileList emit an error.
       if (i > files.length) {
-        this.emit(ScannerEvents.ERROR, new Error('Cannot recovery index on winnower'));
+        this.sendError('Cannot recovery index on winnower');
         return -1;
       }
       this.fileListIndex -= i;
@@ -305,36 +283,9 @@ export class Winnower extends EventEmitter {
     this.worker.terminate();
   }
 
-  // returns true if the a winnowing packet was sended
-  private winnowerPacker(winnowingResult: string): boolean {
-    // When the fingerprint of one file is bigger than 64Kb, truncate to the last 64Kb line.
-    if (winnowingResult.length > this.scannerCfg.WFP_FILE_MAX_SIZE) {
-      let truncateStringOnIndex = this.scannerCfg.WFP_FILE_MAX_SIZE;
-      let keepRemovingCharacters = true;
-      while (keepRemovingCharacters) {
-        if (winnowingResult[truncateStringOnIndex] === '\n') keepRemovingCharacters = false;
-        truncateStringOnIndex -= 1;
-      }
-      truncateStringOnIndex += 1;
-      // eslint-disable-next-line no-param-reassign
-      winnowingResult = winnowingResult.substring(0, truncateStringOnIndex);
-      // eslint-disable-next-line no-param-reassign
-      winnowingResult += '\n';
-    }
-
-    if (this.wfp.length + winnowingResult.length >= this.scannerCfg.WFP_FILE_MAX_SIZE) {
-      this.processPackedWfp(this.wfp);
-      this.wfp = '';
-    }
-    this.wfp += winnowingResult;
-
-    if(this.wfp !== winnowingResult) return false;
-    return true;
-  }
-
-  processPackedWfp(content) {
-    const wnRsp = new WinnowerResponse(content, this.folderRoot);
-    this.emit(ScannerEvents.WINNOWING_NEW_CONTENT, wnRsp);
+  protected processPackedWfp(content) {
+    const fingerprint = new FingerprintPacket(content, this.folderRoot);
+    this.sendFingerprint(fingerprint);
   }
 
   async getNextScannableItem() {
@@ -351,89 +302,52 @@ export class Winnower extends EventEmitter {
     if (!this.continue) return;
     const scannableItem = await this.getNextScannableItem();
     if (scannableItem) this.worker.postMessage(scannableItem);
-    else this.finishWinnowing();
-  }
+    else {
+      this.finishWinnowing();
+      this.forceStopWorker();
+      this.sendLog('[ SCANNER ]: WFP Calculator finished...');
 
-  public startWinnowingFromFile(filePath: string) {
-    this.emit(ScannerEvents.WINNOWER_LOG, '[ SCANNER ]: Starting Winnowing from file...');
-    this.readingFromFile = true;
-    this.isRunning = true;
-    this.winnowingExtractor = new WinnowerExtractor();
-    this.winnowingExtractor.loadFile(filePath);
-    this.extractionProcess(this.scannerCfg.DISPATCHER_QUEUE_SIZE_MAX_LIMIT);
-  }
-
-  private async extractionProcess(n: number) {
-    let winBlock = '-';
-    while(winBlock !== '' && n>=0) { // this.continue will change on method pause();
-      winBlock = this.winnowingExtractor.extractWinBlock(); // TODO Make async funcion
-      if(winBlock !== '') {
-        if (this.winnowerPacker(winBlock))
-          n-=1;
-      }
     }
-
-    // Last winnowing block
-    if(winBlock === '') this.finishWinnowing();
   }
 
-  public async startWinnowing(scanInput: ScannerInput): Promise<void> {
-    this.emit(ScannerEvents.WINNOWER_LOG, '[ SCANNER ]: Starting Winnowing...');
+
+  public start(params: IWfpProviderInput): void {
+
+    if(!params.fileList) this.sendError('File list is required');
+
+    this.sendLog('[ SCANNER ]: WFP Calculator starting...');
 
     this.init();
     this.prepareWorker();
 
-    if(scanInput.winnowingMode) this.setWinnowingMode(scanInput.winnowingMode);
-    this.readingFromFile = false;
-    this.isRunning = true;
-    this.folderRoot = scanInput.folderRoot;
-    this.fileList = scanInput.fileList;
+    if(params.winnowingMode) this.setWinnowingMode(params.winnowingMode);
+    this.pendingFiles = true;
+    this.folderRoot = params.folderRoot;
+    this.fileList = params.fileList;
     this.nextStepMachine();
   }
 
-  private finishWinnowing() {
-    if (this.wfp.length !== 0) {
-      this.processPackedWfp(this.wfp);
-    }
-    this.isRunning = false;
-    this.emit(ScannerEvents.WINNOWER_LOG, '[ SCANNER ]: Winnowing Finished...');
-    this.forceStopWorker();
-  }
+
+
 
   public pause(): void {
-    this.emit(ScannerEvents.WINNOWER_LOG, '[ SCANNER ]: Winnowing paused...');
+    this.sendLog('[ SCANNER ]: WFP Calculator paused...')
     this.continue = false;
-    if (!this.readingFromFile) {
-      this.forceStopWorker();
-      this.prepareWorker();
-    }
   }
 
   public resume(): void {
-    this.emit(ScannerEvents.WINNOWER_LOG, '[ SCANNER ]: Winnowing resumed...');
+    this.sendLog('[ SCANNER ]: WFP Calculator resumed...')
     this.continue = true;
-    if (!this.readingFromFile) {
-      this.recoveryIndex();
-      this.nextStepMachine();
-    } else {
-      this.extractionProcess(this.scannerCfg.DISPATCHER_QUEUE_SIZE_MAX_LIMIT *2 );
-    }
+    this.recoveryIndex();
+    this.nextStepMachine();
   }
 
   public stop(): void {
     this.continue = false;
-    this.isRunning = false;
-    this.winnowingExtractor = null;
+    this.pendingFiles = false;
     this.forceStopWorker();
     this.prepareWorker();
     this.init();
   }
 
-  public hasPendingFiles(): boolean {
-    return this.isRunning;
-  }
-
-  public setWinnowingMode(mode: WinnowingMode): void {
-    this.winnowingMode = mode;
-  }
 }

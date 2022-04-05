@@ -1,17 +1,17 @@
-export class WinnowerResponse {
+export class FingerprintPacket {
   private wfpContent: string;
 
   private engineFlags: number;
 
   private scanRoot: string;
 
-  constructor(wfpContent, scanRoot = '') {
+  constructor(wfpContent: string, scanRoot = '') {
     this.wfpContent = wfpContent;
     this.scanRoot = scanRoot;
   }
 
-  public isEqual(winnowerResponse) {
-    return this.getContent() === winnowerResponse.getContent();
+  public isEqual(fingerprintPacket: FingerprintPacket): boolean {
+    return this.getContent() === fingerprintPacket.getContent();
   }
 
   public getContent() {
@@ -26,7 +26,7 @@ export class WinnowerResponse {
     return this.engineFlags;
   }
 
-  public getFilesWinnowed() {
+  public getFilesFingerprinted() {
     const files = [];
     const regExp = new RegExp(/,(\/.*)/g);
     let result;

@@ -38,4 +38,5 @@ export interface ScannerInput {
   folderRoot?: string;
   fileList: Array<string>;
   winnowingMode?: WinnowingMode;  // Enable winnowing algorithm, otherwise is scanned only MD5
+  wfpPath?: string;
 };

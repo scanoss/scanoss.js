@@ -4,7 +4,7 @@ import EventEmitter from 'eventemitter3';
 import os from 'os';
 import fs from 'fs';
 
-import { Winnower } from './Winnower/Winnower';
+
 import { Dispatcher } from './Dispatcher/Dispatcher';
 
 import { DispatchableItem } from './Dispatcher/DispatchableItem';
@@ -13,8 +13,11 @@ import { ScannerCfg } from './ScannerCfg';
 import { ScannerEvents, ScannerInput } from './ScannerTypes';
 
 import sortPaths from 'sort-paths';
-import { WinnowerResponse } from './Winnower/WinnowerResponse';
 
+import { WfpProvider } from './WfpProvider/WfpProvider';
+import { FingerprintPacket } from './WfpProvider/FingerprintPacket';
+import { WfpCalculator } from './WfpProvider/WfpCalculator/WfpCalculator';
+import { WfpSplitter } from './WfpProvider/WfpSplitter/WfpSplitter';
 
 let finishPromiseResolve;
 let finishPromiseReject;
@@ -22,44 +25,44 @@ let finishPromiseReject;
 
 
 export class Scanner extends EventEmitter {
-  scannerCfg;
+  private scannerCfg: ScannerCfg;
 
-  workDirectory;
+  private workDirectory: string;
 
-  scanRoot;
+  private resultFilePath: string;
 
-  scannerId;
+  private wfpFilePath: string;
 
-  private winnower: Winnower;
+  private scanRoot: string;
+
+  private scannerId: string;
+
+  private wfpProvider: WfpProvider;
 
   private dispatcher: Dispatcher;
 
-  resultFilePath;
-
-  wfpFilePath;
-
-  scanFinished; // Both flags are used to prevent a race condition between DISPATCHER.NEW_DATA and DISPATCHER_FINISHED
-
-  processingNewData; // Both flags are used to prevent a race condition between DISPATCHER.NEW_DATA and DISPATCHER_FINISHED
-
-  responseBuffer;
-
-  processedFiles;
-
-  running;
-
-  filesToScan;
-
-  filesNotScanned;
-
-  finishPromise: Promise<void>;
+  private finishPromise: Promise<void>;
 
   private scannerInput: Array<ScannerInput>;
+
+  private scanFinished: boolean; // Both flags are used to prevent a race condition between DISPATCHER.NEW_DATA and DISPATCHER_FINISHED
+
+  private processingNewData: boolean; // Both flags are used to prevent a race condition between DISPATCHER.NEW_DATA and DISPATCHER_FINISHED
+
+  private processedFiles: number;
+
+  private running: boolean;
+
+  private filesToScan;
+
+  private responseBuffer;
+
+  private filesNotScanned;
 
   constructor(scannerCfg = new ScannerCfg()) {
     super();
     this.scannerCfg = scannerCfg;
-    this.scannerId = new Date().getTime();
+    this.scannerId = new Date().getTime().toString();
   }
 
   init() {
@@ -70,7 +73,7 @@ export class Scanner extends EventEmitter {
     this.responseBuffer = [];
     this.filesToScan = {};
     this.filesNotScanned = {};
-    this.winnower = new Winnower(this.scannerCfg);
+    this.wfpProvider = new WfpCalculator(this.scannerCfg);
     this.dispatcher = new Dispatcher(this.scannerCfg);
 
     this.finishPromise = new Promise((resolve, reject) =>{
@@ -85,19 +88,19 @@ export class Scanner extends EventEmitter {
   }
 
   setWinnowerListeners() {
-    this.winnower.on(ScannerEvents.WINNOWING_NEW_CONTENT, (winnowerResponse: WinnowerResponse) => {
-      this.emit(ScannerEvents.WINNOWING_NEW_CONTENT, winnowerResponse);
+    this.wfpProvider.on(ScannerEvents.WINNOWING_NEW_CONTENT, (fingerprintPacket: FingerprintPacket) => {
+      this.emit(ScannerEvents.WINNOWING_NEW_CONTENT, fingerprintPacket);
       this.reportLog(`[ SCANNER ]: New WFP content`);
-      winnowerResponse.setEngineFlags(this.scannerInput[0].engineFlags);
-      const disptItem = new DispatchableItem(winnowerResponse);
+      fingerprintPacket.setEngineFlags(this.scannerInput[0].engineFlags);
+      const disptItem = new DispatchableItem(fingerprintPacket);
       this.dispatcher.dispatchItem(disptItem);
     });
 
-    this.winnower.on(ScannerEvents.WINNOWER_LOG, (msg) => {
+    this.wfpProvider.on(ScannerEvents.WINNOWER_LOG, (msg) => {
       this.reportLog(msg);
     });
 
-    this.winnower.on(ScannerEvents.ERROR, (error) => {
+    this.wfpProvider.on(ScannerEvents.ERROR, (error) => {
       this.errorHandler(error, ScannerEvents.MODULE_WINNOWER);
     });
   }
@@ -105,12 +108,12 @@ export class Scanner extends EventEmitter {
   setDispatcherListeners() {
     this.dispatcher.on(ScannerEvents.DISPATCHER_QUEUE_SIZE_MAX_LIMIT, () => {
       this.reportLog(`[ SCANNER ]: Maximum queue size reached. Winnower will be paused`);
-      this.winnower.pause();
+      this.wfpProvider.pause();
     });
 
     this.dispatcher.on(ScannerEvents.DISPATCHER_QUEUE_SIZE_MIN_LIMIT, () => {
       this.reportLog(`[ SCANNER ]: Minimum queue size reached. Winnower will be resumed`);
-      this.winnower.resume();
+      this.wfpProvider.resume();
     });
 
     this.dispatcher.on(ScannerEvents.DISPATCHER_NEW_DATA, async (response) => {
@@ -125,7 +128,7 @@ export class Scanner extends EventEmitter {
     });
 
     this.dispatcher.on(ScannerEvents.DISPATCHER_FINISHED, async () => {
-      if (!this.winnower.hasPendingFiles()) {
+      if (!this.wfpProvider.hasPendingFiles()) {
         if (this.processingNewData) this.scanFinished = true;
         else await this.finishJob();
       }
@@ -136,7 +139,7 @@ export class Scanner extends EventEmitter {
       this.appendFilesToNotScanned(filesNotScanned);
     });
 
-    this.winnower.on(ScannerEvents.DISPATCHER_LOG, (msg) => {
+    this.wfpProvider.on(ScannerEvents.DISPATCHER_LOG, (msg) => {
       this.reportLog(msg);
     });
 
@@ -206,8 +209,18 @@ export class Scanner extends EventEmitter {
     this.scannerInput.shift();
     this.reportLog(`[ SCANNER ]: Job finished. ${this.scannerInput.length} pendings`);
 
-    if(this.scannerInput.length) this.winnower.startWinnowing(this.scannerInput[0]);
-    else await this.finishScan();
+    if(this.scannerInput.length) {
+      if (this.scannerInput[0].wfpPath) {
+        this.wfpProvider = new WfpSplitter();
+        this.setWinnowerListeners();
+        this.wfpProvider.start({wfpPath: this.scannerInput[0].wfpPath});
+      } else {
+        const folderRoot = this.scannerInput[0].folderRoot;
+        const winnowingMode = this.scannerInput[0].winnowingMode;
+        const fileList = this.scannerInput[0].fileList;
+        this.wfpProvider.start({folderRoot, winnowingMode, fileList});
+      }
+     } else await this.finishScan();
   }
 
   private async finishScan() {
@@ -264,7 +277,6 @@ export class Scanner extends EventEmitter {
   public scanFromWinnowingFile(wfpFilePath: string): Promise<void> {
     this.init();
     this.createOutputFiles();
-    this.winnower.startWinnowingFromFile(wfpFilePath);
     return this.finishPromise;
   }
 
@@ -274,14 +286,25 @@ export class Scanner extends EventEmitter {
     this.createOutputFiles();
     this.scannerInput = scannerInput;
 
-    if (!this.isValidInput(scannerInput)) {
-      this.finishScan();
-      return this.finishPromise;
-    }
+    // if (!this.isValidInput(scannerInput)) {
+    //   this.finishScan();
+    //   return this.finishPromise;
+    // }
 
-    this.winnower.startWinnowing(this.scannerInput[0]);
+    if (scannerInput[0].wfpPath) {
+      this.wfpProvider = new WfpSplitter();
+      this.setWinnowerListeners();
+      this.wfpProvider.start({wfpPath: scannerInput[0].wfpPath});
+    } else {
+      const folderRoot = this.scannerInput[0].folderRoot;
+      const winnowingMode = this.scannerInput[0].winnowingMode;
+      const fileList = this.scannerInput[0].fileList;
+      this.wfpProvider.start({folderRoot, winnowingMode, fileList});
+    }
     return this.finishPromise;
   }
+
+
 
 
   private isValidInput(scannerInput: Array<ScannerInput>): boolean {
@@ -313,25 +336,13 @@ export class Scanner extends EventEmitter {
     return this.scannerId;
   }
 
-  pause() {
-    this.running = false;
-    this.winnower.pause();
-    // this.dispatcher.pause();
-  }
-
-  resume() {
-    this.running = true;
-    this.winnower.resume();
-    // this.dispatcher.resume();
-  }
-
   stop() {
     this.reportLog(`[ SCANNER ]: Stopping scanner`);
     this.running = false;
-    this.winnower.removeAllListeners();
+    this.wfpProvider.removeAllListeners();
     this.dispatcher.removeAllListeners();
     this.dispatcher.stop();
-    this.winnower.stop();
+    this.wfpProvider.stop();
   }
 
   isRunning() {
