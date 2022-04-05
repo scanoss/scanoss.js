@@ -58,6 +58,7 @@ export abstract class WfpProvider extends EventEmitter {
   protected finishWinnowing() {
     if (this.wfp.length !== 0) this.sendFingerprint(new FingerprintPacket(this.wfp, this.folderRoot));
     this.pendingFiles = false;
+    this.emit(ScannerEvents.WINNOWING_FINISHED);
   }
 
 

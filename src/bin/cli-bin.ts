@@ -2,6 +2,7 @@
 
 import { program } from 'commander';
 import { depHandler } from '../commands/dep';
+import { fingerprintHandler } from '../commands/fingerprint';
 import { scanHandler } from '../commands/scan';
 
 function CLIErrorHandler(e: Error) {
@@ -15,7 +16,7 @@ function CLIErrorHandler(e: Error) {
 
 async function main() {
   program
-    .version("0.2.21")
+    .version("0.2.24")
     .description('The SCANOSS JS package provides a simple, easy to consume module for interacting with SCANOSS APIs/Engine.')
 
   program
@@ -23,7 +24,7 @@ async function main() {
     .description('Scan a folder/file')
     .option('-w, --wfp', 'Scan a .wfp file instead of a folder')
     .option('-c, --concurrency <number>', 'Number of concurrent connections to use while scanning (optional -default 10)')
-    .option('--filter <path>', 'Loads an user defined filter (optional)')
+    .option('-f, --filter <path>', 'Loads an user defined filter (optional)')
     .option('-o, --output <filename>', 'Output result file name (optional - default stdout)')
     .option('-F, --flags <flags>', 'Scanning engine flags (1: disable snippet matching, 2 enable snippet ids, 4: disable dependencies, 8: disable licenses, 16: disable copyrights,32: disable vulnerabilities, 64: disable quality, 128: disable cryptography,256: disable best match, 512: Report identified files)')
     .option('-P, --post-size <postsize>', 'Number of kilobytes to limit the post to while scanning (optional - default 64)')
@@ -44,8 +45,14 @@ async function main() {
     .option('-o, --output <filename>', 'Output result file name (optional - default stdout)')
     .option('-a, --grpc-host <host>', 'SCANOSS GRPC HOST (optional - default: scanoss.com)')
     .option('-p, --grpc-port <port>', 'SCANOSS GRPC PORT  (optional - default: 443)')
-
     .action((source, options) => {depHandler(source, options).catch((e) => {CLIErrorHandler(e)})})
+
+    program
+    .command('fingerprint <source>')
+    .description('Generates fingerprints for a folder/file')
+    .option('-o, --output <filename>', 'Output result file name (optional - default stdout)')
+    .option('-p, --block-size <size>', 'Maximum size in Kb for each fingerprint block (optional - default 64Kb)')
+    .action((source, options) => {fingerprintHandler(source, options).catch((e) => {CLIErrorHandler(e)})})
 
     await program.parseAsync(process.argv);
 }
