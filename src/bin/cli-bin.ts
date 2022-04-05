@@ -21,7 +21,7 @@ async function main() {
   program
     .command('scan <source>')
     .description('Scan a folder/file')
-    //.option('-w, --wfp', 'Scan a .wfp file instead of a folder') // In progress
+    .option('-w, --wfp', 'Scan a .wfp file instead of a folder')
     .option('-c, --concurrency <number>', 'Number of concurrent connections to use while scanning (optional -default 10)')
     .option('--filter <path>', 'Loads an user defined filter (optional)')
     .option('-o, --output <filename>', 'Output result file name (optional - default stdout)')

@@ -25,7 +25,6 @@ export class WinnowerExtractor {
     this.winnowing = fs.readFileSync(path, 'utf-8');
     const reg = /file=/g;
     this.blocksIndex = [...((this.winnowing).matchAll(reg))].map(x => x.index);
-
   };
 
   public extractWinBlock(): string {
