@@ -4,6 +4,7 @@ import { DependencyRequest, DependencyResponse } from "../grpc/scanoss/api/depen
 import { LocalDependencies } from "./LocalDependency/LocalDependency";
 import { DependencyScannerCfg } from "./DependencyScannerCfg";
 import { IDependencyResponse } from "./DependencyTypes";
+import { PackageURL } from "packageurl-js";
 
 export class DependencyScanner {
 
@@ -18,8 +19,10 @@ export class DependencyScanner {
 
 
   public async scan(files: Array<string>): Promise<IDependencyResponse> {
-    const localDependencies = await this.localDependency.search(files);
+    let localDependencies = await this.localDependency.search(files);
     if (localDependencies.files.length === 0) return {filesList: []};
+    localDependencies = this.purlAdapter(localDependencies);
+
     const request = this.buildRequest(localDependencies);
     const grpcResponse = await this.grpcDependencyService.get(request);
     const response = grpcResponse.toObject();
@@ -28,6 +31,19 @@ export class DependencyScanner {
     // Extract scope from localDependencies and add it to response
     this.mergeScopeField(localDependencies, response);
     return response;
+  }
+
+  private purlAdapter(localDependencies: ILocalDependencies): ILocalDependencies {
+    for (const file of localDependencies.files) {
+      for (const purl of file.purls) {
+
+
+        const version = PackageURL.fromString(purl.purl).version;
+        purl.requirement = version;
+        purl.purl = purl.purl.replace('@'+version, '');
+      }
+    }
+    return localDependencies;
   }
 
 
