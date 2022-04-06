@@ -1,3 +1,5 @@
+import File from "../tree/File";
+
 export enum ScannerEvents {
   WINNOWING_STARTING = 'WINNOWING_STARTING',
   WINNOWING_NEW_CONTENT = 'WINNOWING_NEW_CONTENT',
@@ -33,10 +35,21 @@ export enum WinnowingMode {
   WINNOWING_ONLY_MD5 = 'WINNOWING_ONLY_MD5',
 };
 
-export interface ScannerInput {
+
+interface CommonScan {
   engineFlags?: number;
   folderRoot?: string;
-  fileList: Array<string>;
   winnowingMode?: WinnowingMode;  // Enable winnowing algorithm, otherwise is scanned only MD5
-  wfpPath?: string;
+}
+export interface FileScan extends CommonScan {
+  fileList: Array<string>;
+}
+
+export interface WfpScan extends CommonScan {
+  wfpPath: string;
+}
+export interface ScannerInput {
+  fileScan?: FileScan;
+  wfpScan?: WfpScan;
 };
+

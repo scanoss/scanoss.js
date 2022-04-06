@@ -5,6 +5,7 @@ import { LocalDependencies } from "./LocalDependency/LocalDependency";
 import { DependencyScannerCfg } from "./DependencyScannerCfg";
 import { IDependencyResponse } from "./DependencyTypes";
 import { PackageURL } from "packageurl-js";
+import { publicEncrypt } from "crypto";
 
 export class DependencyScanner {
 
@@ -37,6 +38,9 @@ export class DependencyScanner {
     for (const file of localDependencies.files) {
       for (const purl of file.purls) {
 
+
+        if (purl.purl.includes('%40'))
+          purl.purl = purl.purl.replace('%40', '@');
 
         const version = PackageURL.fromString(purl.purl).version;
         purl.requirement = version;
