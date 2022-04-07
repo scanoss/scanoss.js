@@ -16,7 +16,7 @@ function CLIErrorHandler(e: Error) {
 
 async function main() {
   program
-    .version("0.2.24")
+    .version("0.2.26")
     .description('The SCANOSS JS package provides a simple, easy to consume module for interacting with SCANOSS APIs/Engine.')
 
   program
@@ -41,7 +41,7 @@ async function main() {
 
     program
     .command('dep <source>')
-    .description('Scan for dependencies [ BETA ]')
+    .description('Scan for dependencies')
     .option('-o, --output <filename>', 'Output result file name (optional - default stdout)')
     .option('-a, --grpc-host <host>', 'SCANOSS GRPC HOST (optional - default: scanoss.com)')
     .option('-p, --grpc-port <port>', 'SCANOSS GRPC PORT  (optional - default: 443)')

@@ -274,24 +274,17 @@ export class Scanner extends EventEmitter {
   }
 
 
-  public scanFromWinnowingFile(wfpFilePath: string): Promise<void> {
-    this.init();
-    this.createOutputFiles();
-    return this.finishPromise;
-  }
-
-
   public scan(scannerInput: Array<ScannerInput>): Promise<void> {
     this.init();
     this.createOutputFiles();
     this.scannerInput = scannerInput;
 
-    // if (!this.isValidInput(scannerInput)) {
-    //   this.finishScan();
-    //   return this.finishPromise;
-    // }
+    if (!this.isValidInput(scannerInput)) {
+      this.finishScan();
+      return this.finishPromise;
+    }
 
-    if (scannerInput[0].wfpPath) {
+    if (scannerInput[0]?.wfpPath) {
       this.wfpProvider = new WfpSplitter();
       this.setWinnowerListeners();
       this.wfpProvider.start({wfpPath: scannerInput[0].wfpPath});
@@ -323,7 +316,7 @@ export class Scanner extends EventEmitter {
       return false;
     }
 
-    if (scannerInput.some((input) => !input.fileList.length)) {
+    if (scannerInput.some((input) => !input.fileList.length && !input.wfpPath)) {
       this.reportLog('[ SCANNER ]: Input array contains an element with no file list','warning');
       return false;
     }
