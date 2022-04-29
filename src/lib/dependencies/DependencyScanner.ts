@@ -22,7 +22,6 @@ export class DependencyScanner {
     let localDependencies = await this.localDependency.search(files);
     if (localDependencies.files.length === 0) return {filesList: []};
     localDependencies = this.purlAdapter(localDependencies);
-
     const request = this.buildRequest(localDependencies);
     const grpcResponse = await this.grpcDependencyService.get(request);
     const response = grpcResponse.toObject();
