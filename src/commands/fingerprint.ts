@@ -2,7 +2,7 @@ import { isFolder } from "./helpers";
 import { ScannerEvents, WfpCalculator } from "..";
 import { Tree } from "../lib/tree/Tree";
 import { FilterList } from "../lib/filters/filtering";
-import { FingerprintPacket } from "../lib/scanner/WfpProvider/FingerprintPacket";
+import { FingerprintPackage } from "../lib/scanner/WfpProvider/FingerprintPackage";
 import fs from 'fs';
 import { defaultFilter } from "../lib/filters/defaultFilter";
 import cliProgress from 'cli-progress';
@@ -29,9 +29,9 @@ export async function fingerprintHandler(rootPath: string, options: any): Promis
   bar1.start(filesToFingerprint.length, 0);
 
   let fingerprints = '';
-  wfpCalculator.on(ScannerEvents.WINNOWING_NEW_CONTENT, (fingerprintPacket: FingerprintPacket) => {
-    bar1.increment(fingerprintPacket.getNumberFilesFingerprinted());
-    fingerprints = fingerprints.concat( fingerprintPacket.getContent() );
+  wfpCalculator.on(ScannerEvents.WINNOWING_NEW_CONTENT, (fingerprintPackage: FingerprintPackage) => {
+    bar1.increment(fingerprintPackage.getNumberFilesFingerprinted());
+    fingerprints = fingerprints.concat( fingerprintPackage.getContent() );
   });
 
   if (options.verbose)

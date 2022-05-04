@@ -24,6 +24,7 @@ async function main() {
     .description('Scan a folder/file')
     .option('-w, --wfp', 'Scan a .wfp file instead of a folder')
     .option('-c, --concurrency <number>', 'Number of concurrent connections to use while scanning (optional -default 10)')
+    .option('-n, --ignore <ignore>',  'Ignore components specified in the SBOM file')
     .option('-f, --filter <path>', 'Loads an user defined filter (optional)')
     .option('-o, --output <filename>', 'Output result file name (optional - default stdout)')
     .option('-F, --flags <flags>', 'Scanning engine flags (1: disable snippet matching, 2 enable snippet ids, 4: disable dependencies, 8: disable licenses, 16: disable copyrights,32: disable vulnerabilities, 64: disable quality, 128: disable cryptography,256: disable best match, 512: Report identified files)')

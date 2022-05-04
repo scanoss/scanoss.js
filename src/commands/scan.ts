@@ -1,5 +1,5 @@
 import { Scanner } from '../lib/scanner/Scanner';
-import { ScannerEvents, ScannerInput } from '../lib/scanner/ScannerTypes';
+import { SbomMode, ScannerEvents, ScannerInput } from '../lib/scanner/ScannerTypes';
 import { ScannerCfg } from '../lib/scanner/ScannerCfg';
 import { Tree } from '../lib/tree/Tree';
 
@@ -11,7 +11,6 @@ import { FilterList } from '../lib/filters/filtering';
 import { isFolder } from './helpers';
 
 import fs from 'fs';
-
 
 
 export async function scanHandler(rootPath: string, options: any): Promise<void> {
@@ -81,6 +80,12 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
   });
 
   if (options.wfp) scannerInput.wfpPath = rootPath;
+
+  if (options.ignore) {
+    scannerInput.sbom = fs.readFileSync(options.ignore, 'utf-8');
+    scannerInput.sbomMode = SbomMode.SBOM_IGNORE
+  }
+
   await scanner.scan([scannerInput]);
 
 }

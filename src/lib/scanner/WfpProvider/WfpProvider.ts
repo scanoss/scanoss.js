@@ -2,7 +2,7 @@ import { Worker } from 'worker_threads';
 import { EventEmitter } from "stream";
 import { ScannerCfg } from "../ScannerCfg";
 import { ScannerEvents, ScannerInput, WinnowingMode } from "../ScannerTypes";
-import { FingerprintPacket } from "./FingerprintPacket";
+import { FingerprintPackage } from "./FingerprintPackage";
 
 
 export interface IWfpProviderInput {
@@ -46,7 +46,7 @@ export abstract class WfpProvider extends EventEmitter {
     }
 
     if (this.wfp.length + fingerprint.length >= this.scannerCfg.WFP_FILE_MAX_SIZE) {
-      this.sendFingerprint(new FingerprintPacket(this.wfp, this.folderRoot));
+      this.sendFingerprint(new FingerprintPackage(this.wfp, this.folderRoot));
       this.wfp = '';
     }
     this.wfp += fingerprint;
@@ -56,14 +56,14 @@ export abstract class WfpProvider extends EventEmitter {
   }
 
   protected finishWinnowing() {
-    if (this.wfp.length !== 0) this.sendFingerprint(new FingerprintPacket(this.wfp, this.folderRoot));
+    if (this.wfp.length !== 0) this.sendFingerprint(new FingerprintPackage(this.wfp, this.folderRoot));
     this.pendingFiles = false;
     this.emit(ScannerEvents.WINNOWING_FINISHED);
   }
 
 
-  protected sendFingerprint(fingerprintPacket: FingerprintPacket) {
-    this.emit(ScannerEvents.WINNOWING_NEW_CONTENT, fingerprintPacket);
+  protected sendFingerprint(fingerprintPackage: FingerprintPackage) {
+    this.emit(ScannerEvents.WINNOWING_NEW_CONTENT, fingerprintPackage);
   }
 
   protected sendLog(logMsg: string): void {
