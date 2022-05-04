@@ -33,10 +33,17 @@ export enum WinnowingMode {
   WINNOWING_ONLY_MD5 = 'WINNOWING_ONLY_MD5',
 };
 
+export enum SbomMode {
+  SBOM_IGNORE = 'blacklist',
+  SBOM_IDENTIFY = 'identify'
+}
+
 export interface ScannerInput {
-  engineFlags?: number;
-  folderRoot?: string;
   fileList: Array<string>;
+  folderRoot?: string;
+  engineFlags?: number;
   winnowingMode?: WinnowingMode;  // Enable winnowing algorithm, otherwise is scanned only MD5
   wfpPath?: string;
+  sbom?: string;
+  sbomMode?: SbomMode;
 };

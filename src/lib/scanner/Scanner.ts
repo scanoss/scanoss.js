@@ -15,14 +15,12 @@ import { ScannerEvents, ScannerInput } from './ScannerTypes';
 import sortPaths from 'sort-paths';
 
 import { WfpProvider } from './WfpProvider/WfpProvider';
-import { FingerprintPacket } from './WfpProvider/FingerprintPacket';
+import { FingerprintPackage } from './WfpProvider/FingerprintPackage';
 import { WfpCalculator } from './WfpProvider/WfpCalculator/WfpCalculator';
 import { WfpSplitter } from './WfpProvider/WfpSplitter/WfpSplitter';
 
 let finishPromiseResolve;
 let finishPromiseReject;
-
-
 
 export class Scanner extends EventEmitter {
   private scannerCfg: ScannerCfg;
@@ -88,12 +86,18 @@ export class Scanner extends EventEmitter {
   }
 
   setWinnowerListeners() {
-    this.wfpProvider.on(ScannerEvents.WINNOWING_NEW_CONTENT, (fingerprintPacket: FingerprintPacket) => {
-      this.emit(ScannerEvents.WINNOWING_NEW_CONTENT, fingerprintPacket);
+    this.wfpProvider.on(ScannerEvents.WINNOWING_NEW_CONTENT, (fingerprintPackage: FingerprintPackage) => {
+      this.emit(ScannerEvents.WINNOWING_NEW_CONTENT, fingerprintPackage);
       this.reportLog(`[ SCANNER ]: New WFP content`);
-      fingerprintPacket.setEngineFlags(this.scannerInput[0].engineFlags);
-      const disptItem = new DispatchableItem(fingerprintPacket);
-      this.dispatcher.dispatchItem(disptItem);
+
+      const item = new DispatchableItem();
+      item.setFingerprintPackage(fingerprintPackage);
+      if(this.scannerInput[0]?.engineFlags) item.setEngineFlags(this.scannerInput[0]?.engineFlags);
+
+      if(this.scannerInput[0]?.sbom && this.scannerInput[0]?.sbomMode)
+        item.setSbom(this.scannerInput[0]?.sbom, this.scannerInput[0]?.sbomMode);
+
+      this.dispatcher.dispatchItem(item);
     });
 
     this.wfpProvider.on(ScannerEvents.WINNOWER_LOG, (msg) => {
@@ -116,7 +120,7 @@ export class Scanner extends EventEmitter {
       this.wfpProvider.resume();
     });
 
-    this.dispatcher.on(ScannerEvents.DISPATCHER_NEW_DATA, async (response) => {
+    this.dispatcher.on(ScannerEvents.DISPATCHER_NEW_DATA, async (response: DispatcherResponse) => {
       this.processingNewData = true;
       this.processedFiles += response.getNumberOfFilesScanned();
       this.reportLog(`[ SCANNER ]: Received results of ${response.getNumberOfFilesScanned()} files`);
@@ -134,8 +138,8 @@ export class Scanner extends EventEmitter {
       }
     });
 
-    this.dispatcher.on(ScannerEvents.DISPATCHER_ITEM_NO_DISPATCHED, (disptItem) => {
-      const filesNotScanned = disptItem.getWinnowerResponse().getFilesWinnowed();
+    this.dispatcher.on(ScannerEvents.DISPATCHER_ITEM_NO_DISPATCHED, (disptItem: DispatchableItem) => {
+      const filesNotScanned = disptItem.getFingerprintPackage().getFilesFingerprinted();
       this.appendFilesToNotScanned(filesNotScanned);
     });
 
@@ -143,8 +147,8 @@ export class Scanner extends EventEmitter {
       this.reportLog(msg);
     });
 
-    this.dispatcher.on(ScannerEvents.ERROR, (error, disptItem) => {
-      const wfpContent = disptItem.getWinnowerResponse().getContent();
+    this.dispatcher.on(ScannerEvents.ERROR, (error: Error, disptItem: DispatchableItem) => {
+      const wfpContent = disptItem.getFingerprintPackage().getContent();
       fs.writeFileSync(`${this.workDirectory}/failed.wfp`, wfpContent, 'utf8');
       this.errorHandler(error, ScannerEvents.MODULE_DISPATCHER);
     });
