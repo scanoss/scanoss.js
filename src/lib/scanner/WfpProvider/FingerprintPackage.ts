@@ -1,7 +1,5 @@
-export class FingerprintPacket {
+export class FingerprintPackage {
   private wfpContent: string;
-
-  private engineFlags: number;
 
   private scanRoot: string;
 
@@ -10,20 +8,12 @@ export class FingerprintPacket {
     this.scanRoot = scanRoot;
   }
 
-  public isEqual(fingerprintPacket: FingerprintPacket): boolean {
-    return this.getContent() === fingerprintPacket.getContent();
+  public isEqual(fingerprintPackage: FingerprintPackage): boolean {
+    return this.getContent() === fingerprintPackage.getContent();
   }
 
   public getContent() {
     return this.wfpContent;
-  }
-
-  public setEngineFlags(engineFlags: number): void {
-    this.engineFlags = engineFlags;
-  }
-
-  public getEngineFlags(): number {
-    return this.engineFlags;
   }
 
   public getNumberFilesFingerprinted() {

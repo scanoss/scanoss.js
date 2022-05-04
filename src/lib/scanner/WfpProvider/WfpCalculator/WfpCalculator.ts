@@ -5,7 +5,7 @@ import { ScannableItem } from '../../Scannable/ScannableItem';
 import { ScannerCfg } from '../../ScannerCfg';
 import { ScannerEvents, ScannerInput, WinnowingMode } from '../../ScannerTypes';
 
-import { FingerprintPacket } from '../FingerprintPacket';
+import { FingerprintPackage } from '../FingerprintPackage';
 import { IWfpProviderInput, WfpProvider } from '../WfpProvider';
 
 
@@ -260,7 +260,7 @@ export class WfpCalculator extends WfpProvider {
 
   recoveryIndex() {
     // Files: contains all files winnowed but not packed yet
-    const files = new FingerprintPacket(this.wfp, this.folderRoot).getFilesFingerprinted();
+    const files = new FingerprintPackage(this.wfp, this.folderRoot).getFilesFingerprinted();
     if (files.length) {
       const lastFileWinnowed = files[files.length - 1];
       let i = 0;
@@ -284,7 +284,7 @@ export class WfpCalculator extends WfpProvider {
   }
 
   protected processPackedWfp(content) {
-    const fingerprint = new FingerprintPacket(content, this.folderRoot);
+    const fingerprint = new FingerprintPackage(content, this.folderRoot);
     this.sendFingerprint(fingerprint);
   }
 
