@@ -1,0 +1,16 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: scanoss.js
+Upstream-Contact: SCANOSS <info@scanoss.com>
+Source: https://github.com/scanoss/scanoss.js
+
+Files: src/*
+Copyright: 2021 SCANOSS <info@scanoss.com>
+License: MIT
+
+Files: test/*
+Copyright: 2021 SCANOSS <info@scanoss.com>
+License: CC0-1.0
+
+Files: *
+Copyright: 2021 SCANOSS <info@scanoss.com>
+License: MIT
