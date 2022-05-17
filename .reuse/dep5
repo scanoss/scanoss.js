@@ -10,3 +10,7 @@ License: MIT
 Files: test/*
 Copyright: 2021 SCANOSS <info@scanoss.com>
 License: CC0-1.0
+
+Files: *
+Copyright: 2021 SCANOSS <info@scanoss.com>
+License: MIT
