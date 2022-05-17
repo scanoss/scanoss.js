@@ -1,3 +1,12 @@
+<div align='center'>
+
+[![REUSE status](https://api.reuse.software/badge/github.com/scanoss/scanoss.js)](https://api.reuse.software/info/github.com/scanoss/scanoss.js)
+
+</div>
+
+
+
+
 # Scanoss JS Package
 
 The SCANOSS JS package provides a simple, easy to consume module for interacting with SCANOSS APIs/Engine.
