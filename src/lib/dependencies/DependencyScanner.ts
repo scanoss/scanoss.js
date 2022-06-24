@@ -26,9 +26,10 @@ export class DependencyScanner {
     const grpcResponse = await this.grpcDependencyService.get(request);
     const response = grpcResponse.toObject();
 
-
     // Extract scope from localDependencies and add it to response
-    this.mergeScopeField(localDependencies, response);
+    // Also adds the requirements field from localDependency to the response if the server didn't
+    // replay back a version
+    this.repairOutput(localDependencies, response);
     return response;
   }
 
@@ -71,27 +72,34 @@ export class DependencyScanner {
     }
   }
 
-  private mergeScopeField(localdependency: ILocalDependencies, serverResponse: DependencyResponse.AsObject
-    ): IDependencyResponse {
+  private repairOutput(localdependency: ILocalDependencies, serverResponse: DependencyResponse.AsObject) {
 
-    const scopeHashMap = {};
-
+    // Create a map with key = [filename + purl] and the value is an object containing:
+    // * The scope of the local dependency
+    // * The requirement of the local dependency
+    // Later this map is used to add information in the server response
+    const localDependencyInfo = {};
     for (const file of localdependency.files) {
       const filename = file.file
-      for (const dependency of file.purls) {
-        if (dependency?.scope) scopeHashMap[filename + dependency.purl] = dependency.scope;
+      for (const localDependency of file.purls) {
+        const localInfo = {}
+        if (localDependency?.scope) localInfo['scope'] = localDependency.scope
+        if(localDependency?.requirement) localInfo['requirement'] = localDependency.requirement
+        localDependencyInfo[filename + localDependency.purl] = localInfo;
       }
     }
 
     for (const file of serverResponse.filesList) {
       const filename = file.file
       for (const dependency of file.dependenciesList) {
-        const scope = scopeHashMap[filename + dependency.purl];
-        if (scope) dependency['scope'] = scope;
+        const localDependencyData = localDependencyInfo[filename + dependency.purl];
+        if (localDependencyData?.scope) dependency['scope'] = localDependencyData.scope;
+        if (localDependencyData?.requirement && dependency.version == "") {
+          dependency.version = localDependencyData.requirement;
+        }
       }
     }
-
-    return serverResponse;
   }
+
 
 }
