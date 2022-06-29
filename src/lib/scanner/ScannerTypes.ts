@@ -30,6 +30,7 @@ export enum ScannerEvents {
 
 export enum WinnowingMode {
   FULL_WINNOWING = 'FULL_WINNOWING',
+  FULL_WINNOWING_HPSM = 'FULL_WINNOWING_HPSM',
   WINNOWING_ONLY_MD5 = 'WINNOWING_ONLY_MD5',
 };
 

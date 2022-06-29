@@ -13,6 +13,7 @@
 
     "allowJs": true,
     "checkJs": false,
+    "noImplicitUseStrict": true,
 
     /* Debugging Options */
     "traceResolution": false /* Report module resolution log messages. */,
@@ -21,7 +22,7 @@
     "pretty": true /* Stylize errors and messages using color and context. */,
 
     "lib": ["es2017"],
-    "types": ["node"],
+    "types": ["mocha","node"],
     "typeRoots": ["node_modules/@types", "src/types"]
   },
   "include": ["./src" , "./src/**/*.ts", "./src/scanoss/*" ],

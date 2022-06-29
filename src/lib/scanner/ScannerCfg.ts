@@ -20,10 +20,11 @@ export class ScannerCfg {
 
   ABORT_ON_MAX_RETRIES = true;
 
-  // Persist results after [ X ] number of server responses.
+  // Persist results after [ X ] server responses
   MAX_RESPONSES_IN_BUFFER = 300;
 
   DISPATCHER_QUEUE_SIZE_MAX_LIMIT = 300;
 
   DISPATCHER_QUEUE_SIZE_MIN_LIMIT = 200;
+
 };
