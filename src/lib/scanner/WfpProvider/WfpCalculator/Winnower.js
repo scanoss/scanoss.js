@@ -1,5 +1,5 @@
-const crypto = require('crypto');
 const { crc8_MAXIM_DOW_GenerateTable, crc8_MAXIM_DOW_Buffer } = require('./crc8_maxim')
+const crypto = require('crypto');
 const isWin = process.platform === 'win32';
 const pathSeparator = isWin ? String.fromCharCode(92) : '/';
 
@@ -27,14 +27,6 @@ function normalize(byte) {
     return byte + 32;
   }
   return 0;
-}
-
-function normalize_line(line) {
-  let result = []
-  for (let c of line) {
-    result.push(normalize(c))
-  }
-  return result
 }
 
 function min_hex_array(array) {
@@ -189,11 +181,8 @@ function crc32c_hex(str) {
   return crc32c(str).toString(16).padStart(8, '0');
 }
 
-
-
 function truncate_string(input, maxSize){
-
-  return ""
+  return input.slice(0, maxSize)
 }
 
 function toHexString(byteArray) {
@@ -203,11 +192,8 @@ function toHexString(byteArray) {
 }
 
 function calc_hpsm(content) {
-
-
   let list_normalized = [];    //Array of numbers
   let crc_lines = [];  //Array of numbers that represent the crc8_maxim for each line of the file
-  let byte = 0;
 
   let last_line = 0;
   crc8_MAXIM_DOW_GenerateTable();
@@ -233,52 +219,44 @@ function calc_hpsm(content) {
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-Receives a wfp with the md5 line, a hpsm and joins both.
-
-Example:
-wfp = `file=508cb9dfbe1c7dca5ed24f124473f33d,300,asd.c
-        11=b19bdbfa
-        13=8fd738fa,b6f47c1e
-        `
-hpsm = `hpsm=1909ff06ff688630ff45a92b52f47eff3500ffff`
-
-wfp_hpsm = `file=508cb9dfbe1c7dca5ed24f124473f33d,300,asd.c
-            hpsm=1909ff06ff688630ff45a92b52f47eff3500ffff
-            11=b19bdbfa
-            13=8fd738fa,b6f47c1e`
+/**
+ * Create a wfp_hpsm package joining wfp (with md5 line) and a hpsm.
+ *
+ * Example:
+ * wfp = `file=508cb9dfbe1c7dca5ed24f124473f33d,300,asd.c
+ *         11=b19bdbfa
+ *         `
+ * hpsm = `hpsm=1909ff06ff688630ff45a92b52f47eff3500ffff`
+ *
+ * wfp_hpsm = `file=508cb9dfbe1c7dca5ed24f124473f33d,300,asd.c
+ *             hpsm=1909ff06ff688630ff45a92b52f47eff3500ffff
+ *             11=b19bdbfa
+ *
+ * @param {string} wfp Complete wfp string (with md5 line)
+ * @param {string} hpsm
+ * @returns {string}
  */
 function join_wfp_hpsm(wfp, hpsm) {
   let header = wfp.match(/file\=.*/);
   header += "\n";
   header += hpsm;
-  wfp.replace(/file\=.*/, "")
+  wfp = wfp.replace(/file\=.*/, "")
   return header + wfp;
 }
 
+/**
+ *
+ * @param {Buffer} content
+ * @param {string} contentSource
+ * @param {number} maxSize
+ * @returns {string}
+ */
 function wfp_hpsm_for_content(content, contentSource, maxSize) {
   let wfp = wfp_for_content(content, contentSource, maxSize)
-  let hpsm = calc_hpsm(content)
+  let hpsm = calc_hpsm(content)   //Returns a string
   let wfp_hpsm_joined = join_wfp_hpsm(wfp, hpsm)
-  return wfp_hpsm_joined
+  return truncate_string(wfp_hpsm_joined, maxSize)
 }
-
 
 function wfp_for_content(content, contentSource, maxSize) {
   let wfp = wfp_only_md5(content, contentSource);
@@ -292,54 +270,3 @@ function wfp_only_md5(contents, contentSource) {
   return wfp;
 }
 
-
-function test() {
-  let data = `typedef struct
-
-  unsigned long used_memory;
-
-  unsigned int uint_max;
-  unsigned long ulong_max;
-
-  json_settings settings;
-  int first_pass;
-
-  const json_char *ptr;
-  unsigned int cur_line, cur_col;
-
-} json_state;
-
-static void *default_alloc(size_t size, int zero, void *user_data)
-{
-  return zero ? calloc(1, size) : malloc(size);
-}
-
-static void default_free(void *ptr, void *user_data)
-{
-  free(ptr);
-}
-
-static void *json_alloc(json_state *state, unsigned long size, int zero)
-{
-  if ((state->ulong_max - state->used_memory) < size)
-    return 0;
-
-  if (state->settings.max_memory && (state->used_memory += size) > state->settings.max_memory)
-  {
-    return 0;
-  }
-
-  return state->settings.mem_alloc(size, zero, state->settings.user_data);
-}
-
-static int new_value(json_state *state,
-                     json_value **top, json_value **root, json_value **alloc,
-                     json_type type)
-
-`;
-
-  const a = wfp_hpsm_for_content(Buffer.from(data), "mock", 64*1024*1024)
-  console.log(a);
-}
-
-test()
