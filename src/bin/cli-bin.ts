@@ -23,6 +23,7 @@ async function main() {
     .command('scan <source>')
     .description('Scan a folder/file')
     .option('-w, --wfp', 'Scan a .wfp file instead of a folder')
+    .option('-H, --hpsm', 'Scan using winnowing high precision matching')
     .option('-c, --concurrency <number>', 'Number of concurrent connections to use while scanning (optional -default 10)')
     .option('-n, --ignore <ignore>',  'Ignore components specified in the SBOM file')
     .option('-f, --filter <path>', 'Loads an user defined filter (optional)')
@@ -51,6 +52,7 @@ async function main() {
     program
     .command('fingerprint <source>')
     .description('Generates fingerprints for a folder/file')
+    .option('-H, --hpsm', 'Scan using winnowing high precision matching')
     .option('-o, --output <filename>', 'Output result file name (optional - default stdout)')
     .option('-p, --block-size <size>', 'Maximum size in Kb for each fingerprint block (optional - default 64Kb)')
     .action((source, options) => {fingerprintHandler(source, options).catch((e) => {CLIErrorHandler(e)})})

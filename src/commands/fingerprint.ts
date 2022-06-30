@@ -1,11 +1,14 @@
-import { isFolder } from "./helpers";
-import { ScannerEvents, WfpCalculator } from "..";
-import { Tree } from "../lib/tree/Tree";
-import { FilterList } from "../lib/filters/filtering";
-import { FingerprintPackage } from "../lib/scanner/WfpProvider/FingerprintPackage";
+import { isFolder } from './helpers';
+import { ScannerEvents, WfpCalculator, WinnowingMode } from '..';
+import { Tree } from '../lib/tree/Tree';
+import { FilterList } from '../lib/filters/filtering';
+import {
+  FingerprintPackage
+} from '../lib/scanner/WfpProvider/FingerprintPackage';
 import fs from 'fs';
-import { defaultFilter } from "../lib/filters/defaultFilter";
+import { defaultFilter } from '../lib/filters/defaultFilter';
 import cliProgress from 'cli-progress';
+import { IWfpProviderInput } from '../lib/scanner/WfpProvider/WfpProvider';
 
 
 export async function fingerprintHandler(rootPath: string, options: any): Promise<void> {
@@ -15,14 +18,19 @@ export async function fingerprintHandler(rootPath: string, options: any): Promis
   const pathIsFolder = await isFolder(rootPath);
   const wfpCalculator = new WfpCalculator();
 
-  const tree = new Tree(rootPath);
-  const filter = new FilterList('');
-  filter.load(defaultFilter as FilterList);
+  let filesToFingerprint: string[] = [];
+  if (pathIsFolder) {
+    const tree = new Tree(rootPath);
+    const filter = new FilterList('');
+    filter.load(defaultFilter as FilterList);
 
-  tree.loadFilter(filter);
-  tree.buildTree();
+    tree.loadFilter(filter);
+    tree.buildTree();
+    filesToFingerprint = tree.getFileList();
+  } else {
+    filesToFingerprint.push(rootPath)
+  }
 
-  const filesToFingerprint = tree.getFileList();
 
   const optBar1 = { format: 'Fingerprinting Progress: [{bar}] {percentage}% | Fingerprinted {value} files of {total}' };
   const bar1 = new cliProgress.SingleBar(optBar1, cliProgress.Presets.shades_classic);
@@ -48,8 +56,9 @@ export async function fingerprintHandler(rootPath: string, options: any): Promis
     }
   });
 
-
-  wfpCalculator.start({fileList: filesToFingerprint, folderRoot: rootPath});
+  const wfpInput: IWfpProviderInput = {fileList: filesToFingerprint, folderRoot: rootPath}
+  if(options.hpsm) wfpInput.winnowingMode = WinnowingMode.FULL_WINNOWING_HPSM;
+  wfpCalculator.start(wfpInput);
 
 
 }

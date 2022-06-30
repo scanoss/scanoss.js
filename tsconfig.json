@@ -26,6 +26,6 @@
     "typeRoots": ["node_modules/@types", "src/types"]
   },
   "include": ["./src" , "./src/**/*.ts", "./src/scanoss/*" ],
-  "exclude": ["node_modules"],
+  "exclude": ["node_modules", "tests/data/*"],
   "compileOnSave": false
 }
