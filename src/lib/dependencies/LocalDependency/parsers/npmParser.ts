@@ -16,7 +16,6 @@ export function packageParser(fileContent: string, filePath: string): ILocalDepe
     const o = JSON.parse(fileContent);
     let devDeps = Object.keys(o.devDependencies || {});
     let deps = Object.keys(o.dependencies || {});
-    let listDeps = [...deps, ...devDeps];
 
     for(const name of deps){
         const purlString = new PackageURL(PURL_TYPE, undefined, name, undefined, undefined, undefined).toString();
@@ -34,18 +33,27 @@ export function packageParser(fileContent: string, filePath: string): ILocalDepe
 
 // Parse a package-lock.json file from node projects
 // See reference on: https://docs.npmjs.com/cli/v8/configuring-npm/package-json
-const MANIFEST_FILE_1 = 'package-lock.json';
 export function packagelockParser(fileContent: string, filePath: string): ILocalDependency {
 
     const results: ILocalDependency = {file: filePath, purls: []};
-    if(path.basename(filePath) != MANIFEST_FILE_1)
+
+    if(path.basename(filePath) != 'package-lock.json')
         return results;
 
-    const o = JSON.parse(fileContent).dependencies;
-    for (const [key, value] of Object.entries(o)) {
+    const packages = JSON.parse(fileContent)?.packages;
+
+    if(!packages) return results;
+
+    for (const [key, value] of Object.entries(packages)) {
         if(!key) continue;
-        let purl = new PackageURL(PURL_TYPE, undefined, key,value['version'], undefined, undefined).toString();
-        results.purls.push({purl});
+
+        const keySplit = key.split("/")
+        const depName = keySplit[keySplit.length-1]
+
+        let purl = new PackageURL(PURL_TYPE, undefined, depName,undefined, undefined, undefined).toString();
+        let req = value['version'];
+        results.purls.push({purl: purl, requirement: req});
     }
+
     return results;
 }
