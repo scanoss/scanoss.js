@@ -139,7 +139,7 @@ describe('Suit test for go sum parser', function() {
     for (const test of tests) {
       const fileContent = fs.readFileSync(test.inputPath,  {encoding:'utf-8'});
       const result = goSumParser(fileContent, 'go.sum');
-      expect(test.expectedResult).to.deep.equal(result)
+      expect(result).to.deep.equal(test.expectedResult)
     }
   });
 

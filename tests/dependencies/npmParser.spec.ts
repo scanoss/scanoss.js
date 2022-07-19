@@ -1,5 +1,8 @@
 import fs from 'fs'
-import { packagelockParser } from '../../src/lib/dependencies/LocalDependency/parsers/npmParser'
+import {
+  packagelockParser,
+  yarnLockParser
+} from '../../src/lib/dependencies/LocalDependency/parsers/npmParser';
 import { ILocalDependency } from '../../src/lib/dependencies/LocalDependency/DependencyTypes'
 import { expect } from 'chai';
 
@@ -105,3 +108,16 @@ describe('Suit test for package lock parser', function() {
 });
 
 
+// Command used to generate the expected output
+// scancode --json-pp - --package yarn.lock | jq -c '.files[0].packages[0].dependencies[] | { "purl": .purl , "requirement": .requirement }'
+describe('Suit test for yarn lock files', function() {
+
+  it('Testing yarn lock file v1', function() {
+    const expectedOutput = fs.readFileSync('./tests/data/dependencies/yarn-lock/v1/yarn.lock-expected', 'utf-8')
+    const yarnLock = fs.readFileSync('./tests/data/dependencies/yarn-lock/v1/yarn.lock', 'utf-8')
+    const results = yarnLockParser(yarnLock, 'yarn.lock');
+
+    expect(expectedOutput).to.be.deep.equal(results)
+  });
+
+});

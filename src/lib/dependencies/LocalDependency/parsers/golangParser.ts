@@ -118,7 +118,8 @@ export function goSumParser(fileContent: string, filePath: string): ILocalDepend
 
     if (!name) continue
 
-    const purlString = new PackageURL(PURL_TYPE, namespace, name, undefined, undefined, undefined).toString();
+    //const purlString = new PackageURL(PURL_TYPE, namespace, name, undefined, undefined, undefined).toString();
+    const purlString = `pkg:${PURL_TYPE}/${namespace}/${name}`
     results.purls.push({purl: purlString, requirement: version})
   }
 
