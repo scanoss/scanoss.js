@@ -118,11 +118,23 @@ export function yarnLockV1Parser(fileContent: string, filePath: string): ILocalD
 
   for (const yl_dependency of yl_dependencies) {
 
-    // Clean comments and empty lines
+
+
+    const dependencyData: Record<string, string> = {}
+    const topRequirements = [];
 
     const dep_lines = yl_dependency.split("\n");
+    if (dep_lines.every((line) =>  line.trim().startsWith("#") == true)) continue //All lines are coments
+    if (dep_lines.every((line) =>  line.trim() == "")) continue  //All lines are empty lines
+
     for (const dep_line of dep_lines) {
 
+      // Clean comments and empty lines
+      const trimmed = dep_line.trim();
+      const comment = trimmed.startsWith('#');
+      if (!trimmed || comment) continue
+
+      // Do nothing with it's own dependencies
       //    "@babel/code-frame" "^7.0.0"
       //    "@babel/generator" "^7.3.4"
       if (dep_line.startsWith(' '.repeat(4))) {}
@@ -132,17 +144,67 @@ export function yarnLockV1Parser(fileContent: string, filePath: string): ILocalD
       //  integrity sha512-jRsuseXBo9pN197KnDwhhaaBzyZr2oIcLHHTt2oDdQrej5Qp57dCCJafWx5ivU8/alEYDpssYqv1MUqcxwQlrA==
       //  dependencies:
       else if (dep_line.startsWith(' '.repeat(2))) {
-
+        const dep = trimmed.split(" ")
+        const key = dep[0].trim();
+        if (key !== "dependencies:") {
+          dependencyData[key] = dep[1].replace(/"|'/g, "");
+        }
       }
 
+      // the first line of a dependency has the name and requirements
       //"@babel/core@^7.1.0", "@babel/core@^7.3.4":
       else if (!dep_line.startsWith(' ')){
+        const dep = dep_line.replace(/:/g, "").split(",");
+        const requirements = dep.map(line => line.trim().replace(/"|'/g, ""));
+
+        for (const req of requirements) {
+          let constraint = req.split("@").pop()  // gets ^7.1.0
+          constraint = constraint.replace(/"|'/g, "");
+
+          const ns_name = req.split("@")[0]  //@babel/core
+
+          let ns = '';
+          let name = ns_name;
+          if (ns_name.includes("/")) {
+            ns = ns_name.split("/").pop();
+            name = ns_name.split("/")[0];
+          }
+
+          topRequirements.push({constraint: constraint, ns: ns, name: name });
+        }
 
       }
+
 
     }
 
+    //Make sure that name and namespace are equal for the same dependency
+    const isNsNameEqual = topRequirements.every((topRequirement) => {
+      return topRequirement.ns === topRequirements[0].ns && topRequirement.name === topRequirements[0].name
+    });
+
+    if (!isNsNameEqual) {
+      console.error("Different names for same dependency is not supported")
+      continue
+    }
+    const topRequirement = topRequirements[0];
+    const namespace = topRequirement.ns;
+    const name = topRequirement.name;
+    const version = dependencyData['version'];
+    const purl = new PackageURL(PURL_TYPE, namespace, name, version, undefined, undefined).toString()
+
+    let requirement = ''
+    for (const topRequirement of topRequirements) {
+      requirement += topRequirement.constraint + ", "
+    }
+    if (requirement.endsWith(", ")) {
+      requirement = requirement.slice(0, requirement.length-2)
+    }
+
+    results.purls.push({purl: purl, requirement: requirement})
+
   }
+
 
   return results;
 
