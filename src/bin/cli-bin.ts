@@ -16,7 +16,7 @@ function CLIErrorHandler(e: Error) {
 
 async function main() {
   program
-    .version("0.2.3")
+    .version("0.3.0")
     .description('The SCANOSS JS package provides a simple, easy to consume module for interacting with SCANOSS APIs/Engine.')
 
   program
