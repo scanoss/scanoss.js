@@ -12,7 +12,7 @@ export class FingerprintPackage {
     return this.getContent() === fingerprintPackage.getContent();
   }
 
-  public getContent() {
+  public getContent(): string {
     return this.wfpContent;
   }
 
