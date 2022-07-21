@@ -3,9 +3,13 @@ import fs from 'fs';
 import { ParserFuncType, ILocalDependencies } from "./DependencyTypes";
 import { requirementsParser } from "./parsers/pyParser";
 import { pomParser } from "./parsers/mavenParser";
-import { packagelockParser, packageParser } from "./parsers/npmParser";
+import {
+  packagelockParser,
+  packageParser,
+  yarnLockParser
+} from './parsers/npmParser';
 import { gemfilelockParser, gemfileParser } from "./parsers/rubyParser";
-import { goModParser } from './parsers/golangParser';
+import { goModParser, goSumParser } from './parsers/golangParser';
 
 export class LocalDependencies {
 
@@ -24,6 +28,8 @@ export class LocalDependencies {
         'Gemfile': gemfileParser,
         'Gemfile.lock': gemfilelockParser,
         'go.mod': goModParser,
+        'go.sum': goSumParser,
+        'yarn.lock': yarnLockParser
       };
   }
 

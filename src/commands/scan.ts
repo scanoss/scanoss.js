@@ -1,10 +1,17 @@
 import { Scanner } from '../lib/scanner/Scanner';
-import { SbomMode, ScannerEvents, ScannerInput } from '../lib/scanner/ScannerTypes';
+import {
+  SbomMode,
+  ScannerEvents,
+  ScannerInput,
+  WinnowingMode
+} from '../lib/scanner/ScannerTypes';
 import { ScannerCfg } from '../lib/scanner/ScannerCfg';
 import { Tree } from '../lib/tree/Tree';
 
 import cliProgress from 'cli-progress';
-import { DispatcherResponse } from '../lib/scanner/Dispatcher/DispatcherResponse';
+import {
+  DispatcherResponse
+} from '../lib/scanner/Dispatcher/DispatcherResponse';
 import { defaultFilter } from '../lib/filters/defaultFilter';
 import { FilterList } from '../lib/filters/filtering';
 
@@ -80,6 +87,7 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
   });
 
   if (options.wfp) scannerInput.wfpPath = rootPath;
+  if (options.hpsm) scannerInput.winnowingMode = WinnowingMode.FULL_WINNOWING_HPSM
 
   if (options.ignore) {
     scannerInput.sbom = fs.readFileSync(options.ignore, 'utf-8');
