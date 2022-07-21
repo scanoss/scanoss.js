@@ -158,16 +158,20 @@ export function yarnLockV1Parser(fileContent: string, filePath: string): ILocalD
         const requirements = dep.map(line => line.trim().replace(/"|'/g, ""));
 
         for (const req of requirements) {
-          let constraint = req.split("@").pop()  // gets ^7.1.0
+
+          const atIndex = req.lastIndexOf("@")
+
+          let constraint = req.slice(atIndex+1)  // gets ^7.1.0
           constraint = constraint.replace(/"|'/g, "");
 
-          const ns_name = req.split("@")[0]  //@babel/core
+          const ns_name = req.slice(0, atIndex)
 
           let ns = '';
           let name = ns_name;
           if (ns_name.includes("/")) {
-            ns = ns_name.split("/").pop();
-            name = ns_name.split("/")[0];
+            const slashIndex = req.lastIndexOf("/")
+            ns = ns_name.slice(0,slashIndex);
+            name = ns_name.slice(slashIndex+1)
           }
 
           topRequirements.push({constraint: constraint, ns: ns, name: name });
