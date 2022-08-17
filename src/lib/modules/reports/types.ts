@@ -2,8 +2,8 @@ export interface IReportEntry{
   resultPath: string,
   dependencyPath?: string,
   vulnerabilityPath?: string,
-  outputPath: string,
-  templatePath: string,
+  basePath: string,
+  templatePath?: string,
 }
 
 export interface ILicenses{
@@ -44,6 +44,7 @@ export interface ISaveResponse{
   status: SaveStatus,
   path: string,
   format: string,
+  message?:string;
 }
 
 export enum SaveStatus {
