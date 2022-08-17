@@ -3,34 +3,34 @@ import {
   IReportData,
   IReportEntry,
   ISaveResponse,
-  SaveStatus
+  SaveStatus, Summary
 } from './types';
 import { ReportAdapter } from './ReportAdapter';
 const fs = require('fs').promises;
 const f = require('fs');
 const path = require('path')
 
-
 export const reportDefaultPath = {
-  html:'src/lib/modules/reports/htmlReport/template.html'
+  html:'./src/lib/modules/reports/htmlReport/template.html'
 }
 
 export abstract class Report{
-  private resultPath: string;
-  private dependenciesPath : string;
+  private readonly resultPath: string;
+  private readonly dependenciesPath : string;
   private vulnerabilitiesPath: string;
-  private readonly basePath: string;
+  private readonly outputPath: string;
   private licenseMapper :Record<string, ILicenses> = {};
   private fileExtension: string;
+  private summary : Summary;
 
-
-protected constructor(params: IReportEntry) {
-  this.resultPath = params.resultPath;
-  this.dependenciesPath = params.dependencyPath? params.dependencyPath : null;
-  this.vulnerabilitiesPath = params.vulnerabilityPath? params.vulnerabilityPath : null;
-  this.basePath = params.basePath;
-  this.fileExtension = null;
-}
+  protected constructor(params: IReportEntry) {
+    this.resultPath = params.resultPath;
+    this.dependenciesPath = params.dependencyPath? params.dependencyPath : null;
+    this.vulnerabilitiesPath = params.vulnerabilityPath? params.vulnerabilityPath : null;
+    this.outputPath = params.outputPath;
+    this.fileExtension = null;
+    this.summary = { matchedFiles:0, noMatchFiles:0, totalFiles:0 };
+  }
 
   public abstract generate();
 
@@ -42,24 +42,18 @@ protected constructor(params: IReportEntry) {
 
   protected async save(file: string, fileName:string, folder:string) :Promise<ISaveResponse> {
     try {
-      let stat = await fs.stat(`${this.basePath}`);
-      if(stat.isDirectory()) {
-        if (!f.existsSync(`${this.basePath}/${folder}`)) {
-          await fs.mkdir(`${this.basePath}/${folder}`);
-        }
-        await fs.writeFile(`${this.basePath}/${folder}/${fileName}`, file);
+        await fs.writeFile(this.outputPath, file);
         return {
           status: SaveStatus.OK,
-          path: `${this.basePath}${folder}/${fileName}`,
-          format: path.extname(`${this.basePath}/${folder}/${fileName}`),
+          path: this.outputPath,
+          format: path.extname(this.outputPath),
         };
-      }
     }
     catch (error:any){
       return {
         status: SaveStatus.FAILED,
-        path: this.basePath,
-        format: path.extname(this.basePath),
+        path: this.outputPath,
+        format: path.extname(this.outputPath),
         message: error.message
       };
     }
@@ -70,41 +64,30 @@ protected constructor(params: IReportEntry) {
     return data;
   }
 
-  public async getReportData(): Promise<IReportData>{
+  public async getReportData(): Promise<IReportData> {
     const reportAdapter = new ReportAdapter(this);
     const results = await this.readFile(this.resultPath);
-    reportAdapter.getResultLicenses(JSON.parse(results));
-  if(this.dependenciesPath){
-    const dependencies = await this.readFile(this.dependenciesPath);
-    reportAdapter.getDependenciesLicenses(JSON.parse(dependencies).filesList);
+    const r =  JSON.parse(results);
+    reportAdapter.getResultLicenses(r);
+    this.summary.totalFiles = reportAdapter.getTotalFiles(r);
+    if (this.dependenciesPath) {
+      const dependencies = await this.readFile(this.dependenciesPath);
+      reportAdapter.getDependenciesLicenses(JSON.parse(dependencies).filesList);
+    }
+    const licenses =  Object.values((this.licenseMapper));
+    reportAdapter.checkForIncompatibilities(licenses);
+    return {
+      licenses,
+      summary: this.summary,
+    }
   }
-  return {
-    licenses: Object.values((this.licenseMapper)),
-    summary: {
-      summary: {
-        matchFiles: 0,
-        noMatchFiles: 0,
-        filterFiles: 0,
-        totalFiles: 0,
-      },
-      identified: {
-        scan: 0,
-        total:0,
-      },
-      pending: 0,
-      original: 0,
-  }
-  }
-}
 
-public getLicenseMapper(): Record<string,ILicenses>{
+  public getLicenseMapper(): Record<string,ILicenses>{
     return this.licenseMapper;
-}
+  }
 
-
-
-
-
-
+  public getSummary() : Summary{
+    return this.summary;
+  }
 
 }

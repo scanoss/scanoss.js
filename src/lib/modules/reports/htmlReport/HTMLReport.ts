@@ -9,10 +9,10 @@ const path = require('path')
 
 export class HTMLReport extends Report{
     private html: string;
-    private htmlTemplatePath: string;
-    private extension : string;
-    private fileName : string;
-    private folder: string;
+    private readonly htmlTemplatePath: string;
+    private readonly extension : string;
+    private readonly fileName : string;
+    private readonly folder: string;
 
     constructor(params: IReportEntry) {
       super(params);
@@ -34,8 +34,7 @@ export class HTMLReport extends Report{
       if(!this.validTemplateExtension()) throw new Error('Invalid template extension');
         let html = (await this.readFile(this.htmlTemplatePath)).toString();
         if(!html) throw new Error('Invalid template path');
-        html = html.replace('#DATA',JSON.stringify(reportData.licenses));
-        html = html.replace('#SUMMARY', JSON.stringify(reportData.summary));
+        html = html.replace('#DATA',JSON.stringify(reportData));
         this.html = html;
     }
 

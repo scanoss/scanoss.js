@@ -498,7 +498,6 @@
                 licenseNameP.innerText = key;
                 licenseName.appendChild(licenseNameP);
                 licenseLabel.appendChild(licenseName);
-
                 licenseRefContainer.appendChild(colourRefLicenseContainer);
                 licenseRefContainer.appendChild(licenseLabel);
 
@@ -546,7 +545,6 @@
 
         function insertLicenseDetailRow() {
             const bodyLicenseTable = document.querySelector('#body-license-detail-table');
-
             let counter = 0;
             Object.keys(rowDataTable).forEach((key) => {
                 const tr = document.createElement('tr');

@@ -2,39 +2,27 @@ export interface IReportEntry{
   resultPath: string,
   dependencyPath?: string,
   vulnerabilityPath?: string,
-  basePath: string,
-  templatePath?: string,
+  outputPath: string,
+  templatePath?: string
 }
 
 export interface ILicenses{
   label: string,
   value: number;
   components: Array<Component>;
+  incompatibleWith: Array<string>;
+  hasIncompatibles: Array<string>;
 }
 
-export interface ISummary {
-  summary: {
-    matchFiles: number;
-    noMatchFiles: number;
-    filterFiles: number;
-    totalFiles: number;
-  };
-  identified: {
-    scan: number;
-    total: number;
-  };
-  pending: number;
-  original: number;
-}
 
 export interface IReportData {
   licenses: Array<ILicenses>;
-  summary: ISummary;
+  summary: Summary;
 }
 
 export interface Component {
   purl:string,
-  version: string,
+  versions: Array<string>,
   url:string,
   name:string,
   vendor:string,
@@ -50,4 +38,10 @@ export interface ISaveResponse{
 export enum SaveStatus {
   OK,
   FAILED
+}
+
+export interface Summary {
+  matchedFiles: number;
+  noMatchFiles: number;
+  totalFiles:number;
 }
