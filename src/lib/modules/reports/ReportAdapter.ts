@@ -17,20 +17,20 @@ private report: Report;
                 purl: v.purl[0],
                 vendor: v.vendor,
                 version: v.version,
-                name: v.name,
+                name: v.component,
                 url: v.url,
               };
-              if(!this.report.getData().licenses[l.name]) {
-                this.report.getData().licenses[l.name] = {
+              if(!this.report.getLicenseMapper()[l.name]) {
+                this.report.getLicenseMapper()[l.name] = {
                   value: 1,
                   label: l.name,
                   components: [component]
                 };
               }else {
-                const componentIndex =  this.report.getData().licenses[l.name].components.findIndex((c)=> c.purl === v.purl[0] && c.version === v.version );
+                const componentIndex =  this.report.getLicenseMapper()[l.name].components.findIndex((c)=> c.purl === v.purl[0] && c.version === v.version );
                 if(componentIndex<0) {
-                  this.report.getData().licenses[l.name].components.push(component);
-                  this.report.getData().licenses[l.name].value = this.report.getData().licenses[l.name].value + 1;
+                  this.report.getLicenseMapper()[l.name].components.push(component);
+                  this.report.getLicenseMapper()[l.name].value = this.report.getLicenseMapper()[l.name].value + 1;
                 }
               }
             });
@@ -53,18 +53,17 @@ private report: Report;
               url: ''
             };
             if (l.name !== '') {
-              if (!this.report.getData().licenses[l.name]) {
-                this.report.getData().licenses[l.name] = {
+              if (!this.report.getLicenseMapper()[l.name]) {
+                this.report.getLicenseMapper()[l.name] = {
                   label: l.name,
                   value: 1,
                   components: [component],
                 }
               } else {
-                console.log(d.purl);
-                const componentIndex = this.report.getData().licenses[l.name].components.findIndex((c) => c.purl === d.purl && c.version === d.version);
+                const componentIndex = this.report.getLicenseMapper()[l.name].components.findIndex((c) => c.purl === d.purl && c.version === d.version);
                 if (componentIndex < 0) {
-                  this.report.getData().licenses[l.name].components.push(component);
-                  this.report.getData().licenses[l.name].value = this.report.getData().licenses[l.name].value + 1;
+                  this.report.getLicenseMapper()[l.name].components.push(component);
+                  this.report.getLicenseMapper()[l.name].value = this.report.getLicenseMapper()[l.name].value + 1;
                 }
               }
             }
