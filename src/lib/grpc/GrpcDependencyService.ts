@@ -1,6 +1,6 @@
 import * as grpc from '@grpc/grpc-js';
 import { DependenciesClient } from './scanoss/api/dependencies/v2/scanoss-dependencies_grpc_pb';
-import * as DependenciesMessages from './scanoss/api/dependencies/v2/scanoss-dependencies_pb.js';
+import * as DependenciesMessages from './scanoss/api/dependencies/v2/scanoss-dependencies_pb';
 import * as CommonMessages from './scanoss/api/common/v2/scanoss-common_pb'
 
 export class GrpcDependencyService {

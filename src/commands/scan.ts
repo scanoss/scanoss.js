@@ -18,6 +18,10 @@ import { FilterList } from '../lib/filters/filtering';
 import { isFolder } from './helpers';
 
 import fs from 'fs';
+import { DependencyScannerCfg } from '../lib/dependencies/DependencyScannerCfg';
+import { DependencyScanner } from '../lib/dependencies/DependencyScanner';
+import { IDependencyResponse } from '../lib/dependencies/DependencyTypes';
+import os from 'os';
 
 
 export async function scanHandler(rootPath: string, options: any): Promise<void> {
@@ -27,6 +31,12 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
   rootPath = rootPath.replace(/\/$/, '');  // Remove trailing slash if exists
   rootPath = rootPath.replace(/^\./, process.env.PWD);  // Convert relative path to absolute path.
   const pathIsFolder = await isFolder(rootPath);
+
+  // Create dependency scanner and set parameters
+  const dependencyScannerCfg = new DependencyScannerCfg();
+  if (options.grpcHost) dependencyScannerCfg.DEFAULT_GRPC_HOST = options.api2url;
+  const dependencyScanner = new DependencyScanner(dependencyScannerCfg);
+
 
   // Create scanner and set connections parameters
   const scannerCfg = new ScannerCfg();
@@ -79,13 +89,6 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
     scanner.on(ScannerEvents.SCANNER_LOG, (logText) => console.error(logText));
   }
 
-  scanner.on(ScannerEvents.SCAN_DONE, async (resultPath) => {
-    if(options.output)
-      await fs.promises.copyFile(resultPath, options.output);
-    else
-      console.log(await fs.promises.readFile(resultPath, 'utf8'));
-  });
-
   if (options.wfp) scannerInput.wfpPath = rootPath;
   if (options.hpsm) scannerInput.winnowingMode = WinnowingMode.FULL_WINNOWING_HPSM
 
@@ -94,7 +97,42 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
     scannerInput.sbomMode = SbomMode.SBOM_IGNORE
   }
 
-  await scanner.scan([scannerInput]);
+
+
+  // Dependency scanner
+  let pDependencyScanner = Promise.resolve(<IDependencyResponse>{});
+  if (options.dependencies) {
+    pDependencyScanner = dependencyScanner.scan(scannerInput.fileList);
+  }
+
+  //Launch parallel scanners
+  const pScanner = scanner.scan([scannerInput]);
+
+  const [scannerResultPath, depResults] = await Promise.all([pScanner, pDependencyScanner])
+  const scannerResults = JSON.parse(await fs.promises.readFile(scannerResultPath, 'utf-8'));
+
+
+  const scannersResults = {
+    scanner: scannerResults,
+    ...(options.dependencies && {dependencies: depResults})
+  };
+
+  let scannerResultsString = JSON.stringify(scannersResults, null, 2);
+
+  if (options.format === "HTML") {
+    // scannerResultPath
+    // save dependency analizys to os.tmpdir()
+    // call report module
+    scannerResultsString = "<p>Hello</p>";
+  }
+
+  if(options.output)
+    await fs.promises.writeFile(options.output, scannerResultsString)
+  else
+    console.log(scannerResultsString);
+
+
+
 
 }
 
