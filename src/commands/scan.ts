@@ -22,6 +22,9 @@ import { DependencyScannerCfg } from '../lib/dependencies/DependencyScannerCfg';
 import { DependencyScanner } from '../lib/dependencies/DependencyScanner';
 import { IDependencyResponse } from '../lib/dependencies/DependencyTypes';
 import os from 'os';
+import { Report } from '../lib/modules/reports/Report';
+import { IReportEntry } from '../lib/modules/reports/types';
+import { HTMLReport } from '../lib/modules/reports/htmlReport/HTMLReport';
 
 
 export async function scanHandler(rootPath: string, options: any): Promise<void> {
@@ -119,11 +122,23 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
 
   let scannerResultsString = JSON.stringify(scannersResults, null, 2);
 
+  // path result.json: scannerResultPath
+  // dependencyResult (JSON):
   if (options.format === "HTML") {
-    // scannerResultPath
+
     // save dependency analizys to os.tmpdir()
-    // call report module
-    scannerResultsString = "<p>Hello</p>";
+    const depPath = `${os.tmpdir()}/scanoss-dependency.json`
+    await fs.promises.writeFile(depPath, JSON.stringify(depResults, null, 2));
+
+    const ReportEntry: IReportEntry = {
+      resultPath: scannerResultPath,
+      dependencyPath: depPath,
+      outputPath: "",
+    }
+
+    const HTML = new HTMLReport(ReportEntry);
+    scannerResultsString = await HTML.generate();
+
   }
 
   if(options.output)
