@@ -11,7 +11,7 @@ const f = require('fs');
 const path = require('path')
 
 export const reportDefaultPath = {
-  html:'./src/lib/modules/reports/htmlReport/template.html'
+  html: path.join(__dirname,"../../../../../assets/htmlTemplate/template.html")
 }
 
 export abstract class Report{
