@@ -20,8 +20,9 @@ private report: Report;
                 this.report.getLicenseMapper()[l.name] = {
                   value: 1,
                   label: l.name,
+                  copyleft: l.copyleft === 'yes' ? true : false,
                   hasIncompatibles: [],
-                  incompatibleWith:  l.incompatible_with!== undefined ? l.incompatible_with.split(',') : [] ,
+                  incompatibleWith:  l.incompatible_with!== undefined ? l.incompatible_with.split(',').map(il=> il.trim()) : [] ,
                   components: [component]
                 };
               }else {
@@ -51,6 +52,7 @@ private report: Report;
                 this.report.getLicenseMapper()[l.name] = {
                   label: l.name,
                   value: 1,
+                  copyleft: false,
                   hasIncompatibles: [],
                   incompatibleWith: [],
                   components: [component],
