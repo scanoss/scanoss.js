@@ -79,6 +79,7 @@ export abstract class Report{
     return {
       licenses,
       summary: this.summary,
+      date: new Date().toUTCString(),
     }
   }
 

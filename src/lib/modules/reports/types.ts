@@ -19,6 +19,7 @@ export interface ILicenses{
 export interface IReportData {
   licenses: Array<ILicenses>;
   summary: Summary;
+  date: string,
 }
 
 export interface Component {
@@ -44,5 +45,5 @@ export enum SaveStatus {
 export interface Summary {
   matchedFiles: number;
   noMatchFiles: number;
-  totalFiles:number;
+  totalFiles: number;
 }
