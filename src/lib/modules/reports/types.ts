@@ -12,6 +12,7 @@ export interface ILicenses{
   components: Array<Component>;
   incompatibleWith: Array<string>;
   hasIncompatibles: Array<string>;
+  copyleft:boolean;
 }
 
 
