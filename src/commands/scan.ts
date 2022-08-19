@@ -124,7 +124,7 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
 
   // path result.json: scannerResultPath
   // dependencyResult (JSON):
-  if (options.format === "HTML") {
+  if (options.format.toLowerCase() === "html") {
 
     // save dependency analizys to os.tmpdir()
     const depPath = `${os.tmpdir()}/scanoss-dependency.json`
