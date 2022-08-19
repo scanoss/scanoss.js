@@ -2,442 +2,498 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-  <title>Report</title>
+    <title>Report</title>
 </head>
 
 <style>
-  body {
-    background-color: #f5f5f5a1;
-  }
 
-  header {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    body{
+        max-width: 1300px;
+        margin: 0 auto;
+    }
 
-  }
+    header {
+        display: flex;
+        flex-direction: column;
+    }
 
-  h1 {
-    margin-top: 1%;
-    margin-bottom: 1%;
-    text-align: center;
-  }
+    .header-container{
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
+        width: 100%;
+        margin-left: 4px;
+    }
 
-  h3 {
-    margin-top: 1%;
-    text-align: center;
-  }
+    img{
+        height: 85px;
+    }
 
-  .identification-progress-title {
-    margin-top: 1.2%
-  }
+    h1 {
+        margin-bottom: 1%;
+        text-align: center;
+        color: #656df1;
+    }
 
-  .divider {
-    border-bottom: 1px solid #b5b5b5ab;
-    text-align: center;
-    width: 90%;
-  }
+    h3 {
+        margin-top: 1%;
+        text-align: center;
+        color: #656df1;
+    }
 
-  .main-container {
-    width: 100%;
-    height: 800px;
-    margin-top: 1%;
-  }
+    #date{
+        margin-top: 0;
+        color: darkgray;
+        font-size: 14px;
+    }
 
-  .progress-bar-container {
-    margin-top: 1%;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 2%;
-  }
+    .identification-progress-title {
+        margin-top: 1.2%
+    }
 
-  .main-content-info-container {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 700px;
-    padding-bottom: 4%;
-    padding-top: 7%;
-  }
+    .divider {
+        border-bottom: 1px solid #b5b5b5ab;
+        text-align: center;
+        width: 100%;
+    }
 
-  .main-container-left {
-    display: flex;
-    flex-direction: column;
-    width: 45%;
-    height: 700px;
-  }
+    .main-container {
+        width: 100%;
+        height: 800px;
+        margin-top: 1%;
+    }
 
-  .main-container-right {
-    display: flex;
-    flex-direction: column;
-    width: 55%;
-    height: 700px;
-    border-left: 1px solid #e7e6e6ab;
-  }
+    .progress-bar-container {
+        margin-top: 1%;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 2%;
+    }
 
-  .license-table-container {
-    width: 100%;
-    height: 700px;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: flex-start;
-    padding-left: 4%;
-    padding-right: 7%;
-  }
-
-  .pie-chart-container {
-    width: 100%;
-    height: 330px;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    padding-top: 5px;
-    padding-bottom: 5px;
-
-  }
-
-  .table td,
-  .table th {
-    padding: 0.15rem;
-    text-align: center;
-    vertical-align: middle;
-  }
-
-  table {
-    width: 100%;
-  }
-
-  th {
-    font-size: 13px;
-    font-weight: bold;
-  }
-
-  tr {
-    font-size: 11px;
-  }
-
-  .color-reference {
-    width: 15px;
-    height: 15px;
-    display: block;
-    border-radius: 2px;
-  }
+    .main-content-info-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 700px;
+        padding-bottom: 4%;
+        padding-top: 7%;
+        background-color: darkgray;
+    }
 
 
-  .table-striped tbody tr:nth-of-type(odd) {
-    background-color: rgb(105 101 101 / 5%);
-  }
+    .license-table-container {
+        width: 100%;
+        height: 700px;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: flex-start;
+        padding-left: 4%;
+        padding-right: 7%;
+    }
 
-  #myChart {
-    width: 235px;
-  }
+    .pie-chart-container {
+        padding-top: 5px;
+        padding-bottom: 5px;
+    }
 
-  .button-solid {
-    border: none;
-    background-color: rgb(105 101 101 / 5%);
-    color: rgb(104, 180, 250);
-    font-weight: bold;
-  }
+    .table td,
+    .table th {
+        padding: 0.15rem;
+        text-align: center;
+        vertical-align: middle;
+    }
 
-  #drop-down-license-detail-btn {
-    display: block;
-    border: none;
-    width: 100%;
-    background-color: rgb(226 226 226);
-  }
+    table {
+        width: 100%;
+    }
 
-  .button-solid:focus,
-  #drop-down-license-detail-btn:focus {
-    border: none;
-    outline: none;
-  }
+    th {
+        font-size: 13px;
+        font-weight: bold;
+    }
 
-  .hide {
-    display: none;
-  }
+    tr {
+        font-size: 11px;
+    }
 
-
-  .label {
-    display: flex;
-    justify-content: left;
-    align-items: center;
-    width: 100%;
-    color: rgb(0 0 0 / 51%);
-  }
-
-  p {
-    margin-top: 0;
-    margin-bottom: 0;
-    text-align: left;
-  }
+    .color-reference {
+        width: 15px;
+        height: 15px;
+        display: block;
+        border-radius: 2px;
+    }
 
 
-  .drop-down-license-detail-container {
-    border-bottom: 1.5px solid #82828291;
-  }
+    .table-striped tbody tr:nth-of-type(odd) {
+        background-color: rgb(105 101 101 / 5%);
+    }
 
-  .drop-down-license-detail-container button {
-    display: flex;
-    justify-content: center;
-    width: 100%;
-  }
 
-  .license-info-detail{
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    width: 100%;
-    height: 30px;
-  }
 
-  .license-ref{
-    width: 90%;
-    display: flex;
-    padding-left: 2%;
-  }
+    .button-solid {
+        border: none;
+        background-color: rgb(105 101 101 / 2%);
+        color: #656df1;
+        font-weight: bold;
+    }
 
-  .license-component-button-container{
-    width: 40%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
 
-  .license-info-container{
-    display: flex;
-    width: 85%;
-    padding-left: 1%;
-  }
+    .button-solid:focus,
+    #drop-down-license-detail-btn:focus {
+        border: none;
+        outline: none;
+    }
 
-  .color-reference-container{
-    width: 14%;
-    align-items: center;
-    justify-content: center;
-    display: flex;
-  }
+    .hide {
+        display: none;
+    }
 
-  .info-container{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 85%;
-    height: 30px;
-  }
 
-  .info{
-    display: flex;
-    flex-direction: column;
-    width: 100%;
+    .label {
+        display: flex;
+        justify-content: left;
+        align-items: center;
+        width: 100%;
+        color: rgb(0 0 0 / 51%);
+    }
 
-  }
+    p {
+        margin-top: 0;
+        margin-bottom: 0;
+        text-align: left;
+    }
 
-  .label{
-    display: flex;
-    justify-content: flex-start;
-    width: 100%;
-  }
+    .drop-down-license-detail-container button {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+    }
 
-  .value{
-    display: flex;
-    justify-content: flex-start;
-    width: 100%;
-  }
+    .license-info-detail{
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        width: 100%;
+        height: 30px;
+    }
 
-  .row-license-info-container{
-    display: flex;
-    width: 100%;
-  }
+    .license-ref{
+        width: 90%;
+        display: flex;
+        padding-left: 2%;
+    }
 
-  td.cell-info-container{
-    width: 33%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #ededed;
+    .license-component-button-container{
+        width: 40%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
 
-  }
+    .license-info-container{
+        display: flex;
+        width: 85%;
+        padding-left: 1%;
+    }
 
-  .row-info-container{
-    width: 100px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
+    .color-reference-container{
+        width: 14%;
+        align-items: center;
+        justify-content: center;
+        display: flex;
+    }
+
+    .info-container{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 85%;
+        height: 30px;
+    }
+
+    .info{
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+
+    }
+
+    .label{
+        display: flex;
+        justify-content: flex-start;
+        width: 100%;
+    }
+
+    .value{
+        display: flex;
+        justify-content: flex-start;
+        width: 100%;
+    }
+
+    .row-license-info-container{
+        display: flex;
+        width: 100%;
+    }
+
+    td.cell-info-container{
+        width: 33%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #ededed;
+
+    }
+
+    .row-info-container{
+        width: 100px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .detected-license-report-table-container{
+        width: 98%;
+        display: flex;
+        justify-content: space-around;
+        flex-direction: column;
+        padding-left: 10px;
+    }
+
+    .incompatibilities-table-container{
+        display: flex;
+        justify-content: center;
+        flex-direction: row;
+        width: 98%;
+    }
+
+    .incompatible-license-table{
+        border-spacing: 10px;
+        border-collapse: separate;
+    }
+
+    .license-block{
+        margin: 1.5px;
+        background-color: #dfdedd;
+        display: flex;
+        flex-flow: wrap;
+        justify-content: center;
+        align-items: center;
+        padding: 5px;
+        border-radius: 3px;
+        font-weight: bold;
+    }
+
+    .incompatible-license-container{
+        display: flex;
+        flex-flow: wrap;
+        flex-direction: row;
+    }
+
+    #incompatible-license{
+        vertical-align: baseline;
+    }
+
+    .incompatible-ref{
+        background-color: red;
+    }
+
 
 
 </style>
 
 <body>
-<header>
-  <h1>Detected Report</h1>
-  <div class="divider"></div>
-</header>
-<div class="main-container">
-
-  <div class="progress-bar-container">
-    <!-- <h3 class="identification-progress-title">Original vs OSS</h3>
-    <div class="progress-bar-child-container">
-        <div class="percentage-container">
-            <span id="oss-percentage"></span>
+    <header>
+        <div class="header-container">
+            <img src="https://www.eclipsecon.org/sites/default/files/Scanoss%20negative%404x.png">
         </div>
-        <canvas id="progress-bar"></canvas>
-        <div>
-            <span class="original-percentage"></span>
+        <div class="header-container">
+            <h1>Detected Report</h1>
         </div>
-    </div>
-    <div>
-        <p id="total-files"></p>
-    </div>
-
-    <div class="divider"> </div> -->
-  </div>
-
-  <div class="main-content-info-container">
-    <div class="main-container-left">
-      <div>
-        <h3>License Reference</h3>
-        <div class="pie-chart-container">
-          <div>
-            <canvas id="myChart"></canvas>
-          </div>
+        <div class="header-container">
+            <h5 id="date"></h5>
         </div>
-      </div>
-    </div>
+        <div class="header-container">
+            <div id="scan-summary"></div>
+        </div>
 
-    <div class="main-container-right">
-      <h3>Detected License Report</h3>
-      <table class="table">
-        <thead>
-        <tr>
-          <th scope="col"></th>
-          <th scope="col"></th>
-        </tr>
-        </thead>
-        <tbody id="body-license-detail-table">
-        </tbody>
-      </table>
-    </div>
-  </div>
-</div>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-  const entryData = "#DATA";
-  const data = JSON.parse(entryData);
-  console.log(data);
+        <div class="divider"></div>
+    </header>
+    <main class="main-container">
+        <section>
+                <h3>License Reference</h3>
+                <div class="pie-chart-container">
+                    <div>
+                        <canvas id="myChart"></canvas>
+                    </div>
+                </div>
+            </section>
+        <section>
+                <h3>Detected License Report</h3>
+                <div class="detected-license-report-table-container">
+                    <table class="table">
+                        <tbody id="body-license-detail-table">
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        <section>
+            <div>
+                <h3>License Obligations</h3>
+            </div>
+            <div class="incompatibilities-table-container">
+                <table class="incompatible-license-table">
+                    <thead>
+                    <tr>
+                        <th>License</th>
+                        <th>Copyleft</th>
+                        <th>Incompatible Licenses</th>
+                    </tr>
+                    </thead>
+                    <tbody id="incompatible-license">
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
 
-  let pieChartDataEntry = {
-    labels: [],
-    components: []
-  }
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const entryData = '#DATA';
+        const data = JSON.parse(entryData);
+        console.log(data);
 
-  data.licenses.forEach((l)=>{
-    pieChartDataEntry.labels.push(l.label);
-    pieChartDataEntry.components.push(l.value);
-  });
+        let pieChartDataEntry = {
+            labels: [],
+            components: []
+        }
 
-  const color = [
-    '#E8B34B',
-    '#E22C2C',
-    '#5754D0',
-    '#9F69C0',
-    '#FE7F10',
-    '#E56399',
-    '#E637BF',
-    '#474647',
-    '#153243',
-    '#2DE1C2',
-    '#F05365',
-    '#A2D729',
-    '#3C91E6',
-    '#FA824C',
-    '#C94277',
-    '#E56B6F',
-    '#F71735',
-    '#011627',
-    '#724E91',
-    '#7D451B',
-    '#9BE564',
-  ];
+        data.licenses.forEach((l)=>{
+            pieChartDataEntry.labels.push(l.label);
+            pieChartDataEntry.components.push(l.value);
+        });
 
-  // License pie chart
-  function pieChart() {
-    const data = {
-      labels: pieChartDataEntry.labels,
-      datasets: [
-        {
-          label: 'My First dataset',
-          backgroundColor: color,
-          borderColor: 'rgb(255, 255, 255)',
-          data: pieChartDataEntry.components,
-        },
-      ],
-    };
-    const config = {
-      type: 'pie',
-      data,
-      options: {
-        elements: {
-          arc: {
-            borderWidth: 1,
-          },
-        },
-        plugins: {
-          legend: {
-            display: false,
-          },
-        },
-      },
-    };
-    const myChart = new Chart(document.getElementById('myChart'), config);
-  }
-  pieChart();
+        const color = [
+            '#E8B34B',
+            '#E22C2C',
+            '#5754D0',
+            '#9F69C0',
+            '#FE7F10',
+            '#E56399',
+            '#E637BF',
+            '#474647',
+            '#153243',
+            '#2DE1C2',
+            '#F05365',
+            '#A2D729',
+            '#3C91E6',
+            '#FA824C',
+            '#C94277',
+            '#E56B6F',
+            '#F71735',
+            '#011627',
+            '#724E91',
+            '#7D451B',
+            '#9BE564',
+        ];
 
+        function dropDown(id) {
+            console.log(id);
+            const nodes = document.getElementsByClassName(id);
+            for (let i = 0; i < nodes.length; i += 1) {
+                if (nodes[i].classList.contains('hide')) {
+                    nodes[i].classList.remove('hide');
+                    nodes[i].classList.add('show');
+                } else {
+                    nodes[i].classList.remove('show');
+                    nodes[i].classList.add('hide');
+                }
+            }
+        }
 
-
-
-
-  function dropDown(id) {
-    console.log(id);
-    const nodes = document.getElementsByClassName(id);
-    for (let i = 0; i < nodes.length; i += 1) {
-      if (nodes[i].classList.contains('hide')) {
-        nodes[i].classList.remove('hide');
-        nodes[i].classList.add('show');
-      } else {
-        nodes[i].classList.remove('show');
-        nodes[i].classList.add('hide');
-      }
-    }
-  }
-
-  function addButtonListener() {
-    const btn = document.querySelectorAll('.button-solid');
-    console.log(btn)
-    btn.forEach((button) => {
-      button.addEventListener('click', (event) => {
-        dropDown(event.target.id);
-      });
-    });
-  }
+        function addButtonListener() {
+            const btn = document.querySelectorAll('.button-solid');
+            console.log(btn)
+            btn.forEach((button) => {
+                button.addEventListener('click', (event) => {
+                    dropDown(event.target.id);
+                });
+            });
+        }
 
 
-  function licenseDetail() {
-    const body= document.querySelector('#body-license-detail-table');
-    data.licenses.forEach((l,index)=>{
-      body.innerHTML +=`
+        function date(){
+            const d= document.querySelector('#date');
+            const utcDate = new Date().toUTCString();
+            console.log(utcDate);
+            d.innerHTML +=`Date: ${utcDate}`;
+        }
+        date();
+
+        function scanSummary(){
+            const s = document.querySelector('#scan-summary');
+            s.innerHTML+= `
+                            <h3>Scan Summary</h3>
+                            <h5>Scanned Files: ${data.summary.totalFiles} </h5>
+                           <h5>Matched Files: ${data.summary.matchedFiles} </h5>
+                           <h5>No Match Files: ${data.summary.noMatchFiles} </h5>
+
+            `;
+        }
+        scanSummary();
+
+        // License pie chart
+        function pieChart() {
+            const data = {
+                labels: pieChartDataEntry.labels,
+                datasets: [
+                    {
+                        label: 'My First dataset',
+                        backgroundColor: color,
+                        borderColor: 'rgb(255, 255, 255)',
+                        data: pieChartDataEntry.components,
+                    },
+                ],
+            };
+            const config = {
+                type: 'pie',
+                data,
+                options: {
+                    responsive:true,
+                    maintainAspectRatio: false,
+                    elements: {
+                        arc: {
+                            borderWidth: 1,
+                        },
+                    },
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position:'bottom'
+                        },
+                    },
+                },
+            };
+            const myChart = new Chart(document.getElementById('myChart'), config);
+        }
+        pieChart();
+
+
+        function licenseDetail() {
+            const body= document.querySelector('#body-license-detail-table');
+            data.licenses.forEach((l,index)=>{
+                body.innerHTML +=`
                                   <tr>
                                   <td>
                                     <div class="license-info-detail">
@@ -459,17 +515,17 @@
                                             </div>
                                         </div>
                                         <div class="license-component-button-container">
-                                            <button class="button-solid" id="${l.label}"> ${l.value} component found</button>
+                                            <button class="button-solid" id="${l.label}"> ${l.value} component found &#x25BC</button>
                                           </div>
                                      </div>
                                     <td>
                                   </tr>`;
 
-      body.innerHTML +=`<tr class="${l.label} hide">
+                    body.innerHTML +=`<tr class="${l.label} hide">
                                         <td colspan="2">
                                             <table>
                                                 ${l.components.map((c,index)=>{
-        return  `<tr class="row-license-info-container">
+                                                    return  `<tr class="row-license-info-container">
                                                                     <td class="cell-info-container">
                                                                         <div class="row-info-container">
                                                                         <div class="info">
@@ -507,29 +563,46 @@
                                                                         </div>
                                                                     </td>
                                                             </tr>`
-      }).join(' ')}
+                                                }).join(' ')}
                                             </table>
                                         </td>
                                       </tr>`;
+                });
+
+             addButtonListener();
+        }
+        licenseDetail();
+
+function incompatibleLicenses(){
+    const licenseMapper = new Set();
+    data.licenses.forEach((l)=>licenseMapper.add(l.label));
+    console.log(licenseMapper)
+    const body= document.querySelector('#incompatible-license');
+    data.licenses.forEach((l)=>{
+        body.innerHTML+=`
+            <tr>
+                <td>${l.label}</td>
+                 <td>${l.copyleft === true ? '&#10004'  : '&#10006' }</td>
+                 <td class="incompatible-license-container">${l.incompatibleWith.map((i)=>{
+                     console.log(licenseMapper.has(i))
+                    return `<div class="license-block ${licenseMapper.has(i)===true ? 'incompatible-ref' : '' }">
+                                <p>${i}</p>
+                            </div>`;
+
+
+                    }).join(' ')}</td>
+
+             </tr>
+        `;
     });
 
-    addButtonListener();
-  }
-  licenseDetail();
 
 
-  /*        document.getElementById('drop-down-license-detail-btn').addEventListener('click', () => {
-              const aux = document.querySelector('.drop-down-license-detail');
-              if (aux.classList.contains('hide')) {
-                  aux.classList.remove('hide');
-                  aux.classList.add('show-license-detail');
-              } else {
-                  aux.classList.remove('show-license-detail');
-                  aux.classList.add('hide');
-              }
-          });*/
 
-</script>
+}
+incompatibleLicenses();
+
+    </script>
 
 </body>
 
