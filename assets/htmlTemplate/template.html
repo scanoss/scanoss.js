@@ -32,6 +32,14 @@
         justify-content: space-between;
         width: 100%;
         margin-top: 15px;
+        margin-bottom: 16px;
+    }
+
+    .project-name-container{
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: -6px;
     }
 
     .header-title img {
@@ -41,8 +49,6 @@
     h1, h2,  h3 {
         color: #656df1;
     }
-
-
 
     #date{
         margin-top: 0;
@@ -311,7 +317,10 @@
                 <h5 id="date"></h5>
             </div>
         </div>
-
+        <div class="divider"></div>
+        <section class="project-name-container">
+          <h2 id='project-name'></h2>
+        </section>
         <div class="divider"></div>
 
         <div class="scan-summary"></div>
@@ -367,74 +376,88 @@
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
+      addEventListener('DOMContentLoaded', (event) => {
         const entryData = '#DATA';
         const data = JSON.parse(entryData);
         let pieChartDataEntry = {
-            labels: [],
-            components: []
-        }
+          labels: [],
+          components: []
+        };
 
         data.licenses.forEach((l)=>{
-            pieChartDataEntry.labels.push(l.label);
-            pieChartDataEntry.components.push(l.value);
+          pieChartDataEntry.labels.push(l.label);
+          pieChartDataEntry.components.push(l.value);
         });
 
         const color = [
-            '#E8B34B',
-            '#E22C2C',
-            '#5754D0',
-            '#9F69C0',
-            '#FE7F10',
-            '#E56399',
-            '#E637BF',
-            '#474647',
-            '#153243',
-            '#2DE1C2',
-            '#F05365',
-            '#A2D729',
-            '#3C91E6',
-            '#FA824C',
-            '#C94277',
-            '#E56B6F',
-            '#F71735',
-            '#011627',
-            '#724E91',
-            '#7D451B',
-            '#9BE564',
+          '#E8B34B',
+          '#E22C2C',
+          '#5754D0',
+          '#9F69C0',
+          '#FE7F10',
+          '#E56399',
+          '#E637BF',
+          '#474647',
+          '#153243',
+          '#2DE1C2',
+          '#F05365',
+          '#A2D729',
+          '#3C91E6',
+          '#FA824C',
+          '#C94277',
+          '#E56B6F',
+          '#F71735',
+          '#011627',
+          '#724E91',
+          '#7D451B',
+          '#9BE564',
         ];
 
+        function init(){
+          date();
+          addProjectName();
+          scanSummary();
+          pieChart();
+          licenseDetail();
+          incompatibleLicenses();
+        }
+        init();
+
+        function addProjectName(){
+          const p= document.querySelector('#project-name');
+          p.innerHTML+= data.projectName? data.projectName : '-';
+        }
+
         function dropDown(id) {
-            const nodes = document.getElementsByClassName(id);
-            for (let i = 0; i < nodes.length; i += 1) {
-                if (nodes[i].classList.contains('hide')) {
-                    nodes[i].classList.remove('hide');
-                    nodes[i].classList.add('show');
-                } else {
-                    nodes[i].classList.remove('show');
-                    nodes[i].classList.add('hide');
-                }
+          const nodes = document.getElementsByClassName(id);
+          for (let i = 0; i < nodes.length; i += 1) {
+            if (nodes[i].classList.contains('hide')) {
+              nodes[i].classList.remove('hide');
+              nodes[i].classList.add('show');
+            } else {
+              nodes[i].classList.remove('show');
+              nodes[i].classList.add('hide');
             }
+          }
         }
 
         function addButtonListener() {
-            const btn = document.querySelectorAll('.button-solid');
-            btn.forEach((button) => {
-                button.addEventListener('click', (event) => {
-                    dropDown(event.target.id);
-                });
+          const btn = document.querySelectorAll('.button-solid');
+          btn.forEach((button) => {
+            button.addEventListener('click', (event) => {
+              dropDown(event.target.id);
             });
+          });
         }
-
 
         function date(){
-            const d= document.querySelector('#date');
-            d.innerHTML += `${data.date}`;
+          const d= document.querySelector('#date');
+          d.innerHTML += `${data.date}`;
         }
-        date();
 
         function scanSummary(){
-            const s = document.querySelector('.scan-summary');
-            s.innerHTML+= `
+          const s = document.querySelector('.scan-summary');
+          s.innerHTML+= `
                             <div class="info big">
                                 <div class="label">Scanned Files</div>
                                 <div class="value">${data.summary.totalFiles}</div>
@@ -449,48 +472,44 @@
                             </div>
             `;
         }
-        scanSummary();
-
         // License pie chart
         function pieChart() {
-            const data = {
-                labels: pieChartDataEntry.labels,
-                datasets: [
-                    {
-                        backgroundColor: color,
-                        borderColor: 'rgb(255, 255, 255)',
-                        data: pieChartDataEntry.components,
-                    },
-                ],
-            };
-            const config = {
-                type: 'doughnut',
-                data,
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    elements: {
-                        arc: {
-                            borderWidth: 1,
-                        },
-                    },
-                    plugins: {
-                        legend: {
-                            display: true,
-                            position:'bottom',
-                        },
-                    },
+          const data = {
+            labels: pieChartDataEntry.labels,
+            datasets: [
+              {
+                backgroundColor: color,
+                borderColor: 'rgb(255, 255, 255)',
+                data: pieChartDataEntry.components,
+              },
+            ],
+          };
+          const config = {
+            type: 'doughnut',
+            data,
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              elements: {
+                arc: {
+                  borderWidth: 1,
                 },
-            };
-            const myChart = new Chart(document.getElementById('myChart'), config);
+              },
+              plugins: {
+                legend: {
+                  display: true,
+                  position:'bottom',
+                },
+              },
+            },
+          };
+          const myChart = new Chart(document.getElementById('myChart'), config);
         }
-        pieChart();
-
 
         function licenseDetail() {
-            const body= document.querySelector('#body-license-detail-table');
-            data.licenses.forEach((l,index)=>{
-                body.innerHTML +=`
+          const body= document.querySelector('#body-license-detail-table');
+          data.licenses.forEach((l,index)=>{
+            body.innerHTML +=`
                                   <tr>
                                   <td>
                                     <div class="license-info-detail">
@@ -516,11 +535,11 @@
                                     <td>
                                   </tr>`;
 
-                    body.innerHTML +=`<tr class="${l.label} hide">
+            body.innerHTML +=`<tr class="${l.label} hide">
                                         <td colspan="2">
                                             <table>
                                                 ${l.components.map((c,index)=>{
-                                                    return  `<tr class="row-license-info-container">
+              return  `<tr class="row-license-info-container">
                                                                     <td class="cell-info-container">
                                                                         <div class="row-info-container">
                                                                         <div class="info">
@@ -558,40 +577,41 @@
                                                                         </div>
                                                                     </td>
                                                             </tr>`
-                                                }).join(' ')}
+            }).join(' ')}
                                             </table>
                                         </td>
                                       </tr>`;
-                });
+          });
 
-             addButtonListener();
+          addButtonListener();
         }
-        licenseDetail();
 
-function incompatibleLicenses(){
-    const licenseMapper = new Set();
-    data.licenses.forEach((l)=>licenseMapper.add(l.label));
-    const body= document.querySelector('#incompatible-license');
-    data.licenses.forEach((l)=>{
-        body.innerHTML+=`
+        function incompatibleLicenses(){
+          const licenseMapper = new Set();
+          data.licenses.forEach((l)=>licenseMapper.add(l.label));
+          const body= document.querySelector('#incompatible-license');
+          data.licenses.forEach((l)=>{
+            body.innerHTML+=`
             <tr>
                 <td>${l.label}</td>
                  <td>${l.copyleft === true ? '&#10004'  : '&#10006' }</td>
                  <td><div  class="incompatible-license-container">${l.incompatibleWith.map((i)=>{
-                    return `<div class="license-block ${licenseMapper.has(i)===true ? 'incompatible-ref' : '' }">
+              return `<div class="license-block ${licenseMapper.has(i)===true ? 'incompatible-ref' : '' }">
                                 <p>${i}</p>
                             </div>`;
-                    }).join(' ')}</div></td>
+            }).join(' ')}</div></td>
 
              </tr>
         `;
-    });
+          });
 
 
 
 
-}
-incompatibleLicenses();
+        }
+
+      });
+
     </script>
 
 </body>
