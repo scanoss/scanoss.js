@@ -15,7 +15,7 @@ import {
 import { defaultFilter } from '../lib/filters/defaultFilter';
 import { FilterList } from '../lib/filters/filtering';
 
-import { isFolder } from './helpers';
+import { getProjectNameFromPath, isFolder } from './helpers';
 
 import fs from 'fs';
 import { DependencyScannerCfg } from '../lib/dependencies/DependencyScannerCfg';
@@ -29,11 +29,13 @@ import { HTMLReport } from '../lib/modules/reports/htmlReport/HTMLReport';
 
 export async function scanHandler(rootPath: string, options: any): Promise<void> {
 
-  let scannerInput: ScannerInput = {fileList: []};
 
   rootPath = rootPath.replace(/\/$/, '');  // Remove trailing slash if exists
   rootPath = rootPath.replace(/^\./, process.env.PWD);  // Convert relative path to absolute path.
   const pathIsFolder = await isFolder(rootPath);
+
+
+  const projectName = getProjectNameFromPath(rootPath)
 
   // Create dependency scanner and set parameters
   const dependencyScannerCfg = new DependencyScannerCfg();
@@ -51,6 +53,7 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
   if(options.maxRetry) scannerCfg.MAX_RETRIES_FOR_RECOVERABLES_ERRORS = options.maxRetry;
   const scanner = new Scanner(scannerCfg);
 
+  let scannerInput: ScannerInput = {fileList: []};
   scannerInput.folderRoot = rootPath + '/'; // This will remove the project root path from the results.
   if(options.flags) scannerInput.engineFlags = options.flags;
 
@@ -124,13 +127,14 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
 
   // path result.json: scannerResultPath
   // dependencyResult (JSON):
-  if (options.format.toLowerCase() === "html") {
+  if (options.format && options.format.toLowerCase() === "html") {
 
     // save dependency analizys to os.tmpdir()
     const depPath = `${os.tmpdir()}/scanoss-dependency.json`
     await fs.promises.writeFile(depPath, JSON.stringify(depResults, null, 2));
 
     const ReportEntry: IReportEntry = {
+      projectName,
       resultPath: scannerResultPath,
       dependencyPath: depPath,
       outputPath: "",

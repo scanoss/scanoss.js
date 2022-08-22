@@ -1,13 +1,14 @@
 export interface IReportEntry{
-  resultPath: string,
-  dependencyPath?: string,
-  vulnerabilityPath?: string,
-  outputPath: string,
-  templatePath?: string
+  resultPath: string;
+  dependencyPath?: string;
+  vulnerabilityPath?: string;
+  outputPath: string;
+  templatePath?: string;
+  projectName: string;
 }
 
 export interface ILicenses{
-  label: string,
+  label: string;
   value: number;
   components: Array<Component>;
   incompatibleWith: Array<string>;
@@ -17,23 +18,24 @@ export interface ILicenses{
 
 
 export interface IReportData {
+  projectName: string;
   licenses: Array<ILicenses>;
   summary: Summary;
   date: string,
 }
 
 export interface Component {
-  purl:string,
-  versions: Array<string>,
-  url:string,
-  name:string,
-  vendor:string,
+  purl:string;
+  versions: Array<string>;
+  url:string;
+  name:string;
+  vendor:string;
 }
 
 export interface ISaveResponse{
-  status: SaveStatus,
-  path: string,
-  format: string,
+  status: SaveStatus;
+  path: string;
+  format: string;
   message?:string;
 }
 

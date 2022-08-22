@@ -22,8 +22,10 @@ export abstract class Report{
   private licenseMapper :Record<string, ILicenses> = {};
   private fileExtension: string;
   private summary : Summary;
+  private readonly projectName: string;
 
   protected constructor(params: IReportEntry) {
+    this.projectName = params.projectName
     this.resultPath = params.resultPath;
     this.dependenciesPath = params.dependencyPath? params.dependencyPath : null;
     this.vulnerabilitiesPath = params.vulnerabilityPath? params.vulnerabilityPath : null;
@@ -77,6 +79,7 @@ export abstract class Report{
     const licenses =  Object.values((this.licenseMapper));
     reportAdapter.checkForIncompatibilities(licenses);
     return {
+      projectName: this.projectName,
       licenses,
       summary: this.summary,
       date: new Date().toUTCString(),
