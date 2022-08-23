@@ -16,7 +16,7 @@ function CLIErrorHandler(e: Error) {
 
 async function main() {
   program
-    .version("0.4.0-alpha.0")
+    .version("0.4.0-alpha.1")
     .description('The SCANOSS JS package provides a simple, easy to consume module for interacting with SCANOSS APIs/Engine.')
 
   program
@@ -35,7 +35,7 @@ async function main() {
     .option('-M, --timeout <timeout>', 'Timeout (in seconds) for API communication (optional -default 120)')
     .option('-D, --dependencies', 'Add dependency scanning')
     .option('-a, --apiurl <apiurl>', 'SCANOSS API URL (optional - default: https://osskb.org/api/scan/direct)')
-    .option('-a, --api2url <api2url>', 'SCANOSS gRPC API 2.0 URL (optional - default: https://api.osskb.org)')
+    .option('-a, --api2url <api2url>', 'SCANOSS gRPC API 2.0 URL (optional - default: scanoss.com)')
     .option('-k, --key <key>', 'SCANOSS API Key token (optional - not required for default OSSKB URL)')
     .option('-v, --verbose', 'Makes scan operation verbose')
     .action((source, options) => {scanHandler(source, options).catch((e) => {CLIErrorHandler(e)})})

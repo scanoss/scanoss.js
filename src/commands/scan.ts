@@ -39,7 +39,7 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
 
   // Create dependency scanner and set parameters
   const dependencyScannerCfg = new DependencyScannerCfg();
-  if (options.grpcHost) dependencyScannerCfg.DEFAULT_GRPC_HOST = options.api2url;
+  if (options.api2url) dependencyScannerCfg.DEFAULT_GRPC_HOST = options.api2url;
   const dependencyScanner = new DependencyScanner(dependencyScannerCfg);
 
 
@@ -125,24 +125,20 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
 
   let scannerResultsString = JSON.stringify(scannersResults, null, 2);
 
-  // path result.json: scannerResultPath
-  // dependencyResult (JSON):
   if (options.format && options.format.toLowerCase() === "html") {
 
-    // save dependency analizys to os.tmpdir()
     const depPath = `${os.tmpdir()}/scanoss-dependency.json`
     await fs.promises.writeFile(depPath, JSON.stringify(depResults, null, 2));
 
     const ReportEntry: IReportEntry = {
       projectName,
       resultPath: scannerResultPath,
-      dependencyPath: depPath,
+      ...(options.dependencies && {dependencyPath: depPath}),
       outputPath: "",
     }
 
     const HTML = new HTMLReport(ReportEntry);
     scannerResultsString = await HTML.generate();
-
   }
 
   if(options.output)
