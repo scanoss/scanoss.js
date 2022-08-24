@@ -1,5 +1,6 @@
 import { NodeType } from './Node';
 import Node from './Node';
+import { Filter } from './Filters/Filter';
 
 
 export default class File extends Node {
@@ -13,7 +14,8 @@ export default class File extends Node {
     return null;
   }
 
-  public getFiles(): Array<string> {
+  public getFiles(f: Filter): Array<string> {
+    if (f && f.evaluate(this)) return [];
     return [this.getPath()];
   }
 

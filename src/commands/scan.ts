@@ -12,7 +12,6 @@ import cliProgress from 'cli-progress';
 import {
   DispatcherResponse
 } from '../lib/scanner/Dispatcher/DispatcherResponse';
-import { defaultFilter } from '../lib/filters/defaultFilter';
 import { FilterList } from '../lib/filters/filtering';
 
 import { getProjectNameFromPath, isFolder } from './helpers';
@@ -25,6 +24,8 @@ import os from 'os';
 import { Report } from '../lib/modules/reports/Report';
 import { IReportEntry } from '../lib/modules/reports/types';
 import { HTMLReport } from '../lib/modules/reports/htmlReport/HTMLReport';
+import { ScanFilter } from '../lib/tree/Filters/ScanFilter';
+import { DependencyFilter } from '../lib/tree/Filters/DependencyFilter';
 
 
 export async function scanHandler(rootPath: string, options: any): Promise<void> {
@@ -41,6 +42,7 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
   const dependencyScannerCfg = new DependencyScannerCfg();
   if (options.api2url) dependencyScannerCfg.DEFAULT_GRPC_HOST = options.api2url;
   const dependencyScanner = new DependencyScanner(dependencyScannerCfg);
+  let dependencyInput: Array<string> = [];
 
 
   // Create scanner and set connections parameters
@@ -57,24 +59,18 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
   scannerInput.folderRoot = rootPath + '/'; // This will remove the project root path from the results.
   if(options.flags) scannerInput.engineFlags = options.flags;
 
+
+
   if(!options.wfp) {
     if(pathIsFolder) {
-      const tree = new Tree(rootPath);
-      const filter = new FilterList('');
-
-      if (options.filter) {
-        console.error('Loading filter from file: ' + options.filter);
-        filter.loadFromFile(options.filter);
-      } else {
-        console.error('Loading default filters...');
-        filter.load(defaultFilter as FilterList);
-      }
       console.error('Reading directory...  ');
-      tree.loadFilter(filter);
-      tree.buildTree();
-      scannerInput.fileList = tree.getFileList();
+      const tree = new Tree(rootPath);
+      tree.build();
+      scannerInput.fileList = tree.getFileList(new ScanFilter(""));
+      dependencyInput = tree.getFileList(new DependencyFilter(""));
     } else {
       scannerInput.fileList = [rootPath];
+      dependencyInput = [rootPath];
     }
   } else {
     const winnowing = fs.readFileSync(rootPath, {encoding: 'utf-8'});
@@ -108,7 +104,7 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
   // Dependency scanner
   let pDependencyScanner = Promise.resolve(<IDependencyResponse>{});
   if (options.dependencies) {
-    pDependencyScanner = dependencyScanner.scan(scannerInput.fileList);
+    pDependencyScanner = dependencyScanner.scan(dependencyInput);
   }
 
   //Launch parallel scanners
@@ -145,10 +141,6 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
     await fs.promises.writeFile(options.output, scannerResultsString)
   else
     console.log(scannerResultsString);
-
-
-
-
 }
 
 
