@@ -44,25 +44,38 @@ private report: Report;
     dependencies.map((f) => {
       //dependencies
       f.dependenciesList.map((d) => {
-        if (d.component !== '' && d.version !== '') {
-          d.licensesList.map((l) => {
+          d.licensesList.map((licenses) => {
             const component = this.getNewComponent(d.purl,null,d.version,d.component,'');
-            if (l.name !== '') {
-              if (!this.report.getLicenseMapper()[l.name]) {
-                this.report.getLicenseMapper()[l.name] = {
-                  label: l.name,
+            if (licenses.spdxId !== '') {
+              licenses.spdxId.split(/;|\//g).forEach((l) => {
+                if (!this.report.getLicenseMapper()[l]) {
+                  this.report.getLicenseMapper()[l] = {
+                    label: l,
+                    value: 1,
+                    copyleft: false,
+                    hasIncompatibles: [],
+                    incompatibleWith: [],
+                    components: [component],
+                  }
+                } else {
+                  this.addComponentToLicense(l, d.purl, d.version, component);
+                }
+              });
+            }else{ //Unknown licenses
+              if(!this.report.getLicenseMapper()['unknown']){
+                this.report.getLicenseMapper().unknown = {
+                  label: 'unknown',
                   value: 1,
                   copyleft: false,
                   hasIncompatibles: [],
                   incompatibleWith: [],
                   components: [component],
-                }
-              } else {
-                this.addComponentToLicense(l.name,d.purl,d.version,component);
+                };
+              }else{
+                this.addComponentToLicense('unknown', d.purl, d.version, component);
               }
             }
           });
-        }
       });
     });
   }
@@ -81,10 +94,13 @@ private report: Report;
     const auxComp =  this.report.getLicenseMapper()[license].components.findIndex((c)=> c.purl === purl);
     if(auxComp >= 0) { //if component exists
       const auxVersion =  this.report.getLicenseMapper()[license].components[auxComp].versions.find((version)=>version === version);
-      if(!auxVersion) this.report.getLicenseMapper()[license].components[auxComp].versions.push(version);
+      if(!auxVersion){
+        this.report.getLicenseMapper()[license].components[auxComp].versions.push(version);
+        this.report.getLicenseMapper()[license].value++;
+      }
     } else{
-      this.report.getLicenseMapper()[license].value++;
       this.report.getLicenseMapper()[license].components.push(component);
+      this.report.getLicenseMapper()[license].value++;
     }
   }
 
