@@ -16,7 +16,7 @@ function CLIErrorHandler(e: Error) {
 
 async function main() {
   program
-    .version("0.4.0-alpha.1")
+    .version("0.4.0-alpha.3")
     .description('The SCANOSS JS package provides a simple, easy to consume module for interacting with SCANOSS APIs/Engine.')
 
   program
@@ -26,7 +26,6 @@ async function main() {
     .option('-H, --hpsm', 'Scan using winnowing high precision matching')
     .option('-c, --concurrency <number>', 'Number of concurrent connections to use while scanning (optional -default 10)')
     .option('-n, --ignore <ignore>',  'Ignore components specified in the SBOM file')
-    .option('-f, --filter <path>', 'Loads an user defined filter (optional)')
     .option('-o, --output <filename>', 'Output result file name (optional - default stdout)')
     .option('-f, --format <format>', 'Result output format. {JSON, HTML} Default: JSON')
     .option('-F, --flags <flags>', 'Scanning engine flags (1: disable snippet matching, 2 enable snippet ids, 4: disable dependencies, 8: disable licenses, 16: disable copyrights,32: disable vulnerabilities, 64: disable quality, 128: disable cryptography,256: disable best match, 512: Report identified files)')

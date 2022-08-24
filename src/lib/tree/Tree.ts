@@ -1,4 +1,3 @@
-
 import fs from 'fs';
 import pathLib from 'path';
 
@@ -8,7 +7,7 @@ import Node from './Node';
 import File from './File';
 import Folder from './Folder';
 import { FilterList } from '../filters/filtering';
-
+import { Filter } from './Filters/Filter';
 
 export class Tree {
   private rootFolder: Folder;
@@ -26,16 +25,12 @@ export class Tree {
     this.rootFolder = new Folder('/', this.rootName);
   }
 
-  public buildTree(): Node {
-    this.buildTreeRec(this.rootPath, this.rootFolder);
+  public build(): Node {
+    this.buildRec(this.rootPath, this.rootFolder);
     return this.rootFolder;
   }
 
-  public loadFilter(f: FilterList){
-    this.filter = f;
-  }
-
-  private buildTreeRec(path: string, root: Folder): Node {
+  private buildRec(path: string, root: Folder): Node {
     const dirEntries = fs
       .readdirSync(path, { withFileTypes: true }) // Returns a list of files and folders
       .sort(this.dirFirstFileAfter)
@@ -43,13 +38,12 @@ export class Tree {
 
     for (const dirEntry of dirEntries) {
       const fullPath = `${path}/${dirEntry.name}`;
-      const relativePath = `${path}/${dirEntry.name}`.replace(this.rootPath, '');
-      if (!this.filter || this.filter.include(fullPath))
-        if (dirEntry.isDirectory()) {
-          const f: Folder = new Folder(relativePath, dirEntry.name);
-          const subTree = this.buildTreeRec(`${path}/${dirEntry.name}`, f);
-          root.addChild(subTree);
-        } else root.addChild(new File(relativePath, dirEntry.name));
+      const relativePath = fullPath.replace(this.rootPath, '');
+      if (dirEntry.isDirectory()) {
+        const f: Folder = new Folder(fullPath, dirEntry.name);
+        const subTree = this.buildRec(`${path}/${dirEntry.name}`, f);
+        root.addChild(subTree);
+      } else root.addChild(new File(fullPath, dirEntry.name));
     }
     return root;
   }
@@ -81,9 +75,7 @@ export class Tree {
     return this.rootPath;
   }
 
-  public getFileList(): Array<string> {
-    const rootPath = this.rootPath.substring(0, this.rootPath.length);
-    const fList = this.rootFolder.getFiles();
-    return fList.map((fileRelativePath: string) => {return (rootPath + fileRelativePath)});
+  public getFileList(f?: Filter): Array<string> {
+    return  this.rootFolder.getFiles(f);
   }
 }
