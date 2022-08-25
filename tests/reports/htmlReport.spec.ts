@@ -14,20 +14,23 @@ describe('Suit test for HTML report', function() {
 
   it('Testing report adapters', async function() {
     const test: {
+      projectName: string;
       resultsPath: string;
       dependenciesPath: string;
       outputPath: string;
       expectedResult: IReportData
     } = {
+      projectName: "Test name",
       resultsPath: path.join(__dirname, "../data/reports/result.json"),
       dependenciesPath: path.join(__dirname, "../data/reports/dependencies.json"),
       outputPath: path.join(__dirname, "../data/reports/outputs/"),
       expectedResult: {
+        "projectName": "Test name",
         "licenses": [{
           "value": 2,
           "label": "GPL-2.0-only",
           "copyleft": true,
-          "hasIncompatibles": [],
+          "hasIncompatibles": ["Apache-2.0"],
           "incompatibleWith": ["Apache-1.0", "Apache-1.1", "Apache-2.0", "BSD-4-Clause", "BSD-4-Clause-UC", "FTL", "IJG", "OpenSSL", "Python-2.0", "zlib-acknowledgement", "XFree86-1.1"],
           "components": [{
             "purl": "pkg:github/scanoss/scanner.c",
@@ -46,7 +49,7 @@ describe('Suit test for HTML report', function() {
           "value": 2,
           "label": "GPL-2.0-or-later",
           "copyleft": true,
-          "hasIncompatibles": [],
+          "hasIncompatibles": ["Apache-2.0"],
           "incompatibleWith": ["Apache-1.0", "Apache-1.1", "Apache-2.0", "BSD-4-Clause", "BSD-4-Clause-UC", "FTL", "IJG", "OpenSSL", "Python-2.0", "zlib-acknowledgement", "XFree86-1.1"],
           "components": [{
             "purl": "pkg:github/scanoss/scanner.c",
@@ -139,7 +142,7 @@ describe('Suit test for HTML report', function() {
             "url": "https://github.com/scanoss/scanner.c"
           }]
         }, {
-          "label": "Apache 2.0",
+          "label": "Apache-2.0",
           "value": 1,
           "copyleft": false,
           "hasIncompatibles": [],
@@ -152,7 +155,7 @@ describe('Suit test for HTML report', function() {
             "url": ""
           }]
         }, {
-          "label": "LGPLv2.1+",
+          "label": "LGPL-2.1-or-later",
           "value": 1,
           "copyleft": false,
           "hasIncompatibles": [],
@@ -165,7 +168,7 @@ describe('Suit test for HTML report', function() {
             "url": ""
           }]
         }, {
-          "label": "BSD",
+          "label": "0BSD",
           "value": 1,
           "copyleft": false,
           "hasIncompatibles": [],
@@ -191,7 +194,7 @@ describe('Suit test for HTML report', function() {
             "url": ""
           }]
         }, {
-          "label": "3-Clause BSD License",
+          "label": "BSD-3-Clause",
           "value": 1,
           "copyleft": false,
           "hasIncompatibles": [],
@@ -235,9 +238,10 @@ describe('Suit test for HTML report', function() {
     };
 
       const htmlReport = new HTMLReport({
-      resultPath: test.resultsPath,
-      dependencyPath: test.dependenciesPath,
-      outputPath: test.outputPath,
+        projectName: test.projectName,
+        resultPath: test.resultsPath,
+        dependencyPath: test.dependenciesPath,
+        outputPath: test.outputPath,
     });
       // Replaces actual date to test.expectedResult date
     const reportData = await htmlReport.getReportData();
