@@ -18,38 +18,57 @@ export function pomParser(fileContent: string, filePath: string): ILocalDependen
     const dependencies = fileContent.match(/<dependency>((?:.|\n)*?)<\/dependency>/gm);
     if(dependencies) {
 
-      // TODO: classifier are not supported yet
       dependencies.forEach(dependency => {
         // Extract groupId. It's the purl namespace
         const groupId = dependency.match(/<groupId>([^<]*)<\/groupId>/);
-        const namespace = groupId ? groupId[1] : '';
+        const namespace = (groupId && groupId.length>=1) ? groupId[1] : null;
 
         // Extract artifact id. It's the purl name
         const artifactId = dependency.match(/<artifactId>([^<]*)<\/artifactId>/);
-        const name = artifactId ? artifactId[1] : '';
+        const name = (artifactId && artifactId.length>=1) ? artifactId[1] : null;
 
         const versionReg = dependency.match(/<version>([^<]*)<\/version>/);
-        let version = null;
-        if(versionReg && versionReg.length>0) version = resolve_version(versionReg[1], fileContent);
+        let version;
+        if(versionReg && versionReg.length>=1) version = resolve_version(versionReg[1], fileContent);
 
-
-        let purlQualifiers;
-        const type = dependency.match(/<type>([^<]*)<\/type>/);
-        if(type) {
-            purlQualifiers = {};
-            purlQualifiers['type'] = type[1]
-        }
 
         // Extract scope.
         const scopeRes = dependency.match(/<scope>([^<]*)<\/scope>/);
-        const scope = scopeRes ? scopeRes[1] : null;
-        const purlString = new PackageURL(PURL_TYPE, namespace, name, version, purlQualifiers, undefined).toString();
-        results.purls.push({purl: purlString, scope});
+        const scope = (scopeRes && scopeRes.length>=1) ? scopeRes[1] : null;
+
+
+        //Detect and extract purl qualifiers
+        const classifierRes = dependency.match(/<classifier>([^<]*)<\/classifier>/);
+        const classifier = (classifierRes && classifierRes.length>=1) ? classifierRes[1] : null;
+
+        const typeRes = dependency.match(/<type>([^<]*)<\/type>/);
+        const type = (typeRes && typeRes.length>=1) ? typeRes[1] : null;
+
+        let purlQualifiers;
+        if (type || classifier)
+        purlQualifiers = {
+          ...(type && {type}),
+          ...(classifier && {classifier}),
+        };
+
+        const purlString = new PackageURL(PURL_TYPE, namespace, name, undefined, purlQualifiers, undefined).toString();
+        results.purls.push({purl: purlString, requirement: version, scope: scope});
+
       });
     }
-    return results;
+
+    //Remove purls duplicated
+    return removeDuplicated(results);
 }
 
+function removeDuplicated(results: ILocalDependency): ILocalDependency {
+  const map = {};
+  for (let res of results.purls) {
+    map[res.purl] = res
+  }
+  results.purls = Object.values(map);
+  return results
+}
 
 function resolve_version(dependency_version: string, file_content: string): string {
   // See properties: https://maven.apache.org/pom.html#properties
