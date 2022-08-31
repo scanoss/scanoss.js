@@ -23,6 +23,7 @@ export abstract class Report{
   private fileExtension: string;
   private summary : Summary;
   private readonly projectName: string;
+  private licenses: Array<ILicenses>;
 
   protected constructor(params: IReportEntry) {
     this.projectName = params.projectName
@@ -76,13 +77,29 @@ export abstract class Report{
       const dependencies = await this.readFile(this.dependenciesPath);
       reportAdapter.getDependenciesLicenses(JSON.parse(dependencies).filesList);
     }
-    const licenses =  Object.values((this.licenseMapper));
-    reportAdapter.checkForIncompatibilities(licenses);
+
+    // set unknown licenses to the of the array
+    this.unknownLicensesToEnd();
+
+    reportAdapter.checkForIncompatibilities(this.licenses);
     return {
       projectName: this.projectName,
-      licenses,
+      licenses: this.licenses,
       summary: this.summary,
-      date: new Date().toUTCString(),
+      date: new Date().toLocaleTimeString(),
+    }
+  }
+
+  private unknownLicensesToEnd(){
+    let unknownLicenses = null;
+    if(this.licenseMapper['unknown']){
+      unknownLicenses =  this.licenseMapper['unknown'];
+      delete this.licenseMapper['unknown'];
+    }
+
+    this.licenses =  Object.values((this.licenseMapper));
+    if(unknownLicenses){
+      this.licenses.push(unknownLicenses);
     }
   }
 
