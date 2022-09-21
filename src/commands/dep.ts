@@ -3,6 +3,7 @@ import { DependencyScanner } from "../lib/dependencies/DependencyScanner";
 import { DependencyScannerCfg } from "../lib/dependencies/DependencyScannerCfg";
 import { Tree } from "../lib/tree/Tree";
 import { isFolder } from "./helpers";
+import { DependencyFilter } from '../lib/tree/Filters/DependencyFilter';
 
 export async function depHandler(rootPath: string, options: any): Promise<void> {
 
@@ -20,8 +21,8 @@ export async function depHandler(rootPath: string, options: any): Promise<void> 
 
   if (pathIsFolder) {
     const tree = new Tree(rootPath);
-    tree.buildTree();
-    fileList = tree.getRootFolder().getFiles().map((path) => {return rootPath+path});
+    tree.build();
+    fileList = tree.getFileList(new DependencyFilter(""));
   }
 
   const results = await dependencyScanner.scan(fileList);

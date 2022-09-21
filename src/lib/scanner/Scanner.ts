@@ -39,7 +39,7 @@ export class Scanner extends EventEmitter {
 
   private dispatcher: Dispatcher;
 
-  private finishPromise: Promise<void>;
+  private finishPromise: Promise<string>;
 
   private scannerInput: Array<ScannerInput>;
 
@@ -243,7 +243,7 @@ export class Scanner extends EventEmitter {
     this.reportLog(`[ SCANNER ]: Results on: ${this.resultFilePath}`);
     this.running = false;
     this.emit(ScannerEvents.SCAN_DONE, this.resultFilePath, this.filesNotScanned);
-    finishPromiseResolve();
+    finishPromiseResolve(this.resultFilePath);
   }
 
   reportLog(txt, level = 'info') {
@@ -278,7 +278,7 @@ export class Scanner extends EventEmitter {
   }
 
 
-  public scan(scannerInput: Array<ScannerInput>): Promise<void> {
+  public scan(scannerInput: Array<ScannerInput>): Promise<string> {
     this.init();
     this.createOutputFiles();
     this.scannerInput = scannerInput;

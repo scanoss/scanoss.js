@@ -8,10 +8,10 @@ import { expect } from 'chai';
 describe('Suit test for Pom parser', function() {
 
   it('Testing valids pom.xml', function (){
-    const tests: [{
+    const tests: Array<{
       inputPath: string;
       expectedResult: ILocalDependency;
-    }] = [{
+    }> = [{
       inputPath: "./tests/data/dependencies/pom.xml/2/pom.xml",
       expectedResult: {file: 'pom.xml', purls: [
           {purl: "pkg:maven/org.keycloak/keycloak-dependencies-admin-ui-wrapper?type=pom", requirement: "999-SNAPSHOT", scope: null},
@@ -29,7 +29,11 @@ describe('Suit test for Pom parser', function() {
           {purl: "pkg:maven/org.wildfly.galleon-plugins/transformer", requirement: "5.2.7.Final", scope: null},
           {purl: "pkg:maven/org.wildfly.core/wildfly-embedded", requirement: "18.1.0.Final", scope: null}
         ]}
-    }];
+    }, {
+      inputPath: "./tests/data/dependencies/pom.xml/1/pom.xml",
+      expectedResult: {file: 'pom.xml', purls: [
+        {purl: "pkg:maven/javax.xml.bind/jaxb-api", requirement: "2.4.0-b180830.0359", scope: null}]
+      }}];
 
     for (const test of tests) {
       const fileContent = fs.readFileSync(test.inputPath,  {encoding:'utf-8'});

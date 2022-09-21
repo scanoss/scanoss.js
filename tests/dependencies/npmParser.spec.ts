@@ -5,6 +5,7 @@ import {
 } from '../../src/lib/dependencies/LocalDependency/parsers/npmParser';
 import { ILocalDependency } from '../../src/lib/dependencies/LocalDependency/DependencyTypes'
 import { expect } from 'chai';
+const path = require('path');
 
 describe('Suit test for package lock parser', function() {
 
@@ -13,7 +14,7 @@ describe('Suit test for package lock parser', function() {
       inputPath: string;
       expectedResult: ILocalDependency;
     }] = [{
-      inputPath: "./tests/data/dependencies/package-lock/1/package-lock.json",
+      inputPath: path.join(__dirname,"../data/dependencies/package-lock/1/package-lock.json"),
       expectedResult: {file: 'package-lock.json', purls: [
           {purl: "pkg:npm/ansi-regex", requirement: "3.0.1"},
           {purl: "pkg:npm/ansi-styles",requirement: "4.3.0"},
@@ -58,7 +59,7 @@ describe('Suit test for package lock parser', function() {
           {purl: "pkg:npm/strip-ansi", requirement: "6.0.1"}
         ]}
     }];
-
+console.log(path.join(__dirname,"../data/dependencies/package-lock/1/package-lock.json"));
     for (const test of tests) {
       const fileContent = fs.readFileSync(test.inputPath,  {encoding:'utf-8'});
       const result = packagelockParser(fileContent, 'package-lock.json');

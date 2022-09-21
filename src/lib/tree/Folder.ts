@@ -1,5 +1,6 @@
 import { NodeType } from "./Node";
 import Node from './Node';
+import { Filter } from './Filters/Filter';
 
 export default class Folder extends Node {
   private children: Node[];
@@ -40,11 +41,14 @@ export default class Folder extends Node {
     return true;
   }
 
-  public getFiles(): Array<string> {
+  public getFiles(f?: Filter): Array<string> {
+    if (f && f.evaluate(this)) return []
+
     const files: Array<string> = [];
     this.children.forEach((child) => {
-      files.push(...child.getFiles());
+      files.push(...child.getFiles(f));
     });
     return files;
+
   }
 }

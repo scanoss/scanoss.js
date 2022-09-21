@@ -11,7 +11,7 @@
     "esModuleInterop": true /* Enables emit interoperability between CommonJS and ES Modules via creation of namespace objects for all imports. Implies 'allowSyntheticDefaultImports'. */,
     "resolveJsonModule": true /* Include modules imported with .json extension. */,
 
-    "allowJs": false,
+    "allowJs": true,
     "checkJs": false,
     "noImplicitUseStrict": true,
 
@@ -25,7 +25,7 @@
     "types": ["mocha","node"],
     "typeRoots": ["node_modules/@types", "src/types"]
   },
-  "include": ["./src" , "./src/**/*.ts", "./src/scanoss/*" ],
+  "include": ["./src" , "./src/**/*.html" , "./src/**/*.ts", "./src/scanoss/*" ],
   "exclude": ["node_modules", "tests/data/*"],
   "compileOnSave": false
 }

@@ -6,9 +6,9 @@ import {
   FingerprintPackage
 } from '../lib/scanner/WfpProvider/FingerprintPackage';
 import fs from 'fs';
-import { defaultFilter } from '../lib/filters/defaultFilter';
 import cliProgress from 'cli-progress';
 import { IWfpProviderInput } from '../lib/scanner/WfpProvider/WfpProvider';
+import { DependencyFilter } from '../lib/tree/Filters/DependencyFilter';
 
 
 export async function fingerprintHandler(rootPath: string, options: any): Promise<void> {
@@ -21,12 +21,8 @@ export async function fingerprintHandler(rootPath: string, options: any): Promis
   let filesToFingerprint: string[] = [];
   if (pathIsFolder) {
     const tree = new Tree(rootPath);
-    const filter = new FilterList('');
-    filter.load(defaultFilter as FilterList);
-
-    tree.loadFilter(filter);
-    tree.buildTree();
-    filesToFingerprint = tree.getFileList();
+    tree.build();
+    filesToFingerprint = tree.getFileList(new DependencyFilter(""));
   } else {
     filesToFingerprint.push(rootPath)
   }
