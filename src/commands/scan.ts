@@ -12,21 +12,38 @@ import cliProgress from 'cli-progress';
 import {
   DispatcherResponse
 } from '../lib/scanner/Dispatcher/DispatcherResponse';
-import { defaultFilter } from '../lib/filters/defaultFilter';
 import { FilterList } from '../lib/filters/filtering';
 
-import { isFolder } from './helpers';
+import { getProjectNameFromPath, isFolder } from './helpers';
 
 import fs from 'fs';
+import { DependencyScannerCfg } from '../lib/dependencies/DependencyScannerCfg';
+import { DependencyScanner } from '../lib/dependencies/DependencyScanner';
+import { IDependencyResponse } from '../lib/dependencies/DependencyTypes';
+import os from 'os';
+import { Report } from '../lib/modules/reports/Report';
+import { IReportEntry } from '../lib/modules/reports/types';
+import { HTMLReport } from '../lib/modules/reports/htmlReport/HTMLReport';
+import { ScanFilter } from '../lib/tree/Filters/ScanFilter';
+import { DependencyFilter } from '../lib/tree/Filters/DependencyFilter';
 
 
 export async function scanHandler(rootPath: string, options: any): Promise<void> {
 
-  let scannerInput: ScannerInput = {fileList: []};
 
   rootPath = rootPath.replace(/\/$/, '');  // Remove trailing slash if exists
   rootPath = rootPath.replace(/^\./, process.env.PWD);  // Convert relative path to absolute path.
   const pathIsFolder = await isFolder(rootPath);
+
+
+  const projectName = getProjectNameFromPath(rootPath)
+
+  // Create dependency scanner and set parameters
+  const dependencyScannerCfg = new DependencyScannerCfg();
+  if (options.api2url) dependencyScannerCfg.DEFAULT_GRPC_HOST = options.api2url;
+  const dependencyScanner = new DependencyScanner(dependencyScannerCfg);
+  let dependencyInput: Array<string> = [];
+
 
   // Create scanner and set connections parameters
   const scannerCfg = new ScannerCfg();
@@ -38,27 +55,22 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
   if(options.maxRetry) scannerCfg.MAX_RETRIES_FOR_RECOVERABLES_ERRORS = options.maxRetry;
   const scanner = new Scanner(scannerCfg);
 
+  let scannerInput: ScannerInput = {fileList: []};
   scannerInput.folderRoot = rootPath + '/'; // This will remove the project root path from the results.
   if(options.flags) scannerInput.engineFlags = options.flags;
 
+
+
   if(!options.wfp) {
     if(pathIsFolder) {
-      const tree = new Tree(rootPath);
-      const filter = new FilterList('');
-
-      if (options.filter) {
-        console.error('Loading filter from file: ' + options.filter);
-        filter.loadFromFile(options.filter);
-      } else {
-        console.error('Loading default filters...');
-        filter.load(defaultFilter as FilterList);
-      }
       console.error('Reading directory...  ');
-      tree.loadFilter(filter);
-      tree.buildTree();
-      scannerInput.fileList = tree.getFileList();
+      const tree = new Tree(rootPath);
+      tree.build();
+      scannerInput.fileList = tree.getFileList(new ScanFilter(""));
+      dependencyInput = tree.getFileList(new DependencyFilter(""));
     } else {
       scannerInput.fileList = [rootPath];
+      dependencyInput = [rootPath];
     }
   } else {
     const winnowing = fs.readFileSync(rootPath, {encoding: 'utf-8'});
@@ -79,13 +91,6 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
     scanner.on(ScannerEvents.SCANNER_LOG, (logText) => console.error(logText));
   }
 
-  scanner.on(ScannerEvents.SCAN_DONE, async (resultPath) => {
-    if(options.output)
-      await fs.promises.copyFile(resultPath, options.output);
-    else
-      console.log(await fs.promises.readFile(resultPath, 'utf8'));
-  });
-
   if (options.wfp) scannerInput.wfpPath = rootPath;
   if (options.hpsm) scannerInput.winnowingMode = WinnowingMode.FULL_WINNOWING_HPSM
 
@@ -94,8 +99,48 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
     scannerInput.sbomMode = SbomMode.SBOM_IGNORE
   }
 
-  await scanner.scan([scannerInput]);
 
+
+  // Dependency scanner
+  let pDependencyScanner = Promise.resolve(<IDependencyResponse>{});
+  if (options.dependencies) {
+    pDependencyScanner = dependencyScanner.scan(dependencyInput);
+  }
+
+  //Launch parallel scanners
+  const pScanner = scanner.scan([scannerInput]);
+
+  const [scannerResultPath, depResults] = await Promise.all([pScanner, pDependencyScanner])
+  const scannerResults = JSON.parse(await fs.promises.readFile(scannerResultPath, 'utf-8'));
+
+
+  const scannersResults = {
+    scanner: scannerResults,
+    ...(options.dependencies && {dependencies: depResults})
+  };
+
+  let scannerResultsString = JSON.stringify(scannersResults, null, 2);
+
+  if (options.format && options.format.toLowerCase() === "html") {
+
+    const depPath = `${os.tmpdir()}/scanoss-dependency.json`
+    await fs.promises.writeFile(depPath, JSON.stringify(depResults, null, 2));
+
+    const ReportEntry: IReportEntry = {
+      projectName,
+      resultPath: scannerResultPath,
+      ...(options.dependencies && {dependencyPath: depPath}),
+      outputPath: "",
+    }
+
+    const HTML = new HTMLReport(ReportEntry);
+    scannerResultsString = await HTML.generate();
+  }
+
+  if(options.output)
+    await fs.promises.writeFile(options.output, scannerResultsString)
+  else
+    console.log(scannerResultsString);
 }
 
 

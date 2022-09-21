@@ -2,7 +2,7 @@
 import { FilterListType } from "./filtering";
 
 
-export const defaultFilter = {
+export const defaultFilterForScanning = {
   name: 'Default',
   type: FilterListType.BANNED,
   filters: [

@@ -37,9 +37,12 @@ export class DependencyScanner {
     for (const file of localDependencies.files) {
       for (const purl of file.purls) {
 
+        //If purl has a specific version, remove it and place the "version" value into requirement field.
         const version = PackageURL.fromString(purl.purl).version;
-        purl.requirement = version;
-        purl.purl = purl.purl.replace('@'+version, '');
+        if (version) {
+          purl.requirement = version;
+          purl.purl = purl.purl.replace('@' + version, '');
+        }
 
         if (purl.purl.includes('%2F'))
           purl.purl = purl.purl.replace(/%2F/g, '/');
