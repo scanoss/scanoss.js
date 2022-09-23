@@ -3,6 +3,10 @@ import { DataProvider, IDataLayers } from './DataLayerTypes';
 export class DataProviderManager {
   private dataLayersProviders: Array<DataProvider>;
 
+  constructor() {
+    this.dataLayersProviders = [];
+  }
+
   public addLayer(l: DataProvider) {
     this.dataLayersProviders.push(l)
   }
@@ -17,7 +21,7 @@ export class DataProviderManager {
       licenses: null
     };
 
-    for (const layer of this.dataLayersProviders) Object.assign(dataLayer, layer.getData())
+    for (const layer of this.dataLayersProviders) Object.assign(dataLayer, layer.getData());
     return dataLayer;
   }
 }

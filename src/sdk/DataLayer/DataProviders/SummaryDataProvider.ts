@@ -13,6 +13,10 @@ export class SummaryDataProvider implements DataProvider {
     return {licenses: this.getLicenseLayer()} as IDataLayers
   }
 
+  public getLayerName(): string {
+    return this.constructor.name;
+  }
+
   public getLicenseLayer(): LicenseDataLayer[]{
 
     return {} as LicenseDataLayer[]

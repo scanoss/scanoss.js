@@ -95,5 +95,6 @@ export interface IDataLayers {
 
 export interface DataProvider {
   getData(): IDataLayers;
+  getLayerName(): string;
 }
 

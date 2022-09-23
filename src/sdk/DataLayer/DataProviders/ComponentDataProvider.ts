@@ -14,6 +14,10 @@ export class ComponentDataProvider implements DataProvider {
     this.scanRawResults=scanRawResults;
   }
 
+  public getLayerName(): string {
+    return this.constructor.name;
+  }
+
   public getData(): IDataLayers {
     if (!this.scanRawResults) return {} as IDataLayers;
 
@@ -23,7 +27,7 @@ export class ComponentDataProvider implements DataProvider {
   }
 
 
-  public getComponentDataLayer(scanComponents: Array<ScannerRawComponent>): Array<ComponentDataLayer> {
+  private getComponentDataLayer(scanComponents: Array<ScannerRawComponent>): Array<ComponentDataLayer> {
     const componentLayer: Array<ComponentDataLayer> = [];
 
     for (let i=0 ; i<scanComponents.length ; i++) {

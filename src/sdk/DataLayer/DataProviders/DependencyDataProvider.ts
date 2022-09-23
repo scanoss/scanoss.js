@@ -14,6 +14,10 @@ export class DependencyDataProvider implements DataProvider {
     this.dependencies = dependencies;
   }
 
+  public getLayerName(): string {
+    return this.constructor.name;
+  }
+
   public getData(): IDataLayers {
     return {dependencies: this.getDependencyLayer(this.dependencies)} as IDataLayers
   }

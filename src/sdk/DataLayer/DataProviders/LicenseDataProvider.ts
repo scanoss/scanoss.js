@@ -1,6 +1,7 @@
 import {DataProvider, IDataLayers, LicenseDataLayer} from '../DataLayerTypes';
 import { ScannerRawComponent } from '../../scanner/ScannerTypes';
 import { IDependencyResponse } from '../../Dependencies/DependencyTypes';
+import { DependencyDataProvider } from './DependencyDataProvider';
 
 export class LicenseDataProvider implements DataProvider {
 
@@ -11,6 +12,10 @@ export class LicenseDataProvider implements DataProvider {
   constructor(components: ScannerRawComponent[], dependencies: IDependencyResponse ) {
     this.components = components;
     this.dependencies = dependencies;
+  }
+
+  public getLayerName(): string {
+    return this.constructor.name;
   }
 
   public getData(): IDataLayers {
