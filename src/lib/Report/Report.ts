@@ -11,6 +11,7 @@ import {
 } from '../../sdk/DataLayer/DataProviders/LicenseDataProvider';
 import { IDataLayers } from '../../sdk/DataLayer/DataLayerTypes';
 
+//TODO Unify results.json and dependency.json. What happens with result.json that includes dependencies?
 export class Report {
 
   private rawScannerResults: any;
@@ -21,10 +22,12 @@ export class Report {
 
   private dataLayer: IDataLayers;
 
-  constructor(pathScannerResults: string) {
-    this.pathScannerResults = pathScannerResults;
+  constructor() {
     this.dataProviderManager = new DataProviderManager();
-    this.dataLayer = null;
+  }
+
+  public loadDataFromMemory(rawScannerResults: any){
+    this.rawScannerResults = rawScannerResults;
   }
 
   public async init() {

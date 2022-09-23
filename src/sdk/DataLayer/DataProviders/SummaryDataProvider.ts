@@ -1,6 +1,7 @@
 import {DataProvider, IDataLayers, LicenseDataLayer} from '../DataLayerTypes';
 import { ScannerRawComponent } from '../../scanner/ScannerTypes';
 
+//TODO Implement SummarDataProvider
 export class SummaryDataProvider implements DataProvider {
 
   private components: ScannerRawComponent[];

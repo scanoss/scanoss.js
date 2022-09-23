@@ -5,7 +5,7 @@ import { Scanner } from '../../sdk/scanner/Scanner';
 import {
   SbomMode,
   ScannerEvents,
-  ScannerInput,
+  ScannerInput, ScannerRawComponent,
   WinnowingMode
 } from '../../sdk/scanner/ScannerTypes';
 import { ScannerCfg } from '../../sdk/scanner/ScannerCfg';
@@ -22,6 +22,7 @@ import { IReportEntry } from '../../sdk/modules/reports/types';
 import { HTMLReport } from '../../sdk/modules/reports/htmlReport/HTMLReport';
 import { ScanFilter } from '../../sdk/tree/Filters/ScanFilter';
 import { DependencyFilter } from '../../sdk/tree/Filters/DependencyFilter';
+import { Report } from '../../lib/Report/Report';
 
 
 export async function scanHandler(rootPath: string, options: any): Promise<void> {
@@ -111,7 +112,7 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
 
 
   const scannersResults = {
-    scanner: scannerResults,
+    scanner: scannerResults as ScannerRawComponent[],
     ...(options.dependencies && {dependencies: depResults})
   };
 
@@ -119,18 +120,23 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
 
   if (options.format && options.format.toLowerCase() === "html") {
 
-    const depPath = `${os.tmpdir()}/scanoss-dependency.json`
-    await fs.promises.writeFile(depPath, JSON.stringify(depResults, null, 2));
+    const report = new Report();
+    report.loadDataFromMemory(scannersResults);
+    scannerResultsString = report.generateHTML();
 
-    const ReportEntry: IReportEntry = {
-      projectName,
-      resultPath: scannerResultPath,
-      ...(options.dependencies && {dependencyPath: depPath}),
-      outputPath: "",
-    }
-
-    const HTML = new HTMLReport(ReportEntry);
-    scannerResultsString = await HTML.generate();
+    //
+    // const depPath = `${os.tmpdir()}/scanoss-dependency.json`
+    // await fs.promises.writeFile(depPath, JSON.stringify(depResults, null, 2));
+    //
+    // const ReportEntry: IReportEntry = {
+    //   projectName,
+    //   resultPath: scannerResultPath,
+    //   ...(options.dependencies && {dependencyPath: depPath}),
+    //   outputPath: "",
+    // }
+    //
+    // const HTML = new HTMLReport(ReportEntry);
+    // scannerResultsString = await HTML.generate();
   }
 
   if(options.output)

@@ -3,6 +3,7 @@ import { ScannerRawComponent } from '../../scanner/ScannerTypes';
 import { IDependencyResponse } from '../../Dependencies/DependencyTypes';
 import { DependencyDataProvider } from './DependencyDataProvider';
 
+//TODO Implement LicenseDataProvider
 export class LicenseDataProvider implements DataProvider {
 
   private components: ScannerRawComponent[];
