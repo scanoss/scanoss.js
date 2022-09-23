@@ -1,3 +1,5 @@
+import path from 'path';
+
 export enum ScannerEvents {
   WINNOWING_STARTING = 'WINNOWING_STARTING',
   WINNOWING_NEW_CONTENT = 'WINNOWING_NEW_CONTENT',
@@ -48,3 +50,61 @@ export interface ScannerInput {
   sbom?: string;
   sbomMode?: SbomMode;
 };
+
+
+export type ScannerResults = Map<string , ScannerRawComponent[]>;
+
+export interface ScannerRawComponent {
+  id: string;
+  status: string;
+  lines: string;
+  oss_lines: string;
+  matched: string;
+  purl: string[];
+  vendor: string
+  component: string;
+  version: string;
+  latest: string;
+  url: string;
+  release_date: string;
+  file: string;
+  url_hash: string;
+  file_hash: string;
+  source_hash: string;
+  file_url: string;
+  licenses: {
+    name: string;
+    patent_hints: string;
+    copyleft: string;
+    checklist_url: string;
+    osadl_updated: string;
+    source: string; }[];
+  dependencies: {
+    vendor: string;
+    component: string;
+    version: string;
+    source: string; }[];
+  copyrights: {
+    name: string;
+    source: string; }[];
+  vulnerabilities: {
+    ID: string;
+    CVE: string;
+    severity: string;
+    reported: string;
+    introduced: string;
+    patched: string;
+    summary: string;
+    source: string; }[];
+  quality: {
+    score: string;
+    source: string; }[];
+  cryptography: any[];
+  server: {
+    version: string;
+    kb_version: { monthly: string; daily: string; }
+    hostname: string;
+    flags: string;
+    elapsed: string;
+  };
+}
