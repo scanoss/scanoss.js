@@ -1,9 +1,10 @@
 import fs from "fs";
-import { DependencyScanner } from "../lib/dependencies/DependencyScanner";
-import { DependencyScannerCfg } from "../lib/dependencies/DependencyScannerCfg";
-import { Tree } from "../lib/tree/Tree";
+import { DependencyScanner } from "../../sdk/Dependencies/DependencyScanner";
+import { DependencyScannerCfg } from "../../sdk/Dependencies/DependencyScannerCfg";
+import { Tree } from "../../sdk/tree/Tree";
+import { DependencyFilter } from '../../sdk/tree/Filters/DependencyFilter';
 import { isFolder } from "./helpers";
-import { DependencyFilter } from '../lib/tree/Filters/DependencyFilter';
+
 
 export async function depHandler(rootPath: string, options: any): Promise<void> {
 

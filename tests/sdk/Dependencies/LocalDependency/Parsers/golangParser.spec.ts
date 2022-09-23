@@ -1,18 +1,18 @@
 import fs from 'fs'
-import { goSumParser } from '../../src/lib/dependencies/LocalDependency/parsers/golangParser'
-import { ILocalDependency } from '../../src/lib/dependencies/LocalDependency/DependencyTypes'
+import { goSumParser } from '../../../../../src/sdk/Dependencies/LocalDependency/parsers/golangParser';
+import { ILocalDependency } from '../../../../../src/sdk/Dependencies/LocalDependency/DependencyTypes'
 import { expect } from 'chai';
+import path from 'path';
 
 
 describe('Suit test for go sum parser', function() {
-
 
   it('Testing valids go.sum files', function (){
     const tests: [{
       inputPath: string;
       expectedResult: ILocalDependency;
     }] = [{
-      inputPath: "./tests/data/dependencies/go.sum/1/go.sum",
+      inputPath: path.join(__dirname,"./samples/go.sum/1/go.sum"),
       expectedResult: {file: 'go.sum', purls: [
           {purl:"pkg:golang/cloud.google.com/go", requirement:"v0.26.0"},
           {purl:"pkg:golang/cloud.google.com/go", requirement:"v0.34.0"},

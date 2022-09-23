@@ -1,11 +1,9 @@
 import fs from 'fs'
-import {
-  packagelockParser,
-  yarnLockParser
-} from '../../src/lib/dependencies/LocalDependency/parsers/npmParser';
-import { ILocalDependency } from '../../src/lib/dependencies/LocalDependency/DependencyTypes'
 import { expect } from 'chai';
-const path = require('path');
+import path from 'path';
+
+import { packagelockParser, yarnLockParser } from '../../../../../src/sdk/Dependencies/LocalDependency/parsers/npmParser';
+import { ILocalDependency } from '../../../../../src/sdk/Dependencies/LocalDependency/DependencyTypes'
 
 describe('Suit test for package lock parser', function() {
 
@@ -14,7 +12,7 @@ describe('Suit test for package lock parser', function() {
       inputPath: string;
       expectedResult: ILocalDependency;
     }] = [{
-      inputPath: path.join(__dirname,"../data/dependencies/package-lock/1/package-lock.json"),
+      inputPath: path.join(__dirname,"./samples/package-lock/1/package-lock.json"),
       expectedResult: {file: 'package-lock.json', purls: [
           {purl: "pkg:npm/ansi-regex", requirement: "3.0.1"},
           {purl: "pkg:npm/ansi-styles",requirement: "4.3.0"},
@@ -114,21 +112,17 @@ console.log(path.join(__dirname,"../data/dependencies/package-lock/1/package-loc
 describe('Suit test for yarn lock files', function() {
 
   it('Testing yarn lock file v1', function() {
-    const expectedOutput = JSON.parse(fs.readFileSync('./tests/data/dependencies/yarn-lock/v1/yarn.lock-expected', 'utf-8'));
-    const yarnLock = fs.readFileSync('./tests/data/dependencies/yarn-lock/v1/yarn.lock', 'utf-8')
+    const expectedOutput = JSON.parse(fs.readFileSync(path.join(__dirname, "./samples/yarn-lock/v1/yarn.lock-expected"), 'utf-8'));
+    const yarnLock = fs.readFileSync(path.join(__dirname, "./samples/yarn-lock/v1/yarn.lock"), 'utf-8');
     const results = yarnLockParser(yarnLock, 'yarn.lock');
-
     expect(results).to.be.deep.equal(expectedOutput)
   });
 
   it('Testing yarn lock file v1 complex', function() {
-    const expectedOutput = JSON.parse(fs.readFileSync('./tests/data/dependencies/yarn-lock/v1-complex/yarn.lock-expected', 'utf-8'));
-    const yarnLock = fs.readFileSync('./tests/data/dependencies/yarn-lock/v1-complex/yarn.lock', 'utf-8')
+    const expectedOutput = JSON.parse(fs.readFileSync(path.join(__dirname, './samples/yarn-lock/v1-complex/yarn.lock-expected'), 'utf-8'));
+    const yarnLock = fs.readFileSync(path.join(__dirname, './samples/yarn-lock/v1-complex/yarn.lock'), 'utf-8');
     const results = yarnLockParser(yarnLock, 'yarn.lock');
-
     expect(results).to.be.deep.equal(expectedOutput)
   });
-
-
 
 });

@@ -1,31 +1,27 @@
-import { Scanner } from '../lib/scanner/Scanner';
+import os from 'os';
+import fs from 'fs';
+
+import { Scanner } from '../../sdk/scanner/Scanner';
 import {
   SbomMode,
   ScannerEvents,
   ScannerInput,
   WinnowingMode
-} from '../lib/scanner/ScannerTypes';
-import { ScannerCfg } from '../lib/scanner/ScannerCfg';
-import { Tree } from '../lib/tree/Tree';
-
+} from '../../sdk/scanner/ScannerTypes';
+import { ScannerCfg } from '../../sdk/scanner/ScannerCfg';
+import { Tree } from '../../sdk/tree/Tree';
 import cliProgress from 'cli-progress';
-import {
-  DispatcherResponse
-} from '../lib/scanner/Dispatcher/DispatcherResponse';
-import { FilterList } from '../lib/filters/filtering';
-
+import { DispatcherResponse } from '../../sdk/scanner/Dispatcher/DispatcherResponse';
 import { getProjectNameFromPath, isFolder } from './helpers';
 
-import fs from 'fs';
-import { DependencyScannerCfg } from '../lib/dependencies/DependencyScannerCfg';
-import { DependencyScanner } from '../lib/dependencies/DependencyScanner';
-import { IDependencyResponse } from '../lib/dependencies/DependencyTypes';
-import os from 'os';
-import { Report } from '../lib/modules/reports/Report';
-import { IReportEntry } from '../lib/modules/reports/types';
-import { HTMLReport } from '../lib/modules/reports/htmlReport/HTMLReport';
-import { ScanFilter } from '../lib/tree/Filters/ScanFilter';
-import { DependencyFilter } from '../lib/tree/Filters/DependencyFilter';
+
+import { DependencyScannerCfg } from '../../sdk/Dependencies/DependencyScannerCfg';
+import { DependencyScanner } from '../../sdk/Dependencies/DependencyScanner';
+import { IDependencyResponse } from '../../sdk/Dependencies/DependencyTypes';
+import { IReportEntry } from '../../sdk/modules/reports/types';
+import { HTMLReport } from '../../sdk/modules/reports/htmlReport/HTMLReport';
+import { ScanFilter } from '../../sdk/tree/Filters/ScanFilter';
+import { DependencyFilter } from '../../sdk/tree/Filters/DependencyFilter';
 
 
 export async function scanHandler(rootPath: string, options: any): Promise<void> {

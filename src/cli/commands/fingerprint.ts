@@ -1,14 +1,14 @@
-import { isFolder } from './helpers';
-import { ScannerEvents, WfpCalculator, WinnowingMode } from '..';
-import { Tree } from '../lib/tree/Tree';
-import { FilterList } from '../lib/filters/filtering';
-import {
-  FingerprintPackage
-} from '../lib/scanner/WfpProvider/FingerprintPackage';
 import fs from 'fs';
+
 import cliProgress from 'cli-progress';
-import { IWfpProviderInput } from '../lib/scanner/WfpProvider/WfpProvider';
-import { DependencyFilter } from '../lib/tree/Filters/DependencyFilter';
+
+import { isFolder } from './helpers';
+import { ScannerEvents, WinnowingMode } from '../../sdk/scanner/ScannerTypes';
+import { IWfpProviderInput } from '../../sdk/scanner/WfpProvider/WfpProvider';
+import { WfpCalculator } from '../../sdk/scanner/WfpProvider/WfpCalculator/WfpCalculator';
+import { FingerprintPackage } from '../../sdk/scanner/WfpProvider/FingerprintPackage';
+import { Tree } from '../../sdk/tree/Tree';
+import { DependencyFilter } from '../../sdk/tree/Filters/DependencyFilter';
 
 
 export async function fingerprintHandler(rootPath: string, options: any): Promise<void> {

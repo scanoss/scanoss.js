@@ -1,4 +1,4 @@
-import { DataProvider, IDataLayers } from './types';
+import { DataProvider, IDataLayers } from './DataLayerTypes';
 
 export class DataProviderManager {
   private dataLayersProviders: Array<DataProvider>;

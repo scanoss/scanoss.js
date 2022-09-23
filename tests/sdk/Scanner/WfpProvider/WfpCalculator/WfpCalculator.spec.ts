@@ -1,9 +1,7 @@
-import {WfpCalculator} from '../src/lib/scanner/WfpProvider/WfpCalculator/WfpCalculator';
-import { IWfpProviderInput } from '../src/lib/scanner/WfpProvider/WfpProvider';
-import {ScannerEvents, WinnowingMode} from '../src/lib/scanner/ScannerTypes'
-import {
-  FingerprintPackage
-} from '../src/lib/scanner/WfpProvider/FingerprintPackage';
+import { WfpCalculator } from '../../../../../src/sdk/scanner/WfpProvider/WfpCalculator/WfpCalculator';
+import { IWfpProviderInput } from '../../../../../src/sdk/scanner/WfpProvider/WfpProvider';
+import { ScannerEvents, WinnowingMode } from '../../../../../src/sdk/scanner/ScannerTypes'
+import { FingerprintPackage } from '../../../../../src/sdk/scanner/WfpProvider/FingerprintPackage';
 
 
 
@@ -21,8 +19,8 @@ describe('Suit test for WfpCalculator Class', () => {
 
     it('Winnowing Full mode', function (done) {
       wfpInput  = {
-        fileList: [__dirname + "/data/scanner/file1.c"],
-        folderRoot: __dirname + "/data/scanner/"
+        fileList: [__dirname + "/samples/file1.c"],
+        folderRoot: __dirname + "/samples/"
       };
 
       let wfpExpected = `file=736c0a4b4440e35baffc9378304ee588,907,file1.c
@@ -55,8 +53,8 @@ describe('Suit test for WfpCalculator Class', () => {
     it('Winnowing HPSM mode', function (done) {
 
       wfpInput  = {
-        fileList: [__dirname + "/data/scanner/file1.c"],
-        folderRoot: __dirname + "/data/scanner/"
+        fileList: [__dirname + "/samples/file1.c"],
+        folderRoot: __dirname + "/samples/"
       };
 
       let wfpExpected = `file=736c0a4b4440e35baffc9378304ee588,907,file1.c
@@ -83,6 +81,8 @@ hpsm=91ffe7ff989bffe7fcff91bdff2dff3d00a400ff9b00a400ffb6004c42ff9c004200ffc700f
         if (wfpResponse.getContent() === wfpExpected) {
           done()
         } else {
+          console.log("Expected: ", wfpExpected);
+          console.log("Got: ", wfpResponse.getContent());
           done(new Error("Diferences in wfp generated and expected"))
         }
       });
@@ -94,7 +94,6 @@ hpsm=91ffe7ff989bffe7fcff91bdff2dff3d00a400ff9b00a400ffb6004c42ff9c004200ffc700f
       wfpInput.winnowingMode=WinnowingMode.FULL_WINNOWING_HPSM;
       wfpCalculator.start(wfpInput)
     });
-
 
   });
 
