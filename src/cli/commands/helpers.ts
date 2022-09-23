@@ -1,5 +1,4 @@
 import pathLib from 'path';
-
 import fs from 'fs';
 
 // Async function that verify if a path is a folder. If the path is not valid the promise will be rejected
