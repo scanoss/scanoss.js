@@ -23,7 +23,7 @@ export class Report {
 
   public async getHTML(): Promise<string> {
     this.dataLayer = this.dataProviderManager.generateData();
-    //Consume data from this.dataLayer;
+    console.log(this.dataLayer);
     const html = (await fs.promises.readFile(reportDefaultPath, 'utf-8'));
     if(!html) throw new Error('Invalid template path');
     return html.replace('#DATA',JSON.stringify(this.dataLayer));

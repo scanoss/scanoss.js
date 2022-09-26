@@ -3,6 +3,7 @@ import {
   ScannerComponent,
   ScannerResults
 } from '../../scanner/ScannerTypes';
+import { IDependencyResponse } from '../../Dependencies/DependencyTypes';
 
 export class ComponentDataProvider implements DataProvider {
 
@@ -10,8 +11,11 @@ export class ComponentDataProvider implements DataProvider {
 
   private componentList: Array<ScannerComponent>;
 
-  constructor(scanRawResults: ScannerResults) {
+  private dependencies: IDependencyResponse;
+
+  constructor(scanRawResults: ScannerResults, dependencies: IDependencyResponse) {
     this.scanRawResults=scanRawResults;
+    this.dependencies = dependencies;
   }
 
   public getLayerName(): string {
@@ -23,11 +27,35 @@ export class ComponentDataProvider implements DataProvider {
 
     //Extract all components from scanRawResults, does not matter if there are duplicated
     this.componentList = Object.values(this.scanRawResults).flat();
-    return { component:  this.getComponentDataLayer(this.componentList)} as IDataLayers;
+
+    const componentsDependencies = this.getComponentsFromDependencies(this.dependencies);
+    const componentsScanner = this.getComponentsFromScanner(this.componentList);
+
+    return { component:  [...componentsScanner,...componentsDependencies]} as IDataLayers;
   }
 
+  private getComponentsFromDependencies(dependencies: IDependencyResponse): Array<ComponentDataLayer> {
+    const componentLayer: Array<ComponentDataLayer> = [];
+    dependencies.filesList.forEach(file => {
+      file.dependenciesList.forEach(dependency => {
+        const newComponent: ComponentDataLayer = <ComponentDataLayer>{};
+        newComponent.key = dependency.purl;
+        newComponent.purls = [dependency.purl];
+        newComponent.name = dependency.component;
+        newComponent.url = null;
+        newComponent.vendor = null;
+        newComponent.versions = [{
+          version: dependency.version,
+          licenses: dependency.licensesList.map(license => license.spdxId),
+          copyrights: null,
+        }];
+      componentLayer.push(newComponent);
+      });
+    });
+    return componentLayer;
+  }
 
-  private getComponentDataLayer(scanComponents: Array<ScannerComponent>): Array<ComponentDataLayer> {
+  private getComponentsFromScanner(scanComponents: Array<ScannerComponent>): Array<ComponentDataLayer> {
     const componentLayer: Array<ComponentDataLayer> = [];
 
     for (let i=0 ; i<scanComponents.length ; i++) {

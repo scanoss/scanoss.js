@@ -129,7 +129,7 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
   if (options.format && options.format.toLowerCase() === "html") {
 
     const dataProviderManager = new DataProviderManager();
-    dataProviderManager.addDataProvider(new ComponentDataProvider(scannersResults.scanner))
+    dataProviderManager.addDataProvider(new ComponentDataProvider(scannersResults.scanner, scannersResults.dependencies))
     dataProviderManager.addDataProvider(new DependencyDataProvider(scannersResults.dependencies))
     dataProviderManager.addDataProvider(new LicenseDataProvider(scannersResults.scanner, scannersResults.dependencies));
 

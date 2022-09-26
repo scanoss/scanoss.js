@@ -113,7 +113,7 @@ export class LicenseDataProvider implements DataProvider {
   private insertComponentIntoLicense(license: LicenseDataLayer, component: ScannerComponent): LicenseDataLayer{
     //Check whether component exist on this specific license (license.name)
     const componentExist = license.components.findIndex((c)=> c.purl === component.purl[0]);
-    if (componentExist) {
+    if (componentExist >= 0) {
       const versionExist = license.components[componentExist].versions.find((version)=>version === component.version);
       if (!versionExist) {
         license.components[componentExist].versions.push(component.version);

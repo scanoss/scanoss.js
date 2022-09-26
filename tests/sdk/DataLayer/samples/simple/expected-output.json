@@ -75,6 +75,53 @@
           ]
         }
       ]
+    },
+    {
+      "key": "pkg:npm/querystringify",
+      "purls": ["pkg:npm/querystringify"],
+      "name": "querystringify",
+      "url": null,
+      "versions": [{
+        "version": "2.2.0",
+        "licenses": ["MIT"],
+        "copyrights": null
+      }],
+      "vendor": null
+    },{
+      "key": "pkg:npm/requires-port",
+      "purls": ["pkg:npm/requires-port"],
+      "name": "requires-port",
+      "url": null,
+      "versions": [{
+        "version": "1.0.0",
+        "licenses": ["MIT"],
+        "copyrights": null
+      }],
+      "vendor": null
+    },
+    {
+      "key": "pkg:npm/assume",
+      "purls": ["pkg:npm/assume"],
+      "name": "assume",
+      "url": null,
+      "versions": [{
+        "version": "2.3.0",
+        "licenses": ["MIT"],
+        "copyrights": null
+      }],
+      "vendor": null
+    },
+    {
+      "key": "pkg:npm/browserify",
+      "purls": ["pkg:npm/browserify"],
+      "name": "browserify",
+      "url": null,
+      "versions": [{
+        "version": "17.0.0",
+        "licenses": ["MIT"],
+        "copyrights": null
+      }],
+      "vendor": null
     }
   ],
   "dependencies": [
@@ -129,6 +176,31 @@
     }
   ],
   "vulnerabilities": null,
-  "summary": null,
-  "licenses": null
+  "summary": {
+    "matchedFiles": 4,
+    "noMatchFiles": 0,
+    "projectName": "project-test",
+    "timestamp": 737272800000,
+    "totalFiles": 4
+  },
+  "licenses": [
+    {
+      "components": [
+        {
+          "name": "url-parse",
+          "purl": "pkg:npm/url-parse",
+          "url": "https://www.npmjs.com/package/url-parse",
+          "vendor": "Arnout Kazemier",
+          "versions": [
+            "1.5.10"
+          ]
+        }
+      ],
+      "copyleft": false,
+      "hasIncompatibles": [],
+      "incompatibleWith": [],
+      "label": "MIT",
+      "value": 1
+    }
+  ]
 }
