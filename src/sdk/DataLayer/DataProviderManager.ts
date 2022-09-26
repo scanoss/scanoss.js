@@ -7,7 +7,7 @@ export class DataProviderManager {
     this.dataLayersProviders = [];
   }
 
-  public addLayer(l: DataProvider) {
+  public addDataProvider(l: DataProvider) {
     this.dataLayersProviders.push(l)
   }
 

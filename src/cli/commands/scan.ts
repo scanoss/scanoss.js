@@ -5,7 +5,7 @@ import { Scanner } from '../../sdk/scanner/Scanner';
 import {
   SbomMode,
   ScannerEvents,
-  ScannerInput, ScannerRawComponent,
+  ScannerInput, ScannerComponent, ScannerResults,
   WinnowingMode
 } from '../../sdk/scanner/ScannerTypes';
 import { ScannerCfg } from '../../sdk/scanner/ScannerCfg';
@@ -18,11 +18,19 @@ import { getProjectNameFromPath, isFolder } from './helpers';
 import { DependencyScannerCfg } from '../../sdk/Dependencies/DependencyScannerCfg';
 import { DependencyScanner } from '../../sdk/Dependencies/DependencyScanner';
 import { IDependencyResponse } from '../../sdk/Dependencies/DependencyTypes';
-import { IReportEntry } from '../../sdk/modules/reports/types';
-import { HTMLReport } from '../../sdk/modules/reports/htmlReport/HTMLReport';
 import { ScanFilter } from '../../sdk/tree/Filters/ScanFilter';
 import { DependencyFilter } from '../../sdk/tree/Filters/DependencyFilter';
-import { Report } from '../../lib/Report/Report';
+import { Report } from '../../sdk/Report/Report';
+import { DataProviderManager } from '../../sdk/DataLayer/DataProviderManager';
+import {
+  ComponentDataProvider
+} from '../../sdk/DataLayer/DataProviders/ComponentDataProvider';
+import {
+  DependencyDataProvider
+} from '../../sdk/DataLayer/DataProviders/DependencyDataProvider';
+import {
+  LicenseDataProvider
+} from '../../sdk/DataLayer/DataProviders/LicenseDataProvider';
 
 
 export async function scanHandler(rootPath: string, options: any): Promise<void> {
@@ -110,9 +118,9 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
   const [scannerResultPath, depResults] = await Promise.all([pScanner, pDependencyScanner])
   const scannerResults = JSON.parse(await fs.promises.readFile(scannerResultPath, 'utf-8'));
 
-
+  //TODO Unify results.json and dependency.json. What happens with result.json that includes dependencies?
   const scannersResults = {
-    scanner: scannerResults as ScannerRawComponent[],
+    scanner: scannerResults as ScannerResults,
     ...(options.dependencies && {dependencies: depResults})
   };
 
@@ -120,23 +128,14 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
 
   if (options.format && options.format.toLowerCase() === "html") {
 
-    const report = new Report();
-    report.loadDataFromMemory(scannersResults);
-    scannerResultsString = report.generateHTML();
+    const dataProviderManager = new DataProviderManager();
+    dataProviderManager.addDataProvider(new ComponentDataProvider(scannersResults.scanner))
+    dataProviderManager.addDataProvider(new DependencyDataProvider(scannersResults.dependencies))
+    dataProviderManager.addDataProvider(new LicenseDataProvider(scannersResults.scanner, scannersResults.dependencies));
 
-    //
-    // const depPath = `${os.tmpdir()}/scanoss-dependency.json`
-    // await fs.promises.writeFile(depPath, JSON.stringify(depResults, null, 2));
-    //
-    // const ReportEntry: IReportEntry = {
-    //   projectName,
-    //   resultPath: scannerResultPath,
-    //   ...(options.dependencies && {dependencyPath: depPath}),
-    //   outputPath: "",
-    // }
-    //
-    // const HTML = new HTMLReport(ReportEntry);
-    // scannerResultsString = await HTML.generate();
+    const report = new Report(dataProviderManager);
+    scannerResultsString = await report.getHTML();
+
   }
 
   if(options.output)

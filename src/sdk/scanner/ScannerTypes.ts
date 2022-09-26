@@ -51,11 +51,14 @@ export interface ScannerInput {
   sbomMode?: SbomMode;
 };
 
+/********************** Scanner results types **********************/
 
-export type ScannerResults = Map<string , ScannerRawComponent[]>;
+export type ScannerResults = Map<string , ScannerComponent[]>;
 
-export interface ScannerRawComponent {
-  id: string;
+export enum ScannerComponentId {NONE = 'none', FILE = 'file' , SNIPPET = 'snippet'};
+
+export interface ScannerComponent {
+  id: ScannerComponentId;
   status: string;
   lines: string;
   oss_lines: string;
@@ -78,7 +81,9 @@ export interface ScannerRawComponent {
     copyleft: string;
     checklist_url: string;
     osadl_updated: string;
-    source: string; }[];
+    source: string;
+    incompatible_with?: string;
+  }[];
   dependencies: {
     vendor: string;
     component: string;
@@ -108,3 +113,4 @@ export interface ScannerRawComponent {
     elapsed: string;
   };
 }
+/********************** Scanner results types **********************/

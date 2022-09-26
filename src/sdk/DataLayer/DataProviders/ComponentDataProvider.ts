@@ -1,6 +1,6 @@
 import { ComponentDataLayer, DataProvider, IDataLayers } from '../DataLayerTypes';
 import {
-  ScannerRawComponent,
+  ScannerComponent,
   ScannerResults
 } from '../../scanner/ScannerTypes';
 
@@ -8,7 +8,7 @@ export class ComponentDataProvider implements DataProvider {
 
   private scanRawResults: ScannerResults
 
-  private componentList: Array<ScannerRawComponent>;
+  private componentList: Array<ScannerComponent>;
 
   constructor(scanRawResults: ScannerResults) {
     this.scanRawResults=scanRawResults;
@@ -27,7 +27,7 @@ export class ComponentDataProvider implements DataProvider {
   }
 
 
-  private getComponentDataLayer(scanComponents: Array<ScannerRawComponent>): Array<ComponentDataLayer> {
+  private getComponentDataLayer(scanComponents: Array<ScannerComponent>): Array<ComponentDataLayer> {
     const componentLayer: Array<ComponentDataLayer> = [];
 
     for (let i=0 ; i<scanComponents.length ; i++) {

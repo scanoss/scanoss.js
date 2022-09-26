@@ -4,7 +4,6 @@ import { expect } from 'chai';
 
 import { ComponentDataProvider } from '../../../src/sdk/DataLayer/DataProviders/ComponentDataProvider';
 import { DependencyDataProvider } from '../../../src/sdk/DataLayer/DataProviders/DependencyDataProvider';
-import { ComponentDataLayer } from '../../../src/sdk/DataLayer/DataLayerTypes';
 import { DataProviderManager } from '../../../src/sdk/DataLayer/DataProviderManager';
 
 describe('Suit test for DataProviderManager', () => {
@@ -16,8 +15,8 @@ describe('Suit test for DataProviderManager', () => {
 
     const dataProviderManager = new DataProviderManager();
 
-    dataProviderManager.addLayer(new ComponentDataProvider(scannerOutput.scanner));
-    dataProviderManager.addLayer(new DependencyDataProvider(scannerOutput.dependencies));
+    dataProviderManager.addDataProvider(new ComponentDataProvider(scannerOutput.scanner));
+    dataProviderManager.addDataProvider(new DependencyDataProvider(scannerOutput.dependencies));
 
     const dataLayer = dataProviderManager.generateData();
 

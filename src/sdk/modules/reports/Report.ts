@@ -79,7 +79,7 @@ export abstract class Report{
     }
 
     // set unknown licenses to the of the array
-    this.unknownLicensesToEnd();
+   // this.unknownLicensesToEnd();
 
     reportAdapter.checkForIncompatibilities(this.licenses);
     return {
@@ -87,19 +87,6 @@ export abstract class Report{
       licenses: this.licenses,
       summary: this.summary,
       date: new Date().toLocaleTimeString(),
-    }
-  }
-
-  private unknownLicensesToEnd(){
-    let unknownLicenses = null;
-    if(this.licenseMapper['unknown']){
-      unknownLicenses =  this.licenseMapper['unknown'];
-      delete this.licenseMapper['unknown'];
-    }
-
-    this.licenses =  Object.values((this.licenseMapper));
-    if(unknownLicenses){
-      this.licenses.push(unknownLicenses);
     }
   }
 

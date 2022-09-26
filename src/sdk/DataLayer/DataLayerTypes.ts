@@ -1,3 +1,5 @@
+import { Component } from '../modules/reports/types';
+
 /*************  Component interface definition  *************/
 export interface ComponentDataLayer {
   key: string; // purl[0]
@@ -61,14 +63,17 @@ export interface VulnerabilityDataLayer {
 /*************  License interface definition  *************/
 export interface LicenseDataLayer {
   label: string;
+  value: number;  //Number of licenses found
   components: Array<LicenseComponent>;
   incompatibleWith: Array<string>;
   hasIncompatibles: Array<string>;
   copyleft:boolean;
 }
 
+
 export interface LicenseComponent {
   purl: string;
+  name: string;
   versions: Array<string>;
   url:string;
   vendor:string;
@@ -77,7 +82,7 @@ export interface LicenseComponent {
 
 export interface SummaryDataLayer {
   projectName: string;
-  timestamp: number;
+  timestamp: Date;
   matchedFiles: number;
   noMatchFiles: number;
   totalFiles: number;
@@ -87,9 +92,9 @@ export interface SummaryDataLayer {
 export interface IDataLayers {
   licenses: LicenseDataLayer[];
   component: ComponentDataLayer[];
-  summary: SummaryDataLayer;
   dependencies: DependencyDataLayer[];
   vulnerabilities: VulnerabilityDataLayer[];
+  summary: SummaryDataLayer;
 }
 
 

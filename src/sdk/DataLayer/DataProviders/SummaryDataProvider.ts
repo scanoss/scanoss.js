@@ -1,25 +1,51 @@
-import {DataProvider, IDataLayers, LicenseDataLayer} from '../DataLayerTypes';
-import { ScannerRawComponent } from '../../scanner/ScannerTypes';
+import { DataProvider, IDataLayers, SummaryDataLayer } from '../DataLayerTypes';
+import {
+  ScannerComponent,
+  ScannerComponentId,
+  ScannerResults
+} from '../../scanner/ScannerTypes';
 
-//TODO Implement SummarDataProvider
 export class SummaryDataProvider implements DataProvider {
 
-  private components: ScannerRawComponent[];
+  private scannerResults: ScannerResults;
 
-  constructor(components: ScannerRawComponent[]) {
-    this.components = components;
-  }
+  private componentList: Array<ScannerComponent>;
 
-  public getData(): IDataLayers {
-    return {licenses: this.getLicenseLayer()} as IDataLayers
+  private summary: SummaryDataLayer;
+
+  private projectName: string;
+
+  private projectCreateAt: Date;
+
+  constructor(projectName: string, projectCreatedAt: Date, scannerResults: ScannerResults) {
+    this.scannerResults = scannerResults;
+    this.projectName = projectName;
+    this.projectCreateAt = projectCreatedAt
+
+    this.summary = <SummaryDataLayer>{};
+    this.componentList = [];
   }
 
   public getLayerName(): string {
     return this.constructor.name;
   }
 
-  public getLicenseLayer(): LicenseDataLayer[]{
+  public getData(): IDataLayers {
+    this.componentList = Object.values(this.scannerResults).flat();
 
-    return {} as LicenseDataLayer[]
+    this.summary.projectName = this.projectName;
+    this.summary.timestamp = this.projectCreateAt;
+    this.summary.totalFiles = 0;
+    this.summary.noMatchFiles = 0;
+    this.summary.matchedFiles = 0;
+
+    this.componentList.forEach(component => {
+      if (component.id==ScannerComponentId.NONE) this.summary.noMatchFiles++;
+      else this.summary.matchedFiles++;
+      this.summary.totalFiles++;
+    });
+
+    return <IDataLayers>{summary: this.summary};
   }
+
 }
