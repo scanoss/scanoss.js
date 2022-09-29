@@ -10,6 +10,8 @@ import {
 } from '../../scanner/ScannerTypes';
 import { IDependencyResponse } from '../../Dependencies/DependencyTypes';
 
+//TODO finish this class.
+//Implement unknowk licenses
 export class LicenseDataProvider implements DataProvider {
 
   private scanResults: ScannerResults

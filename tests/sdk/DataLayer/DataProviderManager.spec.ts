@@ -9,6 +9,8 @@ import { LicenseDataProvider } from '../../../src/sdk/DataLayer/DataProviders/Li
 
 import { DataProviderManager } from '../../../src/sdk/DataLayer/DataProviderManager';
 
+//TODO; Extract all data from here and use for testing all other submodules
+//expecter-results.json has all the data expected for ComponentDataLAyer, LicenseDataLAyer, so on.
 describe('Suit test for DataProviderManager', () => {
 
   it('Test DataProviderManager',  function () {

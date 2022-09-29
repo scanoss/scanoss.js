@@ -35,7 +35,6 @@ import {
 
 export async function scanHandler(rootPath: string, options: any): Promise<void> {
 
-
   rootPath = rootPath.replace(/\/$/, '');  // Remove trailing slash if exists
   rootPath = rootPath.replace(/^\./, process.env.PWD);  // Convert relative path to absolute path.
   const pathIsFolder = await isFolder(rootPath);

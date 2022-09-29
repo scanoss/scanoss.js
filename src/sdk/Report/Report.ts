@@ -4,8 +4,7 @@ import { DataProviderManager } from '../../sdk/DataLayer/DataProviderManager';
 import { IDataLayers } from '../../sdk/DataLayer/DataLayerTypes';
 
 
-const reportDefaultPath = path.join(__dirname,"../../../../../assets/htmlTemplate/template.html");
-
+const reportDefaultPath = path.join(__dirname,"../../../../../assets/ReportHTMLTemplate/index.html");
 
 export class Report {
 
