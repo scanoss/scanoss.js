@@ -9,7 +9,7 @@
   "license": "MIT",
   "keywords": [],
   "bin": {
-    "scanoss-js": "build/main/bin/cli-bin.js"
+    "scanoss-js": "build/main/cli/bin/cli-bin.js"
   },
   "scripts": {
     "build": "run-p build:*",
