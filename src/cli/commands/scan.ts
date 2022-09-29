@@ -31,6 +31,9 @@ import {
 import {
   LicenseDataProvider
 } from '../../sdk/DataLayer/DataProviders/LicenseDataProvider';
+import {
+  SummaryDataProvider
+} from '../../sdk/DataLayer/DataProviders/SummaryDataProvider';
 
 
 export async function scanHandler(rootPath: string, options: any): Promise<void> {
@@ -131,7 +134,7 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
     dataProviderManager.addDataProvider(new ComponentDataProvider(scannersResults.scanner, scannersResults.dependencies))
     dataProviderManager.addDataProvider(new DependencyDataProvider(scannersResults.dependencies))
     dataProviderManager.addDataProvider(new LicenseDataProvider(scannersResults.scanner, scannersResults.dependencies));
-
+    dataProviderManager.addDataProvider(new SummaryDataProvider(projectName, new Date(), scannersResults.scanner));
     const report = new Report(dataProviderManager);
     scannerResultsString = await report.getHTML();
 

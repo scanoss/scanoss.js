@@ -9,8 +9,6 @@ export class SummaryDataProvider implements DataProvider {
 
   private scannerResults: ScannerResults;
 
-  private componentList: Array<ScannerComponent>;
-
   private summary: SummaryDataLayer;
 
   private projectName: string;
@@ -23,7 +21,6 @@ export class SummaryDataProvider implements DataProvider {
     this.projectCreateAt = projectCreatedAt
 
     this.summary = <SummaryDataLayer>{};
-    this.componentList = [];
   }
 
   public getLayerName(): string {
@@ -31,19 +28,19 @@ export class SummaryDataProvider implements DataProvider {
   }
 
   public getData(): IDataLayers {
-    this.componentList = Object.values(this.scannerResults).flat();
-
     this.summary.projectName = this.projectName;
     this.summary.timestamp = this.projectCreateAt;
     this.summary.totalFiles = 0;
     this.summary.noMatchFiles = 0;
     this.summary.matchedFiles = 0;
 
-    this.componentList.forEach(component => {
-      if (component.id==ScannerComponentId.NONE) this.summary.noMatchFiles++;
-      else this.summary.matchedFiles++;
-      this.summary.totalFiles++;
-    });
+    for (const [file, components] of Object.entries(this.scannerResults)) {
+      components.forEach(component => {
+        if (component.id==ScannerComponentId.NONE) this.summary.noMatchFiles++;
+        else this.summary.matchedFiles++;
+        this.summary.totalFiles++;
+      });
+    }
 
     return <IDataLayers>{summary: this.summary};
   }

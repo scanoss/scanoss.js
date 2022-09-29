@@ -53,7 +53,7 @@ export interface ScannerInput {
 
 /********************** Scanner results types **********************/
 
-export type ScannerResults = Map<string , ScannerComponent[]>;
+export type ScannerResults = Record<string , ScannerComponent[]>;
 
 export enum ScannerComponentId {NONE = 'none', FILE = 'file' , SNIPPET = 'snippet'};
 

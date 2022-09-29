@@ -24,7 +24,7 @@ export class LicenseDataProvider implements DataProvider {
 
   private licenseLayer: Array<LicenseDataLayer>;
 
-  constructor(scanResults: ScannerResults, dependencies: IDependencyResponse ) {
+  constructor(scanResults: ScannerResults, dependencies?: IDependencyResponse ) {
     this.scanResults = scanResults;
     this.dependencies = dependencies;
 
@@ -40,10 +40,12 @@ export class LicenseDataProvider implements DataProvider {
   public getData(): IDataLayers {
 
     this.componentList = Object.values(this.scanResults).flat();
+    this.componentList = this.componentList.filter(component => component.id!=='none')
+
     if (this.componentList.length >0)
       this.updateLicenseStorageFromComponentList();
 
-    if (this.dependencies.filesList.length > 0)
+    if (this.dependencies && this.dependencies.filesList.length > 0)
       this.updateLicenseStorageFromDependencies();
 
 
@@ -66,7 +68,7 @@ export class LicenseDataProvider implements DataProvider {
         newLicenseComponent.name = component.component
         newLicenseComponent.url = component.url;
 
-        const licenseExist = this.licenseStorage[license.name];
+        const licenseExist = !!this.licenseStorage[license.name];
         if(!licenseExist){
           const newLicense: LicenseDataLayer = <LicenseDataLayer>{};
           newLicense.value = 1;

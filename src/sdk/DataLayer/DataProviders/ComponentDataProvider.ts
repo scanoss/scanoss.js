@@ -13,7 +13,7 @@ export class ComponentDataProvider implements DataProvider {
 
   private dependencies: IDependencyResponse;
 
-  constructor(scanRawResults: ScannerResults, dependencies: IDependencyResponse) {
+  constructor(scanRawResults: ScannerResults, dependencies?: IDependencyResponse) {
     this.scanRawResults=scanRawResults;
     this.dependencies = dependencies;
   }
@@ -23,19 +23,29 @@ export class ComponentDataProvider implements DataProvider {
   }
 
   public getData(): IDataLayers {
-    if (!this.scanRawResults) return {} as IDataLayers;
+    const componentLayer = <IDataLayers>{component: null};
+
+    if (!this.scanRawResults && !this.dependencies) return componentLayer;
+
 
     //Extract all components from scanRawResults, does not matter if there are duplicated
+    //And removes all no match results.
     this.componentList = Object.values(this.scanRawResults).flat();
+    this.componentList = this.componentList.filter(component => component.id!=='none')
+    const scannerComponentLayer = this.parseComponentsFromScanner(this.componentList);
+    const dependenciesComponentLayer = this.parseComponentsFromDependencies(this.dependencies);
 
-    const componentsDependencies = this.getComponentsFromDependencies(this.dependencies);
-    const componentsScanner = this.getComponentsFromScanner(this.componentList);
+    componentLayer.component =  [...scannerComponentLayer, ...dependenciesComponentLayer];
 
-    return { component:  [...componentsScanner,...componentsDependencies]} as IDataLayers;
+    if(!componentLayer.component.length) componentLayer.component=null;
+    return componentLayer
+
   }
 
-  private getComponentsFromDependencies(dependencies: IDependencyResponse): Array<ComponentDataLayer> {
+  private parseComponentsFromDependencies(dependencies: IDependencyResponse): Array<ComponentDataLayer> {
     const componentLayer: Array<ComponentDataLayer> = [];
+    if (!dependencies) return componentLayer;
+
     dependencies.filesList.forEach(file => {
       file.dependenciesList.forEach(dependency => {
         const newComponent: ComponentDataLayer = <ComponentDataLayer>{};
@@ -55,8 +65,9 @@ export class ComponentDataProvider implements DataProvider {
     return componentLayer;
   }
 
-  private getComponentsFromScanner(scanComponents: Array<ScannerComponent>): Array<ComponentDataLayer> {
+  private parseComponentsFromScanner(scanComponents: Array<ScannerComponent>): Array<ComponentDataLayer> {
     const componentLayer: Array<ComponentDataLayer> = [];
+    if (!scanComponents) return componentLayer
 
     for (let i=0 ; i<scanComponents.length ; i++) {
 
@@ -91,7 +102,7 @@ export class ComponentDataProvider implements DataProvider {
             });
 
             //Insert copyright
-            newComponent.versions[0].copyrights.forEach(copyright => {
+            newComponent.versions[0]?.copyrights?.forEach(copyright => {
               if (!versionTarget.copyrights.includes(copyright)) versionTarget.copyrights.push(copyright);
             });
 
