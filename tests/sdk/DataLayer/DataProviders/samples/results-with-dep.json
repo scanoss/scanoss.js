@@ -1,0 +1,665 @@
+{
+  "scanner": {
+    "index.js": [
+      {
+        "id": "snippet",
+        "status": "pending",
+        "lines": "1-39,43-434,444-496,517-621",
+        "oss_lines": "1-39,29-420,448-500,481-585",
+        "matched": "94%",
+        "purl": [
+          "pkg:npm/url-parse",
+          "pkg:github/unshiftio/url-parse",
+          "pkg:deb/debian/node-url-parse",
+          "pkg:maven/org.webjars.bowergithub.unshiftio/url-parse"
+        ],
+        "vendor": "Arnout Kazemier",
+        "component": "url-parse",
+        "version": "1.5.10",
+        "latest": "1.5.10",
+        "url": "https://www.npmjs.com/package/url-parse",
+        "release_date": "2022-02-22",
+        "file": "package/index.js",
+        "url_hash": "bc40a277f4637eae4e69d08b2d65c574",
+        "file_hash": "39333d05dfb4c8fc4a9a48ecb207f890",
+        "source_hash": "b24ec0768e8f83ed5977a9d23f13ad9e",
+        "file_url": "https://osskb.org/api/file_contents/39333d05dfb4c8fc4a9a48ecb207f890",
+        "licenses": [
+          {
+            "name": "MIT",
+            "patent_hints": "no",
+            "copyleft": "no",
+            "checklist_url": "https://www.osadl.org/fileadmin/checklists/unreflicenses/MIT.txt",
+            "osadl_updated": "2022-09-16 15:38",
+            "source": "component_declared"
+          },
+          {
+            "name": "MIT",
+            "patent_hints": "no",
+            "copyleft": "no",
+            "checklist_url": "https://www.osadl.org/fileadmin/checklists/unreflicenses/MIT.txt",
+            "osadl_updated": "2022-09-16 15:38",
+            "source": "license_file",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        ],
+        "dependencies": [
+          {
+            "vendor": "npm_dep_vendor",
+            "component": "assume",
+            "version": "^2.2.0",
+            "source": "component_declared"
+          },
+          {
+            "vendor": "npm_dep_vendor",
+            "component": "browserify",
+            "version": "^17.0.0",
+            "source": "component_declared"
+          },
+          {
+            "vendor": "npm_dep_vendor",
+            "component": "c8",
+            "version": "^7.3.1",
+            "source": "component_declared"
+          },
+          {
+            "vendor": "npm_dep_vendor",
+            "component": "mocha",
+            "version": "^9.0.3",
+            "source": "component_declared"
+          },
+          {
+            "vendor": "npm_dep_vendor",
+            "component": "pre-commit",
+            "version": "^1.2.2",
+            "source": "component_declared"
+          },
+          {
+            "vendor": "npm_dep_vendor",
+            "component": "querystringify",
+            "version": "^2.1.1",
+            "source": "component_declared"
+          },
+          {
+            "vendor": "npm_dep_vendor",
+            "component": "requires-port",
+            "version": "^1.0.0",
+            "source": "component_declared"
+          },
+          {
+            "vendor": "npm_dep_vendor",
+            "component": "sauce-browsers",
+            "version": "^2.0.0",
+            "source": "component_declared"
+          },
+          {
+            "vendor": "npm_dep_vendor",
+            "component": "sauce-test",
+            "version": "^1.3.3",
+            "source": "component_declared"
+          },
+          {
+            "vendor": "npm_dep_vendor",
+            "component": "uglify-js",
+            "version": "^3.5.7",
+            "source": "component_declared"
+          }
+        ],
+        "copyrights": [
+          {
+            "name": "Copyright (c) 2015 Unshift.io; Arnout Kazemier;  the Contributors.",
+            "source": "license_file"
+          }
+        ],
+        "vulnerabilities": [],
+        "quality": [],
+        "cryptography": [],
+        "server": {
+          "version": "4.5.4",
+          "kb_version": {
+            "monthly": "22.09",
+            "daily": "22.09.19"
+          },
+          "hostname": "p14",
+          "flags": "0",
+          "elapsed": "0.812637s"
+        }
+      }
+    ],
+    "test/browser.js": [
+      {
+        "id": "file",
+        "status": "pending",
+        "lines": "all",
+        "oss_lines": "all",
+        "matched": "100%",
+        "purl": [
+          "pkg:github/unshiftio/url-parse",
+          "pkg:deb/debian/node-url-parse",
+          "pkg:maven/org.webjars.bowergithub.unshiftio/url-parse",
+          "pkg:npm/url-parse"
+        ],
+        "vendor": "unshiftio",
+        "component": "url-parse",
+        "version": "1.5.3",
+        "latest": "1.5.10",
+        "url": "https://github.com/unshiftio/url-parse",
+        "release_date": "2021-07-25",
+        "file": "test/browser.js",
+        "url_hash": "ffcd1caece260e46a4dc4896cf5675ef",
+        "file_hash": "5845e9af8f32f7e789058738d28874df",
+        "source_hash": "5845e9af8f32f7e789058738d28874df",
+        "file_url": "https://osskb.org/api/file_contents/5845e9af8f32f7e789058738d28874df",
+        "licenses": [
+          {
+            "name": "MIT",
+            "patent_hints": "no",
+            "copyleft": "no",
+            "checklist_url": "https://www.osadl.org/fileadmin/checklists/unreflicenses/MIT.txt",
+            "osadl_updated": "2022-09-16 15:38",
+            "source": "component_declared"
+          }
+        ],
+        "dependencies": [
+          {
+            "vendor": "npm_dep_vendor",
+            "component": "assume",
+            "version": "^2.2.0",
+            "source": "component_declared"
+          },
+          {
+            "vendor": "npm_dep_vendor",
+            "component": "browserify",
+            "version": "^17.0.0",
+            "source": "component_declared"
+          },
+          {
+            "vendor": "npm_dep_vendor",
+            "component": "c8",
+            "version": "^7.3.1",
+            "source": "component_declared"
+          },
+          {
+            "vendor": "npm_dep_vendor",
+            "component": "mocha",
+            "version": "^8.0.1",
+            "source": "component_declared"
+          },
+          {
+            "vendor": "npm_dep_vendor",
+            "component": "pre-commit",
+            "version": "^1.2.2",
+            "source": "component_declared"
+          },
+          {
+            "vendor": "npm_dep_vendor",
+            "component": "querystringify",
+            "version": "^2.1.1",
+            "source": "component_declared"
+          },
+          {
+            "vendor": "npm_dep_vendor",
+            "component": "requires-port",
+            "version": "^1.0.0",
+            "source": "component_declared"
+          },
+          {
+            "vendor": "npm_dep_vendor",
+            "component": "sauce-browsers",
+            "version": "^2.0.0",
+            "source": "component_declared"
+          },
+          {
+            "vendor": "npm_dep_vendor",
+            "component": "sauce-test",
+            "version": "^1.3.3",
+            "source": "component_declared"
+          },
+          {
+            "vendor": "npm_dep_vendor",
+            "component": "uglify-js",
+            "version": "^3.5.7",
+            "source": "component_declared"
+          }
+        ],
+        "copyrights": [
+          {
+            "name": "Copyright (c) 2015 Unshift.io; Arnout Kazemier;  the Contributors.",
+            "source": "license_file"
+          }
+        ],
+        "vulnerabilities": [
+          {
+            "ID": "GHSA-rqff-837h-mm52",
+            "CVE": "CVE-2022-0512",
+            "severity": "MODERATE",
+            "reported": "2022-02-24",
+            "introduced": "",
+            "patched": "<1.5.6",
+            "summary": "Authorization bypass in url-parse",
+            "source": "github_advisories"
+          },
+          {
+            "ID": "GHSA-8v38-pw62-9cw2",
+            "CVE": "CVE-2022-0639",
+            "severity": "MODERATE",
+            "reported": "2022-04-19",
+            "introduced": "",
+            "patched": "<1.5.7",
+            "summary": "Incorrect returned href via an '@' sign but no user info and hostname",
+            "source": "github_advisories"
+          },
+          {
+            "ID": "GHSA-hgjh-723h-mx2j",
+            "CVE": "CVE-2022-0686",
+            "severity": "CRITICAL",
+            "reported": "2022-03-29",
+            "introduced": "",
+            "patched": "<1.5.8",
+            "summary": "Authorization Bypass Through User-Controlled Key in url-parse",
+            "source": "github_advisories"
+          },
+          {
+            "ID": "GHSA-jf5r-8hm2-f872",
+            "CVE": "CVE-2022-0691",
+            "severity": "MODERATE",
+            "reported": "2022-03-29",
+            "introduced": "",
+            "patched": "<1.5.9",
+            "summary": "Incorrect hostname / protocol due to unstripped leading control characters.",
+            "source": "github_advisories"
+          }
+        ],
+        "quality": [
+          {
+            "score": "4/5",
+            "source": "best_practices"
+          }
+        ],
+        "cryptography": [],
+        "server": {
+          "version": "4.5.4",
+          "kb_version": {
+            "monthly": "22.09",
+            "daily": "22.09.19"
+          },
+          "hostname": "p14",
+          "flags": "0",
+          "elapsed": "0.005017s"
+        }
+      }
+    ],
+    "test/fuzzy.js": [
+      {
+        "id": "file",
+        "status": "pending",
+        "lines": "all",
+        "oss_lines": "all",
+        "matched": "100%",
+        "purl": [
+          "pkg:github/unshiftio/url-parse",
+          "pkg:deb/debian/node-url-parse",
+          "pkg:maven/org.webjars.bowergithub.unshiftio/url-parse",
+          "pkg:npm/url-parse"
+        ],
+        "vendor": "unshiftio",
+        "component": "url-parse",
+        "version": "1.5.0",
+        "latest": "1.5.10",
+        "url": "https://github.com/unshiftio/url-parse",
+        "release_date": "2021-02-17",
+        "file": "test/fuzzy.js",
+        "url_hash": "cc7b246b5ad3dda0f1c0df9b38d21940",
+        "file_hash": "1a07ae7b30555a596aed28c372035af7",
+        "source_hash": "1a07ae7b30555a596aed28c372035af7",
+        "file_url": "https://osskb.org/api/file_contents/1a07ae7b30555a596aed28c372035af7",
+        "licenses": [
+          {
+            "name": "MIT",
+            "patent_hints": "no",
+            "copyleft": "no",
+            "checklist_url": "https://www.osadl.org/fileadmin/checklists/unreflicenses/MIT.txt",
+            "osadl_updated": "2022-09-16 15:38",
+            "source": "component_declared"
+          }
+        ],
+        "dependencies": [
+          {
+            "vendor": "npm_dep_vendor",
+            "component": "assume",
+            "version": "^2.2.0",
+            "source": "component_declared"
+          },
+          {
+            "vendor": "npm_dep_vendor",
+            "component": "browserify",
+            "version": "^16.2.3",
+            "source": "component_declared"
+          },
+          {
+            "vendor": "npm_dep_vendor",
+            "component": "c8",
+            "version": "^7.3.1",
+            "source": "component_declared"
+          },
+          {
+            "vendor": "npm_dep_vendor",
+            "component": "coveralls",
+            "version": "^3.1.0",
+            "source": "component_declared"
+          },
+          {
+            "vendor": "npm_dep_vendor",
+            "component": "mocha",
+            "version": "^8.0.1",
+            "source": "component_declared"
+          },
+          {
+            "vendor": "npm_dep_vendor",
+            "component": "pre-commit",
+            "version": "^1.2.2",
+            "source": "component_declared"
+          },
+          {
+            "vendor": "npm_dep_vendor",
+            "component": "querystringify",
+            "version": "^2.1.1",
+            "source": "component_declared"
+          },
+          {
+            "vendor": "npm_dep_vendor",
+            "component": "requires-port",
+            "version": "^1.0.0",
+            "source": "component_declared"
+          },
+          {
+            "vendor": "npm_dep_vendor",
+            "component": "sauce-browsers",
+            "version": "^2.0.0",
+            "source": "component_declared"
+          },
+          {
+            "vendor": "npm_dep_vendor",
+            "component": "sauce-test",
+            "version": "^1.3.3",
+            "source": "component_declared"
+          },
+          {
+            "vendor": "npm_dep_vendor",
+            "component": "uglify-js",
+            "version": "^3.5.7",
+            "source": "component_declared"
+          }
+        ],
+        "copyrights": [
+          {
+            "name": "Copyright (c) 2015 Unshift.io; Arnout Kazemier;  the Contributors.",
+            "source": "license_file"
+          }
+        ],
+        "vulnerabilities": [
+          {
+            "ID": "GHSA-hh27-ffr2-f2jc",
+            "CVE": "CVE-2021-3664",
+            "severity": "MODERATE",
+            "reported": "2021-08-10",
+            "introduced": "",
+            "patched": "<1.5.2",
+            "summary": "Open redirect in url-parse",
+            "source": "github_advisories"
+          },
+          {
+            "ID": "GHSA-rqff-837h-mm52",
+            "CVE": "CVE-2022-0512",
+            "severity": "MODERATE",
+            "reported": "2022-02-24",
+            "introduced": "",
+            "patched": "<1.5.6",
+            "summary": "Authorization bypass in url-parse",
+            "source": "github_advisories"
+          },
+          {
+            "ID": "GHSA-8v38-pw62-9cw2",
+            "CVE": "CVE-2022-0639",
+            "severity": "MODERATE",
+            "reported": "2022-04-19",
+            "introduced": "",
+            "patched": "<1.5.7",
+            "summary": "Incorrect returned href via an '@' sign but no user info and hostname",
+            "source": "github_advisories"
+          },
+          {
+            "ID": "GHSA-hgjh-723h-mx2j",
+            "CVE": "CVE-2022-0686",
+            "severity": "CRITICAL",
+            "reported": "2022-03-29",
+            "introduced": "",
+            "patched": "<1.5.8",
+            "summary": "Authorization Bypass Through User-Controlled Key in url-parse",
+            "source": "github_advisories"
+          },
+          {
+            "ID": "GHSA-jf5r-8hm2-f872",
+            "CVE": "CVE-2022-0691",
+            "severity": "MODERATE",
+            "reported": "2022-03-29",
+            "introduced": "",
+            "patched": "<1.5.9",
+            "summary": "Incorrect hostname / protocol due to unstripped leading control characters.",
+            "source": "github_advisories"
+          }
+        ],
+        "quality": [
+          {
+            "score": "4/5",
+            "source": "best_practices"
+          }
+        ],
+        "cryptography": [],
+        "server": {
+          "version": "4.5.4",
+          "kb_version": {
+            "monthly": "22.09",
+            "daily": "22.09.19"
+          },
+          "hostname": "p14",
+          "flags": "0",
+          "elapsed": "0.004709s"
+        }
+      }
+    ],
+    "test/test.js": [
+      {
+        "id": "snippet",
+        "status": "pending",
+        "lines": "1-636,643-1409",
+        "oss_lines": "446-1081,632-1398",
+        "matched": "99%",
+        "purl": [
+          "pkg:github/unshiftio/url-parse",
+          "pkg:deb/debian/node-url-parse",
+          "pkg:maven/org.webjars.bowergithub.unshiftio/url-parse",
+          "pkg:npm/url-parse"
+        ],
+        "vendor": "unshiftio",
+        "component": "url-parse",
+        "version": "1.5.10",
+        "latest": "1.5.10",
+        "url": "https://github.com/unshiftio/url-parse",
+        "release_date": "2022-02-22",
+        "file": "test.js",
+        "url_hash": "ee8cb2df37eda1a54fc2c334d2fe7790",
+        "file_hash": "0496e3683c11dd5011df25c1d313ee21",
+        "source_hash": "46bc6a69dd14be18501de7a94cef0390",
+        "file_url": "https://osskb.org/api/file_contents/0496e3683c11dd5011df25c1d313ee21",
+        "licenses": [
+          {
+            "name": "MIT",
+            "patent_hints": "no",
+            "copyleft": "no",
+            "checklist_url": "https://www.osadl.org/fileadmin/checklists/unreflicenses/MIT.txt",
+            "osadl_updated": "2022-09-16 15:38",
+            "source": "component_declared"
+          },
+          {
+            "name": "MIT",
+            "patent_hints": "no",
+            "copyleft": "no",
+            "checklist_url": "https://www.osadl.org/fileadmin/checklists/unreflicenses/MIT.txt",
+            "osadl_updated": "2022-09-16 15:38",
+            "source": "license_file",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        ],
+        "dependencies": [
+          {
+            "vendor": "npm_dep_vendor",
+            "component": "assume",
+            "version": "^2.2.0",
+            "source": "component_declared"
+          },
+          {
+            "vendor": "npm_dep_vendor",
+            "component": "browserify",
+            "version": "^17.0.0",
+            "source": "component_declared"
+          },
+          {
+            "vendor": "npm_dep_vendor",
+            "component": "c8",
+            "version": "^7.3.1",
+            "source": "component_declared"
+          },
+          {
+            "vendor": "npm_dep_vendor",
+            "component": "mocha",
+            "version": "^9.0.3",
+            "source": "component_declared"
+          },
+          {
+            "vendor": "npm_dep_vendor",
+            "component": "pre-commit",
+            "version": "^1.2.2",
+            "source": "component_declared"
+          },
+          {
+            "vendor": "npm_dep_vendor",
+            "component": "querystringify",
+            "version": "^2.1.1",
+            "source": "component_declared"
+          },
+          {
+            "vendor": "npm_dep_vendor",
+            "component": "requires-port",
+            "version": "^1.0.0",
+            "source": "component_declared"
+          },
+          {
+            "vendor": "npm_dep_vendor",
+            "component": "sauce-browsers",
+            "version": "^2.0.0",
+            "source": "component_declared"
+          },
+          {
+            "vendor": "npm_dep_vendor",
+            "component": "sauce-test",
+            "version": "^1.3.3",
+            "source": "component_declared"
+          },
+          {
+            "vendor": "npm_dep_vendor",
+            "component": "uglify-js",
+            "version": "^3.5.7",
+            "source": "component_declared"
+          }
+        ],
+        "copyrights": [
+          {
+            "name": "Copyright (c) 2015 Unshift.io; Arnout Kazemier;  the Contributors.",
+            "source": "license_file"
+          }
+        ],
+        "vulnerabilities": [],
+        "quality": [],
+        "cryptography": [],
+        "server": {
+          "version": "4.5.4",
+          "kb_version": {
+            "monthly": "22.09",
+            "daily": "22.09.19"
+          },
+          "hostname": "p14",
+          "flags": "0",
+          "elapsed": "4.687194s"
+        }
+      }
+    ]
+  },
+  "dependencies": {
+    "filesList": [
+      {
+        "file": "/home/ubuntu/Projects/url-parse/package.json",
+        "id": "dependency",
+        "status": "pending",
+        "dependenciesList": [
+          {
+            "component": "querystringify",
+            "purl": "pkg:npm/querystringify",
+            "version": "2.2.0",
+            "licensesList": [
+              {
+                "name": "MIT",
+                "spdxId": "MIT",
+                "isSpdxApproved": true
+              }
+            ],
+            "scope": "dependencies"
+          },
+          {
+            "component": "requires-port",
+            "purl": "pkg:npm/requires-port",
+            "version": "1.0.0",
+            "licensesList": [
+              {
+                "name": "MIT",
+                "spdxId": "MIT",
+                "isSpdxApproved": true
+              }
+            ],
+            "scope": "dependencies"
+          },
+          {
+            "component": "assume",
+            "purl": "pkg:npm/assume",
+            "version": "2.3.0",
+            "licensesList": [
+              {
+                "name": "MIT",
+                "spdxId": "MIT",
+                "isSpdxApproved": true
+              }
+            ],
+            "scope": "devDependencies"
+          },
+          {
+            "component": "browserify",
+            "purl": "pkg:npm/browserify",
+            "version": "17.0.0",
+            "licensesList": [
+              {
+                "name": "MIT",
+                "spdxId": "MIT",
+                "isSpdxApproved": true
+              }
+            ],
+            "scope": "devDependencies"
+          }
+        ]
+      }
+    ],
+    "status": {
+      "status": 1,
+      "message": "Success"
+    }
+  }
+}

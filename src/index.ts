@@ -1,10 +1,10 @@
-export * from './lib/scanner/ScannerTypes';
-export * from './lib/scanner/ScannerCfg'
-export * from './lib/scanner/Scanner'
-export * from './lib/scanner/WfpProvider/WfpCalculator/WfpCalculator';
-export * from './lib/dependencies/DependencyTypes';
-export * from './lib/dependencies/DependencyScannerCfg';
-export * from './lib/dependencies/DependencyScanner';
+export * from './sdk/scanner/ScannerTypes';
+export * from './sdk/scanner/ScannerCfg'
+export * from './sdk/scanner/Scanner'
+export * from './sdk/scanner/WfpProvider/WfpCalculator/WfpCalculator';
+export * from './sdk/Dependencies/DependencyTypes';
+export * from './sdk/Dependencies/DependencyScannerCfg';
+export * from './sdk/Dependencies/DependencyScanner';
 
 
 
