@@ -134,7 +134,7 @@ describe('Suit test for DataProvider', () => {
       }
       ];
 
-    expect(componentData.component).to.deep.equal(expectedOutput);
+    expect(componentData.component).to.have.deep.members(expectedOutput);
 
   });
 

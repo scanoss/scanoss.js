@@ -1,5 +1,3 @@
-import { Component } from '../modules/reports/types';
-
 /*************  Component interface definition  *************/
 export interface ComponentDataLayer {
   key: string; // purl[0]
