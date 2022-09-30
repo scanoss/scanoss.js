@@ -122,7 +122,7 @@ export class LicenseDataProvider implements DataProvider {
             });
           } else { // Unknown license
             const licenseExist = !!this.licenseStorage['unknown'];
-            if (licenseExist) {
+            if (!licenseExist) {
               const newLicense: LicenseDataLayer = <LicenseDataLayer>{};
               newLicense.value = 1;
               newLicense.label = 'unknown';

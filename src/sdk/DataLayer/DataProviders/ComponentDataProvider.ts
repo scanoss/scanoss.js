@@ -43,6 +43,7 @@ export class ComponentDataProvider implements DataProvider {
                });
 
     if(!componentLayer.component.length) componentLayer.component=null;
+
     return componentLayer
 
   }
@@ -64,7 +65,19 @@ export class ComponentDataProvider implements DataProvider {
           licenses: dependency.licensesList.map(license => license.spdxId),
           copyrights: null,
         }];
-      componentLayer.push(newComponent);
+
+        const existingComponent = componentLayer.find(component => component.key === newComponent.key);
+        if (existingComponent) {
+          const existingVersion = existingComponent.versions.find(version => version.version === newComponent.versions[0].version);
+          if(!existingVersion) existingComponent.versions.push({
+            version : newComponent.versions[0].version,
+            licenses: newComponent.versions[0].licenses,
+            copyrights: newComponent.versions[0].copyrights,
+          });
+        } else { //Component does not exist, insert as it is.
+          componentLayer.push(newComponent);
+        }
+
       });
     });
     return componentLayer;
