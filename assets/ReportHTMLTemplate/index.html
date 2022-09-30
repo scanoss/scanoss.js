@@ -865,7 +865,7 @@
                                                                                   Purl
                                                                               </div>
                                                                               <div class="value small">
-                                                                                  ${c.purl}
+                                                                                  ${decodeURIComponent(c.purl)}
                                                                               </div>
                                                                           </div>
                                                                           </div>
@@ -927,9 +927,9 @@
         for (const component of componentData) {
           const clon = template.content.cloneNode(true);
           clon.querySelector('td:nth-child(1)').innerHTML = component.name;
-          clon.querySelector('td:nth-child(2)').innerHTML = component.key;
+          clon.querySelector('td:nth-child(2)').innerHTML = decodeURIComponent(component.key);
           clon.querySelector('td:nth-child(3)').innerHTML = component.versions?.map(item => item.version).join(', ');
-          clon.querySelector('td:nth-child(4)').innerHTML = component.url ? `<a href="${component.url}" target="_blank">${component.url}</a>` : '-';
+          clon.querySelector('td:nth-child(4)').innerHTML = component.url ? `<a href="${component.url}" target="_blank">${decodeURIComponent(component.url)}</a>` : '-';
           table.appendChild(clon);
         }
       }
@@ -947,7 +947,7 @@
           for (const dependency of depData.dependencies) {
             const clon = template.content.cloneNode(true);
             clon.querySelector('td:nth-child(1)').innerHTML = dependency.component || '-';
-            clon.querySelector('td:nth-child(2)').innerHTML = dependency.purl;
+            clon.querySelector('td:nth-child(2)').innerHTML = decodeURIComponent(dependency.purl);
             clon.querySelector('td:nth-child(3)').innerHTML = dependency.version;
             clon.querySelector('td:nth-child(4)').innerHTML = dependency.licenses?.map(item => item.name).join(', ');
             table.appendChild(clon);
@@ -966,8 +966,8 @@
         for (const purlVulData of vulnerabilityData) {
           for (const vulnerabilty of purlVulData.vulnerability) {
             const clon = template.content.cloneNode(true);
-            clon.querySelector('td:nth-child(1)').innerHTML = purlVulData.purl;
-            clon.querySelector('td:nth-child(2)').innerHTML = "";
+            clon.querySelector('td:nth-child(1)').innerHTML = decodeURIComponent(purlVulData.purl);
+            clon.querySelector('td:nth-child(2)').innerHTML = "-";
             clon.querySelector('td:nth-child(3)').innerHTML = vulnerabilty.cve;
             clon.querySelector('td:nth-child(4)').innerHTML = vulnerabilty.severity;
             clon.querySelector('td:nth-child(5)').innerHTML = vulnerabilty.published;
