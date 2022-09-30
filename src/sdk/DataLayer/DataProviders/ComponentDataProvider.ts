@@ -35,7 +35,12 @@ export class ComponentDataProvider implements DataProvider {
     const scannerComponentLayer = this.parseComponentsFromScanner(this.componentList);
     const dependenciesComponentLayer = this.parseComponentsFromDependencies(this.dependencies);
 
-    componentLayer.component =  [...scannerComponentLayer, ...dependenciesComponentLayer];
+    componentLayer.component =  [...scannerComponentLayer, ...dependenciesComponentLayer].sort(
+      (itemA, itemB) => {
+                  if ( itemA.name < itemB.name) return -1;
+                  else if( itemA.name > itemB.name) return 1;
+                  return 0;
+               });
 
     if(!componentLayer.component.length) componentLayer.component=null;
     return componentLayer
