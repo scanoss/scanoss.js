@@ -120,8 +120,11 @@ export class ComponentDataProvider implements DataProvider {
             });
 
             //Insert copyright
-            newComponent.versions[0]?.copyrights?.forEach(copyright => {
-              if (!versionTarget.copyrights.includes(copyright)) versionTarget.copyrights.push(copyright);
+            newComponent.versions[0]?.copyrights?.forEach(newCopyright => {
+              if (versionTarget.copyrights.every(copyright => newCopyright.name != copyright.name)) {
+                versionTarget.copyrights.push(newCopyright);
+              }
+
             });
 
           } else {
@@ -134,7 +137,17 @@ export class ComponentDataProvider implements DataProvider {
         console.error(`Problem inserting new component building Component Data Layer - `, e);
       }
     }
+
+    //Replace [] for null in versions
+    for (let i=0 ; i<componentLayer.length ; i++) {
+      componentLayer[i].versions.forEach(version => {
+        if(!version.copyrights.length) version.copyrights = null;
+        if(!version.licenses.length) version.licenses = null;
+      })
+    }
+
     return componentLayer;
+
   }
 
 }
