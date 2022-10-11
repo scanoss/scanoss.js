@@ -15,7 +15,7 @@ export default class File extends Node {
   }
 
   public getFiles(f: Filter): Array<string> {
-    if (f && f.evaluate(this)) return [];
+    if (!f || !f.evaluate(this)) return [];
     return [this.getPath()];
   }
 

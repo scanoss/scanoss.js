@@ -24,6 +24,7 @@ async function main() {
     .description('Scan a folder/file')
     .option('-w, --wfp', 'Scan a .wfp file instead of a folder')
     .option('-H, --hpsm', 'Scan using winnowing high precision matching')
+    .option('-x, --extract [deep]', 'Scan using winnowing high precision matching')
     .option('-c, --concurrency <number>', 'Number of concurrent connections to use while scanning (optional -default 10)')
     .option('-n, --ignore <ignore>',  'Ignore components specified in the SBOM file')
     .option('-o, --output <filename>', 'Output result file name (optional - default stdout)')

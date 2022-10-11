@@ -42,13 +42,16 @@ export default class Folder extends Node {
   }
 
   public getFiles(f?: Filter): Array<string> {
-    if (f && f.evaluate(this)) return []
+    if (!f || !f.evaluate(this)) return [];
 
     const files: Array<string> = [];
     this.children.forEach((child) => {
       files.push(...child.getFiles(f));
     });
     return files;
+  }
 
+  public removeChildren(){
+    this.children = [];
   }
 }

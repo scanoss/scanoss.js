@@ -16,7 +16,7 @@ export class ScanFilter extends Filter {
   }
 
   public evaluate(node: Node): boolean {
-    return !this.filter.include(node.getPath());
+    return this.filter.include(node.getPath());
   }
 
 }
