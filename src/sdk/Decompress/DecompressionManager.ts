@@ -1,13 +1,14 @@
-import AdmZip from "adm-zip";
 import path from 'path';
 import fs from 'fs';
 import { Tree } from '../tree/Tree';
 import { DecompressionFilter } from '../tree/Filters/DecompressionFilter';
-
-type DecompressorFuncType = (destPath: string, srcPath: string) => void;
+import { Decompressor } from './Decompressor/Decompressor';
+import { DecompressZip } from './Decompressor/DecompressZips';
+import { DecompressTgz } from './Decompressor/DecompressTgz';
 
 export class DecompressionManager {
-  private decompressorsCollection: Record<string, DecompressorFuncType>;
+
+  private decompressorList: Array<Decompressor>
 
   private decompressionLevel: number;
 
@@ -20,35 +21,50 @@ export class DecompressionManager {
     this.removeFolderOnFailure = removeFolderOnFailure;
     this.suffix = suffix;
 
-    //Maps each file extention with its function that extracts the archive.
-    this.decompressorsCollection = {
-      ".zip": UncompressAdmZip,
-      ".jar": UncompressAdmZip,
-      //".tar":
-      //".tar.gz":
-      //"tgz":
-      //"ear":
-      //"war":
-    };
+    this.decompressorList = [
+      new DecompressTgz(),
+      new DecompressZip()
+    ];
 
   }
 
-  public async decompress(archivesPaths: Array<string>): Promise<void> {
-    for (const archivePath of archivesPaths) this.decompressRecursive(archivePath, 0);
+  public addDecompressor(d: Decompressor) {
+    this.decompressorList.push(d);
   }
 
-  public async decompressRecursive(inputPath: string, level: number): Promise<void> {
+  public getSupportedFormats(): Array<string> {
+    const supportedFormats = [];
+    this.decompressorList.forEach((d) => {
+      supportedFormats.push(...d.getSupportedFormats())
+    });
+    return supportedFormats;
+  }
+
+  public async decompress(archivesPaths: Array<string>): Promise<Array<string>> {
+    for (const archivePath of archivesPaths) await this.decompressRecursive(archivePath, 0);
+    const parentFoldersPath = archivesPaths.map(archivePath => `${archivePath}${this.suffix}`);
+    return parentFoldersPath;
+  }
+
+  public async decompressRecursive(archivePath: string, level: number): Promise<void> {
     if(level>=this.decompressionLevel) return
 
-    const archiveRootPath = path.dirname(inputPath);
-    const archiveName = path.basename(inputPath);
-    const archiveExtension = path.extname(inputPath);
+    const archiveRootPath = path.dirname(archivePath);
+    const archiveName = path.basename(archivePath);
     const newFolderPath = `${archiveRootPath}${path.sep}${archiveName}${this.suffix}`;
 
-    const isSupported = !!this.decompressorsCollection[archiveExtension];
+    const isSupported = this.decompressorList.some((d) => d.isSupported(archiveName))
     if(isSupported) {
       await fs.promises.mkdir(newFolderPath, { recursive: true });
-      await this.decompressorsCollection[archiveExtension](newFolderPath, inputPath);
+
+      //Search for decompressor and extract archive
+      for (const d of this.decompressorList) {
+        if (d.isSupported(archiveName)) {
+          await d.run(archivePath, newFolderPath);
+          break;
+        }
+      }
+
 
       //Search for new archives
       const tree = new Tree(newFolderPath);
@@ -58,16 +74,7 @@ export class DecompressionManager {
         await this.decompressRecursive(newFilePath, level+1);
       }
     }
-  }
 
-  public getSupportedFormats(): Array<string> {
-    return Object.keys(this.decompressorsCollection);
   }
 
 }
-
-function UncompressAdmZip(destPath: string, srcPath: string) {
-  const zip = new AdmZip(srcPath);
-  zip.extractAllTo(destPath);
-}
-

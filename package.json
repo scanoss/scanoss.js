@@ -1,6 +1,6 @@
 {
   "name": "scanoss",
-  "version": "0.4.5-beta",
+  "version": "0.4.7-beta",
   "description": "The SCANOSS JS package provides a simple, easy to consume module for interacting with SCANOSS APIs/Engine.",
   "main": "build/main/index.js",
   "typings": "build/main/index.d.ts",
@@ -52,11 +52,14 @@
     "eventemitter3": "^4.0.7",
     "form-data": "^4.0.0",
     "google-protobuf": "^3.19.4",
+    "gunzip-maybe": "^1.4.2",
     "isbinaryfile": "^4.0.8",
     "node-fetch": "2.6.1",
     "p-queue": "6.6.2",
     "packageurl-js": "^0.0.5",
-    "sort-paths": "^1.1.1"
+    "sort-paths": "^1.1.1",
+    "tar": "^6.1.11",
+    "tar-stream": "^2.2.0"
   },
   "devDependencies": {
     "@ava/typescript": "^1.1.1",
@@ -64,6 +67,7 @@
     "@types/chai": "^4.3.1",
     "@types/mocha": "^9.1.1",
     "@types/node": "^17.0.2",
+    "@types/node-gzip": "^1.1.0",
     "@typescript-eslint/eslint-plugin": "^4.0.1",
     "@typescript-eslint/parser": "^4.0.1",
     "chai": "^4.3.6",
