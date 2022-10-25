@@ -14,10 +14,7 @@ export class DecompressTgz extends Decompressor{
   }
 
   public async run(archivePath: string, destPath: string): Promise<void> {
-    await fs.createReadStream(archivePath)
-      .pipe(tar.x({
-        C: destPath
-      }));
+      return tar.x({C: destPath, file: archivePath});
   }
 
 }
