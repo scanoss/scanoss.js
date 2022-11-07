@@ -5,6 +5,7 @@ export interface ComponentDataLayer {
   name: string;
   vendor: string;
   url: string;
+  health: Health;
   versions: Version[];
 }
 
@@ -12,13 +13,38 @@ export interface Version {
   version: string;
   licenses:  string[]
   copyrights: Copyright[]
+  cryptography: Cryptography[];
+  quality: Quality;
 }
 
 export interface Copyright {
   name: string;
   source: string;
+};
+
+export interface Cryptography {
+  algorithm: string;
+  strength: string;
+};
+
+export interface Quality {
+  scoreAvg: number;
+  count: number;
+  sum: number; //TODO remove
+};
+
+export interface Health {
+  creation_date: string;
+  issues: number;
+  last_push: string;
+  last_update: string;
+  watchers: number;
+  country: string;
+  stars: number;
+  forks: number;
 }
 /*************  Component interface definition  *************/
+
 
 /*************  Dependency interface definition  *************/
 export interface DependencyDataLayer {
@@ -86,7 +112,7 @@ export interface SummaryDataLayer {
   totalFiles: number;
 }
 
-
+// Each layer is created to group by differents criteria.
 export interface IDataLayers {
   licenses: LicenseDataLayer[];
   component: ComponentDataLayer[];

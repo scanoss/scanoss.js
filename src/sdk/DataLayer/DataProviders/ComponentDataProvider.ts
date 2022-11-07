@@ -1,4 +1,9 @@
-import { ComponentDataLayer, DataProvider, IDataLayers } from '../DataLayerTypes';
+import {
+  ComponentDataLayer,
+  DataProvider,
+  Health,
+  IDataLayers
+} from '../DataLayerTypes';
 import {
   ScannerComponent,
   ScannerResults
@@ -60,10 +65,13 @@ export class ComponentDataProvider implements DataProvider {
         newComponent.name = dependency.component;
         newComponent.url = null;
         newComponent.vendor = null;
+        newComponent.health = null;
         newComponent.versions = [{
           version: dependency.version,
           licenses: dependency.licensesList.map(license => license.spdxId),
           copyrights: null,
+          cryptography: null,
+          quality: null,
         }];
 
         const existingComponent = componentLayer.find(component => component.key === newComponent.key);
@@ -73,6 +81,8 @@ export class ComponentDataProvider implements DataProvider {
             version : newComponent.versions[0].version,
             licenses: newComponent.versions[0].licenses,
             copyrights: newComponent.versions[0].copyrights,
+            quality: null,
+            cryptography: null,
           });
         } else { //Component does not exist, insert as it is.
           componentLayer.push(newComponent);
@@ -90,6 +100,11 @@ export class ComponentDataProvider implements DataProvider {
     for (let i=0 ; i<scanComponents.length ; i++) {
 
       try {
+
+        // qualityValue would have a number from 0 to 5 or undefined.
+        const qualityValue = Number(scanComponents[i]?.quality?.shift()?.score?.split("/").shift());
+
+
         //Generates a new component
         const newComponent: ComponentDataLayer = {
           key: scanComponents[i].purl[0],
@@ -97,18 +112,26 @@ export class ComponentDataProvider implements DataProvider {
           name: scanComponents[i].component,
           url: scanComponents[i].url,
           vendor: scanComponents[i].vendor,
+          health: scanComponents[i].health,
           versions: [{
             version: scanComponents[i].version,
             licenses: scanComponents[i].licenses.map(license => license.name),
             copyrights: scanComponents[i].copyrights,
+            quality: { sum: 0, scoreAvg: 0, count: 0 },
+            cryptography: scanComponents[i]?.cryptography,
           }]
         };
 
         //Removes duplicated licenses
         newComponent.versions[0].licenses = [...new Set(newComponent.versions[0].licenses)]
 
-        //Merge new component in componentList
+        if(qualityValue) {
+          newComponent.versions[0].quality.count = 1;
+          newComponent.versions[0].quality.sum = qualityValue;
+          newComponent.versions[0].quality.scoreAvg = qualityValue;
+        }
 
+        //Merge new component in componentList
         const componentTarget = componentLayer.find(component => component.key === newComponent.key);
         if (componentTarget) {
           const versionTarget = componentTarget.versions.find(item => item.version === newComponent.versions[0].version);
@@ -124,8 +147,23 @@ export class ComponentDataProvider implements DataProvider {
               if (versionTarget.copyrights.every(copyright => newCopyright.name != copyright.name)) {
                 versionTarget.copyrights.push(newCopyright);
               }
-
             });
+
+            //Insert cryptography
+            newComponent.versions[0]?.cryptography?.forEach(newCryptoAlgo => {
+              if (versionTarget.cryptography.every(cryptoAlgorithm => cryptoAlgorithm.algorithm != newCryptoAlgo.algorithm)) {
+                versionTarget.cryptography.push(newCryptoAlgo);
+              }
+            });
+
+            //recalculate quality average in case we have a quality value
+            if (qualityValue) {
+              versionTarget.quality.count++;
+              versionTarget.quality.sum += Number(qualityValue);
+              versionTarget.quality.scoreAvg = versionTarget.quality.sum / versionTarget.quality.count
+            }
+
+
 
           } else {
             //newComponent version is not included in the component with same purl key
@@ -143,6 +181,8 @@ export class ComponentDataProvider implements DataProvider {
       componentLayer[i].versions.forEach(version => {
         if(version.copyrights?.length == 0) version.copyrights = null;
         if(version.licenses?.length == 0) version.licenses = null;
+        if(version.cryptography?.length === 0) version.cryptography = null;
+        if(version.quality.count === 0 ) version.quality = null;
       })
     }
 

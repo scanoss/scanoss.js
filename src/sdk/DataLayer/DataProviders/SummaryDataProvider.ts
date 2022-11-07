@@ -19,7 +19,6 @@ export class SummaryDataProvider implements DataProvider {
     this.scannerResults = scannerResults;
     this.projectName = projectName;
     this.projectCreateAt = projectCreatedAt
-
     this.summary = <SummaryDataLayer>{};
   }
 
