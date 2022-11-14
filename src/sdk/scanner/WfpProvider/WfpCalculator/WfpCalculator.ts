@@ -468,7 +468,7 @@ export class WfpCalculator extends WfpProvider {
   }
 
 
-  public start(params: IWfpProviderInput): void {
+  public start(params: IWfpProviderInput): Promise<void> {
 
     if(!params.fileList) this.sendError('File list is required');
     this.sendLog('[ SCANNER ]: WFP Calculator starting...');
@@ -481,6 +481,8 @@ export class WfpCalculator extends WfpProvider {
     this.folderRoot = params.folderRoot;
     this.fileList = params.fileList;
     this.nextStepMachine();
+
+    return this.finishPromise;
   }
 
 
