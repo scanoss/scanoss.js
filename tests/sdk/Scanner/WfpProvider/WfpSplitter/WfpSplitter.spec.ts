@@ -11,11 +11,8 @@ describe('Suit test for WfpSplitter Class', () => {
 
   it('Test ignore file list', async function () {
 
-    const cfg = new ScannerCfg();
-    cfg.WFP_FILE_MAX_SIZE = 64*1000;
-    const wfpSplitter = new WfpSplitter(cfg);
-
-    const filesToIgnore = ["/embedded/AIM6/xprt5.dll"];
+    const wfpSplitter = new WfpSplitter();
+    const filesToIgnore = ["/embedded/AIM6/xprt5.dll", "/embedded/Common Files/AOL/AOLDiag/aoldiag.dll"];
 
     let wfp = ""
     wfpSplitter.on(ScannerEvents.WINNOWING_NEW_CONTENT, (f: FingerprintPackage) => {
