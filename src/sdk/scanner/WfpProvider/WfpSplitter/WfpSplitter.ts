@@ -94,14 +94,21 @@ export class WfpSplitter extends WfpProvider {
 
     let ignoreFirstChunkOfFingerprint = false;
 
+
     //Use a loop to make sure we read all currently available data
-    while (this.continue && null !== (this.chunkDataRead = this.wfpStream.read(1 * 1024 * 1024))) {  // Read chunks of 1MB
+    while (this.continue && null !== (this.chunkDataRead = this.wfpStream.read(300))) {  // Read chunks of 1MB 1*1024*1024
 
       // Removes fingerprints that are loose because the file=...... was removed in previous iteration
-      if (ignoreFirstChunkOfFingerprint && this.chunkDataRead.indexOf("file=") > 0) { //TODO: Test this scenario
-        this.chunkDataRead = this.chunkDataRead.substring(this.chunkDataRead.indexOf('file='));
+      if (ignoreFirstChunkOfFingerprint) { //TODO: Test this scenario
+        //If there is no file= delete everything then
+        if (this.chunkDataRead.indexOf("file=") >= 0)
+          this.chunkDataRead = this.chunkDataRead.substring(this.chunkDataRead.indexOf('file='));
+        else
+          this.chunkDataRead = "";
       }
-      ignoreFirstChunkOfFingerprint = false;
+
+      //Before reset the ignoreFlag we need to make sure we have found a new file=
+      if (ignoreFirstChunkOfFingerprint && this.chunkDataRead.indexOf('file=') >= 0 ) ignoreFirstChunkOfFingerprint = false; //TODO: Test this scenario
 
 
       /**** This part removes all the wfp that includes the paths inside this.ignoreFiles ****/
@@ -112,7 +119,7 @@ export class WfpSplitter extends WfpProvider {
       while((result = rWfpPath.exec(this.chunkDataRead)) !== null) {
         if (this.ignoreFiles.has(result?.groups?.path)) {
           const indexDeleteFrom = result.index
-          const indexDeleteTo = this.chunkDataRead.indexOf('file=', indexDeleteFrom+1) || this.chunkDataRead.length;    //TODO: Verify this condition
+          const indexDeleteTo = Math.max(this.chunkDataRead.indexOf('file=', indexDeleteFrom+1) , this.chunkDataRead.length);    //TODO: Verify this condition
 
           //After the deletion of a wfp there are no other file=, so then set ignoreFirstChunkOfFingerprint to true.
           //In the next iteration, the next chunk of data will be fingerprints without a file=. So, this first part will be discarded.
@@ -131,17 +138,18 @@ export class WfpSplitter extends WfpProvider {
 
 
       /**** This part process a chunk of wfp and send the packages to the subscriber ****/
-      // Extract the first portion of the chunk until the first file=
-      // Then append the chunk to the last fingerprint.
-      if (!this.chunkDataRead.startsWith('file=') ) {
-        const chunkOfData = this.chunkDataRead.substring(0, this.chunkDataRead.indexOf('file='));
-        this.fingerprints[this.fingerprints.length-1] += chunkOfData;
-      } else {
-        //We have here the first line of
-        // get filepath. if (this.ignoreList.includes(currentFilePath))
+      if(this.chunkDataRead.length){
+
+        // Extract the first portion of the chunk until the first file=
+        // Then append the chunk to the last fingerprint.
+        if (!this.chunkDataRead.startsWith('file=') ) {
+          const chunkOfData = this.chunkDataRead.substring(0, this.chunkDataRead.indexOf('file='));
+          this.fingerprints[this.fingerprints.length-1] += chunkOfData;
+        }
+
+        this.fingerprints = [...this.fingerprints, ...this.splitFingerprints(this.chunkDataRead)];
+        this.sendFingerprints();
       }
-      this.fingerprints = [...this.fingerprints, ...this.splitFingerprints(this.chunkDataRead)];
-      this.sendFingerprints();
       /**** This part process a chunk of wfp and send the packages to the subscriber ****/
 
     }
