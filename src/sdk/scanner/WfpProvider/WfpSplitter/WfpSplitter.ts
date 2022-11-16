@@ -36,7 +36,7 @@ export class WfpSplitter extends WfpProvider {
     this.fingerprints = [];
     this.continue = true;
     this.fingerprintIndex = 0;
-    this.ignoreFiles = new Set(params.fileList);
+    this.ignoreFiles = new Set(params?.fileList);
 
     const wfpPath = params.wfpPath;
 
@@ -96,41 +96,45 @@ export class WfpSplitter extends WfpProvider {
 
 
     //Use a loop to make sure we read all currently available data
-    while (this.continue && null !== (this.chunkDataRead = this.wfpStream.read(300))) {  // Read chunks of 1MB 1*1024*1024
-
-      // Removes fingerprints that are loose because the file=...... was removed in previous iteration
-      if (ignoreFirstChunkOfFingerprint) { //TODO: Test this scenario
-        //If there is no file= delete everything then
-        if (this.chunkDataRead.indexOf("file=") >= 0) {
-          this.chunkDataRead = this.chunkDataRead.substring(this.chunkDataRead.indexOf('file='));
-          ignoreFirstChunkOfFingerprint = false;
-        } else this.chunkDataRead = "";
-      }
+    while (this.continue && null !== (this.chunkDataRead = this.wfpStream.read(1 * 1024 * 1024))) {  // Read chunks of 1MB 1*1024*1024
 
       /**** This part removes all the wfp that includes the paths inside this.ignoreFiles ****/
-      const rWfpPath = new RegExp(/^file=\w+,\d+,(?<path>.+)$/gm)
-      //Search for paths in the wfp and compares with the ignorefiles set
-      //When there is a match the matched fingerprint is deleted on the fly
-      let result;
-      while((result = rWfpPath.exec(this.chunkDataRead)) !== null) {
-        if (this.ignoreFiles.has(result?.groups?.path)) {
-          const indexDeleteFrom = result.index
+      if (this.ignoreFiles.size > 0) {
 
-          //TODO: Verify this condition
-          //If there is no next file= in the string, remove until end.
-          let indexDeleteTo = this.chunkDataRead.indexOf('file=', indexDeleteFrom+1)
-          if (indexDeleteTo < 0) {
-            indexDeleteTo = this.chunkDataRead.length;
+        // Removes fingerprints that are loose because the file=...... was removed in previous iteration
+        if (ignoreFirstChunkOfFingerprint) { //TODO: Test this scenario
+          //If there is no file= delete everything then
+          if (this.chunkDataRead.indexOf("file=") >= 0) {
+            this.chunkDataRead = this.chunkDataRead.substring(this.chunkDataRead.indexOf('file='));
+            ignoreFirstChunkOfFingerprint = false;
+          } else this.chunkDataRead = "";
+        }
 
-            //After the deletion of a wfp there are no other file=, so then set ignoreFirstChunkOfFingerprint to true.
-            //In the next iteration, the next chunk of data will be fingerprints without a file=. So, this first part will be discarded.
-            ignoreFirstChunkOfFingerprint = true;
+
+        const rWfpPath = new RegExp(/^file=\w+,\d+,(?<path>.+)$/gm)
+        //Search for paths in the wfp and compares with the ignorefiles set
+        //When there is a match the matched fingerprint is deleted on the fly
+        let result;
+        while ((result = rWfpPath.exec(this.chunkDataRead)) !== null) {
+          if (this.ignoreFiles.has(result?.groups?.path)) {
+            const indexDeleteFrom = result.index
+
+            //TODO: Verify this condition
+            //If there is no next file= in the string, remove until end.
+            let indexDeleteTo = this.chunkDataRead.indexOf('file=', indexDeleteFrom + 1)
+            if (indexDeleteTo < 0) {
+              indexDeleteTo = this.chunkDataRead.length;
+
+              //After the deletion of a wfp there are no other file=, so then set ignoreFirstChunkOfFingerprint to true.
+              //In the next iteration, the next chunk of data will be fingerprints without a file=. So, this first part will be discarded.
+              ignoreFirstChunkOfFingerprint = true;
+            }
+
+            const first = this.chunkDataRead.substring(0, indexDeleteFrom);
+            const second = this.chunkDataRead.substring(indexDeleteTo, this.chunkDataRead.length);
+            this.chunkDataRead = first + second;
+            rWfpPath.lastIndex = 0; //Make sure we reset the state of the regex.
           }
-
-          const first = this.chunkDataRead.substring(0,indexDeleteFrom);
-          const second = this.chunkDataRead.substring(indexDeleteTo, this.chunkDataRead.length);
-          this.chunkDataRead = first + second;
-          rWfpPath.lastIndex = 0; //Make sure we reset the state of the regex.
         }
       }
       /**** This part removes all the wfp that includes the paths inside this.ignoreFiles ****/

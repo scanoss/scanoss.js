@@ -217,7 +217,7 @@ export class Scanner extends EventEmitter {
       if (this.scannerInput[0].wfpPath) {
         this.wfpProvider = new WfpSplitter();
         this.setWinnowerListeners();
-        this.wfpProvider.start({wfpPath: this.scannerInput[0].wfpPath});
+        this.wfpProvider.start(this.scannerInput[0]);
       } else {
         const folderRoot = this.scannerInput[0].folderRoot;
         const winnowingMode = this.scannerInput[0].winnowingMode;
@@ -291,7 +291,7 @@ export class Scanner extends EventEmitter {
     if (scannerInput[0]?.wfpPath) {
       this.wfpProvider = new WfpSplitter();
       this.setWinnowerListeners();
-      this.wfpProvider.start({wfpPath: scannerInput[0].wfpPath});
+      this.wfpProvider.start(scannerInput[0]);
     } else {
       const folderRoot = this.scannerInput[0].folderRoot;
       const winnowingMode = this.scannerInput[0].winnowingMode;

@@ -28,8 +28,6 @@ describe('Suit test for WfpSplitter Class', () => {
       }
     }
 
-    console.log(wfp)
-
   });
 
 });
