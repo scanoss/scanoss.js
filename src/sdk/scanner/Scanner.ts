@@ -126,7 +126,7 @@ export class Scanner extends EventEmitter {
       this.reportLog(`[ SCANNER ]: Received results of ${response.getNumberOfFilesScanned()} files`);
       this.emit(ScannerEvents.DISPATCHER_NEW_DATA, response);
       this.insertIntoBuffer(response);
-      if (this.bufferReachedLimit()) this.bufferToFiles();
+      if (this.bufferReachedLimit()) this.bufferToFiles();  //Uses sync to ensure no new data is appended to the buffer
       this.processingNewData = false;
       if (this.scanFinished) await this.finishJob();
     });
@@ -340,6 +340,7 @@ export class Scanner extends EventEmitter {
     this.dispatcher.removeAllListeners();
     this.dispatcher.stop();
     this.wfpProvider.stop();
+    finishPromiseResolve();
   }
 
   isRunning() {
