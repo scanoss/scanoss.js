@@ -105,6 +105,16 @@ export interface ScannerComponent {
     score: string;
     source: string; }[];
   cryptography: any[];
+  health: {
+    creation_date: string;
+    issues: number;
+    last_push: string;
+    last_update: string;
+    watchers: number;
+    country: string;
+    stars: number;
+    forks: number;
+  };
   server: {
     version: string;
     kb_version: { monthly: string; daily: string; }
