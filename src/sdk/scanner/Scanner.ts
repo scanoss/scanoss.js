@@ -126,7 +126,7 @@ export class Scanner extends EventEmitter {
       this.reportLog(`[ SCANNER ]: Received results of ${response.getNumberOfFilesScanned()} files`);
       this.emit(ScannerEvents.DISPATCHER_NEW_DATA, response);
       this.insertIntoBuffer(response);
-      if (this.bufferReachedLimit()) this.bufferToFiles();
+      if (this.bufferReachedLimit()) this.bufferToFiles();  //Uses sync to ensure no new data is appended to the buffer
       this.processingNewData = false;
       if (this.scanFinished) await this.finishJob();
     });
@@ -217,7 +217,7 @@ export class Scanner extends EventEmitter {
       if (this.scannerInput[0].wfpPath) {
         this.wfpProvider = new WfpSplitter();
         this.setWinnowerListeners();
-        this.wfpProvider.start({wfpPath: this.scannerInput[0].wfpPath});
+        this.wfpProvider.start(this.scannerInput[0]);
       } else {
         const folderRoot = this.scannerInput[0].folderRoot;
         const winnowingMode = this.scannerInput[0].winnowingMode;
@@ -291,7 +291,7 @@ export class Scanner extends EventEmitter {
     if (scannerInput[0]?.wfpPath) {
       this.wfpProvider = new WfpSplitter();
       this.setWinnowerListeners();
-      this.wfpProvider.start({wfpPath: scannerInput[0].wfpPath});
+      this.wfpProvider.start(scannerInput[0]);
     } else {
       const folderRoot = this.scannerInput[0].folderRoot;
       const winnowingMode = this.scannerInput[0].winnowingMode;
@@ -340,6 +340,7 @@ export class Scanner extends EventEmitter {
     this.dispatcher.removeAllListeners();
     this.dispatcher.stop();
     this.wfpProvider.stop();
+    finishPromiseResolve();
   }
 
   isRunning() {

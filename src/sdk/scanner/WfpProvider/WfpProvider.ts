@@ -20,12 +20,23 @@ export abstract class WfpProvider extends EventEmitter {
   protected worker: Worker;
   protected pendingFiles: boolean;
   protected winnowingMode: WinnowingMode;
+  protected finishPromise: Promise<void>;
+
+  //Allow resolve or reject the promise returned in start call
+  protected finishPromiseResolve: (value?: void | PromiseLike<void>) => void;
+  protected finishPromiseReject: (value?: void | PromiseLike<void>) => void;
 
   protected init(): void {
     this.wfp = '';
     this.folderRoot = '';
     this.pendingFiles = false;
     this.winnowingMode = WinnowingMode.FULL_WINNOWING;
+
+    this.finishPromise = new Promise((resolve, reject) =>{
+      this.finishPromiseResolve = resolve;
+      this.finishPromiseReject = reject;
+    });
+
   }
 
   // returns true if the function emitted a new fingerprint packet
@@ -59,6 +70,7 @@ export abstract class WfpProvider extends EventEmitter {
     if (this.wfp.length !== 0) this.sendFingerprint(new FingerprintPackage(this.wfp, this.folderRoot));
     this.pendingFiles = false;
     this.emit(ScannerEvents.WINNOWING_FINISHED);
+    this.finishPromiseResolve();
   }
 
 
@@ -72,13 +84,15 @@ export abstract class WfpProvider extends EventEmitter {
 
   protected sendError(errorMsg: string): void {
     this.emit(ScannerEvents.ERROR, new Error(errorMsg));
+    this.finishPromiseReject();
   }
 
   protected setWinnowingMode(mode: WinnowingMode): void {
     this.winnowingMode = mode;
   }
 
-  public abstract start(params: IWfpProviderInput): void;
+  public abstract start(params: IWfpProviderInput): Promise<void>;
+
   public abstract stop(): void;
   public abstract pause(): void;
   public abstract resume(): void;

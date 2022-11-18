@@ -2,7 +2,7 @@
 
 import { program } from 'commander';
 import { depHandler } from '../commands/dep';
-import { fingerprintHandler } from '../commands/fingerprint';
+import { wfpHandler } from '../commands/wfp';
 import { scanHandler } from '../commands/scan';
 
 function CLIErrorHandler(e: Error) {
@@ -16,7 +16,7 @@ function CLIErrorHandler(e: Error) {
 
 async function main() {
   program
-    .version("0.4.8-beta")
+    .version("0.4.13-beta")
     .description('The SCANOSS JS package provides a simple, easy to consume module for interacting with SCANOSS APIs/Engine.')
 
   program
@@ -56,12 +56,12 @@ async function main() {
     .action((source, options) => {depHandler(source, options).catch((e) => {CLIErrorHandler(e)})})
 
     program
-    .command('fingerprint <source>')
+    .command('wfp <source>')
     .description('Generates fingerprints for a folder/file')
     .option('-H, --hpsm', 'Scan using winnowing high precision matching')
     .option('-o, --output <filename>', 'Output result file name (optional - default stdout)')
     .option('-p, --block-size <size>', 'Maximum size in Kb for each fingerprint block (optional - default 64Kb)')
-    .action((source, options) => {fingerprintHandler(source, options).catch((e) => {CLIErrorHandler(e)})})
+    .action((source, options) => {wfpHandler(source, options).catch((e) => {CLIErrorHandler(e)})})
 
     await program.parseAsync(process.argv);
 }

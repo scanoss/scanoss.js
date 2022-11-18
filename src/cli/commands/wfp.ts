@@ -11,7 +11,7 @@ import { Tree } from '../../sdk/tree/Tree';
 import { DependencyFilter } from '../../sdk/tree/Filters/DependencyFilter';
 
 
-export async function fingerprintHandler(rootPath: string, options: any): Promise<void> {
+export async function wfpHandler(rootPath: string, options: any): Promise<void> {
 
   rootPath = rootPath.replace(/\/$/, '');  // Remove trailing slash if exists
   rootPath = rootPath.replace(/^\./, process.env.PWD);  // Convert relative path to absolute path.
