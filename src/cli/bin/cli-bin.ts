@@ -16,7 +16,7 @@ function CLIErrorHandler(e: Error) {
 
 async function main() {
   program
-    .version("0.4.3")
+    .version("0.4.8-beta")
     .description('The SCANOSS JS package provides a simple, easy to consume module for interacting with SCANOSS APIs/Engine.')
 
   program
@@ -24,6 +24,10 @@ async function main() {
     .description('Scan a folder/file')
     .option('-w, --wfp', 'Scan a .wfp file instead of a folder')
     .option('-H, --hpsm', 'Scan using winnowing high precision matching')
+    .option('-x, --extract', 'Extract compressed files before launch scan in folder <<zip_name>>-unzipped')
+    .option('   --extract-overwrite', 'Overwrite folder when decompressing if exists')
+    .option('   --extract-deep <number>', 'Sets uncompress recursion level')
+    .option('   --extract-suffix <suffix>', 'Sets suffix for the folder name')
     .option('-c, --concurrency <number>', 'Number of concurrent connections to use while scanning (optional -default 10)')
     .option('-n, --ignore <ignore>',  'Ignore components specified in the SBOM file')
     .option('-o, --output <filename>', 'Output result file name (optional - default stdout)')

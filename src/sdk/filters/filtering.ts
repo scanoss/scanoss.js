@@ -35,6 +35,7 @@ class AbstractFilter {
     return true;
   }
 }
+
 class NameFilter extends AbstractFilter {
   constructor(condition: string, value: string, scope: string) {
     super(condition, value);
