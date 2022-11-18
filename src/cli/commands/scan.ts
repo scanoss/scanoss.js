@@ -34,6 +34,12 @@ import {
 import {
   SummaryDataProvider
 } from '../../sdk/DataLayer/DataProviders/SummaryDataProvider';
+import {
+  DecompressionFilter
+} from '../../sdk/tree/Filters/DecompressionFilter';
+import {
+  DecompressionManager
+} from '../../sdk/Decompress/DecompressionManager';
 
 
 export async function scanHandler(rootPath: string, options: any): Promise<void> {
@@ -73,8 +79,23 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
       console.error('Reading directory...  ');
       const tree = new Tree(rootPath);
       tree.build();
+
+      if(options.extract) {
+        const archives = tree.getFileList(new DecompressionFilter(""));
+        console.error("Searching archives files...")
+        if(archives.length) {
+          console.error("Extracting archives...")
+          const decompressionManager = new DecompressionManager(options.extractDeep,options.extractSuffix,options.extractOverwrite);
+          await decompressionManager.decompress(archives);
+          console.error("Reindexing files...")
+          tree.build();
+        } else console.error("No archives found.");
+      }
+
       scannerInput.fileList = tree.getFileList(new ScanFilter(""));
       dependencyInput = tree.getFileList(new DependencyFilter(""));
+
+
     } else {
       scannerInput.fileList = [rootPath];
       dependencyInput = [rootPath];

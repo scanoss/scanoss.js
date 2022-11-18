@@ -27,6 +27,10 @@ export default abstract class Node {
     return this.path;
   }
 
+  public getType(): NodeType {
+    return this.type;
+  }
+
 }
 
 export enum NodeType {

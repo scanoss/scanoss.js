@@ -26,6 +26,7 @@ export class Tree {
   }
 
   public build(): Node {
+    this.rootFolder.removeChildren();
     this.buildRec(this.rootPath, this.rootFolder);
     return this.rootFolder;
   }
