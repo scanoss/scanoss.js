@@ -14,13 +14,13 @@ export class DecompressionManager {
 
   private suffix: string;
 
-  private removeFolderOnFailure: boolean;
+  private decompressOverride: boolean;  //When true: Decompress files into <zip_name>-<suffix> whether folder exist or not
+                                        //When false: Decompress files into <zip_name>-<suffix>-X where X can be any number until find a free folder name
 
-  constructor(decompressionLevel: number = 1, suffix: string = "-unzipped", removeFolderOnFailure: boolean = false) {
+  constructor(decompressionLevel: number = 1, suffix: string = "-unzipped", decompressOverride: boolean = false) {
     this.decompressionLevel = decompressionLevel;
-    this.removeFolderOnFailure = removeFolderOnFailure;
+    this.decompressOverride = decompressOverride;
     this.suffix = suffix;
-
     this.decompressorList = [
       new DecompressTgz(),
       new DecompressZip()
@@ -46,15 +46,26 @@ export class DecompressionManager {
     return parentFoldersPath;
   }
 
+
   public async decompressRecursive(archivePath: string, level: number): Promise<void> {
     if(level>=this.decompressionLevel) return
 
     const archiveRootPath = path.dirname(archivePath);
     const archiveName = path.basename(archivePath);
-    const newFolderPath = `${archiveRootPath}${path.sep}${archiveName}${this.suffix}`;
+    let newFolderPath = `${archiveRootPath}${path.sep}${archiveName}${this.suffix}`;
 
     const isSupported = this.decompressorList.some((d) => d.isSupported(archiveName))
     if(isSupported) {
+
+
+      let i = 0;
+      const r = new RegExp("(?<=" + this.suffix +")-\\d+$")  //Selects last -X where X is a number
+      while( !this.decompressOverride && fs.existsSync(newFolderPath) ) { //Search for a free name
+        newFolderPath = newFolderPath.replace(r, "");
+        newFolderPath += `-${i}`
+        i++;
+      }
+
       await fs.promises.mkdir(newFolderPath, { recursive: true });
 
       //Search for decompressor and extract archive

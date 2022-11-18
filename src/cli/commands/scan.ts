@@ -85,10 +85,10 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
         console.error("Searching archives files...")
         if(archives.length) {
           console.error("Extracting archives...")
-          const decompressionManager = new DecompressionManager(options.extract);
+          const decompressionManager = new DecompressionManager(options.extractDeep,options.extractSuffix,options.extractOverwrite);
           await decompressionManager.decompress(archives);
           console.error("Reindexing files...")
-          tree.build();   //Reindex the tree with new folders.
+          tree.build();
         } else console.error("No archives found.");
       }
 
