@@ -473,6 +473,12 @@
         type="button" role="tab" aria-controls="nav-dependencies" aria-selected="false">Dependencies</button>
       <button class="nav-link" id="nav-copyrights-tab" data-bs-toggle="tab" data-bs-target="#nav-copyrights"
         type="button" role="tab" aria-controls="nav-copyrights" aria-selected="false">Copyrights</button>
+      <button class="nav-link" id="nav-cryptography-tab" data-bs-toggle="tab" data-bs-target="#nav-cryptography"
+        type="button" role="tab" aria-controls="nav-cryptography" aria-selected="false">Cryptography</button>
+      <button class="nav-link" id="nav-quality-tab" data-bs-toggle="tab" data-bs-target="#nav-quality"
+        type="button" role="tab" aria-controls="nav-quality" aria-selected="false">Quality</button>
+      <button class="nav-link" id="nav-health-tab" data-bs-toggle="tab" data-bs-target="#nav-health"
+        type="button" role="tab" aria-controls="nav-health" aria-selected="false">Health</button>
       <button class="nav-link" id="nav-summary-tab" data-bs-toggle="tab" data-bs-target="#nav-summary" type="button"
         role="tab" aria-controls="nav-summary" aria-selected="false">Summary</button>
     </div>
@@ -627,6 +633,90 @@
         </template>
       </section>
 
+      <!-- cryptography -->
+      <section class="tab-pane fade" id="nav-cryptography" role="tabpanel" aria-labelledby="nav-cryptography-tab"
+       tabindex="0">
+       <table id="table-cryptography" class="table main-table">
+         <thead>
+           <tr>
+             <th>Component</th>
+             <th>Version</th>
+             <th>Cryptography</th>
+           </tr>
+         </thead>
+         <tbody>
+         </tbody>
+       </table>
+
+       <template id="tpl-cryptography-row">
+         <tr>
+           <td></td>
+           <td></td>
+           <td></td>
+         </tr>
+       </template>
+     </section>
+
+     <!-- quality -->
+     <section class="tab-pane fade" id="nav-quality" role="tabpanel" aria-labelledby="nav-quality-tab"
+     tabindex="0">
+     <table id="table-quality" class="table main-table">
+       <thead>
+         <tr>
+           <th>Component</th>
+           <th>Version</th>
+           <th>Quality</th>
+         </tr>
+       </thead>
+       <tbody>
+       </tbody>
+     </table>
+
+     <template id="tpl-quality-row">
+       <tr>
+         <td></td>
+         <td></td>
+         <td></td>
+       </tr>
+     </template>
+   </section>
+
+   <!-- health -->
+   <section class="tab-pane fade" id="nav-health" role="tabpanel" aria-labelledby="nav-health-tab"
+      tabindex="0">
+      <table id="table-health" class="table main-table">
+        <thead>
+          <tr>
+            <th>Component</th>
+            <th>PURL</th>
+            <th>Creation Date</th>
+            <th>Issues</th>
+            <th>Last Push</th>
+            <th>Last Update</th>
+            <th>Watchers</th>
+            <th>Country</th>
+            <th>Forks</th>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+
+      <template id="tpl-health-row">
+        <tr>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+      </template>
+    </section>
+
       <!-- summary -->
       <div class="tab-pane fade" id="nav-summary" role="tabpanel" aria-labelledby="nav-summary-tab" tabindex="0">
         SUMMARY
@@ -694,18 +784,29 @@
         renderDependenciesTable();
         renderVulnerabilitiesTable();
         renderCopyrightTable();
+        renderCryptographyTable();
+        renderQualityTable();
+        renderHealthTable();
       }
 
       init();
 
-      function setupNavigation() {
+      function setupNavigation(componentList) {
         const showTab = (id) => document.querySelector('.nav-link#' + id).classList.add('visible');
 
-        const existCopyright = (componentList) => {
+        const existVersionKey = (key, componentList) => {
           for (const component of componentList) {
             for (const version of component.versions) {
-              if (version?.copyrights) return true;
+              if (version && version[key]) return true;
             }
+          }
+          return false;
+        };
+
+
+        const existComponentKey = (key, componentList) => {
+          for (const component of componentList) {
+            if (component[key]) return true;
           }
           return false;
         };
@@ -715,7 +816,10 @@
         if (data.component) showTab('nav-components-tab');
         if (data.dependencies) showTab('nav-dependencies-tab');
         if (data.vulnerabilities) showTab('nav-vulnerabilities-tab');
-        if (existCopyright(data.component)) showTab('nav-copyrights-tab');
+        if (existVersionKey('copyrights', data.component)) showTab('nav-copyrights-tab');
+        if (existVersionKey('cryptography', data.component)) showTab('nav-cryptography-tab');
+        if (existVersionKey('quality', data.component)) showTab('nav-quality-tab');
+        if (existComponentKey('health', data.component)) showTab('nav-health-tab');
       }
 
       function renderHeader() {
@@ -734,15 +838,15 @@
         s.innerHTML += `
                             <div class="info big">
                                 <div class="value primary">${data.summary.totalFiles}</div>
-                                <div class="label">Scanned Files</div>
+                                <div class="label">Files Scanned</div>
                             </div>
                             <div class="info big">
                                 <div class="value">${data.summary.matchedFiles}</div>
-                                <div class="label">Matched Files</div>
+                                <div class="label">Matched</div>
                             </div>
                             <div class="info big">
                                 <div class="value">${data.summary.noMatchFiles}</div>
-                                <div class="label">No-Match Files</div>
+                                <div class="label">No Matches</div>
                             </div>
             `;
       }
@@ -998,6 +1102,73 @@
 
             table.appendChild(clon);
           }
+        }
+      }
+
+      function renderCryptographyTable() {
+        const template = document.querySelector("#tpl-cryptography-row");
+        const table = document.querySelector("#table-cryptography tbody");
+
+        const { component: componentData } = data;
+
+        if (!componentData) return false;
+
+        for (const compData of componentData) {
+          for (const version of compData.versions) {
+            if (!version.cryptography) continue
+            const clon = template.content.cloneNode(true);
+            clon.querySelector('td:nth-child(1)').innerHTML = compData.name;
+            clon.querySelector('td:nth-child(2)').innerHTML = version.version;
+            clon.querySelector('td:nth-child(3)').innerHTML = version.cryptography.map(e => `${e.algorithm} (${e.strength})`).join('');
+
+            table.appendChild(clon);
+          }
+        }
+      }
+
+      function renderQualityTable() {
+        const template = document.querySelector("#tpl-quality-row");
+        const table = document.querySelector("#table-quality tbody");
+
+        const { component: componentData } = data;
+
+        if (!componentData) return false;
+
+        for (const compData of componentData) {
+          for (const version of compData.versions) {
+            if (!version.quality) continue
+            const clon = template.content.cloneNode(true);
+            clon.querySelector('td:nth-child(1)').innerHTML = compData.name;
+            clon.querySelector('td:nth-child(2)').innerHTML = version.version;
+            clon.querySelector('td:nth-child(3)').innerHTML = version.quality.scoreAvg + "/5";
+
+            table.appendChild(clon);
+          }
+        }
+      }
+
+      function renderHealthTable() {
+        const template = document.querySelector("#tpl-health-row");
+        const table = document.querySelector("#table-health tbody");
+
+        const { component: componentData } = data;
+
+        if (!componentData) return false;
+
+        for (const compData of componentData) {
+          if (!compData.health) continue
+          const clon = template.content.cloneNode(true);
+          clon.querySelector('td:nth-child(1)').innerHTML = compData.name;
+          clon.querySelector('td:nth-child(2)').innerHTML = compData.key;
+          clon.querySelector('td:nth-child(3)').innerHTML = compData.health.creation_date || '-';
+          clon.querySelector('td:nth-child(4)').innerHTML = compData.health.issues || '-';
+          clon.querySelector('td:nth-child(5)').innerHTML = compData.health.last_push || '-';
+          clon.querySelector('td:nth-child(6)').innerHTML = compData.health.last_update || '-';
+          clon.querySelector('td:nth-child(7)').innerHTML = compData.health.watchers || '-';
+          clon.querySelector('td:nth-child(8)').innerHTML = compData.health.country || '-';
+          clon.querySelector('td:nth-child(9)').innerHTML = compData.health.forks || '-';
+
+          table.appendChild(clon);
         }
       }
     });
