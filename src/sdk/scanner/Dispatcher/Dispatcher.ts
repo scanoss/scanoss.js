@@ -10,6 +10,7 @@ import { DispatcherResponse } from "./DispatcherResponse";
 import { ScannerCfg } from "../ScannerCfg";
 import { GlobalControllerAborter } from "./GlobalControllerAborter";
 import { DispatchableItem } from './DispatchableItem';
+import { HttpsProxyAgent } from 'https-proxy-agent';
 
 const MAX_CONCURRENT_REQUEST = 30;
 
@@ -26,6 +27,8 @@ export class Dispatcher extends EventEmitter {
 
   private recoverableErrors;
 
+  private proxy: HttpsProxyAgent;
+
   constructor(scannerCfg = new ScannerCfg()) {
     super();
     this.scannerCfg = scannerCfg;
@@ -36,6 +39,13 @@ export class Dispatcher extends EventEmitter {
   }
 
   init() {
+
+    this.proxy = null;
+    const proxy = process.env.https_proxy || process.env.HTTPS_PROXY || process.env.http_proxy  || process.env.HTTP_PROXY || '';
+    if (proxy) {
+      this.proxy = new HttpsProxyAgent(proxy)
+    }
+
     this.pQueue = new PQueue({
       concurrency: this.scannerCfg.CONCURRENCY_LIMIT,
     });
@@ -115,6 +125,7 @@ export class Dispatcher extends EventEmitter {
     try {
       this.emit(ScannerEvents.DISPATCHER_WFP_SENDED);
       const response = await fetch(this.scannerCfg.API_URL, {
+        agent: this.proxy,
         method: 'post',
         body: item.getForm(),
         headers: { 'User-Agent': this.scannerCfg.CLIENT_TIMESTAMP, 'X-Session': this.scannerCfg.API_KEY },
@@ -139,6 +150,7 @@ export class Dispatcher extends EventEmitter {
       this.emit(ScannerEvents.DISPATCHER_NEW_DATA, dispatcherResponse);
       return Promise.resolve();
     } catch (e) {
+        console.log(e);
         clearTimeout(timeoutId);
         this.globalAbortController.removeAbortController(timeoutController);
         this.errorHandler(e, item);
