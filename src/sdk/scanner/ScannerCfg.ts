@@ -7,6 +7,13 @@ export class ScannerCfg {
 
   API_KEY = '';
 
+  CERT_PATH = '';
+
+  PROXY = '';
+
+  //Set to true to ignore self certificates issues
+  IGNORE_CERT_ERRORS = false;
+
   // Level of concurrency
   CONCURRENCY_LIMIT = 15;
 
