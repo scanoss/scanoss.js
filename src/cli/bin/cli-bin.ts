@@ -16,7 +16,7 @@ function CLIErrorHandler(e: Error) {
 
 async function main() {
   program
-    .version("0.5.1")
+    .version("0.5.3")
     .description('The SCANOSS JS package provides a simple, easy to consume module for interacting with SCANOSS APIs/Engine.')
 
   program
@@ -40,6 +40,9 @@ async function main() {
     .option('-a, --apiurl <apiurl>', 'SCANOSS API URL (optional - default: https://osskb.org/api/scan/direct)')
     .option('-a, --api2url <api2url>', 'SCANOSS gRPC API 2.0 URL (optional - default: scanoss.com)')
     .option('-k, --key <key>', 'SCANOSS API Key token (optional - not required for default OSSKB URL)')
+    .option('--ignore-cert-errors', 'Ignore self signed certificate errors')
+    .option('--ca-cert <cert>', 'Specify a path for a cert used in SSL/TLS connection')
+    .option('--proxy <proxy>', 'Use proxy')
     .option('-v, --verbose', 'Makes scan operation verbose')
     .action((source, options) => {scanHandler(source, options).catch((e) => {CLIErrorHandler(e)})})
     .addHelpText('after', `

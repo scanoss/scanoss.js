@@ -1,6 +1,6 @@
 {
   "name": "scanoss",
-  "version": "0.5.1",
+  "version": "0.5.3",
   "description": "The SCANOSS JS package provides a simple, easy to consume module for interacting with SCANOSS APIs/Engine.",
   "main": "build/main/index.js",
   "typings": "build/main/index.d.ts",
@@ -58,6 +58,7 @@
     "p-queue": "6.6.2",
     "packageurl-js": "^0.0.5",
     "sort-paths": "^1.1.1",
+    "syswide-cas": "^5.3.0",
     "tar": "^6.1.11",
     "tar-stream": "^2.2.0"
   },
