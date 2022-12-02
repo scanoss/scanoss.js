@@ -67,7 +67,7 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
   if(options.timeout) scannerCfg.TIMEOUT = options.timeout * 1000;
   if(options.maxRetry) scannerCfg.MAX_RETRIES_FOR_RECOVERABLES_ERRORS = options.maxRetry;
   if(options.proxy) scannerCfg.PROXY = options.proxy;
-  if(options.caCert) scannerCfg.CERT_PATH = options.caCert;
+  if(options.caCert) scannerCfg.CA_CERT = options.caCert;
   if(options.ignoreCertErrors) scannerCfg.IGNORE_CERT_ERRORS=true;
   const scanner = new Scanner(scannerCfg);
 
