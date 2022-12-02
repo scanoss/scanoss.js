@@ -7,7 +7,7 @@ export class ScannerCfg {
 
   API_KEY = '';
 
-  CERT_PATH = '';
+  CA_CERT = '';
 
   PROXY = '';
 
