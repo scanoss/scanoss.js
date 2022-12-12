@@ -1,9 +1,13 @@
 import fs from 'fs';
-import { expect } from 'chai';
 import path from 'path';
 
 import { ComponentDataProvider } from '../../../../src/sdk/DataLayer/DataProviders/ComponentDataProvider';
 import { ComponentDataLayer } from '../../../../src/sdk/DataLayer/DataLayerTypes';
+
+const deepEqualInAnyOrder = require('deep-equal-in-any-order');
+const chai = require('chai');
+chai.use(deepEqualInAnyOrder);
+const { expect } = chai;
 
 
 describe('Suit test for DataProvider', () => {
@@ -36,9 +40,12 @@ describe('Suit test for DataProvider', () => {
                 name: "Copyright (c) 2015 Unshift.io; Arnout Kazemier;  the Contributors.",
                 source: "license_file"
               }
-            ]
+            ],
+            cryptography: null,
+            quality: null
           }
-        ]
+        ],
+        health: null,
       },
 
       //Second component with multiple versions detected
@@ -62,7 +69,13 @@ describe('Suit test for DataProvider', () => {
                 name: "Copyright (c) 2015 Unshift.io; Arnout Kazemier;  the Contributors.",
                 source: "license_file"
               }
-            ]
+            ],
+            cryptography: null,
+            quality: {
+              sum: 4,
+              scoreAvg: 4,
+              count: 1
+            }
           },
           {
             version: "1.5.0",
@@ -72,7 +85,13 @@ describe('Suit test for DataProvider', () => {
                 name: "Copyright (c) 2015 Unshift.io; Arnout Kazemier;  the Contributors.",
                 source: "license_file"
               }
-            ]
+            ],
+            cryptography: null,
+            quality: {
+              sum: 4,
+              scoreAvg: 4,
+              count: 1
+            }
           },
           {
             version: "1.5.10",
@@ -82,9 +101,12 @@ describe('Suit test for DataProvider', () => {
                 name: "Copyright (c) 2015 Unshift.io; Arnout Kazemier;  the Contributors.",
                 source: "license_file"
               }
-            ]
+            ],
+            cryptography: null,
+            quality: null
           }
-        ]
+        ],
+        health: null,
       },{
         key: "pkg:npm/querystringify",
         purls: ["pkg:npm/querystringify"],
@@ -94,8 +116,11 @@ describe('Suit test for DataProvider', () => {
           version: "2.2.0",
           licenses: ["MIT"],
           copyrights: null,
+          cryptography: null,
+          quality: null
         }],
         vendor: null,
+        health: null,
       },{
         key: "pkg:npm/requires-port",
         purls: ["pkg:npm/requires-port"],
@@ -105,8 +130,11 @@ describe('Suit test for DataProvider', () => {
           version: "1.0.0",
           licenses: ["MIT"],
           copyrights: null,
+          cryptography: null,
+          quality: null
         }],
         vendor: null,
+        health: null,
       },
       {
         key: "pkg:npm/assume",
@@ -117,7 +145,10 @@ describe('Suit test for DataProvider', () => {
           version: "2.3.0",
           licenses: ["MIT"],
           copyrights: null,
+          cryptography: null,
+          quality: null
         }],
+        health: null,
         vendor: null,
       },
       {
@@ -129,13 +160,15 @@ describe('Suit test for DataProvider', () => {
           version: "17.0.0",
           licenses: ["MIT"],
           copyrights: null,
+          cryptography: null,
+          quality: null
         }],
         vendor: null,
+        health: null,
       }
       ];
 
-    expect(componentData.component).to.have.deep.members(expectedOutput);
-
+    expect(componentData.component).to.deep.equalInAnyOrder(expectedOutput);
   });
 
 });
