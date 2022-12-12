@@ -146,8 +146,8 @@ export function yarnLockV1Parser(fileContent: string, filePath: string): ILocalD
       else if (dep_line.startsWith(' '.repeat(2))) {
         const dep = trimmed.split(" ")
         const key = dep[0].trim();
-        if (key !== "dependencies:") {
-          dependencyData[key] = dep[1].replace(/"|'/g, "");
+        if (key !== "dependencies:" && key!=="optionalDependencies:") {
+          dependencyData[key] = dep[1].replace(/\"|\'/g, "");
         }
       }
 
