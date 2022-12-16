@@ -1,7 +1,7 @@
 import fs from 'fs'
 import {
   csprojParser,
-  packageConfigParser
+  packagesConfigParser
 } from '../../../../../src/sdk/Dependencies/LocalDependency/parsers/nugetParser';
 import { ILocalDependency } from '../../../../../src/sdk/Dependencies/LocalDependency/DependencyTypes'
 import { expect } from 'chai';
@@ -62,7 +62,7 @@ describe('Suit test for packages.config parser', function() {
 
     for (const test of tests) {
       const fileContent = fs.readFileSync(test.inputPath,  {encoding:'utf-8'});
-      const result = packageConfigParser(fileContent, path.basename(test.inputPath));
+      const result = packagesConfigParser(fileContent, path.basename(test.inputPath));
       expect(result).to.deep.equal(test.expectedResult)
     }
   });
