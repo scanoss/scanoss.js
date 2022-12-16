@@ -178,6 +178,7 @@ export class ComponentDataProvider implements DataProvider {
 
     //Replace [] for null in versions
     for (let i=0 ; i<componentLayer.length ; i++) {
+      if(!componentLayer[i].health) componentLayer[i].health = null;
       componentLayer[i].versions.forEach(version => {
         if(version.copyrights?.length == 0) version.copyrights = null;
         if(version.licenses?.length == 0) version.licenses = null;
