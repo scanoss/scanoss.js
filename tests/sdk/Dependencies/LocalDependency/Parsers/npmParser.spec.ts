@@ -125,4 +125,11 @@ describe('Suit test for yarn lock files', function() {
     expect(results).to.be.deep.equal(expectedOutput)
   });
 
+  it('Testing yarn lock file v1_2', function() {
+    const expectedOutput = JSON.parse(fs.readFileSync(path.join(__dirname, './samples/yarn-lock/v1_2/yarn.lock-expected'), 'utf-8'));
+    const yarnLock = fs.readFileSync(path.join(__dirname, './samples/yarn-lock/v1_2/yarn.lock'), 'utf-8');
+    const results = yarnLockParser(yarnLock, 'yarn.lock');
+    expect(results).to.be.deep.equal(expectedOutput)
+  });
+
 });
