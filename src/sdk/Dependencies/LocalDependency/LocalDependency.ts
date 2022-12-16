@@ -10,13 +10,12 @@ import {
 } from './parsers/npmParser';
 import { gemfilelockParser, gemfileParser } from "./parsers/rubyParser";
 import { goModParser, goSumParser } from './parsers/golangParser';
-import { nuspecParser } from './parsers/nugetParser';
+import { csprojParser, packageConfigParser } from './parsers/nugetParser';
 import { buildGradleParser } from './parsers/buildGradleParser';
 
 export class LocalDependencies {
 
   private parserMap: Record<string, ParserFuncType>;
-
   constructor() {
       /*
       This is a hash map that connect a filename with it's own parser function
@@ -32,9 +31,11 @@ export class LocalDependencies {
         'go.mod': goModParser,
         'go.sum': goSumParser,
         'yarn.lock': yarnLockParser,
-        '*.nuspec': nuspecParser,
+        '*.csproj': csprojParser,
+        'packages.config': packageConfigParser,
         'build.gradle': buildGradleParser,
       };
+
   }
 
   public async search(files: Array<string>): Promise<ILocalDependencies> {
@@ -42,7 +43,7 @@ export class LocalDependencies {
     for (const filePath of files) {
         const fileName = path.basename(filePath);
         if(this.parserMap[fileName] != null) {
-          try{
+          try {
             const fileContent = await fs.promises.readFile(filePath, 'utf8');
             const dependency = await this.parserMap[fileName](fileContent, filePath);
             if(dependency.purls.length != 0)
