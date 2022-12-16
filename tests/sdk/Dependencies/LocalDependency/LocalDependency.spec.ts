@@ -8,8 +8,6 @@ describe('Suit test for LocalDependency Scanner', () => {
   it('Testing wildcard string matching',  function () {
     const localDependencyScanner = new LocalDependencies();
 
-
-
     assert(localDependencyScanner.stringMatchWithWildcard("hello this is a test", "hello*"));
     assert(localDependencyScanner.stringMatchWithWildcard("hello this is a test", "*hello*"));
     assert(localDependencyScanner.stringMatchWithWildcard("hello this is a test", "*"));

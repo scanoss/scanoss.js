@@ -41,7 +41,7 @@ export function csprojParser(fileContent: string, filePath: string): Promise<ILo
 }
 
 
-export function packageConfigParser(fileContent: string, filePath: string): Promise<ILocalDependency> {
+export function packagesConfigParser(fileContent: string, filePath: string): Promise<ILocalDependency> {
 
   const results: ILocalDependency = { file: filePath, purls: [] };
   const packageConfig = xml.xml2js(fileContent);

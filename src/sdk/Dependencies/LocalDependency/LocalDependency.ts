@@ -10,7 +10,7 @@ import {
 } from './parsers/npmParser';
 import { gemfilelockParser, gemfileParser } from "./parsers/rubyParser";
 import { goModParser, goSumParser } from './parsers/golangParser';
-import { csprojParser, packageConfigParser } from './parsers/nugetParser';
+import { csprojParser, packagesConfigParser } from './parsers/nugetParser';
 import { buildGradleParser } from './parsers/buildGradleParser';
 
 export class LocalDependencies {
@@ -32,7 +32,7 @@ export class LocalDependencies {
         'go.sum': goSumParser,
         'yarn.lock': yarnLockParser,
         '*.csproj': csprojParser,
-        'packages.config': packageConfigParser,
+        'packages.config': packagesConfigParser,
         'build.gradle': buildGradleParser,
       };
 
@@ -42,10 +42,11 @@ export class LocalDependencies {
     let results: ILocalDependencies = {files: []};
     for (const filePath of files) {
         const fileName = path.basename(filePath);
-        if(this.parserMap[fileName] != null) {
+        const parser: ParserFuncType = this.getParserFunc(fileName);
+        if(parser != null) {
           try {
             const fileContent = await fs.promises.readFile(filePath, 'utf8');
-            const dependency = await this.parserMap[fileName](fileContent, filePath);
+            const dependency = await parser(fileContent, filePath);
             if(dependency.purls.length != 0)
                 results.files.push(dependency);
           } catch(e) {
@@ -61,7 +62,7 @@ export class LocalDependencies {
 
     //Check for an exact match
     const func = this.parserMap[filename];
-    if (func != null) return func
+    if(func) return func
 
 
     //Check for a wildcard string match

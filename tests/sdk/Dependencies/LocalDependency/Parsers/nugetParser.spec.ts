@@ -46,15 +46,15 @@ describe('Suit test for .csproj parser', function() {
 
 
 
-describe('Suit test for package.config parser', function() {
+describe('Suit test for packages.config parser', function() {
 
   it('Testing valids package.config files', function (){
     const tests: Array <{
       inputPath: string;
       expectedResult: ILocalDependency;
     }> = [{
-      inputPath: path.join(__dirname,"./samples/nuget/packageConfig-1/package.config"),
-      expectedResult: {file: 'package.config', purls: [
+      inputPath: path.join(__dirname,"./samples/nuget/packageConfig-1/packages.config"),
+      expectedResult: {file: 'packages.config', purls: [
           {purl:"pkg:nuget/DockPanelSuite", requirement:"2.9.0.0"},
           {purl:"pkg:nuget/Mono.Options", requirement:"6.6.0.161"},
         ]}
