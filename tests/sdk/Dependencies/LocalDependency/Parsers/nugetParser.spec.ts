@@ -4,13 +4,16 @@ import {
   packagesConfigParser
 } from '../../../../../src/sdk/Dependencies/LocalDependency/parsers/nugetParser';
 import { ILocalDependency } from '../../../../../src/sdk/Dependencies/LocalDependency/DependencyTypes'
-import { expect } from 'chai';
 import path from 'path';
 
+const deepEqualInAnyOrder = require('deep-equal-in-any-order');
+const chai = require('chai');
+chai.use(deepEqualInAnyOrder);
+const { expect } = chai;
 
 describe('Suit test for .csproj parser', function() {
 
-  it('Testing valids .csproj files', function (){
+  it('Testing valids .csproj files', async function (){
     const tests: Array <{
       inputPath: string;
       expectedResult: ILocalDependency;
@@ -34,8 +37,8 @@ describe('Suit test for .csproj parser', function() {
 
     for (const test of tests) {
       const fileContent = fs.readFileSync(test.inputPath,  {encoding:'utf-8'});
-      const result = csprojParser(fileContent, path.basename(test.inputPath));
-      expect(result).to.deep.equal(test.expectedResult)
+      const result = await csprojParser(fileContent, path.basename(test.inputPath));
+      expect(result).to.deep.equalInAnyOrder(test.expectedResult)
     }
   });
 
@@ -48,7 +51,7 @@ describe('Suit test for .csproj parser', function() {
 
 describe('Suit test for packages.config parser', function() {
 
-  it('Testing valids package.config files', function (){
+  it('Testing valids package.config files', async function (){
     const tests: Array <{
       inputPath: string;
       expectedResult: ILocalDependency;
@@ -62,8 +65,8 @@ describe('Suit test for packages.config parser', function() {
 
     for (const test of tests) {
       const fileContent = fs.readFileSync(test.inputPath,  {encoding:'utf-8'});
-      const result = packagesConfigParser(fileContent, path.basename(test.inputPath));
-      expect(result).to.deep.equal(test.expectedResult)
+      const result = await packagesConfigParser(fileContent, path.basename(test.inputPath));
+      expect(result).to.deep.equalInAnyOrder(test.expectedResult)
     }
   });
 
