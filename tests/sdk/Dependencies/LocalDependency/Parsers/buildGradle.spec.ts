@@ -14,23 +14,25 @@ describe('Suit test for build.gradle parser', function() {
       inputPath: string;
       expectedResult: ILocalDependency;
       name: string;
-    }> = [{
-      inputPath: path.join(__dirname,"./samples/gradle/2/build.gradle"),
+     }> = [
+      {
+      inputPath: path.join(__dirname,"./samples/gradle/1/build.gradle"),
       name: "Gradle 1",
-      expectedResult: {file: 'gradle.build', purls: [
+      expectedResult: {file: 'build.gradle', purls: [
           {purl:"pkg:maven/org.scala-lang/scala-library", requirement:"2.11.12", scope: "implementation"},
           {purl:"pkg:maven/commons-collections/commons-collections", requirement:"3.2.2", scope: "implementation"},
           {purl:"pkg:maven/org.scalatest/scalatest_2.11", requirement:"3.0.0", scope: "testImplementation"},
           {purl:"pkg:maven/junit/junit", requirement:"4.13", scope: "testImplementation"},
         ]}
-    }, {
+    },
+    {
       inputPath: path.join(__dirname,"./samples/gradle/2/build.gradle"),
       name: "Gradle 2",
       expectedResult: {file: 'build.gradle', purls: [
           {purl: "pkg:maven/com.google/guava", requirement: "1.0", scope: "api"},
           {purl: "pkg:maven/org.apache/commons", requirement: "1.0", scope: "usageDependencies"},
-          {purl: "pkg:maven/org.jacoco.ant", requirement: "0.7.4.201502262128"},
-          {purl: "pkg:maven/org.jacoco.agent", requirement: "0.7.4.201502262128"},
+          {purl: "pkg:maven/org.jacoco/org.jacoco.ant", requirement: "0.7.4.201502262128", scope: "runtimeOnly"},
+          {purl: "pkg:maven/org.jacoco/org.jacoco.agent", requirement: "0.7.4.201502262128", scope: "runtimeOnly"},
         ]}
 
     }];
