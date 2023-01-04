@@ -10,12 +10,12 @@ const PURL_TYPE = 'gem';
 // See reference on: https://bundler.io/gemfile.html
 // and https://bundler.io/man/gemfile.5.html
 const MANIFEST_FILE = 'Gemfile';
-export function gemfileParser(fileContent: string, filePath: string): ILocalDependency {
+export function gemfileParser(fileContent: string, filePath: string): Promise<ILocalDependency> {
 
     // If the file is not a manifest file, return an empty results
     const results: ILocalDependency = {file: filePath, purls: []};
     if(path.basename(filePath) != MANIFEST_FILE)
-        return results;
+      return Promise.resolve(results);
 
 
     const lines: Array<string> = fileContent.split('\n');
@@ -34,24 +34,24 @@ export function gemfileParser(fileContent: string, filePath: string): ILocalDepe
             }
         }
     }
-    return results;
+    return Promise.resolve(results);
 }
 
 
 const MANIFEST_FILE_1 = 'Gemfile.lock';
-export function gemfilelockParser(fileContent: string, filePath: string): ILocalDependency {
+export function gemfilelockParser(fileContent: string, filePath: string): Promise<ILocalDependency> {
 
     // If the file is not a manifest file, return an empty results
     const results: ILocalDependency = {file: filePath, purls: []};
     if(path.basename(filePath) != MANIFEST_FILE_1)
-        return results;
+      return Promise.resolve(results);
 
     const gemlockParser = new GemfileLockParser();
     const purls = gemlockParser.getDependencies(fileContent);
     for (const purl of purls) {
         results.purls.push({purl});
     }
-    return results;
+    return Promise.resolve(results);
 }
 
 

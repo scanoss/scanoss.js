@@ -7,11 +7,11 @@ import path from 'path';
 
 describe('Suit test for go sum parser', function() {
 
-  it('Testing valids go.sum files', function (){
-    const tests: [{
+  it('Testing valids go.sum files', async function (){
+    const tests:  Array <{
       inputPath: string;
       expectedResult: ILocalDependency;
-    }] = [{
+    }> = [{
       inputPath: path.join(__dirname,"./samples/go.sum/1/go.sum"),
       expectedResult: {file: 'go.sum', purls: [
           {purl:"pkg:golang/cloud.google.com/go", requirement:"v0.26.0"},
@@ -138,7 +138,7 @@ describe('Suit test for go sum parser', function() {
 
     for (const test of tests) {
       const fileContent = fs.readFileSync(test.inputPath,  {encoding:'utf-8'});
-      const result = goSumParser(fileContent, 'go.sum');
+      const result = await goSumParser(fileContent, 'go.sum');
       expect(result).to.deep.equal(test.expectedResult)
     }
   });

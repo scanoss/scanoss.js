@@ -8,12 +8,12 @@ const PURL_TYPE = 'maven';
 // See reference on: https://maven.apache.org/guides/introduction/introduction-to-the-pom.html
 // and https://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html
 const MANIFEST_FILE = 'pom.xml';
-export function pomParser(fileContent: string, filePath: string): ILocalDependency {
+export function pomParser(fileContent: string, filePath: string): Promise<ILocalDependency> {
 
     // If the file is not a python manifest file, return an empty results
     const results: ILocalDependency = {file: filePath, purls: []};
     if(path.basename(filePath) != MANIFEST_FILE)
-        return results;
+      return Promise.resolve(results);
 
     const dependencies = fileContent.match(/<dependency>((?:.|\n)*?)<\/dependency>/gm);
     if(dependencies) {
@@ -58,7 +58,8 @@ export function pomParser(fileContent: string, filePath: string): ILocalDependen
     }
 
     //Remove purls duplicated
-    return removeDuplicated(results);
+    const nonDuplicatedResults = removeDuplicated(results);
+    return Promise.resolve(nonDuplicatedResults);
 }
 
 function removeDuplicated(results: ILocalDependency): ILocalDependency {

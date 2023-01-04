@@ -8,11 +8,12 @@ const PURL_TYPE = 'npm';
 // Parse a package.json file from node projects
 // See reference on: https://docs.npmjs.com/cli/v8/configuring-npm/package-json
 const MANIFEST_FILE = 'package.json';
-export function packageParser(fileContent: string, filePath: string): ILocalDependency {
+export function packageParser(fileContent: string, filePath: string): Promise<ILocalDependency> {
     // If the file is not manifest file, return an empty results
     const results: ILocalDependency = {file: filePath, purls: []};
     if(path.basename(filePath) != MANIFEST_FILE)
-        return results;
+      return Promise.resolve(results);
+
     const o = JSON.parse(fileContent);
     let devDeps = Object.keys(o.devDependencies || {});
     let deps = Object.keys(o.dependencies || {});
@@ -27,22 +28,22 @@ export function packageParser(fileContent: string, filePath: string): ILocalDepe
       results.purls.push({purl: purlString, scope: "devDependencies", requirement: o.devDependencies[name]});
     }
 
-    return results;
+    return Promise.resolve(results);
 }
 
 
 // Parse a package-lock.json file from node projects
 // See reference on: https://docs.npmjs.com/cli/v8/configuring-npm/package-json
-export function packagelockParser(fileContent: string, filePath: string): ILocalDependency {
+export function packagelockParser(fileContent: string, filePath: string): Promise<ILocalDependency> {
 
     const results: ILocalDependency = {file: filePath, purls: []};
 
     if(path.basename(filePath) != 'package-lock.json')
-        return results;
+      return Promise.resolve(results);
 
     const packages = JSON.parse(fileContent)?.packages;
 
-    if(!packages) return results;
+    if(!packages) return Promise.resolve(results);
 
     for (const [key, value] of Object.entries(packages)) {
         if(!key) continue;
@@ -55,22 +56,22 @@ export function packagelockParser(fileContent: string, filePath: string): ILocal
         results.purls.push({purl: purl, requirement: req});
     }
 
-    return results;
+    return Promise.resolve(results);
 }
 
 
 
-export function yarnLockParser(fileContent: string, filePath: string): ILocalDependency {
+export function yarnLockParser(fileContent: string, filePath: string): Promise<ILocalDependency> {
   const results: ILocalDependency = {file: filePath, purls: []};
 
   if(path.basename(filePath) != 'yarn.lock')
-    return results;
+    return Promise.resolve(results);
 
   const yarnVersion = yarnLockRecognizeVersion(fileContent)
   if (yarnVersion === YarnLockVersionEnum.V1) return yarnLockV1Parser(fileContent, filePath)
   else if (yarnVersion === YarnLockVersionEnum.V2) return yarnLockV2Parser(fileContent, filePath)
 
-  return results;
+  return Promise.resolve(results);
 }
 
 enum YarnLockVersionEnum {
@@ -100,7 +101,7 @@ export function yarnLockRecognizeVersion(fileContent: string): YarnLockVersionEn
   return YarnLockVersionEnum.UnknownYarnLockFormat
 }
 
-export function yarnLockV1Parser(fileContent: string, filePath: string): ILocalDependency {
+export function yarnLockV1Parser(fileContent: string, filePath: string): Promise <ILocalDependency> {
 
   const results: ILocalDependency = {file: filePath, purls: []};
 
@@ -210,17 +211,17 @@ export function yarnLockV1Parser(fileContent: string, filePath: string): ILocalD
   }
 
 
-  return results;
-
+  return Promise.resolve(results);
 
 }
 
 
-export function yarnLockV2Parser(fileContent: string, filePath: string): ILocalDependency {
+//TODO: Implement yarn lock V2 parser
+export function yarnLockV2Parser(fileContent: string, filePath: string): Promise<ILocalDependency> {
 
   const results: ILocalDependency = {file: filePath, purls: []};
 
 
-  return results;
+  return Promise.resolve(results);
 
 }

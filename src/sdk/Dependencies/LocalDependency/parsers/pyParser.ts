@@ -18,12 +18,12 @@ const PURL_TYPE = 'pypi';
 // Parse a requirements.txt file from python projects
 // See reference on: https://pip.pypa.io/en/stable/reference/requirements-file-format/
 const MANIFEST_FILE = 'requirements.txt';
-export function requirementsParser(fileContent: string, filePath: string): ILocalDependency {
+export function requirementsParser(fileContent: string, filePath: string): Promise<ILocalDependency> {
 
     // If the file is not a python manifest file, return an empty results
     const results: ILocalDependency = {file: filePath, purls: []};
     if(path.basename(filePath) != MANIFEST_FILE)
-        return results;
+        return Promise.resolve(results);
 
     const lines: Array<string> = fileContent.split('\n');
 
@@ -54,5 +54,5 @@ export function requirementsParser(fileContent: string, filePath: string): ILoca
             }
         }
     }
-    return results;
+  return Promise.resolve(results);
 }

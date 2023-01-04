@@ -10,6 +10,7 @@ import {
 } from './parsers/npmParser';
 import { gemfilelockParser, gemfileParser } from "./parsers/rubyParser";
 import { goModParser, goSumParser } from './parsers/golangParser';
+import { buildGradleParser } from './parsers/buildGradleParser';
 
 export class LocalDependencies {
 
@@ -29,7 +30,8 @@ export class LocalDependencies {
         'Gemfile.lock': gemfilelockParser,
         'go.mod': goModParser,
         'go.sum': goSumParser,
-        'yarn.lock': yarnLockParser
+        'yarn.lock': yarnLockParser,
+        'build.gradle': buildGradleParser,
       };
   }
 
@@ -40,7 +42,7 @@ export class LocalDependencies {
         if(this.parserMap[fileName] != null) {
           try{
             const fileContent = await fs.promises.readFile(filePath, 'utf8');
-            const dependency = this.parserMap[fileName](fileContent, filePath);
+            const dependency = await this.parserMap[fileName](fileContent, filePath);
             if(dependency.purls.length != 0)
                 results.files.push(dependency);
           } catch(e) {

@@ -2708,6 +2708,13 @@ graceful-fs@^4.1.15, graceful-fs@^4.1.2, graceful-fs@^4.1.6, graceful-fs@^4.2.0:
   resolved "https://registry.npmjs.org/graceful-fs/-/graceful-fs-4.2.10.tgz"
   integrity sha512-9ByhssR2fPVsNZj478qUUbKfmL0+t5BDVyjShtyZZLiK7ZDAArFFfopyOTj0M05wE2tJPisA4iTnnXl2YoPvOA==
 
+gradle-to-js@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/gradle-to-js/-/gradle-to-js-2.0.1.tgz#3d943ba026afe19b7b6a0af3bc00d1cfd4c2eac4"
+  integrity sha512-is3hDn9zb8XXnjbEeAEIqxTpLHUiGBqjegLmXPuyMBfKAggpadWFku4/AP8iYAGBX6qR9/5UIUIp47V0XI3aMw==
+  dependencies:
+    lodash.merge "^4.6.2"
+
 gunzip-maybe@^1.4.2:
   version "1.4.2"
   resolved "https://registry.npmjs.org/gunzip-maybe/-/gunzip-maybe-1.4.2.tgz"
