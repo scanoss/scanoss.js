@@ -161,7 +161,6 @@ export class Dispatcher extends EventEmitter {
       this.emit(ScannerEvents.DISPATCHER_NEW_DATA, dispatcherResponse);
       return Promise.resolve();
     } catch (e) {
-        console.log(e);
         clearTimeout(timeoutId);
         this.globalAbortController.removeAbortController(timeoutController);
         this.errorHandler(e, item);

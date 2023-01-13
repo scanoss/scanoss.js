@@ -36,12 +36,12 @@ const PURL_TYPE = 'golang';
 
 // See reference on: https://go.dev/ref/mod#go-mod-file
 const MANIFEST_FILE = 'go.mod';
-export function goModParser(fileContent: string, filePath: string): ILocalDependency {
+export function goModParser(fileContent: string, filePath: string): Promise<ILocalDependency> {
 
   // If the file is not a go.mod manifest file, return an empty results
   const results: ILocalDependency = {file: filePath, purls: []};
   if(path.basename(filePath) != MANIFEST_FILE)
-      return results;
+      return Promise.resolve(results);
 
   const lines =	fileContent.split('\n');
 
@@ -70,7 +70,7 @@ export function goModParser(fileContent: string, filePath: string): ILocalDepend
     }
   }
 
-  return results;
+  return Promise.resolve(results);
 }
 
 
@@ -99,12 +99,12 @@ function getDepDataGoSumFromLine(line: string) {
 }
 
 // See reference on: https://go.dev/ref/mod#go-mod-file
-export function goSumParser(fileContent: string, filePath: string): ILocalDependency {
+export function goSumParser(fileContent: string, filePath: string): Promise<ILocalDependency> {
 
   // If the file is not a go.mod manifest file, return an empty results
   const results: ILocalDependency = { file: filePath, purls: [] };
   if (path.basename(filePath) != 'go.sum')
-    return results;
+    return Promise.resolve(results);
 
 
   const lines = fileContent.split('\n');
@@ -123,7 +123,7 @@ export function goSumParser(fileContent: string, filePath: string): ILocalDepend
     results.purls.push({purl: purlString, requirement: version})
   }
 
-  return results;
+  return Promise.resolve(results);
 
 
 }

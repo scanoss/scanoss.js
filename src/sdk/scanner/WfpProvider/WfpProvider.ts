@@ -56,7 +56,7 @@ export abstract class WfpProvider extends EventEmitter {
       fingerprint += '\n';
     }
 
-    if (this.wfp.length + fingerprint.length >= this.scannerCfg.WFP_FILE_MAX_SIZE) {
+    if (this.wfp.length + fingerprint.length >= this.scannerCfg.WFP_FILE_MAX_SIZE && this.wfp.length > 0) {
       this.sendFingerprint(new FingerprintPackage(this.wfp, this.folderRoot));
       this.wfp = '';
     }
