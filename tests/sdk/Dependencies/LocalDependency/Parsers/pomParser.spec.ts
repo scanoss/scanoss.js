@@ -7,7 +7,7 @@ import path from 'path';
 
 describe('Suit test for Pom parser', function() {
 
-  it('Testing valids pom.xml', function (){
+  it('Testing valids pom.xml', async function (){
     const tests: Array<{
       inputPath: string;
       expectedResult: ILocalDependency;
@@ -37,7 +37,7 @@ describe('Suit test for Pom parser', function() {
 
     for (const test of tests) {
       const fileContent = fs.readFileSync(test.inputPath,  {encoding:'utf-8'});
-      const result = pomParser(fileContent, 'pom.xml');
+      const result = await pomParser(fileContent, 'pom.xml');
       expect(test.expectedResult).to.deep.equal(result)
     }
   });

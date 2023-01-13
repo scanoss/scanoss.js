@@ -14,7 +14,7 @@ export interface ILocalDependencies{
 }
 
 /* Parser funcion definition */
-export type ParserFuncType = (fileContent: string, filePath: string) => ILocalDependency;
+export type ParserFuncType = (fileContent: string, filePath: string) => Promise<ILocalDependency>;
 
 export interface ParserDefinitions {
   [key: string]: ParserFuncType;

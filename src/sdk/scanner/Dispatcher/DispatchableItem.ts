@@ -21,7 +21,7 @@ export class DispatchableItem {
   }
 
   public getForm(): FormData {
-    this.form.append('filename', Buffer.from(this.fingerprintPackage.getContent()), 'data.wfp');
+    this.form.append('file', Buffer.from(this.fingerprintPackage.getContent()), 'data.wfp');
     if(this.engineFlags) this.form.append('flags', this.engineFlags);
 
     if(this.sbomMode && this.sbom) {

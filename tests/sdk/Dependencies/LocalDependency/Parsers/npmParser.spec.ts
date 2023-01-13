@@ -66,7 +66,7 @@ describe('Suit test for package lock parser', function() {
   // });
 
 
-  it('Testing invalid package-lock.json', function () {
+  it('Testing invalid package-lock.json', async function () {
     const packageLock = {
       name: "broken",
       version: "1.0.0",
@@ -78,29 +78,29 @@ describe('Suit test for package lock parser', function() {
     };
 
     const outputExpected: ILocalDependency = {file: 'package-lock.json', purls: []};
-    const deps = packagelockParser(JSON.stringify(packageLock), 'package-lock.json')
+    const deps = await packagelockParser(JSON.stringify(packageLock), 'package-lock.json')
     expect(outputExpected).to.deep.equal(deps)
   });
 
 
-  it('Testing invalid name', function () {
+  it('Testing invalid name', async function () {
     const outputExpected: ILocalDependency = {file: '.json', purls: []};
-    const deps = packagelockParser(JSON.stringify({}), '.json')
+    const deps = await packagelockParser(JSON.stringify({}), '.json')
     expect(outputExpected).to.deep.equal(deps)
   });
 
 
-  it('Testing broken JSON', function () {
+  it('Testing broken JSON', async function () {
     const emptyPackageLock = "{}" ;
     const outputExpected: ILocalDependency = {file: 'package-lock.json', purls: []};
-    const deps = packagelockParser(JSON.stringify(emptyPackageLock), 'package-lock.json')
+    const deps = await packagelockParser(JSON.stringify(emptyPackageLock), 'package-lock.json')
     expect(outputExpected).to.deep.equal(deps)
   });
 
-  it('Testing broken JSON', function () {
+  it('Testing broken JSON', async function () {
     const emptyPackageLock = "{{asddsasdasaddsa,.,..,00045g{}" ;
     const outputExpected: ILocalDependency = {file: 'package-lock.json', purls: []};
-    const deps = packagelockParser(JSON.stringify(emptyPackageLock), 'package-lock.json')
+    const deps = await packagelockParser(JSON.stringify(emptyPackageLock), 'package-lock.json')
     expect(outputExpected).to.deep.equal(deps)
   });
 
@@ -111,24 +111,24 @@ describe('Suit test for package lock parser', function() {
 // scancode --json-pp - --package yarn.lock | jq -c '.files[0].packages[0].dependencies[] | { "purl": .purl , "requirement": .requirement }'
 describe('Suit test for yarn lock files', function() {
 
-  it('Testing yarn lock file v1', function() {
+  it('Testing yarn lock file v1', async function() {
     const expectedOutput = JSON.parse(fs.readFileSync(path.join(__dirname, "./samples/yarn-lock/v1/yarn.lock-expected"), 'utf-8'));
     const yarnLock = fs.readFileSync(path.join(__dirname, "./samples/yarn-lock/v1/yarn.lock"), 'utf-8');
-    const results = yarnLockParser(yarnLock, 'yarn.lock');
+    const results = await yarnLockParser(yarnLock, 'yarn.lock');
     expect(results).to.be.deep.equal(expectedOutput)
   });
 
-  it('Testing yarn lock file v1 complex', function() {
+  it('Testing yarn lock file v1 complex', async function() {
     const expectedOutput = JSON.parse(fs.readFileSync(path.join(__dirname, './samples/yarn-lock/v1-complex/yarn.lock-expected'), 'utf-8'));
     const yarnLock = fs.readFileSync(path.join(__dirname, './samples/yarn-lock/v1-complex/yarn.lock'), 'utf-8');
-    const results = yarnLockParser(yarnLock, 'yarn.lock');
+    const results = await yarnLockParser(yarnLock, 'yarn.lock');
     expect(results).to.be.deep.equal(expectedOutput)
   });
 
-  it('Testing yarn lock file v1_2', function() {
+  it('Testing yarn lock file v1_2', async function() {
     const expectedOutput = JSON.parse(fs.readFileSync(path.join(__dirname, './samples/yarn-lock/v1_2/yarn.lock-expected'), 'utf-8'));
     const yarnLock = fs.readFileSync(path.join(__dirname, './samples/yarn-lock/v1_2/yarn.lock'), 'utf-8');
-    const results = yarnLockParser(yarnLock, 'yarn.lock');
+    const results = await yarnLockParser(yarnLock, 'yarn.lock');
     expect(results).to.be.deep.equal(expectedOutput)
   });
 
