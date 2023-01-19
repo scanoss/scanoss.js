@@ -35,7 +35,6 @@ export class LocalDependencies {
         'packages.config': packagesConfigParser,
         'build.gradle': buildGradleParser,
       };
-
   }
 
   public async search(files: Array<string>): Promise<ILocalDependencies> {
