@@ -24,7 +24,7 @@ export class FingerprintPackage {
 
   public getFilesFingerprinted() {
     const files = [];
-    const regExp = new RegExp(/,(\/.*)/g);
+    const regExp = new RegExp(/,(.?\/.*)/g);
     let result;
     // eslint-disable-next-line no-cond-assign
     while ((result = regExp.exec(this.wfpContent))) files.push(this.scanRoot + result[1]);
