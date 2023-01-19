@@ -446,11 +446,17 @@ export class WfpCalculator extends WfpProvider {
   }
 
   async getNextScannableItem() {
-    if (this.fileListIndex >= this.fileList.length) return null;
+    if (this.fileListIndex >= this.fileList.length) {
+      this.emit(ScannerEvents.WINNOWING_STATUS, (this.fileListIndex) % this.scannerCfg.WINNOWING_REPORT_STATUS_AFTER_X)
+      return null;
+    }
     const path = this.fileList[this.fileListIndex];
     const contentSource = path.replace(`${this.folderRoot}`, '');
     const content = await fs.promises.readFile(path);
     this.fileListIndex += 1;
+    if (!(this.fileListIndex % this.scannerCfg.WINNOWING_REPORT_STATUS_AFTER_X))
+      this.emit(ScannerEvents.WINNOWING_STATUS, this.scannerCfg.WINNOWING_REPORT_STATUS_AFTER_X);
+
     const scannable = new ScannableItem(content, contentSource, this.winnowingMode, this.scannerCfg.WFP_FILE_MAX_SIZE);
     return scannable;
   }
@@ -463,7 +469,6 @@ export class WfpCalculator extends WfpProvider {
       this.finishWinnowing();
       this.forceStopWorker();
       this.sendLog('[ SCANNER ]: WFP Calculator finished...');
-
     }
   }
 

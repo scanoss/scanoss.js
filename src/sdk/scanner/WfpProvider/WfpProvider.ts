@@ -1,13 +1,13 @@
 import { Worker } from 'worker_threads';
 import { EventEmitter } from "stream";
 import { ScannerCfg } from "../ScannerCfg";
-import { ScannerEvents, ScannerInput, WinnowingMode } from "../ScannerTypes";
+import { ScannerEvents, WinnowingMode } from "../ScannerTypes";
 import { FingerprintPackage } from "./FingerprintPackage";
 
 
 export interface IWfpProviderInput {
   wfpPath?: string;
-  folderRoot?: string;
+  folderRoot?: string; //This string is being removed from the fingerprint results paths
   fileList?: Array<string>;
   winnowingMode?: WinnowingMode;  // Enable winnowing algorithm, otherwise is scanned only MD5
 }
