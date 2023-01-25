@@ -4,7 +4,6 @@ import EventEmitter from 'eventemitter3';
 import fetch from 'node-fetch';
 import PQueue from "p-queue";
 
-
 import { ScannerEvents } from "../ScannerTypes";
 import { DispatcherResponse } from "./DispatcherResponse";
 import { ScannerCfg } from "../ScannerCfg";
@@ -12,6 +11,8 @@ import { GlobalControllerAborter } from "./GlobalControllerAborter";
 import { DispatchableItem } from './DispatchableItem';
 import { HttpsProxyAgent } from 'https-proxy-agent';
 import * as syswideCa from "syswide-cas";
+
+import { PackageJSON } from '../../../cli/bin/cli-bin';
 
 const MAX_CONCURRENT_REQUEST = 30;
 
@@ -139,7 +140,9 @@ export class Dispatcher extends EventEmitter {
         agent: this.proxy,
         method: 'post',
         body: item.getForm(),
-        headers: { 'User-Agent': this.scannerCfg.CLIENT_TIMESTAMP, 'X-Session': this.scannerCfg.API_KEY },
+        headers: {  'User-Agent': this.scannerCfg.CLIENT_TIMESTAMP ? this.scannerCfg.CLIENT_TIMESTAMP : `scanoss-js/v${PackageJSON.version}`,
+                    'X-Session': this.scannerCfg.API_KEY,
+        },
         signal: timeoutController.signal,
       });
 
