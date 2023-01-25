@@ -4,6 +4,12 @@ import { program } from 'commander';
 import { depHandler } from '../commands/dep';
 import { wfpHandler } from '../commands/wfp';
 import { scanHandler } from '../commands/scan';
+import path from 'path';
+import fs from 'fs';
+
+
+export const PackageJSONPath = path.join(__dirname,"../../../../package.json");
+export const PackageJSON = JSON.parse(fs.readFileSync(PackageJSONPath, 'utf-8'));
 
 function CLIErrorHandler(e: Error) {
   console.error(' ');
@@ -11,12 +17,9 @@ function CLIErrorHandler(e: Error) {
   process.exit(1);
 }
 
-
-
-
 async function main() {
   program
-    .version("0.7.5")
+    .version(PackageJSON.version)
     .description('The SCANOSS JS package provides a simple, easy to consume module for interacting with SCANOSS APIs/Engine.')
 
   program
