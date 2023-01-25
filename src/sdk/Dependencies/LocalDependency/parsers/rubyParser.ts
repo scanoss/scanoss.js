@@ -1,6 +1,6 @@
 import path from "path";
 import { PackageURL } from "packageurl-js";
-import { ILocalDependency } from "../DependencyTypes";
+import { ILocalDependency, ILocalPurl } from '../DependencyTypes';
 
 
 const PURL_TYPE = 'gem';
@@ -49,8 +49,9 @@ export function gemfilelockParser(fileContent: string, filePath: string): Promis
     const gemlockParser = new GemfileLockParser();
     const purls = gemlockParser.getDependencies(fileContent);
     for (const purl of purls) {
-        results.purls.push({purl});
+        results.purls.push(purl);
     }
+
     return Promise.resolve(results);
 }
 
@@ -86,7 +87,7 @@ class GemfileLockParser {
 
     private current_gem;
 
-    private purlList;
+    private purlList: Array<ILocalPurl>;
 
     constructor () {
 
@@ -103,7 +104,7 @@ class GemfileLockParser {
         this.statesMap[SPECS] = this.parseSpec;
     }
 
-    public getDependencies(filecontent: string) {
+    public getDependencies(filecontent: string): Array<ILocalPurl> {
         this.resetState();
         let file = filecontent.split('\n');
         for (let line of file) {
@@ -153,12 +154,12 @@ class GemfileLockParser {
                 const match = line.match(specRegex);
 
                 const purl = new PackageURL( PURL_TYPE,
-                                undefined,
+                              null,
                                 match.groups.name,
-                                match.groups.version,
-                                undefined,
-                                undefined ).toString();
-                this.purlList.push(purl);
+                                  null,
+                                null,
+                                  null ).toString();
+                this.purlList.push({purl: purl, requirement: match.groups.version});
 
             } else {    // Second level of dependence
 
