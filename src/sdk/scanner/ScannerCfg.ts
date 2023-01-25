@@ -1,6 +1,6 @@
 export class ScannerCfg {
-  // Client Timestamp
-  CLIENT_TIMESTAMP = "SCANNER JS"
+  // Client Timestamp, default value is scanoss-js/${version}
+  CLIENT_TIMESTAMP = ""
 
   // API URL
   API_URL = 'https://osskb.org/api/scan/direct';
