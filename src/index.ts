@@ -24,3 +24,8 @@ export * from './sdk/DataLayer/DataProviders/ComponentDataProvider';
 
 // *** Unzip *** //
 export * from './sdk/Decompress/DecompressionManager';
+
+
+// *** FileCount *** //
+export * from './sdk/FileCount/FileCount';
+export {IDirSummary} from './sdk/FileCount/Interfaces';

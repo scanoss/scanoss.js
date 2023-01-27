@@ -6,7 +6,7 @@ import { NodeType } from './Node';
 import Node from './Node';
 import File from './File';
 import Folder from './Folder';
-import { FilterList } from '../filters/filtering';
+import { FilterList } from '../Filtering/Filtering';
 import { Filter } from './Filters/Filter';
 
 export class Tree {
