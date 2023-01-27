@@ -1,9 +1,9 @@
 import { Filter } from './Filter';
 import Node from '../Node'
-import { FilterList } from '../../filters/filtering';
+import { FilterList, IFilter} from '../../Filtering/Filtering';
 import {
   defaultFilterForDependencies
-} from '../../filters/DefaultFilterForDependencies';
+} from '../../Filtering/DefaultFilterForDependencies';
 
 export class DependencyFilter extends Filter {
 
@@ -11,8 +11,8 @@ export class DependencyFilter extends Filter {
 
   public constructor(filterName: string) {
     super();
-    this.filter = new FilterList(filterName);
-    this.filter.load(defaultFilterForDependencies as FilterList)
+    this.filter = new FilterList();
+    this.filter.load(defaultFilterForDependencies)
   }
 
   public evaluate(node: Node): boolean {

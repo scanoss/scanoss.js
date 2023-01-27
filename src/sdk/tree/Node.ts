@@ -1,4 +1,4 @@
-import { FilterList } from '../filters/filtering';
+import { FilterList } from '../Filtering/Filtering';
 import { Filter } from './Filters/Filter';
 
 export default abstract class Node {
