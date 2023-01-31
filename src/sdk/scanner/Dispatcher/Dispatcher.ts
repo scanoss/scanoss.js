@@ -11,8 +11,7 @@ import { GlobalControllerAborter } from "./GlobalControllerAborter";
 import { DispatchableItem } from './DispatchableItem';
 import { HttpsProxyAgent } from 'https-proxy-agent';
 import * as syswideCa from "syswide-cas";
-
-import { PackageJSON } from '../../../cli/bin/cli-bin';
+import { Utils } from '../../Utils/Utils';
 
 const MAX_CONCURRENT_REQUEST = 30;
 
@@ -140,7 +139,7 @@ export class Dispatcher extends EventEmitter {
         agent: this.proxy,
         method: 'post',
         body: item.getForm(),
-        headers: {  'User-Agent': this.scannerCfg.CLIENT_TIMESTAMP ? this.scannerCfg.CLIENT_TIMESTAMP : `scanoss-js/v${PackageJSON.version}`,
+        headers: {  'User-Agent': this.scannerCfg.CLIENT_TIMESTAMP ? this.scannerCfg.CLIENT_TIMESTAMP : `scanoss-js/v${Utils.getPackageVersion()}`,
                     'X-Session': this.scannerCfg.API_KEY,
         },
         signal: timeoutController.signal,
