@@ -16,6 +16,8 @@ import { buildGradleParser } from './parsers/buildGradleParser';
 export class LocalDependencies {
 
   private parserMap: Record<string, ParserFuncType>;
+  private listFilePattern: Array<string>;
+
   constructor() {
       /*
       This is a hash map that connect a filename with it's own parser function
@@ -35,13 +37,18 @@ export class LocalDependencies {
         'packages.config': packagesConfigParser,
         'build.gradle': buildGradleParser,
       };
+
+      this.listFilePattern = Object.keys(this.parserMap).filter((item) => item.includes("*"));
+  }
+
+  public filterFiles(files: Array<string>): Array<string> {
+    return files.filter((filepath) => this.getParserFunc(filepath))
   }
 
   public async search(files: Array<string>): Promise<ILocalDependencies> {
     let results: ILocalDependencies = {files: []};
     for (const filePath of files) {
-        const fileName = path.basename(filePath);
-        const parser: ParserFuncType = this.getParserFunc(fileName);
+        const parser: ParserFuncType = this.getParserFunc(filePath);
         if(parser != null) {
           try {
             const fileContent = await fs.promises.readFile(filePath, 'utf8');
@@ -57,19 +64,15 @@ export class LocalDependencies {
     return results;
   }
 
-  private getParserFunc(filename: string): ParserFuncType {
-
+  private getParserFunc(filePath: string): ParserFuncType {
+    const fileName = path.basename(filePath);
     //Check for an exact match
-    const func = this.parserMap[filename];
+    const func = this.parserMap[fileName];
     if(func) return func
 
-
     //Check for a wildcard string match
-    const filesPatterns = Object.keys(this.parserMap).filter((item) => item.includes("*"));
-    for (const pattern of filesPatterns) {
-
-      if (this.stringMatchWithWildcard(filename, pattern)) return this.parserMap[pattern];
-    }
+    for (const pattern of this.listFilePattern)
+      if (this.stringMatchWithWildcard(fileName, pattern)) return this.parserMap[pattern];
 
     return null;
   }
