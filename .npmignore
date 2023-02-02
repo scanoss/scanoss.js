@@ -1,0 +1,10 @@
+.circleci
+.github
+.nyc_output
+.reuse
+.vscode
+node_modules
+src
+tests
+
+
