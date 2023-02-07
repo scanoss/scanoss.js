@@ -1,5 +1,5 @@
 import { Worker } from 'worker_threads';
-import { EventEmitter } from "stream";
+import EventEmitter from 'eventemitter3';
 import { ScannerCfg } from "../ScannerCfg";
 import { ScannerEvents, WinnowingMode } from "../ScannerTypes";
 import { FingerprintPackage } from "./FingerprintPackage";
