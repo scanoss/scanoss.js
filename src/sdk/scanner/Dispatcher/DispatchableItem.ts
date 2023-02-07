@@ -15,6 +15,7 @@ export class DispatchableItem {
 
   private sbomMode: SbomMode;
 
+  private _uuid: string;
   constructor() {
     this.errorCounter = 0;
     this.form = new FormData();
@@ -57,6 +58,11 @@ export class DispatchableItem {
     this.sbomMode = sbomMode;
   }
 
+  public get uuid(): string {
+    return this._uuid;
+  }
 
-
+  public set uuid(uuid: string) {
+    this._uuid = uuid;
+  }
 }

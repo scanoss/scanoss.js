@@ -94,11 +94,9 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
           tree.build();
         } else console.error("No archives found.");
       }
-
+      scanner.setWorkDirectory(rootPath);
       scannerInput.fileList = tree.getFileList(new ScanFilter(""));
       dependencyInput = tree.getFileList(new DependencyFilter(""));
-
-
     } else {
       scannerInput.fileList = [rootPath];
       dependencyInput = [rootPath];
