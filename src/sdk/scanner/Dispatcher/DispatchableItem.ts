@@ -15,9 +15,11 @@ export class DispatchableItem {
 
   private sbomMode: SbomMode;
 
+  private uuid: string;
   constructor() {
     this.errorCounter = 0;
     this.form = new FormData();
+    this.uuid =
   }
 
   public getForm(): FormData {
