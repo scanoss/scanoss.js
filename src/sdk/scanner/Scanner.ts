@@ -4,7 +4,6 @@ import EventEmitter from 'eventemitter3';
 import os from 'os';
 import fs from 'fs';
 
-
 import { Dispatcher } from './Dispatcher/Dispatcher';
 
 import { DispatchableItem } from './Dispatcher/DispatchableItem';
@@ -12,12 +11,15 @@ import { DispatcherResponse } from './Dispatcher/DispatcherResponse';
 import { ScannerCfg } from './ScannerCfg';
 import { ScannerEvents, ScannerInput } from './ScannerTypes';
 
-import sortPaths from 'sort-paths';
-
 import { WfpProvider } from './WfpProvider/WfpProvider';
 import { FingerprintPackage } from './WfpProvider/FingerprintPackage';
 import { WfpCalculator } from './WfpProvider/WfpCalculator/WfpCalculator';
 import { WfpSplitter } from './WfpProvider/WfpSplitter/WfpSplitter';
+
+import sortPaths from 'sort-paths';
+import { v4 as uuidv4 } from 'uuid';
+import { Response } from 'node-fetch';
+
 
 let finishPromiseResolve;
 let finishPromiseReject;
@@ -92,6 +94,8 @@ export class Scanner extends EventEmitter {
 
       const item = new DispatchableItem();
       item.setFingerprintPackage(fingerprintPackage);
+      item.uuid = uuidv4();
+
       if(this.scannerInput[0]?.engineFlags) item.setEngineFlags(this.scannerInput[0]?.engineFlags);
 
       if(this.scannerInput[0]?.sbom && this.scannerInput[0]?.sbomMode)
@@ -151,9 +155,17 @@ export class Scanner extends EventEmitter {
       this.reportLog(msg);
     });
 
-    this.dispatcher.on(ScannerEvents.ERROR, (error: Error, disptItem: DispatchableItem) => {
+    this.dispatcher.on(ScannerEvents.ERROR, (error: Error, disptItem: DispatchableItem, response: string) => {
       const wfpContent = disptItem.getFingerprintPackage().getContent();
-      fs.writeFileSync(`${this.workDirectory}/failed.wfp`, wfpContent, 'utf8');
+      const requestId = disptItem.uuid
+
+      let plainResponse = response ? response : "";
+      const dump = `---Request ID Begin---\n${requestId}\n---Request ID End---\n` +
+                `---Bad JSON Begin---\n${plainResponse}\n---Request ID End---\n` +
+                `---WFP Begin---\n${wfpContent}\n---WFP End---\n`;
+
+      fs.writeFileSync(`${this.workDirectory}/bad_request-${this.scannerId}-${requestId}.txt`, dump, 'utf8');
+
       this.errorHandler(error, ScannerEvents.MODULE_DISPATCHER);
     });
   }

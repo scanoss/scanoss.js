@@ -1,7 +1,7 @@
 /* eslint-disable guard-for-in */
 /* eslint-disable no-restricted-syntax */
 import EventEmitter from 'eventemitter3';
-import fetch from 'node-fetch';
+import fetch, { Response } from 'node-fetch';
 import PQueue from "p-queue";
 
 import { ScannerEvents } from "../ScannerTypes";
@@ -103,8 +103,8 @@ export class Dispatcher extends EventEmitter {
     }
   }
 
-  handleUnrecoverableError(error,disptItem) {
-    this.emit('error', error, disptItem);
+  emitUnrecoberableError(error, disptItem, response: string) {
+    this.emit('error', error, disptItem, response);
   }
 
   emitNoDispatchedItem(disptItem) {
@@ -112,27 +112,29 @@ export class Dispatcher extends EventEmitter {
     this.emit(ScannerEvents.DISPATCHER_ITEM_NO_DISPATCHED, disptItem);
   }
 
-  errorHandler(error, disptItem) {
+  errorHandler(error, disptItem: DispatchableItem, response: string) {
     if (!this.globalAbortController.isAborting()) {
       if (error.name === 'AbortError') error.name = 'TIMEOUT';
       if (this.recoverableErrors.has(error.code) || this.recoverableErrors.has(error.name)) {
         disptItem.increaseErrorCounter();
         if (disptItem.getErrorCounter() >= this.scannerCfg.MAX_RETRIES_FOR_RECOVERABLES_ERRORS) {
           this.emitNoDispatchedItem(disptItem);
-          if (this.scannerCfg.ABORT_ON_MAX_RETRIES) this.handleUnrecoverableError(error, disptItem);
+          if (this.scannerCfg.ABORT_ON_MAX_RETRIES) this.emitUnrecoberableError(error, disptItem, response);
           return;
         }
         this.emit(ScannerEvents.DISPATCHER_LOG,`[ SCANNER ]: Recoverable error happened sending WFP content to server. Reason: ${error.code || error.name}`);
         this.dispatchItem(disptItem);
         return;
       }
-      this.handleUnrecoverableError(error, disptItem);
+      this.emitUnrecoberableError(error, disptItem, response);
     }
   }
 
   async dispatch(item: DispatchableItem) {
     const timeoutController = this.globalAbortController.getAbortController();
     const timeoutId = setTimeout(() => timeoutController.abort(), this.scannerCfg.TIMEOUT);
+    let plainResponse: string;
+
     try {
       this.emit(ScannerEvents.DISPATCHER_WFP_SENDED);
       const response = await fetch(this.scannerCfg.API_URL, {
@@ -141,7 +143,7 @@ export class Dispatcher extends EventEmitter {
         body: item.getForm(),
         headers: {  'User-Agent': this.scannerCfg.CLIENT_TIMESTAMP ? this.scannerCfg.CLIENT_TIMESTAMP : `scanoss-js/v${Utils.getPackageVersion()}`,
                     'X-Session': this.scannerCfg.API_KEY,
-                    'x-request-id': item.getUUID();
+                    'x-request-id': item.uuid,
         },
         signal: timeoutController.signal,
       });
@@ -150,8 +152,8 @@ export class Dispatcher extends EventEmitter {
       this.globalAbortController.removeAbortController(timeoutController);
 
       if (!response.ok) {
-        const msg = await response.text();
-        const err = new Error(msg);
+        plainResponse = await response.text();
+        const err = new Error(plainResponse);
         err["code"] = response.status;
         err.name = ScannerEvents.ERROR_SERVER_SIDE;
         throw err;
@@ -166,7 +168,7 @@ export class Dispatcher extends EventEmitter {
     } catch (e) {
         clearTimeout(timeoutId);
         this.globalAbortController.removeAbortController(timeoutController);
-        this.errorHandler(e, item);
+        this.errorHandler(e, item, plainResponse);
         return Promise.resolve();
     }
   }
