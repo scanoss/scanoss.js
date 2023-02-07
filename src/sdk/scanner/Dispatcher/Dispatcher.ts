@@ -112,17 +112,22 @@ export class Dispatcher extends EventEmitter {
     this.emit(ScannerEvents.DISPATCHER_ITEM_NO_DISPATCHED, disptItem);
   }
 
-  errorHandler(error, disptItem: DispatchableItem, response: string) {
+  errorHandler(error: Error, disptItem: DispatchableItem, response: string) {
     if (!this.globalAbortController.isAborting()) {
-      if (error.name === 'AbortError') error.name = 'TIMEOUT';
-      if (this.recoverableErrors.has(error.code) || this.recoverableErrors.has(error.name)) {
+
+      if (error.name === 'AbortError') {
+        error.message = `The packet with request id ${disptItem.uuid} was sent ${this.scannerCfg.MAX_RETRIES_FOR_RECOVERABLES_ERRORS} times and there was a timeout for each retry`
+        error.name = 'TIMEOUT';
+      }
+
+      if (this.recoverableErrors.has(error.name)) {
         disptItem.increaseErrorCounter();
         if (disptItem.getErrorCounter() >= this.scannerCfg.MAX_RETRIES_FOR_RECOVERABLES_ERRORS) {
           this.emitNoDispatchedItem(disptItem);
           if (this.scannerCfg.ABORT_ON_MAX_RETRIES) this.emitUnrecoberableError(error, disptItem, response);
           return;
         }
-        this.emit(ScannerEvents.DISPATCHER_LOG,`[ SCANNER ]: Recoverable error happened sending WFP content to server. Reason: ${error.code || error.name}`);
+        this.emit(ScannerEvents.DISPATCHER_LOG,`[ SCANNER ]: Recoverable error happened sending WFP content to server. Reason: ${error}`);
         this.dispatchItem(disptItem);
         return;
       }
@@ -133,7 +138,7 @@ export class Dispatcher extends EventEmitter {
   async dispatch(item: DispatchableItem) {
     const timeoutController = this.globalAbortController.getAbortController();
     const timeoutId = setTimeout(() => timeoutController.abort(), this.scannerCfg.TIMEOUT);
-    let plainResponse: string;
+    let plain_response: string;
 
     try {
       this.emit(ScannerEvents.DISPATCHER_WFP_SENDED);
@@ -152,10 +157,9 @@ export class Dispatcher extends EventEmitter {
       this.globalAbortController.removeAbortController(timeoutController);
 
       if (!response.ok) {
-        plainResponse = await response.text();
-        const err = new Error(plainResponse);
-        err["code"] = response.status;
-        err.name = ScannerEvents.ERROR_SERVER_SIDE;
+        plain_response = await response.text();
+        const err = new Error(`\nHTTP Status code: ${response.status}\nServer Response:\n${plain_response}\n`);
+        err.name = 'HTTP_ERROR';
         throw err;
       }
 
@@ -168,7 +172,7 @@ export class Dispatcher extends EventEmitter {
     } catch (e) {
         clearTimeout(timeoutId);
         this.globalAbortController.removeAbortController(timeoutController);
-        this.errorHandler(e, item, plainResponse);
+        this.errorHandler(e, item, plain_response);
         return Promise.resolve();
     }
   }
