@@ -162,13 +162,14 @@ export class Scanner extends EventEmitter {
       let plainResponse = response ? response : "";
 
       const dump =  `---Request ID Begin---\n${requestId}\n---Request ID End---\n` +
-                    `---Bad JSON Begin---\n${plainResponse}\n---Request ID End---\n` +
-                    `---WFP Begin---\n${wfpContent}\n---WFP End---\n`;
+                    `---WFP Begin---\n${wfpContent}\n---WFP End---\n` +
+                    `---Server Response Begin---\n${plainResponse}\n---Server Response End---\n`;
+                    `---Error Message Begin---\n${error.message}\n---Error Message End---\n`;
 
       const filePath = `${this.workDirectory}/bad_request-${this.scannerId}-${requestId}.txt`
       fs.writeFileSync(filePath, dump, 'utf8');
 
-      error.message += `\nDump file located at ${filePath}`;
+      error.message += `\n\nDebug file located at ${filePath}`;
       this.errorHandler(error, ScannerEvents.MODULE_DISPATCHER);
     });
   }
