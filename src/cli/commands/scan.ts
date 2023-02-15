@@ -53,7 +53,7 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
 
   // Create dependency scanner and set parameters
   const dependencyScannerCfg = new DependencyScannerCfg();
-  if (options.api2url) dependencyScannerCfg.DEFAULT_GRPC_HOST = options.api2url;
+  if (options.api2url) dependencyScannerCfg.API_URL = options.api2url;
   const dependencyScanner = new DependencyScanner(dependencyScannerCfg);
   let dependencyInput: Array<string> = [];
 
@@ -66,9 +66,12 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
   if(options.key) scannerCfg.API_KEY = options.key;
   if(options.timeout) scannerCfg.TIMEOUT = options.timeout * 1000;
   if(options.maxRetry) scannerCfg.MAX_RETRIES_FOR_RECOVERABLES_ERRORS = options.maxRetry;
-  if(options.proxy) scannerCfg.PROXY = options.proxy;
   if(options.caCert) scannerCfg.CA_CERT = options.caCert;
   if(options.ignoreCertErrors) scannerCfg.IGNORE_CERT_ERRORS=true;
+  if(options.pac) scannerCfg.PAC=options.pac;
+  if(options.proxy) scannerCfg.PROXY = options.proxy;
+  await scannerCfg.validate();
+
   const scanner = new Scanner(scannerCfg);
 
   let scannerInput: ScannerInput = {fileList: []};

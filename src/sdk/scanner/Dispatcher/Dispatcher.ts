@@ -10,6 +10,7 @@ import { ScannerCfg } from "../ScannerCfg";
 import { GlobalControllerAborter } from "./GlobalControllerAborter";
 import { DispatchableItem } from './DispatchableItem';
 import { HttpsProxyAgent } from 'https-proxy-agent';
+import { HttpProxyAgent } from 'http-proxy-agent';
 import * as syswideCa from "syswide-cas";
 import { Utils } from '../../Utils/Utils';
 

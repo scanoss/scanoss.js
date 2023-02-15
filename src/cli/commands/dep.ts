@@ -12,7 +12,7 @@ export async function depHandler(rootPath: string, options: any): Promise<void> 
   rootPath = rootPath.replace(/^\./, process.env.PWD);  // Convert relative path to absolute path.
   const pathIsFolder = await isFolder(rootPath);
   const dependencyScannerCfg = new DependencyScannerCfg();
-  if(options.grpcHost) dependencyScannerCfg.DEFAULT_GRPC_HOST = options.grpcHost;
+  if(options.grpcHost) dependencyScannerCfg.API_URL = options.grpcHost;
   if(options.grpcPort) dependencyScannerCfg.DEFAULT_GRPC_PORT = options.grpcPort;
 
   const dependencyScanner = new DependencyScanner(dependencyScannerCfg);
