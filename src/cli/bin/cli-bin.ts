@@ -43,6 +43,7 @@ async function main() {
     .option('--ignore-cert-errors', 'Ignore self signed certificate errors')
     .option('--ca-cert <cert>', 'Specify a path for a cert used in SSL/TLS connection')
     .option('--proxy <proxy>', 'Use proxy')
+    .option('--pac <pac>', 'Proxy auto configuration (optional). Specify a file, http url or ftp url')
     .option('-v, --verbose', 'Makes scan operation verbose')
     .action((source, options) => {scanHandler(source, options).catch((e) => {CLIErrorHandler(e)})})
     .addHelpText('after', `

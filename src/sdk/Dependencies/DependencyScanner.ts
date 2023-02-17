@@ -13,7 +13,7 @@ export class DependencyScanner {
   private grpcDependencyService: GrpcDependencyService;
 
   constructor(cfg = new DependencyScannerCfg()) {
-    this.grpcDependencyService = new GrpcDependencyService(cfg.DEFAULT_GRPC_HOST, cfg.DEFAULT_GRPC_PORT);
+    this.grpcDependencyService = new GrpcDependencyService(cfg.API_URL, cfg.DEFAULT_GRPC_PORT);
     this.localDependency = new LocalDependencies();
   }
 
