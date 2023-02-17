@@ -1,5 +1,5 @@
 import { BaseConfig } from '../BaseConfig';
-import { Utils } from '../Utils/Utils';
+
 
 export class ScannerCfg extends BaseConfig {
   // Client Timestamp, default value is scanoss-js/${version}

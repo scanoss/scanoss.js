@@ -12,20 +12,23 @@ export abstract class BaseConfig {
       const proxyStringPAC = await Utils.PACProxyResolver(this.PAC, this.API_URL);
       const proxyListPAC = proxyStringPAC.split(";");
       for (const proxyPAC of proxyListPAC ) {
-        if (proxyPAC.includes("PROXY")) {
-          console.log(new URL(this.API_URL));
-          const requestProtocol = new URL(this.API_URL).protocol;   //By default, the PROXY keyword means that a proxy corresponding to the protocol of the original request
-          const proxyAddr = proxyPAC.replace(/PROXY/, '').trim();
-          this.PROXY = `${requestProtocol}//${proxyAddr}`;
-          console.log(this.PROXY)
-          return;
-        } else if (proxyPAC === "DEFAULT") {
-          this.PROXY = "";
-          return;
+        if(/(?:HTTPS|HTTP)/.test(proxyPAC)) {
+          //The following line replaces the HTTPS/HTTP substring and appends
+          //the protocol to the proxy address.
+          this.PROXY = proxyPAC.replace(/(HTTPS|HTTP)\s+/,
+            (match, g1) => {return `${g1.toLowerCase()}://`});
+        } else if (/PROXY/i.test(proxyPAC)) {
+          this.PROXY = "http://" + proxyPAC.replace(/PROXY/, '').trim();
+        } else if (/DEFAULT/.test(proxyPAC)) {
+          this.PROXY = null;
         }
-        //Todo: Implement a fail over strategy instead of using the first proxy
+
+        console.log("Read proxy config from PAC file: ", this.PROXY);
+        if (!this.PROXY && await Utils.testConnection(this.API_URL)) return;
+        if (await Utils.testProxyConnection(this.PROXY, this.API_URL)) return;
+        console.log("Proxy not valid...")
       }
+    throw new Error("PAC file does not contains any valid proxy")
     }
   }
-
 }

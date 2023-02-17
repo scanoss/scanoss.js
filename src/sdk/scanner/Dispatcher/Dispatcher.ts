@@ -29,7 +29,7 @@ export class Dispatcher extends EventEmitter {
 
   private recoverableErrors;
 
-  private proxy: HttpsProxyAgent;
+  private proxyAgent: HttpsProxyAgent | HttpProxyAgent;
 
   constructor(scannerCfg = new ScannerCfg()) {
     super();
@@ -42,19 +42,21 @@ export class Dispatcher extends EventEmitter {
 
   init() {
 
-    //Loads proxy from SDK config, if not from env variables, if not leave empty
-    this.proxy = null;
-    const proxy = this.scannerCfg.PROXY || process.env.https_proxy || process.env.HTTPS_PROXY || process.env.http_proxy  || process.env.HTTP_PROXY || '';
-    if (proxy) this.proxy = new HttpsProxyAgent(proxy)
+    //Loads proxy from SDK config, if not, loads from env variables, if not, leave empty
+    this.proxyAgent = null;
+    const proxyAddr = this.scannerCfg.PROXY || process.env.https_proxy || process.env.HTTPS_PROXY || process.env.http_proxy  || process.env.HTTP_PROXY || null;
 
-
+    if (proxyAddr) {
+      if (this.scannerCfg.API_URL.trim().startsWith('https')) this.proxyAgent = new HttpsProxyAgent(proxyAddr);
+      else this.proxyAgent = new HttpProxyAgent(proxyAddr);
+    }
 
     //Loads certs stuff from SDK config
     const ca_cert = this.scannerCfg.CA_CERT  || process.env.NODE_EXTRA_CA_CERTS
     if (ca_cert) {
       syswideCa.addCAs(ca_cert)
     } else {
-      if (this.scannerCfg.IGNORE_CERT_ERRORS || proxy)
+      if (this.scannerCfg.IGNORE_CERT_ERRORS || proxyAddr)
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
     }
 
@@ -144,7 +146,7 @@ export class Dispatcher extends EventEmitter {
     try {
       this.emit(ScannerEvents.DISPATCHER_WFP_SENDED);
       const response = await fetch(this.scannerCfg.API_URL, {
-        agent: this.proxy,
+        agent: this.proxyAgent,
         method: 'post',
         body: item.getForm(),
         headers: {  'User-Agent': this.scannerCfg.CLIENT_TIMESTAMP ? this.scannerCfg.CLIENT_TIMESTAMP : `scanoss-js/v${Utils.getPackageVersion()}`,
