@@ -82,7 +82,7 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
 
   if(!options.wfp) {
     if(pathIsFolder) {
-      console.error('Reading directory...  ');
+      console.error('\nReading directory...  ');
       const tree = new Tree(rootPath);
       tree.build();
 

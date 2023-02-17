@@ -36,7 +36,7 @@ export class Utils {
     let host = new URL(hostname).origin;
     try {
       const controller = new AbortController()
-      const timeoutId = setTimeout(() => controller.abort(), 5000)
+      const timeoutId = setTimeout(() => controller.abort(), 3000)
       const response = await fetch(host, {
         ...(agent && {agent}),
         // @ts-ignore
@@ -51,13 +51,11 @@ export class Utils {
   }
 
   public static async testProxyConnection(hostname:string, proxy: string ): Promise<boolean> {
-
     let proxyAgent: HttpsProxyAgent | HttpProxyAgent;
     if (/HTTPS/i.test(hostname)) proxyAgent = new HttpsProxyAgent(proxy);
     else if (/HTTP/i.test(hostname)) proxyAgent = new HttpProxyAgent(proxy);
     if (!proxyAgent) return false;
     return await this.testConnection(hostname, proxyAgent);
-
   }
 
 }

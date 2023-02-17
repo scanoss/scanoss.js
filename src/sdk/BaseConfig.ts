@@ -23,10 +23,10 @@ export abstract class BaseConfig {
           this.PROXY = null;
         }
 
-        console.log("Read proxy config from PAC file: ", this.PROXY);
+        process.stdout.write(`Testing proxy connection ${this.PROXY} from PAC file... `);
         if (!this.PROXY && await Utils.testConnection(this.API_URL)) return;
-        if (await Utils.testProxyConnection(this.PROXY, this.API_URL)) return;
-        console.log("Proxy not valid...")
+        if (await Utils.testProxyConnection(this.API_URL, this.PROXY)) return;
+        console.log("   Proxy not valid")
       }
     throw new Error("PAC file does not contains any valid proxy")
     }
