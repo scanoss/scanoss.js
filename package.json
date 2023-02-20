@@ -1,6 +1,6 @@
 {
   "name": "scanoss",
-  "version": "0.7.16",
+  "version": "0.8.0",
   "description": "The SCANOSS JS package provides a simple, easy to consume module for interacting with SCANOSS APIs/Engine.",
   "main": "build/main/index.js",
   "typings": "build/main/index.d.ts",
