@@ -47,15 +47,17 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
   rootPath = rootPath.replace(/\/$/, '');  // Remove trailing slash if exists
   rootPath = rootPath.replace(/^\./, process.env.PWD);  // Convert relative path to absolute path.
   const pathIsFolder = await isFolder(rootPath);
-
-
   const projectName = getProjectNameFromPath(rootPath)
 
   // Create dependency scanner and set parameters
+  let dependencyInput: Array<string> = [];
   const dependencyScannerCfg = new DependencyScannerCfg();
   if (options.api2url) dependencyScannerCfg.API_URL = options.api2url;
+  if (options.proxy) dependencyScannerCfg.PROXY = options.proxy;
+  if(options.pac) dependencyScannerCfg.PAC=options.pac;
+  await dependencyScannerCfg.validate();
   const dependencyScanner = new DependencyScanner(dependencyScannerCfg);
-  let dependencyInput: Array<string> = [];
+
 
 
   // Create scanner and set connections parameters
@@ -71,7 +73,6 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
   if(options.pac) scannerCfg.PAC=options.pac;
   if(options.proxy) scannerCfg.PROXY = options.proxy;
   await scannerCfg.validate();
-
   const scanner = new Scanner(scannerCfg);
 
   let scannerInput: ScannerInput = {fileList: []};

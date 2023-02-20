@@ -13,7 +13,6 @@ export async function depHandler(rootPath: string, options: any): Promise<void> 
   const pathIsFolder = await isFolder(rootPath);
   const dependencyScannerCfg = new DependencyScannerCfg();
   if(options.grpcHost) dependencyScannerCfg.API_URL = options.grpcHost;
-  if(options.grpcPort) dependencyScannerCfg.DEFAULT_GRPC_PORT = options.grpcPort;
 
   const dependencyScanner = new DependencyScanner(dependencyScannerCfg);
 
