@@ -38,11 +38,11 @@ async function main() {
     .option('-M, --timeout <timeout>', 'Timeout (in seconds) for API communication (optional -default 120)')
     .option('-D, --dependencies', 'Add dependency scanning')
     .option('-a, --apiurl <apiurl>', 'SCANOSS API URL (optional - default: https://osskb.org/api/scan/direct)')
-    .option('-a, --api2url <api2url>', 'SCANOSS gRPC API 2.0 URL (optional - default: scanoss.com)')
+    .option('-a, --api2url <api2url>', 'SCANOSS gRPC API 2.0 URL (optional - default: scanoss.com:443)')
     .option('-k, --key <key>', 'SCANOSS API Key token (optional - not required for default OSSKB URL)')
     .option('--ignore-cert-errors', 'Ignore self signed certificate errors')
     .option('--ca-cert <cert>', 'Specify a path for a cert used in SSL/TLS connection')
-    .option('--proxy <proxy>', 'Use proxy')
+    .option('--proxy <proxy>', 'Proxy URL to use for connections (optional). Can also use the environment variable "HTTPS_PROXY=[ip]:[port]" and "grcp_proxy=[ip]:[port]" for gRPC')
     .option('--pac <pac>', 'Proxy auto configuration (optional). Specify a file, http url or ftp url')
     .option('-v, --verbose', 'Makes scan operation verbose')
     .action((source, options) => {scanHandler(source, options).catch((e) => {CLIErrorHandler(e)})})
@@ -55,8 +55,7 @@ async function main() {
     .command('dep <source>')
     .description('Scan for dependencies')
     .option('-o, --output <filename>', 'Output result file name (optional - default stdout)')
-    .option('-a, --grpc-host <host>', 'SCANOSS GRPC HOST (optional - default: scanoss.com)')
-    .option('-p, --grpc-port <port>', 'SCANOSS GRPC PORT  (optional - default: 443)')
+    .option('-a, --grpc-host <host>', 'SCANOSS GRPC HOST (optional - default: scanoss.com:443)')
     .action((source, options) => {depHandler(source, options).catch((e) => {CLIErrorHandler(e)})})
 
     program

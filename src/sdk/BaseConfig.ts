@@ -6,7 +6,7 @@ export abstract class BaseConfig {
   public API_URL: string = '';
 
   public async validate() {
-    if (this.PROXY && this.PAC) throw new Error("Cannot define PROXY and PAC settings at same time. Choose only one.")
+    if (this.PROXY && this.PAC) throw new Error("Cannot define PROXY and PAC settings at same time. Choose only one.");
 
     if(this.PAC) {
       const proxyStringPAC = await Utils.PACProxyResolver(this.PAC, this.API_URL);
@@ -23,10 +23,10 @@ export abstract class BaseConfig {
           this.PROXY = null;
         }
 
-        process.stdout.write(`Testing proxy connection ${this.PROXY} from PAC file... `);
+        console.log(`Testing proxy connection ${this.PROXY} from PAC file and API_URL ${this.API_URL} ... `);
         if (!this.PROXY && await Utils.testConnection(this.API_URL)) return;
         if (await Utils.testProxyConnection(this.API_URL, this.PROXY)) return;
-        console.log("   Proxy not valid")
+        console.log("Proxy not valid")
       }
     throw new Error("PAC file does not contains any valid proxy")
     }
