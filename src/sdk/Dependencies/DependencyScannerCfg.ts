@@ -1,7 +1,6 @@
-export class DependencyScannerCfg {
+import { BaseConfig } from '../BaseConfig';
 
-  DEFAULT_GRPC_PORT = '443';
-
-  API_URL = 'scanoss.com';
+export class DependencyScannerCfg extends  BaseConfig {
+  API_URL = 'https://scanoss.com';
 
 }

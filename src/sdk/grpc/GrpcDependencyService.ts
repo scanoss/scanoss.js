@@ -9,12 +9,10 @@ export class GrpcDependencyService {
 
   private metadata;
 
-  constructor(endpoint: string, port: string, apiKey='') {
-    this.client = new DependenciesClient(endpoint + ':' + port, grpc.credentials.createSsl());
-    if(apiKey) {
-      this.metadata = new grpc.Metadata();
-      this.metadata.add('x-api-key', apiKey);
-    }
+  constructor(endpoint: string, proxy?: string) {
+    if (proxy) process.env.grpc_proxy = proxy;
+
+    this.client = new DependenciesClient(endpoint, grpc.credentials.createSsl());
   }
 
   public async get(req: DependenciesMessages.DependencyRequest): Promise<DependenciesMessages.DependencyResponse> {
