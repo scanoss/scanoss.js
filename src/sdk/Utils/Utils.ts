@@ -8,15 +8,15 @@ import fetch from 'node-fetch';
 import * as Http from 'http';
 import * as Https from 'https';
 
+const pjson = require('../../../../package.json')
 export class Utils {
-  private static PackageJSONPath: string = path.join(__dirname,"../../../../package.json");
   private static PackageJSON: any;
   private static PAC_FindProxyForURL: FindProxyForURL;
 
 
 
   public static getPackageVersion(): string {
-    if (!this.PackageJSON) this.PackageJSON = JSON.parse(fs.readFileSync(this.PackageJSONPath, 'utf-8'));
+    if (!this.PackageJSON) this.PackageJSON = pjson;
     return this.PackageJSON.version
   }
 
