@@ -7,6 +7,7 @@ import { HttpsProxyAgent } from 'https-proxy-agent';
 import fetch from 'node-fetch';
 import * as Http from 'http';
 import * as Https from 'https';
+import { Logger, logger } from '../Logger';
 
 const pjson = require('../../../../package.json')
 export class Utils {
@@ -32,11 +33,24 @@ export class Utils {
     return this.PAC_FindProxyForURL(URL)
   }
 
-  public static async testConnection(hostname:string, agent?: Http.Agent | Https.Agent): Promise<boolean> {
-    let host = new URL(hostname).origin;
+  public static PACProxyURLBuilder(proxyPAC: string): string {
+    let proxyURL: string = '';
+    if(/(?:HTTPS|HTTP)/.test(proxyPAC)) {
+      //The following line replaces the HTTPS/HTTP substring and appends
+      //the protocol to the proxy address.
+      proxyURL = proxyPAC.replace(/(HTTPS|HTTP)\s+/,
+        (match, g1) => {return `${g1.toLowerCase()}://`});
+    } else if (/PROXY/i.test(proxyPAC)) {
+      proxyURL = "http://" + proxyPAC.replace(/PROXY/, '').trim();
+    } else if (/DIRECT/.test(proxyPAC)) {
+      proxyURL = '';
+    }
+    return proxyURL;
+  }
+  public static async testConnection(host:string, agent?: Http.Agent | Https.Agent): Promise<boolean> {
     try {
       const controller = new AbortController()
-      const timeoutId = setTimeout(() => controller.abort(), 3000)
+      const timeoutId = setTimeout(() => controller.abort(), 5000)
       const response = await fetch(host, {
         ...(agent && {agent}),
         // @ts-ignore
@@ -45,7 +59,8 @@ export class Utils {
       clearTimeout(timeoutId);
       if (!response.ok) throw new Error(response.status.toString());
       return true;
-    } catch (e) {
+    } catch (e: any) {
+      logger.log(`[ SCANOSS_SDK.UTILS ]: Failed to query ${host} ${e.name} | ${e.message}`, Logger.Level.info)
       return false;
     }
   }
