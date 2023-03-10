@@ -1,7 +1,6 @@
-import path from 'path';
-import fs from 'fs';
 import getUri from 'get-uri';
-import pac, { FindProxyForURL } from 'pac-resolver';
+import ip from 'ip';
+import pac, { FindProxyForURL, PacResolverOptions } from 'pac-resolver';
 import { HttpProxyAgent } from 'http-proxy-agent';
 import { HttpsProxyAgent } from 'https-proxy-agent';
 import fetch from 'node-fetch';
@@ -29,7 +28,19 @@ export class Utils {
     for await (let chunk of resolverStream) chunks.push(chunk)
     const resolver = Buffer.concat(chunks);
 
-    this.PAC_FindProxyForURL = pac(resolver);
+    // See issue: https://github.com/TooTallNate/node-pac-resolver/issues/18
+    const pacOptions: PacResolverOptions = {
+      displayErrors: true,
+      output: 'async',
+      sandbox: {
+        myIpAddress: (): string => {
+          return ip.address();
+        },
+      },
+    };
+    logger.log(`[ SCANOSS_SDK.UTILS ]: Local IP address detected: ${ip.address()}`, Logger.Level.info)
+
+    this.PAC_FindProxyForURL = pac(resolver, pacOptions);
     return this.PAC_FindProxyForURL(URL)
   }
 
