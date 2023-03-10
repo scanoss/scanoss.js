@@ -38,6 +38,7 @@ export class Utils {
         },
       },
     };
+    logger.log(`[ SCANOSS_SDK.UTILS ]: Local IP address detected: ${ip.address()}`, Logger.Level.info)
 
     this.PAC_FindProxyForURL = pac(resolver, pacOptions);
     return this.PAC_FindProxyForURL(URL)
