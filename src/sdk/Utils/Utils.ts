@@ -8,15 +8,21 @@ import * as Http from 'http';
 import * as Https from 'https';
 import { Logger, logger } from '../Logger';
 
-const pjson = require('../../../../package.json')
+
 export class Utils {
-  private static PackageJSON: any;
+  private static PackageJSON: any = null;
   private static PAC_FindProxyForURL: FindProxyForURL;
 
-
-
   public static getPackageVersion(): string {
-    if (!this.PackageJSON) this.PackageJSON = pjson;
+    if (!this.PackageJSON) {
+      const packageJsonPaths = ['../../../package.json', '../../../../package.json'];
+      for (const packageJsonPath in packageJsonPaths) {
+        try {
+          this.PackageJSON = require(packageJsonPath);
+        } catch (e) {}
+        if (!this.PackageJSON) break;
+      }
+    }
     return this.PackageJSON.version
   }
 
