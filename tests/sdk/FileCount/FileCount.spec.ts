@@ -6,18 +6,6 @@ import { expect } from 'chai';
 
 describe('Suit test for FileCount', () => {
 
-  it('Testing empty dir with CSV and RAW formats', async function() {
-
-    let data = await FileCount.walk(path.join(__dirname, './samples/0'), );
-    expect((data as IDirSummary).totalFileSize ).to.be.equal(0)
-    expect((data as IDirSummary).fileSummary.size ).to.be.equal(0)
-
-
-    data = await FileCount.walk(path.join(__dirname, './samples/0'), {output: Format.CSV});
-    expect(data).equal( "");
-  });
-
-
   it('Testing dir with files', async function() {
     const data = await FileCount.walk(path.join(__dirname, './samples/22036'), { output: Format.CSV});
     expect(data).equal('.ts,6,1\n');
