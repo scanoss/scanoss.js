@@ -1,7 +1,7 @@
-<div align='center'>
+<div align='left'>
 
 [![REUSE status](https://api.reuse.software/badge/github.com/scanoss/scanoss.js)](https://api.reuse.software/info/github.com/scanoss/scanoss.js)
-
+![Build and Test status](https://github.com/scanoss/scanoss.js/actions/workflows/build_test.yml/badge.svg)
 </div>
 
 
