@@ -18,6 +18,7 @@ export abstract class BaseConfig {
         logger.log("[ SCANOSS_SDK.BASE_CONFIG ]: No proxy returned from PAC file. Trying to scan anyway with direct connection", Logger.Level.warn);
         return;
       }
+      logger.log(`[ SCANOSS_SDK.BASE_CONFIG ]: Proxy list from PAC: ${proxyStringPAC} - Split: ${proxyListPAC}`);
 
       //Endpoint to test the proxy
       let host = new URL(this.API_URL).origin;
@@ -27,11 +28,11 @@ export abstract class BaseConfig {
         this.PROXY = Utils.PACProxyURLBuilder(proxyPAC);
 
         if (this.PROXY) {
-          logger.log(`[ SCANOSS_SDK.BASE_CONFIG ]: Proxy parsed ${this.PROXY}   `);
+          logger.log(`[ SCANOSS_SDK.BASE_CONFIG ]: Detected proxy ${this.PROXY}   `);
           logger.log(`[ SCANOSS_SDK.BASE_CONFIG ]: Testing proxy connection against ${healthEndpoint}... `);
           if (await Utils.testProxyConnection(healthEndpoint, this.PROXY)) return;
         } else {
-          logger.log(`[ SCANOSS_SDK.BASE_CONFIG ]:  No using proxy. DIRECT detected`);
+          logger.log(`[ SCANOSS_SDK.BASE_CONFIG ]: DIRECT detected, no using proxy`);
           logger.log(`[ SCANOSS_SDK.BASE_CONFIG ]: Testing direct connection against ${healthEndpoint}... `);
           if (await Utils.testConnection(healthEndpoint)) return;
         }

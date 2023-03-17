@@ -7,6 +7,7 @@ import fetch from 'node-fetch';
 import * as Http from 'http';
 import * as Https from 'https';
 import { Logger, logger } from '../Logger';
+import * as isInNet2 from 'pac-resolver/dist/isInNet';
 
 
 export class Utils {
@@ -35,19 +36,25 @@ export class Utils {
     const resolver = Buffer.concat(chunks);
 
     // See issue: https://github.com/TooTallNate/node-pac-resolver/issues/18
+    const myIP = ip.address();
+
+    logger.log(`[ SCANOSS_SDK.UTILS ]: Local IP address detected: ${myIP}`, Logger.Level.info)
+
     const pacOptions: PacResolverOptions = {
       displayErrors: true,
       output: 'async',
       sandbox: {
+        isInNet: async (a,b,c) => {
+          return await isInNet2.default(a,b,c)
+        },
         myIpAddress: (): string => {
-          return ip.address();
+          return myIP;
         },
       },
     };
-    logger.log(`[ SCANOSS_SDK.UTILS ]: Local IP address detected: ${ip.address()}`, Logger.Level.info)
 
     this.PAC_FindProxyForURL = pac(resolver, pacOptions);
-    return this.PAC_FindProxyForURL(URL)
+    return await this.PAC_FindProxyForURL(URL)
   }
 
   public static PACProxyURLBuilder(proxyPAC: string): string {
