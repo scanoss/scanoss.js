@@ -16,12 +16,16 @@ export class Utils {
 
   public static getPackageVersion(): string {
     if (!this.PackageJSON) {
-      const packageJsonPaths = ['../../../package.json', '../../../../package.json'];
-      for (const packageJsonPath in packageJsonPaths) {
+      const path = require('path');
+      const possiblePackageJsonPaths = [
+        path.join(__dirname, '../../../../package.json'),
+        path.join(__dirname, '../../../package.json')
+      ];
+      for (const packageJsonPath of possiblePackageJsonPaths) {
         try {
           this.PackageJSON = require(packageJsonPath);
         } catch (e) {}
-        if (!this.PackageJSON) break;
+        if (this.PackageJSON) break;
       }
     }
     return this.PackageJSON.version
