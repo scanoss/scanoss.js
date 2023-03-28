@@ -40,12 +40,13 @@ import {
 import {
   DecompressionManager
 } from '../../sdk/Decompress/DecompressionManager';
+import path from 'path';
 
 
 export async function scanHandler(rootPath: string, options: any): Promise<void> {
 
-  rootPath = rootPath.replace(/\/$/, '');  // Remove trailing slash if exists
-  rootPath = rootPath.replace(/^\./, process.env.PWD);  // Convert relative path to absolute path.
+  rootPath = path.resolve(rootPath);
+
   const pathIsFolder = await isFolder(rootPath);
   const projectName = getProjectNameFromPath(rootPath)
 
@@ -76,7 +77,7 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
   const scanner = new Scanner(scannerCfg);
 
   let scannerInput: ScannerInput = {fileList: []};
-  scannerInput.folderRoot = rootPath + '/'; // This will remove the project root path from the results.
+  scannerInput.folderRoot = rootPath + path.sep; // This will remove the project root path from the results.
   if(options.flags) scannerInput.engineFlags = options.flags;
 
 

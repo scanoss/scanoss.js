@@ -28,7 +28,8 @@ export class Utils {
         if (this.PackageJSON) break;
       }
     }
-    return this.PackageJSON.version
+    return this.PackageJSON?.version ? this.PackageJSON.version : ''
+
   }
 
 
