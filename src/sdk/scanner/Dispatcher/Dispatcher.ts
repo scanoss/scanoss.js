@@ -54,6 +54,7 @@ export class Dispatcher extends EventEmitter {
     //Loads certs stuff from SDK config
     const ca_cert = this.scannerCfg.CA_CERT  || process.env.NODE_EXTRA_CA_CERTS
     if (ca_cert) {
+      const syswidecas = require('syswide-cas');
       syswideCa.addCAs(ca_cert)
     } else {
       if (this.scannerCfg.IGNORE_CERT_ERRORS || proxyAddr)
