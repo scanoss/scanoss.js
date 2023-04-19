@@ -5,6 +5,8 @@ import { LocalDependencies } from "./LocalDependency/LocalDependency";
 import { DependencyScannerCfg } from "./DependencyScannerCfg";
 import { IDependencyResponse } from "./DependencyTypes";
 import { PackageURL } from "packageurl-js";
+import fs from 'fs';
+import { Tree } from '../tree/Tree';
 
 export class DependencyScanner {
 
@@ -27,6 +29,13 @@ export class DependencyScanner {
 
     this.grpcDependencyService = new GrpcDependencyService(cfg.API_URL, cfg.PROXY);
     this.localDependency = new LocalDependencies();
+  }
+
+  public async scanFolder(path: string) {
+    if (!(await fs.promises.lstat(path)).isDirectory()) throw new Error("Specified path is not a directory");
+    const tree = new Tree(path)
+    tree.build();
+    return await this.scan(tree.getFileList())
   }
 
 
