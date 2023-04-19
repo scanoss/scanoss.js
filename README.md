@@ -26,6 +26,7 @@ On the other hand, if you need to install the module in your own Node.js project
 Running the bare command will list the available sub-commands:
 
 ```Usage: scanoss-js [options] [command]
+Usage: scanoss-js [options] [command]
 
 The SCANOSS JS package provides a simple, easy to consume module for interacting with SCANOSS APIs/Engine.
 
@@ -35,6 +36,8 @@ Options:
 
 Commands:
   scan [options] <source>  Scan a folder/file
+  dep [options] <source>   Scan for dependencies
+  wfp [options] <source>   Generates fingerprints for a folder/file
   help [command]           display help for command
 ```
 
@@ -42,10 +45,10 @@ From there it is possible to scan a source code folder:
 
 `scanoss-js scan -o scan-output.json <source-folder>`
 
-## Package Usage
+## SDK Usage
+The SDK provides a simple way to interact with the Scanoss APIs from your JS code. Here are two examples for performing code scanning and dependency scanning
 
-The Scanoss package can be used programmatically as a standard Node module.
-A simple example that scans two files and writes the result in the project folder is shown below:
+### Code Scanning 
 
 ```typescript
 // Import as ES6
@@ -77,10 +80,8 @@ const scannerInput = {
 scanner.scan([scannerInput]);
 ```
 
-### Events
-
-The module provides a set of events that can be used to trigger actions.
-Some events are shown in the example above.
+The scanner object provides a set of events that can be used to trigger custom actions. 
+These events are listed in the table above and were previously mentioned.
 
 | Event Name          | Description                         |
 | ------------------- | ----------------------------------- |
@@ -89,10 +90,27 @@ Some events are shown in the example above.
 | DISPATCHER_NEW_DATA | New data received but not persisted |
 | RESULTS_APPENDED    | Results added to scan report file   |
 
-# Build and publish the module
 
-In order to build and publish the package is a requisite to have installed `yarn`. For more information https://yarnpkg.com/getting-started/install
+### Dependency Scanning
+```typescript
+import { DependencyScanner, DependencyScannerCfg } from "scanoss";
 
-- `yarn install` will install the dependencies.
-- `yarn build` will build the module.
-- `yarn publish` will publish the module.
+const main = async () => {
+
+    const dependencyScanner = new DependencyScanner();
+
+    //Scan a full folder
+    const results = await dependencyScanner.scanFolder("./node_modules")
+
+    //Scan specific files
+    //const results = await dependencyScanner.scan(["./package.json", "package-lock.json"])
+
+}
+
+main();
+```
+# Build and test the module
+
+- `npm install` will install the dependencies.
+- `npm run build` will build the module.
+- `npm run test` will publish the module.
