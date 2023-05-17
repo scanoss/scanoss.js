@@ -485,12 +485,13 @@ export class WfpCalculator extends WfpProvider {
     this.pendingFiles = true;
     this.folderRoot = params.folderRoot;
     this.fileList = params.fileList;
+    this.obfuscate = params.obfuscate;
     this.nextStepMachine();
 
     return this.finishPromise;
   }
 
-
+n
 
 
   public pause(): void {

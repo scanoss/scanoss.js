@@ -63,6 +63,7 @@ async function main() {
     .command('wfp <source>')
     .description('Generates fingerprints for a folder/file')
     .option('-H, --hpsm', 'Scan using winnowing high precision matching')
+    .option('--obfuscate', 'Obfuscate fingerprints')
     .option('-o, --output <filename>', 'Output result file name (optional - default stdout)')
     .option('-p, --block-size <size>', 'Maximum size in Kb for each fingerprint block (optional - default 64Kb)')
     .action((source, options) => {wfpHandler(source, options).catch((e) => {CLIErrorHandler(e)})})

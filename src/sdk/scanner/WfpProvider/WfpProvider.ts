@@ -76,8 +76,8 @@ export abstract class WfpProvider extends EventEmitter {
     this.finishPromiseResolve();
   }
 
-
   protected sendFingerprint(fingerprintPackage: FingerprintPackage) {
+    if (this.obfuscate) fingerprintPackage.obfuscate();
     this.emit(ScannerEvents.WINNOWING_NEW_CONTENT, fingerprintPackage);
   }
 
