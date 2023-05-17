@@ -267,6 +267,17 @@ export class Scanner extends EventEmitter {
   private async finishScan() {
     if (!this.isBufferEmpty()) this.bufferToFiles();
     const results = JSON.parse(await fs.promises.readFile(this.resultFilePath, 'utf8'));
+
+    if (this.scannerCfg.WFP_OBFUSCATION && this.scannerCfg.RESULTS_DEOBFUSCATION) {
+      this.obfuscateMap = JSON.parse(await fs.promises.readFile(this.obfuscateMapFilePath, 'utf8'));
+      for (const key of Object.keys(this.obfuscateMap)) {
+        const component = results[key];
+        const originalPath = this.obfuscateMap[key];
+        results[originalPath] = component;
+        delete results[key];
+      }
+    }
+
     const sortedPaths = sortPaths(Object.keys(results), '/');
     const resultSorted = {};
     // eslint-disable-next-line no-restricted-syntax
