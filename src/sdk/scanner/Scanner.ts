@@ -9,7 +9,7 @@ import { Dispatcher } from './Dispatcher/Dispatcher';
 import { DispatchableItem } from './Dispatcher/DispatchableItem';
 import { DispatcherResponse } from './Dispatcher/DispatcherResponse';
 import { ScannerCfg } from './ScannerCfg';
-import { ScannerEvents, ScannerInput } from './ScannerTypes';
+import { ScannerEvents, ScannerInput, ScannerResults } from './ScannerTypes';
 
 import { WfpProvider } from './WfpProvider/WfpProvider';
 import { FingerprintPackage } from './WfpProvider/FingerprintPackage';
@@ -34,7 +34,7 @@ export class Scanner extends EventEmitter {
 
   private obfuscateMapFilePath: string;
 
-  private obfuscateMap: Record<string, string>;
+  private obfuscateMap: Array<Record<string, string>>;
 
   private scanRoot: string;
 
@@ -76,6 +76,8 @@ export class Scanner extends EventEmitter {
     this.responseBuffer = [];
     this.filesToScan = {};
     this.filesNotScanned = {};
+    this.obfuscateMap = [];
+
     this.wfpProvider = new WfpCalculator(this.scannerCfg);
     this.dispatcher = new Dispatcher(this.scannerCfg);
 
@@ -95,6 +97,7 @@ export class Scanner extends EventEmitter {
       this.emit(ScannerEvents.WINNOWING_NEW_CONTENT, fingerprintPackage);
       this.reportLog(`[ SCANNER ]: New WFP content`);
 
+      if (fingerprintPackage.isObfuscated()) this.obfuscateMap.push(fingerprintPackage.getObfuscationMap());
       const item = new DispatchableItem();
       item.setFingerprintPackage(fingerprintPackage);
       item.uuid = uuidv4();
@@ -207,8 +210,15 @@ export class Scanner extends EventEmitter {
       const serverResponseToAppend = dispatcherResponse.getServerResponse();
       Object.assign(serverResponse, serverResponseToAppend);
     }
-    this.appendOutputFiles(wfpContent, serverResponse);
+
+    const obfuscateMap = {}
+    for (const obfuscateMapChunk of this.obfuscateMap) {
+      Object.assign(obfuscateMap, obfuscateMapChunk)
+    }
+
+    this.appendOutputFiles(wfpContent, serverResponse, obfuscateMap);
     this.responseBuffer = [];
+    this.obfuscateMap = [];
     const responses = new DispatcherResponse(serverResponse, wfpContent);
     this.reportLog(`[ SCANNER ]: Persisted results of ${responses.getNumberOfFilesScanned()} files...`);
     this.emit(ScannerEvents.RESULTS_APPENDED, responses, this.filesNotScanned);
@@ -223,9 +233,7 @@ export class Scanner extends EventEmitter {
 
     if (!fs.existsSync(this.workDirectory)) fs.mkdirSync(this.workDirectory);
     if (fs.existsSync(this.resultFilePath)) throw new Error(`${this.resultFilePath}, already exist! Please remove this file and run the scanner again`)
-    if (fs.existsSync(this.wfpFilePath)) fs.mkdirSync(`${this.workDirectory}, already exist! Please remove this file and run the scanner again`);
-
-
+    if (fs.existsSync(this.wfpFilePath)) throw new Error(`${this.workDirectory}, already exist! Please remove this file and run the scanner again`);
   }
 
   public getWorkDirectory(): string {
@@ -249,7 +257,7 @@ export class Scanner extends EventEmitter {
       } else {
         const folderRoot = this.scannerInput[0].folderRoot;
         const winnowingMode = this.scannerInput[0]?.winnowing?.mode;
-        const obfuscate = this.scannerInput[0]?.winnowing?.obfuscate;
+        const obfuscate = this.scannerCfg.WFP_OBFUSCATION;
         const fileList = this.scannerInput[0].fileList;
         this.wfpProvider.start({folderRoot, winnowingMode, fileList, obfuscate});
       }
@@ -295,15 +303,31 @@ export class Scanner extends EventEmitter {
   private createOutputFiles() {
     if (!fs.existsSync(this.wfpFilePath)) fs.writeFileSync(this.wfpFilePath, '');
     if (!fs.existsSync(this.resultFilePath)) fs.writeFileSync(this.resultFilePath, JSON.stringify({}));
+
+    if (this.scannerCfg.WFP_OBFUSCATION) {
+      if (!fs.existsSync(this.obfuscateMapFilePath)) fs.writeFileSync(this.obfuscateMapFilePath, JSON.stringify({}));
+    }
+
+
   }
 
-  private appendOutputFiles(wfpContent, serverResponse) {
+  private appendOutputFiles(wfpContent: string, serverResponse: ScannerResults, obfuscationMap: Record<string, string>) {
     fs.appendFileSync(this.wfpFilePath, wfpContent);
+
     const storedResultStr = fs.readFileSync(this.resultFilePath, 'utf-8');
     const storedResultObj = JSON.parse(storedResultStr);
     Object.assign(storedResultObj, serverResponse);
     const newResultStr = JSON.stringify(storedResultObj);
     fs.writeFileSync(this.resultFilePath, newResultStr);
+
+
+    if (this.scannerCfg.WFP_OBFUSCATION) {
+      const storedObfuscationMapStr = fs.readFileSync(this.obfuscateMapFilePath, 'utf-8');
+      const storedObfuscationMap = JSON.parse(storedObfuscationMapStr);
+      Object.assign(storedObfuscationMap, obfuscationMap);
+      const newObfuscationMap = JSON.stringify(storedObfuscationMap);
+      fs.writeFileSync(this.obfuscateMapFilePath, newObfuscationMap);
+    }
   }
 
 
@@ -326,7 +350,7 @@ export class Scanner extends EventEmitter {
     } else {
       const folderRoot = this.scannerInput[0].folderRoot;
       const winnowingMode = this.scannerInput[0]?.winnowing?.mode;
-      const obfuscate = this.scannerInput[0]?.winnowing?.obfuscate;
+      const obfuscate = this.scannerCfg.WFP_OBFUSCATION
       const fileList = this.scannerInput[0].fileList;
       this.wfpProvider.start({folderRoot, winnowingMode, fileList, obfuscate});
     }

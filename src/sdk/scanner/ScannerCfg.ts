@@ -23,6 +23,8 @@ export class ScannerCfg extends BaseConfig {
   // The maximum size for each .wfp file
   public WFP_FILE_MAX_SIZE = 64 * 1000;
 
+  public WFP_OBFUSCATION = false;
+
   //After processing #WINNOWING_AFTER_X_REPORT_STATUS files,
   // the winnowing algorithm will report a ScannerEvents.WINNOWING_STATUS event.
   public WINNOWING_REPORT_STATUS_AFTER_X = 10;

@@ -48,7 +48,6 @@ export interface ScannerInput {
   engineFlags?: number;
   winnowing?: {
     mode: WinnowingMode,
-    obfuscate: boolean,
   }
   wfpPath?: string;
   sbom?: string;

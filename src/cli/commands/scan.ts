@@ -77,6 +77,8 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
   if(options.ignoreCertErrors) scannerCfg.IGNORE_CERT_ERRORS=true;
   if(options.pac) scannerCfg.PAC=options.pac;
   if(options.proxy) scannerCfg.PROXY = options.proxy;
+  if(options.obfuscate) scannerCfg.WFP_OBFUSCATION = true;
+
   await scannerCfg.validate();
   const scanner = new Scanner(scannerCfg);
 
@@ -86,7 +88,7 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
   if (options.wfp) scannerInput.wfpPath = rootPath;
 
   const wfpMode = options.hpsm ? WinnowingMode.FULL_WINNOWING_HPSM : WinnowingMode.FULL_WINNOWING;
-  scannerInput.winnowing = {mode: wfpMode, obfuscate: options.obfuscate};
+  scannerInput.winnowing = {mode: wfpMode};
 
   if(!options.wfp) {
     if(pathIsFolder) {
