@@ -46,7 +46,10 @@ export interface ScannerInput {
   fileList: Array<string>;
   folderRoot?: string;
   engineFlags?: number;
-  winnowingMode?: WinnowingMode;  // Enable winnowing algorithm, otherwise is scanned only MD5
+  winnowing?: {
+    mode: WinnowingMode,
+    obfuscate: boolean,
+  }
   wfpPath?: string;
   sbom?: string;
   sbomMode?: SbomMode;

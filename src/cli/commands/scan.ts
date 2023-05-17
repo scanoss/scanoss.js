@@ -79,7 +79,7 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
   let scannerInput: ScannerInput = {fileList: []};
   scannerInput.folderRoot = rootPath + path.sep; // This will remove the project root path from the results.
   if(options.flags) scannerInput.engineFlags = options.flags;
-
+  if(options.obfuscate) scannerInput.winnowing.mode = options.obfuscate;
 
 
   if(!options.wfp) {
@@ -126,7 +126,7 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
   }
 
   if (options.wfp) scannerInput.wfpPath = rootPath;
-  if (options.hpsm) scannerInput.winnowingMode = WinnowingMode.FULL_WINNOWING_HPSM
+  if (options.hpsm) scannerInput.winnowing.mode = WinnowingMode.FULL_WINNOWING_HPSM
 
   if (options.ignore) {
     scannerInput.sbom = fs.readFileSync(options.ignore, 'utf-8');

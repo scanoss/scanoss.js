@@ -239,7 +239,7 @@ export class Scanner extends EventEmitter {
         this.wfpProvider.start(this.scannerInput[0]);
       } else {
         const folderRoot = this.scannerInput[0].folderRoot;
-        const winnowingMode = this.scannerInput[0].winnowingMode;
+        const winnowingMode = this.scannerInput[0].winnowing.mode;
         const fileList = this.scannerInput[0].fileList;
         this.wfpProvider.start({folderRoot, winnowingMode, fileList});
       }
@@ -315,14 +315,12 @@ export class Scanner extends EventEmitter {
       this.wfpProvider.start(scannerInput[0]);
     } else {
       const folderRoot = this.scannerInput[0].folderRoot;
-      const winnowingMode = this.scannerInput[0].winnowingMode;
+      const winnowingMode = this.scannerInput[0].winnowing.mode;
       const fileList = this.scannerInput[0].fileList;
       this.wfpProvider.start({folderRoot, winnowingMode, fileList});
     }
     return this.finishPromise;
   }
-
-
 
 
   private isValidInput(scannerInput: Array<ScannerInput>): boolean {
