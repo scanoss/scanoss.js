@@ -32,6 +32,10 @@ export class Scanner extends EventEmitter {
 
   private wfpFilePath: string;
 
+  private obfuscateMapFilePath: string;
+
+  private obfuscateMap: Record<string, string>;
+
   private scanRoot: string;
 
   private scannerId: string;
@@ -215,8 +219,13 @@ export class Scanner extends EventEmitter {
     this.workDirectory = workDirectory;
     this.resultFilePath = `${this.workDirectory}/result.json`;
     this.wfpFilePath = `${this.workDirectory}/winnowing.wfp`;
+    this.obfuscateMapFilePath = `${this.workDirectory}/obfuscate.map`;
 
     if (!fs.existsSync(this.workDirectory)) fs.mkdirSync(this.workDirectory);
+    if (fs.existsSync(this.resultFilePath)) throw new Error(`${this.resultFilePath}, already exist! Please remove this file and run the scanner again`)
+    if (fs.existsSync(this.wfpFilePath)) fs.mkdirSync(`${this.workDirectory}, already exist! Please remove this file and run the scanner again`);
+
+
   }
 
   public getWorkDirectory(): string {
@@ -239,9 +248,10 @@ export class Scanner extends EventEmitter {
         this.wfpProvider.start(this.scannerInput[0]);
       } else {
         const folderRoot = this.scannerInput[0].folderRoot;
-        const winnowingMode = this.scannerInput[0].winnowing.mode;
+        const winnowingMode = this.scannerInput[0]?.winnowing?.mode;
+        const obfuscate = this.scannerInput[0]?.winnowing?.obfuscate;
         const fileList = this.scannerInput[0].fileList;
-        this.wfpProvider.start({folderRoot, winnowingMode, fileList});
+        this.wfpProvider.start({folderRoot, winnowingMode, fileList, obfuscate});
       }
      } else await this.finishScan();
   }
@@ -315,9 +325,10 @@ export class Scanner extends EventEmitter {
       this.wfpProvider.start(scannerInput[0]);
     } else {
       const folderRoot = this.scannerInput[0].folderRoot;
-      const winnowingMode = this.scannerInput[0].winnowing.mode;
+      const winnowingMode = this.scannerInput[0]?.winnowing?.mode;
+      const obfuscate = this.scannerInput[0]?.winnowing?.obfuscate;
       const fileList = this.scannerInput[0].fileList;
-      this.wfpProvider.start({folderRoot, winnowingMode, fileList});
+      this.wfpProvider.start({folderRoot, winnowingMode, fileList, obfuscate});
     }
     return this.finishPromise;
   }

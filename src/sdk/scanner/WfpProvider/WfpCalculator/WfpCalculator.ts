@@ -482,16 +482,17 @@ export class WfpCalculator extends WfpProvider {
     this.prepareWorker();
 
     if(params.winnowingMode) this.setWinnowingMode(params.winnowingMode);
+    if(params.obfuscate) this.obfuscate = params.obfuscate;
+
     this.pendingFiles = true;
     this.folderRoot = params.folderRoot;
     this.fileList = params.fileList;
-    this.obfuscate = params.obfuscate;
+
     this.nextStepMachine();
 
     return this.finishPromise;
   }
 
-n
 
 
   public pause(): void {

@@ -62,7 +62,7 @@ export class FingerprintPackage {
     this.obfuscateMap = {};
 
     let output = this.getContent().replace(regex, (_, match, originalPath) => {
-      const uuid=uuidv4().replace(/-/g, '');;
+      const uuid=uuidv4().replace(/-/g, '');
       this.obfuscateMap[uuid] = originalPath;
 
       const ext = path.extname(originalPath);
