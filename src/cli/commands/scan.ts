@@ -1,21 +1,25 @@
-import os from 'os';
 import fs from 'fs';
 
 import { Scanner } from '../../sdk/scanner/Scanner';
 import {
   SbomMode,
   ScannerEvents,
-  ScannerInput, ScannerComponent, ScannerResults,
+  ScannerInput,
+  ScannerResults,
   WinnowingMode
 } from '../../sdk/scanner/ScannerTypes';
 import { ScannerCfg } from '../../sdk/scanner/ScannerCfg';
 import { Tree } from '../../sdk/tree/Tree';
 import cliProgress from 'cli-progress';
-import { DispatcherResponse } from '../../sdk/scanner/Dispatcher/DispatcherResponse';
+import {
+  DispatcherResponse
+} from '../../sdk/scanner/Dispatcher/DispatcherResponse';
 import { getProjectNameFromPath, isFolder } from './helpers';
 
 
-import { DependencyScannerCfg } from '../../sdk/Dependencies/DependencyScannerCfg';
+import {
+  DependencyScannerCfg
+} from '../../sdk/Dependencies/DependencyScannerCfg';
 import { DependencyScanner } from '../../sdk/Dependencies/DependencyScanner';
 import { IDependencyResponse } from '../../sdk/Dependencies/DependencyTypes';
 import { ScanFilter } from '../../sdk/tree/Filters/ScanFilter';
@@ -73,14 +77,18 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
   if(options.ignoreCertErrors) scannerCfg.IGNORE_CERT_ERRORS=true;
   if(options.pac) scannerCfg.PAC=options.pac;
   if(options.proxy) scannerCfg.PROXY = options.proxy;
+  if(options.obfuscate) scannerCfg.WFP_OBFUSCATION = true;
+
   await scannerCfg.validate();
   const scanner = new Scanner(scannerCfg);
 
   let scannerInput: ScannerInput = {fileList: []};
   scannerInput.folderRoot = rootPath + path.sep; // This will remove the project root path from the results.
   if(options.flags) scannerInput.engineFlags = options.flags;
+  if (options.wfp) scannerInput.wfpPath = rootPath;
 
-
+  const wfpMode = options.hpsm ? WinnowingMode.FULL_WINNOWING_HPSM : WinnowingMode.FULL_WINNOWING;
+  scannerInput.winnowing = {mode: wfpMode};
 
   if(!options.wfp) {
     if(pathIsFolder) {
@@ -99,7 +107,6 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
           tree.build();
         } else console.error("No archives found.");
       }
-      scanner.setWorkDirectory(rootPath);
       scannerInput.fileList = tree.getFileList(new ScanFilter(""));
       dependencyInput = tree.getFileList(new DependencyFilter(""));
     } else {
@@ -125,8 +132,6 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
     scanner.on(ScannerEvents.SCANNER_LOG, (logText) => console.error(logText));
   }
 
-  if (options.wfp) scannerInput.wfpPath = rootPath;
-  if (options.hpsm) scannerInput.winnowingMode = WinnowingMode.FULL_WINNOWING_HPSM
 
   if (options.ignore) {
     scannerInput.sbom = fs.readFileSync(options.ignore, 'utf-8');
