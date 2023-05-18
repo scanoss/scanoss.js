@@ -37,6 +37,7 @@ export class WfpSplitter extends WfpProvider {
     this.continue = true;
     this.fingerprintIndex = 0;
     this.ignoreFiles = new Set(params?.fileList);
+    if(params.obfuscate) this.obfuscate = params.obfuscate;
 
     const wfpPath = params.wfpPath;
 

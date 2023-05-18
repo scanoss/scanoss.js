@@ -10,6 +10,7 @@ export interface IWfpProviderInput {
   folderRoot?: string; //This string is being removed from the fingerprint results paths
   fileList?: Array<string>;
   winnowingMode?: WinnowingMode;  // Enable winnowing algorithm, otherwise is scanned only MD5
+  obfuscate?: boolean;
 }
 
 export abstract class WfpProvider extends EventEmitter {
@@ -21,6 +22,8 @@ export abstract class WfpProvider extends EventEmitter {
   protected pendingFiles: boolean;
   protected winnowingMode: WinnowingMode;
   protected finishPromise: Promise<void>;
+  protected obfuscate: boolean;
+
 
   //Allow resolve or reject the promise returned in start call
   protected finishPromiseResolve: (value?: void | PromiseLike<void>) => void;
@@ -31,12 +34,12 @@ export abstract class WfpProvider extends EventEmitter {
     this.folderRoot = '';
     this.pendingFiles = false;
     this.winnowingMode = WinnowingMode.FULL_WINNOWING;
+    this.obfuscate = false;
 
     this.finishPromise = new Promise((resolve, reject) =>{
       this.finishPromiseResolve = resolve;
       this.finishPromiseReject = reject;
     });
-
   }
 
   // returns true if the function emitted a new fingerprint packet
@@ -73,8 +76,8 @@ export abstract class WfpProvider extends EventEmitter {
     this.finishPromiseResolve();
   }
 
-
   protected sendFingerprint(fingerprintPackage: FingerprintPackage) {
+    if (this.obfuscate) fingerprintPackage.obfuscate();
     this.emit(ScannerEvents.WINNOWING_NEW_CONTENT, fingerprintPackage);
   }
 

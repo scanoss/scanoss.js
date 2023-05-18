@@ -140,7 +140,6 @@ export class Dispatcher extends EventEmitter {
     const timeoutController = this.globalAbortController.getAbortController();
     const timeoutId = setTimeout(() => timeoutController.abort(), this.scannerCfg.TIMEOUT);
     let plain_response: string;
-
     try {
       this.emit(ScannerEvents.DISPATCHER_WFP_SENDED);
       const response = await fetch(this.scannerCfg.API_URL, {

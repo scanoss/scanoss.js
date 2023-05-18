@@ -52,9 +52,9 @@ export async function wfpHandler(rootPath: string, options: any): Promise<void> 
     }
   });
 
-  const wfpInput: IWfpProviderInput = {fileList: filesToFingerprint, folderRoot: rootPath}
+  const wfpInput: IWfpProviderInput = {fileList: filesToFingerprint, folderRoot: rootPath, obfuscate: options.obfuscate }
   if(options.hpsm) wfpInput.winnowingMode = WinnowingMode.FULL_WINNOWING_HPSM;
-  wfpCalculator.start(wfpInput);
+  await wfpCalculator.start(wfpInput);
 
 
 }
