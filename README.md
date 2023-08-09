@@ -41,9 +41,41 @@ Commands:
   help [command]           display help for command
 ```
 
-From there it is possible to scan a source code folder:
+### Command `scan`
 
-`scanoss-js scan -o scan-output.json <source-folder>`
+* For a quick and free analysis of your project, simply input: `scanoss-js scan -o results.json <source-folder>`
+
+
+* Using an API Token for Scanning: `scanoss-js scan -o results.json --key <your_token> --apiurl <your_apiurl> <source-folder>`
+
+
+* Include Dependency detection in scanning: `scanoss-js scan -o results.json --dependencies <source-folder>`
+
+### Command `wfp`
+* Generate Hashes without analysis: `scanoss-js wfp -o fingerprints.wfp <source-folder>`
+
+ 
+* Subsequent scanning of previously generated Hashes: `scanoss-js scan -w fingerprints.wfp -o results.json`
+
+Note: the --dependencies flag is not applicable here, given that manifest files aren't encompassed within the hashes.
+
+
+
+### Command `dep`
+* Focus Exclusively on Dependencies: `scanoss-js dep .`
+
+The manifest files acknowledged during the scanning process are:
+
+    * Python: requirements.txt
+    * Java: pom.xml
+    * Javascript: package.json, package-lock.json, yarn.lock
+    * Ruby: Gemfile, Gemfile.lock
+    * Golang: go.mod, go.sum
+    * .NET/NuGet: *.csproj, packages.config
+    * Gradle: build.gradle
+
+
+
 
 ## SDK Usage
 The SDK provides a simple way to interact with the Scanoss APIs from your JS code. Here are two examples for performing code scanning and dependency scanning
