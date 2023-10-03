@@ -34,7 +34,7 @@ export class Scanner extends EventEmitter {
 
   private obfuscateMapFilePath: string;
 
-  private obfuscateMap: Array<Record<string, string>>;
+  private obfuscateMap: Record<string, string>;
 
   private scanRoot: string;
 
@@ -76,7 +76,7 @@ export class Scanner extends EventEmitter {
     this.responseBuffer = [];
     this.filesToScan = {};
     this.filesNotScanned = {};
-    this.obfuscateMap = [];
+    this.obfuscateMap = {};
 
     this.wfpProvider = new WfpCalculator(this.scannerCfg);
     this.dispatcher = new Dispatcher(this.scannerCfg);
@@ -97,7 +97,7 @@ export class Scanner extends EventEmitter {
       this.emit(ScannerEvents.WINNOWING_NEW_CONTENT, fingerprintPackage);
       this.reportLog(`[ SCANNER ]: New WFP content`);
 
-      if (fingerprintPackage.isObfuscated()) this.obfuscateMap.push(fingerprintPackage.getObfuscationMap());
+      if (fingerprintPackage.isObfuscated()) this.obfuscateMap = { ...this.obfuscateMap, ...fingerprintPackage.getObfuscationMap()};
       const item = new DispatchableItem();
       item.setFingerprintPackage(fingerprintPackage);
       item.uuid = uuidv4();
@@ -201,6 +201,14 @@ export class Scanner extends EventEmitter {
     return false;
   }
 
+  private deobfuscationResponses(responses: Record<string, any>, obfuscateMap: Record<string, string>): Record<string, any>{
+    const deObfuscation = {};
+    Object.entries(responses).forEach(([key, value]: [string, any]) => {
+      deObfuscation[obfuscateMap[key]] = value;
+    });
+    return deObfuscation;
+  }
+
   private bufferToFiles() {
     let wfpContent = '';
     const serverResponse = {};
@@ -211,15 +219,11 @@ export class Scanner extends EventEmitter {
       Object.assign(serverResponse, serverResponseToAppend);
     }
 
-    const obfuscateMap = {}
-    for (const obfuscateMapChunk of this.obfuscateMap) {
-      Object.assign(obfuscateMap, obfuscateMapChunk)
-    }
-
-    this.appendOutputFiles(wfpContent, serverResponse, obfuscateMap);
+    this.appendOutputFiles(wfpContent, serverResponse);
     this.responseBuffer = [];
-    this.obfuscateMap = [];
-    const responses = new DispatcherResponse(serverResponse, wfpContent);
+    const r = (this.scannerCfg.WFP_OBFUSCATION &&
+                                this.scannerCfg.RESULTS_DEOBFUSCATION) ? this.deobfuscationResponses(serverResponse, this.obfuscateMap) : serverResponse;
+    const responses = new DispatcherResponse(r, wfpContent);
     this.reportLog(`[ SCANNER ]: Persisted results of ${responses.getNumberOfFilesScanned()} files...`);
     this.emit(ScannerEvents.RESULTS_APPENDED, responses, this.filesNotScanned);
     return responses;
@@ -269,7 +273,6 @@ export class Scanner extends EventEmitter {
     const results = JSON.parse(await fs.promises.readFile(this.resultFilePath, 'utf8'));
 
     if (this.scannerCfg.WFP_OBFUSCATION && this.scannerCfg.RESULTS_DEOBFUSCATION) {
-      this.obfuscateMap = JSON.parse(await fs.promises.readFile(this.obfuscateMapFilePath, 'utf8'));
       for (const key of Object.keys(this.obfuscateMap)) {
         const component = results[key];
         const originalPath = this.obfuscateMap[key];
@@ -283,6 +286,7 @@ export class Scanner extends EventEmitter {
     // eslint-disable-next-line no-restricted-syntax
     for (const key of sortedPaths) resultSorted[key] = results[key];
     await fs.promises.writeFile(this.resultFilePath, JSON.stringify(resultSorted, null, 2));
+    await fs.promises.writeFile(this.obfuscateMapFilePath, JSON.stringify(this.obfuscateMap, null, 2));
     this.reportLog(
       `[ SCANNER ]: Scan finished (Scanned: ${this.processedFiles}, Not Scanned: ${
         Object.keys(this.filesNotScanned).length
@@ -322,7 +326,7 @@ export class Scanner extends EventEmitter {
 
   }
 
-  private appendOutputFiles(wfpContent: string, serverResponse: ScannerResults, obfuscationMap: Record<string, string>) {
+  private appendOutputFiles(wfpContent: string, serverResponse: ScannerResults) {
     fs.appendFileSync(this.wfpFilePath, wfpContent);
 
     const storedResultStr = fs.readFileSync(this.resultFilePath, 'utf-8');
@@ -331,14 +335,6 @@ export class Scanner extends EventEmitter {
     const newResultStr = JSON.stringify(storedResultObj);
     fs.writeFileSync(this.resultFilePath, newResultStr);
 
-
-    if (this.scannerCfg.WFP_OBFUSCATION) {
-      const storedObfuscationMapStr = fs.readFileSync(this.obfuscateMapFilePath, 'utf-8');
-      const storedObfuscationMap = JSON.parse(storedObfuscationMapStr);
-      Object.assign(storedObfuscationMap, obfuscationMap);
-      const newObfuscationMap = JSON.stringify(storedObfuscationMap);
-      fs.writeFileSync(this.obfuscateMapFilePath, newObfuscationMap);
-    }
   }
 
 
