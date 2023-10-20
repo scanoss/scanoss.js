@@ -117,7 +117,7 @@ export class Dispatcher extends EventEmitter {
     if (!this.globalAbortController.isAborting()) {
 
       if (error.name === 'AbortError') {
-        error.message = `The packet with request id ${disptItem.uuid} was sent ${this.scannerCfg.MAX_RETRIES_FOR_RECOVERABLES_ERRORS} times and there was a timeout for each retry`
+        error.message = `Timeout reached for packet with request ID ${disptItem.uuid}. Enqueuing again.`
         error.name = 'TIMEOUT';
       }
 

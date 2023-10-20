@@ -15,10 +15,10 @@ export class ScannerCfg extends BaseConfig {
   public IGNORE_CERT_ERRORS = false;
 
   // Level of concurrency
-  public CONCURRENCY_LIMIT = 15;
+  public CONCURRENCY_LIMIT = 10;
 
   // Timeout for each transaction
-  public TIMEOUT = 60000;
+  public TIMEOUT = 180000;
 
   // The maximum size for each .wfp file
   public WFP_FILE_MAX_SIZE = 64 * 1000;
@@ -37,8 +37,8 @@ export class ScannerCfg extends BaseConfig {
   // Persist results after [ X ] server responses
   public MAX_RESPONSES_IN_BUFFER = 300;
 
-  public DISPATCHER_QUEUE_SIZE_MAX_LIMIT = 300;
+  public DISPATCHER_QUEUE_SIZE_MAX_LIMIT = 2000;
 
-  public DISPATCHER_QUEUE_SIZE_MIN_LIMIT = 200;
+  public DISPATCHER_QUEUE_SIZE_MIN_LIMIT = 1000;
 
 };
