@@ -419,7 +419,7 @@ export class WfpCalculator extends WfpProvider {
     // Files: contains all files winnowed but not packed yet
     const files = new FingerprintPackage(this.wfp, this.folderRoot).getFilesFingerprinted();
     if (files.length) {
-      const lastFileWinnowed = files[files.length - 1];
+      const lastFileWinnowed = this.folderRoot + files[files.length - 1];
       let i = 0;
       while (i <= files.length && lastFileWinnowed !== this.fileList[this.fileListIndex - i]) {
         i += 1;
