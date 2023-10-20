@@ -157,7 +157,7 @@ export class Scanner extends EventEmitter {
       this.appendFilesToNotScanned(filesNotScanned);
     });
 
-    this.wfpProvider.on(ScannerEvents.DISPATCHER_LOG, (msg) => {
+    this.dispatcher.on(ScannerEvents.DISPATCHER_LOG, (msg) => {
       this.reportLog(msg);
     });
 
