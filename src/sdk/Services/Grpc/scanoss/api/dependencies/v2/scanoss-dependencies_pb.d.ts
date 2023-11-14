@@ -117,6 +117,9 @@ export namespace DependencyResponse {
     getIsSpdxApproved(): boolean;
     setIsSpdxApproved(value: boolean): void;
 
+    getUrl(): string;
+    setUrl(value: string): void;
+
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): Licenses.AsObject;
     static toObject(includeInstance: boolean, msg: Licenses): Licenses.AsObject;
@@ -132,6 +135,7 @@ export namespace DependencyResponse {
       name: string,
       spdxId: string,
       isSpdxApproved: boolean,
+      url: string,
     }
   }
 
@@ -150,6 +154,12 @@ export namespace DependencyResponse {
     setLicensesList(value: Array<DependencyResponse.Licenses>): void;
     addLicenses(value?: DependencyResponse.Licenses, index?: number): DependencyResponse.Licenses;
 
+    getUrl(): string;
+    setUrl(value: string): void;
+
+    getComment(): string;
+    setComment(value: string): void;
+
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): Dependencies.AsObject;
     static toObject(includeInstance: boolean, msg: Dependencies): Dependencies.AsObject;
@@ -166,6 +176,8 @@ export namespace DependencyResponse {
       purl: string,
       version: string,
       licensesList: Array<DependencyResponse.Licenses.AsObject>,
+      url: string,
+      comment: string,
     }
   }
 

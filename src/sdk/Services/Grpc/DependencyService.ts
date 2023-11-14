@@ -1,10 +1,10 @@
 import * as grpc from '@grpc/grpc-js';
 import { DependenciesClient } from './scanoss/api/dependencies/v2/scanoss-dependencies_grpc_pb';
 import * as DependenciesMessages from './scanoss/api/dependencies/v2/scanoss-dependencies_pb';
-import * as CommonMessages from './scanoss/api/common/v2/scanoss-common_pb'
+import * as CommonMessages from './scanoss/api/common/v2/scanoss-common_pb';
+import { BaseService } from './BaseService';
 
-export class GrpcDependencyService {
-
+export class DependencyService {
   private client: DependenciesClient;
 
   private metadata;
@@ -12,10 +12,15 @@ export class GrpcDependencyService {
   constructor(endpoint: string, proxy?: string) {
     if (proxy) process.env.grpc_proxy = proxy;
 
-    this.client = new DependenciesClient(endpoint, grpc.credentials.createSsl());
+    this.client = new DependenciesClient(
+      endpoint,
+      grpc.credentials.createSsl()
+    );
   }
 
-  public async get(req: DependenciesMessages.DependencyRequest): Promise<DependenciesMessages.DependencyResponse> {
+  public async get(
+    req: DependenciesMessages.DependencyRequest
+  ): Promise<DependenciesMessages.DependencyResponse> {
     return new Promise((resolve, reject) => {
       this.client.getDependencies(req, (err, response) => {
         if (err) reject(err);
@@ -24,7 +29,9 @@ export class GrpcDependencyService {
     });
   }
 
-  public buildDependencyRequestMsg(plainObj: DependenciesMessages.DependencyRequest.AsObject): DependenciesMessages.DependencyRequest {
+  public buildDependencyRequestMsg(
+    plainObj: DependenciesMessages.DependencyRequest.AsObject
+  ): DependenciesMessages.DependencyRequest {
     try {
       const depMessage = new DependenciesMessages.DependencyRequest();
       for (const dependency of plainObj.filesList) {
@@ -45,8 +52,9 @@ export class GrpcDependencyService {
     }
   }
 
-
-  public async echo(req: CommonMessages.EchoRequest): Promise<CommonMessages.EchoResponse> {
+  public async echo(
+    req: CommonMessages.EchoRequest
+  ): Promise<CommonMessages.EchoResponse> {
     return new Promise((resolve, reject) => {
       this.client.echo(req, (err, response) => {
         if (err) reject(err);
@@ -55,8 +63,9 @@ export class GrpcDependencyService {
     });
   }
 
-
-  public buildEchoRequestMsg(plainObj: CommonMessages.EchoRequest.AsObject): CommonMessages.EchoRequest {
+  public buildEchoRequestMsg(
+    plainObj: CommonMessages.EchoRequest.AsObject
+  ): CommonMessages.EchoRequest {
     try {
       const echoMessage = new CommonMessages.EchoRequest();
       echoMessage.setMessage(plainObj.message);
@@ -66,5 +75,4 @@ export class GrpcDependencyService {
       return null;
     }
   }
-
 }

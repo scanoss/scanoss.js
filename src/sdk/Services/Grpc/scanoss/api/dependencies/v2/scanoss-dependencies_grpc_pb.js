@@ -4,7 +4,7 @@
 //
 // SPDX-License-Identifier: MIT
 //
-// Copyright (c) 2021, SCANOSS
+// Copyright (c) 2022, SCANOSS
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -25,10 +25,11 @@
 // THE SOFTWARE.
 //
 // **
-// Scanning definition details
+// Dependency definition details
 // *
 'use strict';
 var grpc = require('@grpc/grpc-js');
+var scanoss_api_dependencies_v2_scanoss$dependencies_pb = require('../../../../scanoss/api/dependencies/v2/scanoss-dependencies_pb.js');
 var scanoss_api_common_v2_scanoss$common_pb = require('../../../../scanoss/api/common/v2/scanoss-common_pb.js');
 
 function serialize_scanoss_api_common_v2_EchoRequest(arg) {
@@ -53,12 +54,35 @@ function deserialize_scanoss_api_common_v2_EchoResponse(buffer_arg) {
   return scanoss_api_common_v2_scanoss$common_pb.EchoResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
+function serialize_scanoss_api_dependencies_v2_DependencyRequest(arg) {
+  if (!(arg instanceof scanoss_api_dependencies_v2_scanoss$dependencies_pb.DependencyRequest)) {
+    throw new Error('Expected argument of type scanoss.api.dependencies.v2.DependencyRequest');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
 
-// Expose all of the SCANOSS Scanning RPCs here
-var ScanningService = exports.ScanningService = {
+function deserialize_scanoss_api_dependencies_v2_DependencyRequest(buffer_arg) {
+  return scanoss_api_dependencies_v2_scanoss$dependencies_pb.DependencyRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_scanoss_api_dependencies_v2_DependencyResponse(arg) {
+  if (!(arg instanceof scanoss_api_dependencies_v2_scanoss$dependencies_pb.DependencyResponse)) {
+    throw new Error('Expected argument of type scanoss.api.dependencies.v2.DependencyResponse');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_scanoss_api_dependencies_v2_DependencyResponse(buffer_arg) {
+  return scanoss_api_dependencies_v2_scanoss$dependencies_pb.DependencyResponse.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+
+//
+// Expose all of the SCANOSS Dependency RPCs here
+var DependenciesService = exports.DependenciesService = {
   // Standard echo
 echo: {
-    path: '/scanoss.api.scanning.v2.Scanning/Echo',
+    path: '/scanoss.api.dependencies.v2.Dependencies/Echo',
     requestStream: false,
     responseStream: false,
     requestType: scanoss_api_common_v2_scanoss$common_pb.EchoRequest,
@@ -68,6 +92,18 @@ echo: {
     responseSerialize: serialize_scanoss_api_common_v2_EchoResponse,
     responseDeserialize: deserialize_scanoss_api_common_v2_EchoResponse,
   },
+  // Get dependency details
+getDependencies: {
+    path: '/scanoss.api.dependencies.v2.Dependencies/GetDependencies',
+    requestStream: false,
+    responseStream: false,
+    requestType: scanoss_api_dependencies_v2_scanoss$dependencies_pb.DependencyRequest,
+    responseType: scanoss_api_dependencies_v2_scanoss$dependencies_pb.DependencyResponse,
+    requestSerialize: serialize_scanoss_api_dependencies_v2_DependencyRequest,
+    requestDeserialize: deserialize_scanoss_api_dependencies_v2_DependencyRequest,
+    responseSerialize: serialize_scanoss_api_dependencies_v2_DependencyResponse,
+    responseDeserialize: deserialize_scanoss_api_dependencies_v2_DependencyResponse,
+  },
 };
 
-exports.ScanningClient = grpc.makeGenericClientConstructor(ScanningService);
+exports.DependenciesClient = grpc.makeGenericClientConstructor(DependenciesService);
