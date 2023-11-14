@@ -6,13 +6,13 @@ export * from './sdk/scanner/WfpProvider/WfpCalculator/WfpCalculator';
 
 // *** Fingerprint exports *** //
 export * from './sdk/scanner/Fingerprint';
-export {IWfpProviderInput} from './sdk/scanner/WfpProvider/WfpProvider';
+export { IWfpProviderInput } from './sdk/scanner/WfpProvider/WfpProvider';
 
 // *** Dependency scanner exports *** //
 export * from './sdk/Dependencies/DependencyTypes';
 export * from './sdk/Dependencies/DependencyScannerCfg';
 export * from './sdk/Dependencies/DependencyScanner';
-export * from './sdk/Dependencies/LocalDependency/LocalDependency'
+export * from './sdk/Dependencies/LocalDependency/LocalDependency';
 
 // *** Data layers export *** //
 export * from './sdk/DataLayer/DataLayerTypes';
@@ -27,6 +27,10 @@ export * from './sdk/Decompress/DecompressionManager';
 
 // *** FileCount *** //
 export * from './sdk/FileCount/FileCount';
-export {IDirSummary} from './sdk/FileCount/Interfaces';
+export { IDirSummary } from './sdk/FileCount/Interfaces';
+
+export * from './sdk/Services/Grpc/CryptographyService';
+export * from './sdk/Services/Grpc/DependencyService';
+export { PurlRequest, EchoRequest } from './sdk/Services/Grpc/BaseService';
 
 export { logger } from './sdk/Logger';
