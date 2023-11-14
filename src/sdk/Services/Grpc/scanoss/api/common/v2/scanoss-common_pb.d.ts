@@ -67,6 +67,52 @@ export namespace EchoResponse {
   }
 }
 
+export class PurlRequest extends jspb.Message {
+  clearPurlsList(): void;
+  getPurlsList(): Array<PurlRequest.Purls>;
+  setPurlsList(value: Array<PurlRequest.Purls>): void;
+  addPurls(value?: PurlRequest.Purls, index?: number): PurlRequest.Purls;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): PurlRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: PurlRequest): PurlRequest.AsObject;
+  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+  static serializeBinaryToWriter(message: PurlRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): PurlRequest;
+  static deserializeBinaryFromReader(message: PurlRequest, reader: jspb.BinaryReader): PurlRequest;
+}
+
+export namespace PurlRequest {
+  export type AsObject = {
+    purlsList: Array<PurlRequest.Purls.AsObject>,
+  }
+
+  export class Purls extends jspb.Message {
+    getPurl(): string;
+    setPurl(value: string): void;
+
+    getRequirement(): string;
+    setRequirement(value: string): void;
+
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): Purls.AsObject;
+    static toObject(includeInstance: boolean, msg: Purls): Purls.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: Purls, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): Purls;
+    static deserializeBinaryFromReader(message: Purls, reader: jspb.BinaryReader): Purls;
+  }
+
+  export namespace Purls {
+    export type AsObject = {
+      purl: string,
+      requirement: string,
+    }
+  }
+}
+
 export interface StatusCodeMap {
   UNSPECIFIED: 0;
   SUCCESS: 1;
