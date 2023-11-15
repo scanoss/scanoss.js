@@ -99,3 +99,26 @@ async function main() {
 
 main();
 ```
+
+### Dependency Scanning
+
+```typescript
+import {
+  DependencyScanner,
+  DependencyScannerCfg
+} from "scanoss";
+
+const main = async () => {
+
+  const dependencyScanner = new DependencyScanner();
+
+  //Scan a full folder
+  const results = await dependencyScanner.scanFolder("./node_modules")
+
+  //Scan specific files
+  //const results = await dependencyScanner.scan(["./package.json", "package-lock.json"])
+
+}
+
+main();
+```
