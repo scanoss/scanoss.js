@@ -14,13 +14,14 @@ export * from './sdk/Dependencies/DependencyScannerCfg';
 export * from './sdk/Dependencies/DependencyScanner';
 export * from './sdk/Dependencies/LocalDependency/LocalDependency';
 
-// *** Data layers export *** //
-export * from './sdk/DataLayer/DataLayerTypes';
-export * from './sdk/DataLayer/DataProviderManager';
-export * from './sdk/DataLayer/DataProviders/LicenseDataProvider';
-export * from './sdk/DataLayer/DataProviders/SummaryDataProvider';
-export * from './sdk/DataLayer/DataProviders/DependencyDataProvider';
-export * from './sdk/DataLayer/DataProviders/ComponentDataProvider';
+// *** Report export *** //
+export * from './sdk/Report/Report';
+export * from './sdk/Report/DataLayer/DataLayerTypes';
+export * from './sdk/Report/DataLayer/DataProviderManager';
+export * from './sdk/Report/DataLayer/DataProviders/LicenseDataProvider';
+export * from './sdk/Report/DataLayer/DataProviders/SummaryDataProvider';
+export * from './sdk/Report/DataLayer/DataProviders/DependencyDataProvider';
+export * from './sdk/Report/DataLayer/DataProviders/ComponentDataProvider';
 
 // *** Unzip *** //
 export * from './sdk/Decompress/DecompressionManager';

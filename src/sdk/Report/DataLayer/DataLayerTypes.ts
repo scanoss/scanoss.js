@@ -11,8 +11,8 @@ export interface ComponentDataLayer {
 
 export interface Version {
   version: string;
-  licenses:  string[]
-  copyrights: Copyright[]
+  licenses: string[];
+  copyrights: Copyright[];
   cryptography: Cryptography[];
   quality: Quality;
 }
@@ -20,18 +20,18 @@ export interface Version {
 export interface Copyright {
   name: string;
   source: string;
-};
+}
 
 export interface Cryptography {
   algorithm: string;
   strength: string;
-};
+}
 
 export interface Quality {
   scoreAvg: number;
   count: number;
   sum: number; //TODO remove
-};
+}
 
 export interface Health {
   creation_date: string;
@@ -44,7 +44,6 @@ export interface Health {
   forks: number;
 }
 /*************  Component interface definition  *************/
-
 
 /*************  Dependency interface definition  *************/
 export interface DependencyDataLayer {
@@ -61,7 +60,7 @@ export interface Dependency {
   purl: string;
   component: string;
   version: string;
-  licenses: License[]
+  licenses: License[];
 }
 /*************  Dependency interface definition  *************/
 
@@ -83,24 +82,22 @@ export interface VulnerabilityDataLayer {
 }
 /*************  Vulnerability interface definition  *************/
 
-
 /*************  License interface definition  *************/
 export interface LicenseDataLayer {
   label: string;
-  value: number;  //Number of licenses found
+  value: number; //Number of licenses found
   components: Array<LicenseComponent>;
   incompatibleWith: Array<string>;
   hasIncompatibles: Array<string>;
-  copyleft:boolean;
+  copyleft: boolean;
 }
-
 
 export interface LicenseComponent {
   purl: string;
   name: string;
   versions: Array<string>;
-  url:string;
-  vendor:string;
+  url: string;
+  vendor: string;
 }
 /*************  License interface definition  *************/
 
@@ -121,9 +118,7 @@ export interface IDataLayers {
   summary: SummaryDataLayer;
 }
 
-
 export interface DataProvider {
-  getData(): IDataLayers;
+  getData(): Promise<IDataLayers>;
   getLayerName(): string;
 }
-
