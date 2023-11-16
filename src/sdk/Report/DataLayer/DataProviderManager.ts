@@ -8,20 +8,20 @@ export class DataProviderManager {
   }
 
   public addDataProvider(l: DataProvider) {
-    this.dataLayersProviders.push(l)
+    this.dataLayersProviders.push(l);
   }
 
-  public generateData(): IDataLayers {
-
+  public async generateData(): Promise<IDataLayers> {
     let dataLayer: IDataLayers = {
       component: null,
       dependencies: null,
       vulnerabilities: null,
       summary: null,
-      licenses: null
+      licenses: null,
     };
 
-    for (const layer of this.dataLayersProviders) Object.assign(dataLayer, layer.getData());
+    for (const layer of this.dataLayersProviders)
+      Object.assign(dataLayer, await layer.getData());
     return dataLayer;
   }
 }
