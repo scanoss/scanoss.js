@@ -14,6 +14,7 @@ export class SummaryDataProvider implements DataProvider {
 
   private projectCreateAt: Date;
 
+  private reportTitle: string = 'Detected Report';
   constructor(
     projectName: string,
     projectCreatedAt: Date,
@@ -35,6 +36,7 @@ export class SummaryDataProvider implements DataProvider {
     this.summary.totalFiles = 0;
     this.summary.noMatchFiles = 0;
     this.summary.matchedFiles = 0;
+    this.summary.reportTitle = this.getReportTitle();
 
     for (const [file, components] of Object.entries(this.scannerResults)) {
       components.forEach((component) => {
@@ -46,5 +48,9 @@ export class SummaryDataProvider implements DataProvider {
     }
 
     return <IDataLayers>{ summary: this.summary };
+  }
+
+  public getReportTitle(): string {
+    return this.reportTitle;
   }
 }
