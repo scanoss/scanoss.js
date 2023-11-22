@@ -47,7 +47,6 @@ export class LicenseDataProvider implements DataProvider {
       this.updateLicenseStorageFromDependencies();
 
     this.licenseLayer = Object.values(this.licenseStorage);
-    if (this.licenseLayer.length > 0) this.updateIncompatibilities();
 
     this.licenseLayer.sort((itemA, itemB) => {
       if (itemA.value > itemB.value) return -1;
@@ -74,12 +73,6 @@ export class LicenseDataProvider implements DataProvider {
           const newLicense: LicenseDataLayer = <LicenseDataLayer>{};
           newLicense.value = 1;
           newLicense.label = license.name;
-          newLicense.copyleft = license.copyleft === 'yes' ? true : false;
-          newLicense.hasIncompatibles = [];
-          newLicense.incompatibleWith =
-            license.incompatible_with !== undefined
-              ? license.incompatible_with.split(',').map((il) => il.trim())
-              : [];
           newLicense.components = [newLicenseComponent];
           this.licenseStorage[license.name] = newLicense;
         } else {
@@ -111,9 +104,6 @@ export class LicenseDataProvider implements DataProvider {
                 const newLicense: LicenseDataLayer = <LicenseDataLayer>{};
                 newLicense.value = 1;
                 newLicense.label = license_name;
-                newLicense.copyleft = false;
-                newLicense.hasIncompatibles = [];
-                newLicense.incompatibleWith = [];
                 newLicense.components = [newLicenseComponent];
                 this.licenseStorage[license_name] = newLicense;
               } else {
@@ -131,9 +121,6 @@ export class LicenseDataProvider implements DataProvider {
               const newLicense: LicenseDataLayer = <LicenseDataLayer>{};
               newLicense.value = 1;
               newLicense.label = 'unknown';
-              newLicense.copyleft = false;
-              newLicense.hasIncompatibles = [];
-              newLicense.incompatibleWith = [];
               newLicense.components = [newLicenseComponent];
               this.licenseStorage['unknown'] = newLicense;
             } else {
@@ -146,21 +133,6 @@ export class LicenseDataProvider implements DataProvider {
         });
       });
     });
-  }
-
-  private updateIncompatibilities() {
-    for (let l = 0; l < this.licenseLayer.length; l += 1) {
-      const license = this.licenseLayer[l];
-      if (license.incompatibleWith !== undefined)
-        for (let i = 0; i < license.incompatibleWith.length; i += 1) {
-          if (
-            this.licenseLayer.some(
-              (lic) => lic.label === license.incompatibleWith[i]
-            )
-          )
-            license.hasIncompatibles.push(license.incompatibleWith[i]);
-        }
-    }
   }
 
   private insertComponentIntoLicense(
@@ -186,18 +158,5 @@ export class LicenseDataProvider implements DataProvider {
       license.value++;
     }
     return license;
-  }
-
-  private unknownLicensesToEnd() {
-    // let unknownLicenses = null;
-    // if(this.licenseMapper['unknown']){
-    //   unknownLicenses =  this.licenseMapper['unknown'];
-    //   delete this.licenseMapper['unknown'];
-    // }
-    //
-    // this.licenses =  Object.values((this.licenseMapper));
-    // if(unknownLicenses){
-    //   this.licenses.push(unknownLicenses);
-    // }
   }
 }

@@ -28,6 +28,7 @@ import { SummaryDataProvider } from '../../sdk/Report/DataLayer/DataProviders/Su
 import { DecompressionFilter } from '../../sdk/tree/Filters/DecompressionFilter';
 import { DecompressionManager } from '../../sdk/Decompress/DecompressionManager';
 import path from 'path';
+import { LicenseObligationDataProvider } from '../../sdk/Report/DataLayer/DataProviders/LicenseObligationDataProvider';
 
 export async function scanHandler(
   rootPath: string,
@@ -183,6 +184,13 @@ export async function scanHandler(
     );
     dataProviderManager.addDataProvider(
       new SummaryDataProvider(projectName, new Date(), scannersResults.scanner)
+    );
+
+    dataProviderManager.addDataProvider(
+      new LicenseObligationDataProvider(
+        scannersResults.scanner,
+        scannersResults.dependencies
+      )
     );
     const report = new Report(dataProviderManager);
     scannerResultsString = await report.getHTML();

@@ -87,9 +87,6 @@ export interface LicenseDataLayer {
   label: string;
   value: number; //Number of licenses found
   components: Array<LicenseComponent>;
-  incompatibleWith: Array<string>;
-  hasIncompatibles: Array<string>;
-  copyleft: boolean;
 }
 
 export interface LicenseComponent {
@@ -101,7 +98,17 @@ export interface LicenseComponent {
 }
 /*************  License interface definition  *************/
 
+/*************  License Obligation interface definition  *************/
+export interface LicenseObligation {
+  label: string; //spdxid
+  incompatibleWith: Array<string>;
+  hasIncompatibles: Array<string>;
+  copyleft: boolean;
+}
+/*************  License Obligation interface definition  *************/
+
 export interface SummaryDataLayer {
+  reportTitle: string;
   projectName: string;
   timestamp: Date;
   matchedFiles: number;
@@ -112,6 +119,7 @@ export interface SummaryDataLayer {
 // Each layer is created to group by differents criteria.
 export interface IDataLayers {
   licenses: LicenseDataLayer[];
+  licensesObligations: LicenseObligation[];
   component: ComponentDataLayer[];
   dependencies: DependencyDataLayer[];
   vulnerabilities: VulnerabilityDataLayer[];

@@ -6,7 +6,7 @@ import { DependencyDataProvider } from '../../../../src/sdk/Report/DataLayer/Dat
 import { DependencyDataLayer } from '../../../../src/sdk/Report/DataLayer/DataLayerTypes';
 
 describe('Suit test for Dependency Data Provider', () => {
-  it('Test Simple case Dependency Data provider', function () {
+  it('Test Simple case Dependency Data provider', async function () {
     const result = JSON.parse(
       fs.readFileSync(
         path.join(__dirname, '/samples/results-with-dep.json'),
@@ -16,7 +16,7 @@ describe('Suit test for Dependency Data Provider', () => {
     const dependencyDataProvider = new DependencyDataProvider(
       result.dependencies
     );
-    const dependencyData = dependencyDataProvider.getData();
+    const dependencyData = await dependencyDataProvider.getData();
 
     const expectedOutput: DependencyDataLayer[] = [
       {

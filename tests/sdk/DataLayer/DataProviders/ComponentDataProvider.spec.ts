@@ -10,7 +10,7 @@ chai.use(deepEqualInAnyOrder);
 const { expect } = chai;
 
 describe('Suit test for DataProvider', () => {
-  it('Test ComponentDataLayer', function () {
+  it('Test ComponentDataLayer', async function () {
     const result = JSON.parse(
       fs.readFileSync(
         path.join(__dirname, '/samples/results-with-dep.json'),
@@ -21,7 +21,7 @@ describe('Suit test for DataProvider', () => {
       result.scanner,
       result.dependencies
     );
-    const componentData = componentDataProvider.getData();
+    const componentData = await componentDataProvider.getData();
 
     const expectedOutput: ComponentDataLayer[] = [
       //First component

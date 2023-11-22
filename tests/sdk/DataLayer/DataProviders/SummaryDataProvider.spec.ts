@@ -6,7 +6,7 @@ import { SummaryDataLayer } from '../../../../src/sdk/Report/DataLayer/DataLayer
 import { SummaryDataProvider } from '../../../../src/sdk/Report/DataLayer/DataProviders/SummaryDataProvider';
 
 describe('Suit test for SummaryDataProvider', () => {
-  it('Simple test SummaryDataProvider', function () {
+  it('Simple test SummaryDataProvider', async function () {
     const result = JSON.parse(
       fs.readFileSync(
         path.join(__dirname, '/samples/results-with-dep.json'),
@@ -21,7 +21,7 @@ describe('Suit test for SummaryDataProvider', () => {
       date,
       result.scanner
     );
-    const summaryData = summaryDataProvider.getData();
+    const summaryData = await summaryDataProvider.getData();
 
     const expectedOutput: SummaryDataLayer = {
       projectName: 'Test project',
@@ -29,6 +29,7 @@ describe('Suit test for SummaryDataProvider', () => {
       totalFiles: 4,
       noMatchFiles: 0,
       matchedFiles: 4,
+      reportTitle: summaryDataProvider.getReportTitle(),
     };
 
     expect(summaryData.summary).to.deep.equal(expectedOutput);
