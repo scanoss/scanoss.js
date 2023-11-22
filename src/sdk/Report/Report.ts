@@ -42,8 +42,9 @@ export class Report {
       );
     this.report = html.replace(
       this.dataPlaceholder,
-      JSON.stringify(this.dataLayer)
+      JSON.stringify(this.dataLayer).replace(/\\\"/g, '\\\\u0022')
     );
+
     return this.report;
   }
 
