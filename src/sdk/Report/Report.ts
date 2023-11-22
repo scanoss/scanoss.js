@@ -3,11 +3,6 @@ import path from 'path';
 import { DataProviderManager } from './DataLayer/DataProviderManager';
 import { IDataLayers } from './DataLayer/DataLayerTypes';
 
-const reportDefaultPath = path.join(
-  __dirname,
-  '../../../../assets/ReportHTMLTemplate/index.html'
-);
-
 export class Report {
   private dataProviderManager: DataProviderManager;
 
@@ -15,6 +10,12 @@ export class Report {
 
   private report: string;
 
+  private templatePath: string = path.join(
+    __dirname,
+    '../../../../assets/ReportHTMLTemplate/index.html'
+  );
+
+  private dataPlaceholder: string = '#DATA';
   constructor(dpm: DataProviderManager = new DataProviderManager()) {
     this.dataProviderManager = dpm;
   }
@@ -23,11 +24,26 @@ export class Report {
     this.dataProviderManager = dpm;
   }
 
+  public setTemplatePath(filePath: string) {
+    this.templatePath = filePath;
+  }
+
+  public getTemplatePath(): string {
+    return this.templatePath;
+  }
+
   public async getHTML(): Promise<string> {
     this.dataLayer = await this.dataProviderManager.generateData();
-    const html = await fs.promises.readFile(reportDefaultPath, 'utf-8');
+    const html = await fs.promises.readFile(this.getTemplatePath(), 'utf-8');
     if (!html) throw new Error('Invalid template path');
-    this.report = html.replace('#DATA', JSON.stringify(this.dataLayer));
+    if (!html.includes(this.dataPlaceholder))
+      throw new Error(
+        `Placeholder ${this.dataPlaceholder} not found, cannot insert the data`
+      );
+    this.report = html.replace(
+      this.dataPlaceholder,
+      JSON.stringify(this.dataLayer)
+    );
     return this.report;
   }
 
