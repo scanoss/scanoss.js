@@ -18,6 +18,7 @@ export class DataProviderManager {
       vulnerabilities: null,
       summary: null,
       licenses: null,
+      licensesObligations: null,
     };
 
     for (const layer of this.dataLayersProviders)
