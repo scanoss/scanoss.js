@@ -19,7 +19,6 @@ import { WfpSplitter } from './WfpProvider/WfpSplitter/WfpSplitter';
 import sortPaths from 'sort-paths';
 import { v4 as uuidv4 } from 'uuid';
 
-
 let finishPromiseResolve;
 let finishPromiseReject;
 
@@ -81,7 +80,7 @@ export class Scanner extends EventEmitter {
     this.wfpProvider = new WfpCalculator(this.scannerCfg);
     this.dispatcher = new Dispatcher(this.scannerCfg);
 
-    this.finishPromise = new Promise((resolve, reject) =>{
+    this.finishPromise = new Promise((resolve, reject) => {
       finishPromiseResolve = resolve;
       finishPromiseReject = reject;
     });
@@ -89,29 +88,112 @@ export class Scanner extends EventEmitter {
     this.setWinnowerListeners();
     this.setDispatcherListeners();
 
-    if (this.workDirectory === undefined) this.setWorkDirectory(`${os.tmpdir()}/scanner-${this.getScannerId()}`);
+    if (this.workDirectory === undefined)
+      this.setWorkDirectory(`${os.tmpdir()}/scanner-${this.getScannerId()}`);
+  }
+
+  public setWorkDirectory(workDirectory: string) {
+    this.workDirectory = workDirectory;
+    this.resultFilePath = `${this.workDirectory}/result.json`;
+    this.wfpFilePath = `${this.workDirectory}/winnowing.wfp`;
+    this.obfuscateMapFilePath = `${this.workDirectory}/obfuscate.map`;
+
+    if (!fs.existsSync(this.workDirectory)) fs.mkdirSync(this.workDirectory);
+    if (fs.existsSync(this.resultFilePath))
+      throw new Error(
+        `${this.resultFilePath}, already exist! Please remove this file and run the scanner again`
+      );
+    if (fs.existsSync(this.wfpFilePath))
+      throw new Error(
+        `${this.workDirectory}, already exist! Please remove this file and run the scanner again`
+      );
+  }
+
+  public getWorkDirectory(): string {
+    return this.workDirectory;
+  }
+
+  public cleanWorkDirectory(): void {
+    if (fs.existsSync(this.resultFilePath)) fs.unlinkSync(this.resultFilePath);
+    if (fs.existsSync(this.wfpFilePath)) fs.unlinkSync(this.wfpFilePath);
+  }
+
+  public scan(scannerInput: Array<ScannerInput>): Promise<string> {
+    this.init();
+    this.createOutputFiles();
+    this.scannerInput = scannerInput;
+
+    this.reportLog(`[ SCANNER ]: Scanner instance id ${this.getScannerId()}`);
+
+    if (!this.isValidInput(scannerInput)) {
+      this.finishScan();
+      return this.finishPromise;
+    }
+
+    if (scannerInput[0]?.wfpPath) {
+      this.wfpProvider = new WfpSplitter(this.scannerCfg);
+      this.setWinnowerListeners();
+      this.wfpProvider.start(scannerInput[0]);
+    } else {
+      const folderRoot = this.scannerInput[0].folderRoot;
+      const winnowingMode = this.scannerInput[0]?.winnowing?.mode;
+      const obfuscate = this.scannerCfg.WFP_OBFUSCATION;
+      const fileList = this.scannerInput[0].fileList;
+      this.wfpProvider.start({
+        folderRoot,
+        winnowingMode,
+        fileList,
+        obfuscate,
+      });
+    }
+    return this.finishPromise;
+  }
+
+  public getScannerId() {
+    return this.scannerId;
+  }
+
+  public stop() {
+    this.reportLog(`[ SCANNER ]: Stopping scanner`);
+    this.abort();
+    finishPromiseResolve();
+  }
+
+  public isRunning() {
+    return this.running;
   }
 
   private setWinnowerListeners() {
-    this.wfpProvider.on(ScannerEvents.WINNOWING_NEW_CONTENT, (fingerprintPackage: FingerprintPackage) => {
-      this.emit(ScannerEvents.WINNOWING_NEW_CONTENT, fingerprintPackage);
-      this.reportLog(`[ SCANNER ]: New WFP content`);
+    this.wfpProvider.on(
+      ScannerEvents.WINNOWING_NEW_CONTENT,
+      (fingerprintPackage: FingerprintPackage) => {
+        this.emit(ScannerEvents.WINNOWING_NEW_CONTENT, fingerprintPackage);
+        this.reportLog(`[ SCANNER ]: New WFP content`);
 
-      if (fingerprintPackage.isObfuscated()) this.obfuscateMap = { ...this.obfuscateMap, ...fingerprintPackage.getObfuscationMap()};
-      const item = new DispatchableItem();
-      item.setFingerprintPackage(fingerprintPackage);
-      item.uuid = uuidv4();
+        if (fingerprintPackage.isObfuscated())
+          this.obfuscateMap = {
+            ...this.obfuscateMap,
+            ...fingerprintPackage.getObfuscationMap(),
+          };
+        const item = new DispatchableItem();
+        item.setFingerprintPackage(fingerprintPackage);
+        item.uuid = uuidv4();
 
-      if(this.scannerInput[0]?.engineFlags) item.setEngineFlags(this.scannerInput[0]?.engineFlags);
+        if (this.scannerInput[0]?.engineFlags)
+          item.setEngineFlags(this.scannerInput[0]?.engineFlags);
 
-      if(this.scannerInput[0]?.sbom && this.scannerInput[0]?.sbomMode)
-        item.setSbom(this.scannerInput[0]?.sbom, this.scannerInput[0]?.sbomMode);
+        if (this.scannerInput[0]?.sbom && this.scannerInput[0]?.sbomMode)
+          item.setSbom(
+            this.scannerInput[0]?.sbom,
+            this.scannerInput[0]?.sbomMode
+          );
 
-      this.dispatcher.dispatchItem(item);
-    });
+        this.dispatcher.dispatchItem(item);
+      }
+    );
 
-    this.wfpProvider.on(ScannerEvents.WINNOWING_STATUS, (newFilesProcessed)=>{
-      this.emit(ScannerEvents.WINNOWING_STATUS, newFilesProcessed)
+    this.wfpProvider.on(ScannerEvents.WINNOWING_STATUS, (newFilesProcessed) => {
+      this.emit(ScannerEvents.WINNOWING_STATUS, newFilesProcessed);
     });
 
     this.wfpProvider.on(ScannerEvents.WINNOWER_LOG, (msg) => {
@@ -125,25 +207,34 @@ export class Scanner extends EventEmitter {
 
   private setDispatcherListeners() {
     this.dispatcher.on(ScannerEvents.DISPATCHER_QUEUE_SIZE_MAX_LIMIT, () => {
-      this.reportLog(`[ SCANNER ]: Maximum queue size reached. Winnower will be paused`);
+      this.reportLog(
+        `[ SCANNER ]: Maximum queue size reached. Winnower will be paused`
+      );
       this.wfpProvider.pause();
     });
 
     this.dispatcher.on(ScannerEvents.DISPATCHER_QUEUE_SIZE_MIN_LIMIT, () => {
-      this.reportLog(`[ SCANNER ]: Minimum queue size reached. Winnower will be resumed`);
+      this.reportLog(
+        `[ SCANNER ]: Minimum queue size reached. Winnower will be resumed`
+      );
       this.wfpProvider.resume();
     });
 
-    this.dispatcher.on(ScannerEvents.DISPATCHER_NEW_DATA, async (response: DispatcherResponse) => {
-      this.processingNewData = true;
-      this.processedFiles += response.getNumberOfFilesScanned();
-      this.reportLog(`[ SCANNER ]: Received results of ${response.getNumberOfFilesScanned()} files`);
-      this.emit(ScannerEvents.DISPATCHER_NEW_DATA, response);
-      this.insertIntoBuffer(response);
-      if (this.bufferReachedLimit()) this.bufferToFiles();  //Uses sync to ensure no new data is appended to the buffer
-      this.processingNewData = false;
-      if (this.scanFinished) await this.finishJob();
-    });
+    this.dispatcher.on(
+      ScannerEvents.DISPATCHER_NEW_DATA,
+      async (response: DispatcherResponse) => {
+        this.processingNewData = true;
+        this.processedFiles += response.getNumberOfFilesScanned();
+        this.reportLog(
+          `[ SCANNER ]: Received results of ${response.getNumberOfFilesScanned()} files`
+        );
+        this.emit(ScannerEvents.DISPATCHER_NEW_DATA, response);
+        this.insertIntoBuffer(response);
+        if (this.bufferReachedLimit()) this.bufferToFiles(); //Uses sync to ensure no new data is appended to the buffer
+        this.processingNewData = false;
+        if (this.scanFinished) await this.finishJob();
+      }
+    );
 
     this.dispatcher.on(ScannerEvents.DISPATCHER_FINISHED, async () => {
       if (!this.wfpProvider.hasPendingFiles()) {
@@ -152,32 +243,41 @@ export class Scanner extends EventEmitter {
       }
     });
 
-    this.dispatcher.on(ScannerEvents.DISPATCHER_ITEM_NO_DISPATCHED, (disptItem: DispatchableItem) => {
-      const filesNotScanned = disptItem.getFingerprintPackage().getFilesFingerprinted();
-      this.appendFilesToNotScanned(filesNotScanned);
-    });
+    this.dispatcher.on(
+      ScannerEvents.DISPATCHER_ITEM_NO_DISPATCHED,
+      (disptItem: DispatchableItem) => {
+        const filesNotScanned = disptItem
+          .getFingerprintPackage()
+          .getFilesFingerprinted();
+        this.appendFilesToNotScanned(filesNotScanned);
+      }
+    );
 
     this.dispatcher.on(ScannerEvents.DISPATCHER_LOG, (msg) => {
       this.reportLog(msg);
     });
 
-    this.dispatcher.on(ScannerEvents.ERROR, (error: Error, disptItem: DispatchableItem, response: string) => {
-      const wfpContent = disptItem.getFingerprintPackage().getContent();
-      const requestId = disptItem.uuid
+    this.dispatcher.on(
+      ScannerEvents.ERROR,
+      (error: Error, disptItem: DispatchableItem, response: string) => {
+        const wfpContent = disptItem.getFingerprintPackage().getContent();
+        const requestId = disptItem.uuid;
 
-      let plainResponse = response ? response : "";
+        let plainResponse = response ? response : '';
 
-      const dump =  `---Request ID Begin---\n${requestId}\n---Request ID End---\n` +
-                    `---WFP Begin---\n${wfpContent}\n---WFP End---\n` +
-                    `---Server Response Begin---\n${plainResponse}\n---Server Response End---\n`;
-                    `---Error Message Begin---\n${error.message}\n---Error Message End---\n`;
+        const dump =
+          `---Request ID Begin---\n${requestId}\n---Request ID End---\n` +
+          `---WFP Begin---\n${wfpContent}\n---WFP End---\n` +
+          `---Server Response Begin---\n${plainResponse}\n---Server Response End---\n`;
+        `---Error Message Begin---\n${error.message}\n---Error Message End---\n`;
 
-      const filePath = `${this.workDirectory}/bad_request-${this.scannerId}-${requestId}.txt`
-      fs.writeFileSync(filePath, dump, 'utf8');
+        const filePath = `${this.workDirectory}/bad_request-${this.scannerId}-${requestId}.txt`;
+        fs.writeFileSync(filePath, dump, 'utf8');
 
-      error.message += `\n\nDebug file located at ${filePath}`;
-      this.errorHandler(error, ScannerEvents.MODULE_DISPATCHER);
-    });
+        error.message += `\n\nDebug file located at ${filePath}`;
+        this.errorHandler(error, ScannerEvents.MODULE_DISPATCHER);
+      }
+    );
   }
 
   private appendFilesToNotScanned(fileList) {
@@ -197,11 +297,15 @@ export class Scanner extends EventEmitter {
   }
 
   private bufferReachedLimit() {
-    if (this.responseBuffer.length >= this.scannerCfg.MAX_RESPONSES_IN_BUFFER) return true;
+    if (this.responseBuffer.length >= this.scannerCfg.MAX_RESPONSES_IN_BUFFER)
+      return true;
     return false;
   }
 
-  private deobfuscationResponses(responses: Record<string, any>, obfuscateMap: Record<string, string>): Record<string, any>{
+  private deobfuscationResponses(
+    responses: Record<string, any>,
+    obfuscateMap: Record<string, string>
+  ): Record<string, any> {
     const deObfuscation = {};
     Object.entries(responses).forEach(([key, value]: [string, any]) => {
       deObfuscation[obfuscateMap[key]] = value;
@@ -221,39 +325,25 @@ export class Scanner extends EventEmitter {
 
     this.appendOutputFiles(wfpContent, serverResponse);
     this.responseBuffer = [];
-    const r = (this.scannerCfg.WFP_OBFUSCATION &&
-                                this.scannerCfg.RESULTS_DEOBFUSCATION) ? this.deobfuscationResponses(serverResponse, this.obfuscateMap) : serverResponse;
+    const r =
+      this.scannerCfg.WFP_OBFUSCATION && this.scannerCfg.RESULTS_DEOBFUSCATION
+        ? this.deobfuscationResponses(serverResponse, this.obfuscateMap)
+        : serverResponse;
     const responses = new DispatcherResponse(r, wfpContent);
-    this.reportLog(`[ SCANNER ]: Persisted results of ${responses.getNumberOfFilesScanned()} files...`);
+    this.reportLog(
+      `[ SCANNER ]: Persisted results of ${responses.getNumberOfFilesScanned()} files...`
+    );
     this.emit(ScannerEvents.RESULTS_APPENDED, responses, this.filesNotScanned);
     return responses;
   }
 
-  public setWorkDirectory(workDirectory: string) {
-    this.workDirectory = workDirectory;
-    this.resultFilePath = `${this.workDirectory}/result.json`;
-    this.wfpFilePath = `${this.workDirectory}/winnowing.wfp`;
-    this.obfuscateMapFilePath = `${this.workDirectory}/obfuscate.map`;
-
-    if (!fs.existsSync(this.workDirectory)) fs.mkdirSync(this.workDirectory);
-    if (fs.existsSync(this.resultFilePath)) throw new Error(`${this.resultFilePath}, already exist! Please remove this file and run the scanner again`)
-    if (fs.existsSync(this.wfpFilePath)) throw new Error(`${this.workDirectory}, already exist! Please remove this file and run the scanner again`);
-  }
-
-  public getWorkDirectory(): string {
-    return this.workDirectory;
-  }
-
-  public cleanWorkDirectory(): void {
-    if (fs.existsSync(this.resultFilePath)) fs.unlinkSync(this.resultFilePath);
-    if (fs.existsSync(this.wfpFilePath)) fs.unlinkSync(this.wfpFilePath);
-  }
-
   private async finishJob() {
     this.scannerInput.shift();
-    this.reportLog(`[ SCANNER ]: Job finished. ${this.scannerInput.length} pendings`);
+    this.reportLog(
+      `[ SCANNER ]: Job finished. ${this.scannerInput.length} pendings`
+    );
 
-    if(this.scannerInput.length) {
+    if (this.scannerInput.length) {
       if (this.scannerInput[0].wfpPath) {
         this.wfpProvider = new WfpSplitter();
         this.setWinnowerListeners();
@@ -263,16 +353,26 @@ export class Scanner extends EventEmitter {
         const winnowingMode = this.scannerInput[0]?.winnowing?.mode;
         const obfuscate = this.scannerCfg.WFP_OBFUSCATION;
         const fileList = this.scannerInput[0].fileList;
-        this.wfpProvider.start({folderRoot, winnowingMode, fileList, obfuscate});
+        this.wfpProvider.start({
+          folderRoot,
+          winnowingMode,
+          fileList,
+          obfuscate,
+        });
       }
-     } else await this.finishScan();
+    } else await this.finishScan();
   }
 
   private async finishScan() {
     if (!this.isBufferEmpty()) this.bufferToFiles();
-    const results = JSON.parse(await fs.promises.readFile(this.resultFilePath, 'utf8'));
+    const results = JSON.parse(
+      await fs.promises.readFile(this.resultFilePath, 'utf8')
+    );
 
-    if (this.scannerCfg.WFP_OBFUSCATION && this.scannerCfg.RESULTS_DEOBFUSCATION) {
+    if (
+      this.scannerCfg.WFP_OBFUSCATION &&
+      this.scannerCfg.RESULTS_DEOBFUSCATION
+    ) {
       for (const key of Object.keys(this.obfuscateMap)) {
         const component = results[key];
         const originalPath = this.obfuscateMap[key];
@@ -285,16 +385,26 @@ export class Scanner extends EventEmitter {
     const resultSorted = {};
     // eslint-disable-next-line no-restricted-syntax
     for (const key of sortedPaths) resultSorted[key] = results[key];
-    await fs.promises.writeFile(this.resultFilePath, JSON.stringify(resultSorted, null, 2));
-    await fs.promises.writeFile(this.obfuscateMapFilePath, JSON.stringify(this.obfuscateMap, null, 2));
+    await fs.promises.writeFile(
+      this.resultFilePath,
+      JSON.stringify(resultSorted, null, 2)
+    );
+    await fs.promises.writeFile(
+      this.obfuscateMapFilePath,
+      JSON.stringify(this.obfuscateMap, null, 2)
+    );
     this.reportLog(
-      `[ SCANNER ]: Scan finished (Scanned: ${this.processedFiles}, Not Scanned: ${
-        Object.keys(this.filesNotScanned).length
-      })`
+      `[ SCANNER ]: Scan finished (Scanned: ${
+        this.processedFiles
+      }, Not Scanned: ${Object.keys(this.filesNotScanned).length})`
     );
     this.reportLog(`[ SCANNER ]: Results on: ${this.resultFilePath}`);
     this.running = false;
-    this.emit(ScannerEvents.SCAN_DONE, this.resultFilePath, this.filesNotScanned);
+    this.emit(
+      ScannerEvents.SCAN_DONE,
+      this.resultFilePath,
+      this.filesNotScanned
+    );
     finishPromiseResolve(this.resultFilePath);
   }
 
@@ -312,21 +422,25 @@ export class Scanner extends EventEmitter {
     this.reportLog(`[ SCANNER ]: Error reason ${error}`);
 
     this.emit(ScannerEvents.ERROR, error);
-    if(this.finishPromise) finishPromiseReject(error);
+    if (this.finishPromise) finishPromiseReject(error);
   }
 
   private createOutputFiles() {
-    if (!fs.existsSync(this.wfpFilePath)) fs.writeFileSync(this.wfpFilePath, '');
-    if (!fs.existsSync(this.resultFilePath)) fs.writeFileSync(this.resultFilePath, JSON.stringify({}));
+    if (!fs.existsSync(this.wfpFilePath))
+      fs.writeFileSync(this.wfpFilePath, '');
+    if (!fs.existsSync(this.resultFilePath))
+      fs.writeFileSync(this.resultFilePath, JSON.stringify({}));
 
     if (this.scannerCfg.WFP_OBFUSCATION) {
-      if (!fs.existsSync(this.obfuscateMapFilePath)) fs.writeFileSync(this.obfuscateMapFilePath, JSON.stringify({}));
+      if (!fs.existsSync(this.obfuscateMapFilePath))
+        fs.writeFileSync(this.obfuscateMapFilePath, JSON.stringify({}));
     }
-
-
   }
 
-  private appendOutputFiles(wfpContent: string, serverResponse: ScannerResults) {
+  private appendOutputFiles(
+    wfpContent: string,
+    serverResponse: ScannerResults
+  ) {
     fs.appendFileSync(this.wfpFilePath, wfpContent);
 
     const storedResultStr = fs.readFileSync(this.resultFilePath, 'utf-8');
@@ -334,36 +448,7 @@ export class Scanner extends EventEmitter {
     Object.assign(storedResultObj, serverResponse);
     const newResultStr = JSON.stringify(storedResultObj);
     fs.writeFileSync(this.resultFilePath, newResultStr);
-
   }
-
-
-  public scan(scannerInput: Array<ScannerInput>): Promise<string> {
-    this.init();
-    this.createOutputFiles();
-    this.scannerInput = scannerInput;
-
-    this.reportLog(`[ SCANNER ]: Scanner instance id ${this.getScannerId()}`);
-
-    if (!this.isValidInput(scannerInput)) {
-      this.finishScan();
-      return this.finishPromise;
-    }
-
-    if (scannerInput[0]?.wfpPath) {
-      this.wfpProvider = new WfpSplitter();
-      this.setWinnowerListeners();
-      this.wfpProvider.start(scannerInput[0]);
-    } else {
-      const folderRoot = this.scannerInput[0].folderRoot;
-      const winnowingMode = this.scannerInput[0]?.winnowing?.mode;
-      const obfuscate = this.scannerCfg.WFP_OBFUSCATION
-      const fileList = this.scannerInput[0].fileList;
-      this.wfpProvider.start({folderRoot, winnowingMode, fileList, obfuscate});
-    }
-    return this.finishPromise;
-  }
-
 
   private isValidInput(scannerInput: Array<ScannerInput>): boolean {
     if (!scannerInput) {
@@ -372,7 +457,7 @@ export class Scanner extends EventEmitter {
     }
 
     if (!Array.isArray(scannerInput)) {
-      this.reportLog('[ SCANNER ]: Input must be an array','warning');
+      this.reportLog('[ SCANNER ]: Input must be an array', 'warning');
       return false;
     }
 
@@ -381,17 +466,17 @@ export class Scanner extends EventEmitter {
       return false;
     }
 
-    if (scannerInput.some((input) => !input.fileList.length && !input.wfpPath)) {
-      this.reportLog('[ SCANNER ]: Input array contains an element with no file list','warning');
+    if (
+      scannerInput.some((input) => !input.fileList.length && !input.wfpPath)
+    ) {
+      this.reportLog(
+        '[ SCANNER ]: Input array contains an element with no file list',
+        'warning'
+      );
       return false;
     }
 
     return true;
-  }
-
-
-  public getScannerId() {
-    return this.scannerId;
   }
 
   private abort() {
@@ -401,17 +486,4 @@ export class Scanner extends EventEmitter {
     this.dispatcher.stop();
     this.wfpProvider.stop();
   }
-
-  public stop() {
-    this.reportLog(`[ SCANNER ]: Stopping scanner`);
-    this.abort();
-    finishPromiseResolve();
-  }
-
-  public isRunning() {
-    return this.running;
-  }
-
 }
-
-
