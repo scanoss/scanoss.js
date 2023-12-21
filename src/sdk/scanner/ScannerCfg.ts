@@ -1,9 +1,8 @@
 import { BaseConfig } from '../BaseConfig';
 
-
 export class ScannerCfg extends BaseConfig {
   // Client Timestamp, default value is scanoss-js/${version}
-  public CLIENT_TIMESTAMP = ""
+  public CLIENT_TIMESTAMP = '';
   // API URL
   public API_URL = 'https://osskb.org/api/scan/direct';
 
@@ -20,8 +19,8 @@ export class ScannerCfg extends BaseConfig {
   // Timeout for each transaction
   public TIMEOUT = 180000;
 
-  // The maximum size for each .wfp file
-  public WFP_FILE_MAX_SIZE = 64 * 1000;
+  // The maximum size for each .wfp file in bytes
+  public WFP_FILE_MAX_SIZE = 32 * 1024;
 
   public WFP_OBFUSCATION = false;
 
@@ -40,5 +39,4 @@ export class ScannerCfg extends BaseConfig {
   public DISPATCHER_QUEUE_SIZE_MAX_LIMIT = 2000;
 
   public DISPATCHER_QUEUE_SIZE_MIN_LIMIT = 1000;
-
-};
+}
