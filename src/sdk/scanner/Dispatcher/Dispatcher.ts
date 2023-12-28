@@ -124,7 +124,7 @@ export class Dispatcher extends EventEmitter {
   emitNoDispatchedItem(disptItem) {
     this.emit(
       ScannerEvents.DISPATCHER_LOG,
-      `[ SCANNER ]: WFP content sended to many times. Some files won't be scanned`
+      `[ SCANNER ]: WFP content sended to many times`
     );
     this.emit(ScannerEvents.DISPATCHER_ITEM_NO_DISPATCHED, disptItem);
   }
@@ -136,25 +136,28 @@ export class Dispatcher extends EventEmitter {
         error.name = 'TIMEOUT';
       }
 
-      if (this.recoverableErrors.has(error.name)) {
-        disptItem.increaseErrorCounter();
-        if (
-          disptItem.getErrorCounter() >=
-          this.scannerCfg.MAX_RETRIES_FOR_RECOVERABLES_ERRORS
-        ) {
-          this.emitNoDispatchedItem(disptItem);
-          if (this.scannerCfg.ABORT_ON_MAX_RETRIES)
-            this.emitUnrecoberableError(error, disptItem, response);
-          return;
+      disptItem.increaseErrorCounter();
+      if (
+        disptItem.getErrorCounter() >=
+        this.scannerCfg.MAX_RETRIES_FOR_RECOVERABLES_ERRORS
+      ) {
+        this.emitNoDispatchedItem(disptItem);
+
+        if (this.scannerCfg.ABORT_ON_MAX_RETRIES) {
+          error[
+            'max_retries'
+          ] = `Fingerprint block retried ${this.scannerCfg.MAX_RETRIES_FOR_RECOVERABLES_ERRORS} times, aborting`;
+          this.emitUnrecoberableError(error, disptItem, response);
         }
-        this.emit(
-          ScannerEvents.DISPATCHER_LOG,
-          `[ SCANNER ]: Recoverable error happened sending WFP content to server. Reason: ${error}`
-        );
-        this.dispatchItem(disptItem);
+
         return;
       }
-      this.emitUnrecoberableError(error, disptItem, response);
+      this.emit(
+        ScannerEvents.DISPATCHER_LOG,
+        `[ SCANNER ]: An error occurred while sending WFP content to the server. Reason: ${error}`
+      );
+      this.dispatchItem(disptItem);
+      return;
     }
   }
 
