@@ -15,17 +15,30 @@ export class DispatchableItem {
 
   private sbomMode: SbomMode;
 
-  private _uuid: string;
   constructor() {
     this.errorCounter = 0;
     this.form = new FormData();
   }
 
-  public getForm(): FormData {
-    this.form.append('file', Buffer.from(this.fingerprintPackage.getContent()), 'data.wfp');
-    if(this.engineFlags) this.form.append('flags', this.engineFlags);
+  private _uuid: string;
 
-    if(this.sbomMode && this.sbom) {
+  public get uuid(): string {
+    return this._uuid;
+  }
+
+  public set uuid(uuid: string) {
+    this._uuid = uuid;
+  }
+
+  public getForm(): FormData {
+    this.form.append(
+      'file',
+      Buffer.from(this.fingerprintPackage.getContent()),
+      'data.wfp'
+    );
+    if (this.engineFlags) this.form.append('flags', this.engineFlags);
+
+    if (this.sbomMode && this.sbom) {
       this.form.append('assets', this.sbom);
       this.form.append('type', this.sbomMode);
     }
@@ -56,13 +69,5 @@ export class DispatchableItem {
   public setSbom(sbom: string, sbomMode: SbomMode) {
     this.sbom = sbom;
     this.sbomMode = sbomMode;
-  }
-
-  public get uuid(): string {
-    return this._uuid;
-  }
-
-  public set uuid(uuid: string) {
-    this._uuid = uuid;
   }
 }
