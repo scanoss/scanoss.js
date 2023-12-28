@@ -14,7 +14,7 @@ export class ScannerCfg extends BaseConfig {
   public IGNORE_CERT_ERRORS = false;
 
   // Level of concurrency
-  public CONCURRENCY_LIMIT = 10;
+  public CONCURRENCY_LIMIT = 5;
 
   // Timeout for each transaction
   public TIMEOUT = 180000;
@@ -29,7 +29,7 @@ export class ScannerCfg extends BaseConfig {
   // the winnowing algorithm will report a ScannerEvents.WINNOWING_STATUS event.
   public WINNOWING_REPORT_STATUS_AFTER_X = 10;
 
-  public MAX_RETRIES_FOR_RECOVERABLES_ERRORS = 5;
+  public MAX_RETRIES_FOR_RECOVERABLES_ERRORS = 6;
 
   public ABORT_ON_MAX_RETRIES = true;
 

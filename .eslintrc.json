@@ -21,7 +21,7 @@
       "error",
       { "allowWholeFile": true }
     ],
-    "eslint-comments/no-unused-disable": false,
+    "eslint-comments/no-unused-disable": 0,
     "import/order": [
       "error",
       { "newlines-between": "always", "alphabetize": { "order": "asc" } }
