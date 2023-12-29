@@ -91,10 +91,6 @@ export class Dispatcher extends EventEmitter {
     this.queueMinLimitReached = true;
 
     this.globalAbortController = new GlobalControllerAborter();
-
-    this.recoverableErrors = new Set();
-    this.recoverableErrors.add('ECONNRESET');
-    this.recoverableErrors.add('TIMEOUT');
   }
 
   stop() {
@@ -131,8 +127,15 @@ export class Dispatcher extends EventEmitter {
 
   errorHandler(error: Error, disptItem: DispatchableItem, response: string) {
     if (!this.globalAbortController.isAborting()) {
+      //Abort scan when JSON is broken
+      if (error instanceof SyntaxError) {
+        this.emitUnrecoberableError(error, disptItem, response);
+      }
+
       if (error.name === 'AbortError') {
-        error.message = `Timeout reached for packet with request ID ${disptItem.uuid}. Enqueuing again.`;
+        error = new Error(
+          `Timeout reached for packet with request ID ${disptItem.uuid}`
+        );
         error.name = 'TIMEOUT';
       }
 

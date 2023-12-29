@@ -3,7 +3,7 @@ import FormData from 'form-data';
 import { SbomMode } from '../ScannerTypes';
 
 export class DispatchableItem {
-  private readonly form: FormData;
+  private form: FormData;
 
   private errorCounter: number;
 
@@ -31,6 +31,8 @@ export class DispatchableItem {
   }
 
   public getForm(): FormData {
+    this.form = new FormData();
+
     this.form.append(
       'file',
       Buffer.from(this.fingerprintPackage.getContent()),
