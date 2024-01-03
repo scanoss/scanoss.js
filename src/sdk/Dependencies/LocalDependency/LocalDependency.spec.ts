@@ -1,7 +1,5 @@
-import fs from 'fs';
+import { LocalDependencies } from './LocalDependency';
 import { assert, expect } from 'chai';
-import path from 'path';
-import { LocalDependencies } from  '../../../../src/sdk/Dependencies/LocalDependency/LocalDependency'
 
 describe('Suit test for LocalDependency Scanner', () => {
 
@@ -20,7 +18,6 @@ describe('Suit test for LocalDependency Scanner', () => {
 
   it('Testing filepath filter function',  function () {
     const localDependencyScanner = new LocalDependencies();
-
     const files = [
       "/home/user/ignore.c",
       "/home/user/go.sum",
@@ -38,10 +35,6 @@ describe('Suit test for LocalDependency Scanner', () => {
     for (let i=0; i<result.length;i++){
       expect(expectedOut[i]).to.be.equal(result[i]);
     }
-
-
   });
 
 });
-
-
