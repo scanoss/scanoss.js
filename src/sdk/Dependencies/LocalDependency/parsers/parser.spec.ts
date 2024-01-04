@@ -12,6 +12,7 @@ interface ParserSpecI {
   file_content: string;
   expect: ILocalDependency;
   parser: ParserFuncType;
+  priority?: boolean; //Useful for debug. Test will be run only on the cases with this flag to true. By default is undefined
 }
 
 
@@ -49,7 +50,7 @@ const ParserSpec: ParserSpecI[] = [
     file_name: 'pyproject.toml',
     file_content:
       '[build-system]\nrequires = ["hatchling"]\nbuild-backend = "hatchling.build"\n\n  [project]\nname = "spam-eggs"\nversion = "2020.0.0"\ndependencies = [\n  "httpx",\n  "gidgethub[httpx]>4.0.0",\n  "django>2.1; os_name != \'nt\'",\n  "django>2.0; os_name == \'nt\'",\n]\nrequires-python = ">=3.8"\nauthors = [\n  {name = "Pradyun Gedam", email = "pradyun@example.com"},\n  {name = "Tzu-Ping Chung", email = "tzu-ping@example.com"},\n  {name = "Another person"},\n  {email = "different.person@example.com"},\n]\nmaintainers = [\n  {name = "Brett Cannon", email = "brett@example.com"}\n]\ndescription = "Lovely Spam! Wonderful Spam!"\nreadme = "README.rst"\nlicense = {file = "LICENSE.txt"}\nkeywords = ["egg", "bacon", "sausage", "tomatoes", "Lobster Thermidor"]\nclassifiers = [\n  "Development Status :: 4 - Beta",\n  "Programming Language :: Python"\n]\n\n  [project.optional-dependencies]\ngui = ["PyQt5"]\ncli = [\n  "rich",\n  "click",\n]\n\n  [project.urls]\nHomepage = "https://example.com"\nDocumentation = "https://readthedocs.org"\nRepository = "https://github.com/me/spam.git"\n"Bug Tracker" = "https://github.com/me/spam/issues"\nChangelog = "https://github.com/me/spam/blob/master/CHANGELOG.md"\n\n  [project.scripts]\nspam-cli = "spam:main_cli"\n\n  [project.gui-scripts]\nspam-gui = "spam:main_gui"\n\n  [project.entry-points."spam.magical"]\ntomatoes = "spam:main_tomatoes"',
-    expect: { file: 'pyproject.toml', purls: [{purl: "httpx"},{purl: "pkg:pypi/gidgethub", requirement:">4.0.0"}, {purl: "django", requirement:">2.1"}, {purl: "django", requirement: ">2.0"}] },
+    expect: { file: 'pyproject.toml', purls: [{purl: "pkg:pypi/httpx"},{purl: "pkg:pypi/gidgethub", requirement:">4.0.0"}, {purl: "pkg:pypi/django", requirement:">2.1"}, {purl: "pkg:pypi/django", requirement: ">2.0"}] },
     parser: pyProjectToml,
   },
   {
@@ -77,7 +78,7 @@ const ParserSpec: ParserSpecI[] = [
     test_name: 'pyproject.toml example 4',
     source:
       'https://setuptools.pypa.io/en/latest/userguide/pyproject_config.html',
-    note: 'Uses a setuptools as buildtool',
+    note: 'Uses a simple quote in one dependency',
     file_name: 'pyproject.toml',
     file_content:
       '[build-system]\nrequires = ["setuptools", "setuptools-scm"]\nbuild-backend = "setuptools.build_meta"\n\n[project]\nname = "my_package"\nauthors = [\n    {name = "Josiah Carberry", email = "josiah_carberry@brown.edu"},\n]\ndescription = "My package description"\nreadme = "README.rst"\nrequires-python = ">=3.7"\nkeywords = ["one", "two"]\nlicense = {text = "BSD-3-Clause"}\nclassifiers = [\n    "Framework :: Django",\n    "Programming Language :: Python :: 3",\n]\ndependencies = [\n    "requests",\n    \'importlib-metadata; python_version<"3.8"\',\n]\ndynamic = ["version"]\n\n[project.optional-dependencies]\npdf = ["ReportLab>=1.2", "RXP"]\nrest = ["docutils>=0.3", "pack ==1.1, ==1.3"]\n\n[project.scripts]\nmy-script = "my_package.module:function"\n\n# ... other project metadata fields as listed in:\n#     https://packaging.python.org/en/latest/guides/writing-pyproject-toml/\n',
@@ -86,31 +87,51 @@ const ParserSpec: ParserSpecI[] = [
   },
   {
     test_name: 'pyproject.toml example 5',
+    source:
+      'https://setuptools.pypa.io/en/latest/userguide/pyproject_config.html',
+    note: 'Uses a simple quote in one dependency',
+    file_name: 'pyproject.toml',
+    file_content:
+      '[build-system]\nrequires = ["setuptools", "setuptools-scm"]\nbuild-backend = "setuptools.build_meta"\n\n[project]\nname = "my_package"\nauthors = [\n    {name = "Josiah Carberry", email = "josiah_carberry@brown.edu"},\n]\ndescription = "My package description"\nreadme = "README.rst"\nrequires-python = ">=3.7"\nkeywords = ["one", "two"]\nlicense = {text = "BSD-3-Clause"}\nclassifiers = [\n    "Framework :: Django",\n    "Programming Language :: Python :: 3",\n]\ndependencies = [\n    "requests",\n    # this should be ignored\n    \'importlib-metadata; python_version<"3.8"\',  #This line as well\n]\ndynamic = ["version"]\n\n[project.optional-dependencies]\npdf = ["ReportLab>=1.2", "RXP"]\nrest = ["docutils>=0.3", "pack ==1.1, ==1.3"]\n\n[project.scripts]\nmy-script = "my_package.module:function"\n\n# ... other project metadata fields as listed in:\n#     https://packaging.python.org/en/latest/guides/writing-pyproject-toml/\n',
+    expect: { file: 'pyproject.toml', purls: [{purl: "pkg:pypi/requests"}, {purl: "pkg:pypi/importlib-metadata"}] },
+    parser: pyProjectToml,
+  },
+  {
+    test_name: 'pyproject.toml example 6',
+    source:
+      'https://setuptools.pypa.io/en/latest/userguide/pyproject_config.html',
+    note: 'Uses a simple quote in one dependency',
+    file_name: 'pyproject.toml',
+    file_content: '[build-system]\nrequires = ["setuptools", "setuptools-scm"]\nbuild-backend = "setuptools.build_meta"\n\n[project]\nname = "my_package"\nauthors = [\n    {name = "Josiah Carberry", email = "josiah_carberry@brown.edu"},\n]\ndescription = "My package description"\nreadme = "README.rst"\nrequires-python = ">=3.7"\nkeywords = ["one", "two"]\nlicense = {text = "BSD-3-Clause"}\nclassifiers = [\n    "Framework :: Django",\n    "Programming Language :: Python :: 3",\n]\ndependencies = [\n    "requests", "request[extra]    < 1.0.0; marker<\'1.0\'",\n    # this should be ignored\n    \'importlib-metadata; python_version<"3.8"\',  #This line as well\n]\ndynamic = ["version"]\n\n[project.optional-dependencies]\npdf = ["ReportLab>=1.2", "RXP"]\nrest = ["docutils>=0.3", "pack ==1.1, ==1.3"]\n\n[project.scripts]\nmy-script = "my_package.module:function"\n\n# ... other project metadata fields as listed in:\n#     https://packaging.python.org/en/latest/guides/writing-pyproject-toml/\n',
+    expect: { file: 'pyproject.toml', purls: [{purl: "pkg:pypi/requests"}, {purl: "pkg:pypi/request", requirement: '<1.0.0'}, {purl: "pkg:pypi/importlib-metadata"},] },
+    parser: pyProjectToml,
+  },
+  {
+    test_name: 'pyproject.toml example 7',
     source: 'local',
     note: 'This is a empty file',
     file_name: 'pyproject.toml',
     file_content: '',
-    expect: null,
+    expect: { file: 'pyproject.toml', purls: [] },
     parser: pyProjectToml,
   },
 ];
 
-describe('Testing all parsers', () => {
+describe('Testing purl extractors', () => {
 
-  ParserSpec.forEach(async (ds, i) => {
-    it(`Test name ${ds.test_name}`, async () => {
-      const d = await ds.parser(ds.file_content, ds.file_name);
-      const dsp = ds.expect.purls.sort();
+  const TestCase = async (ps: ParserSpecI) => {
+    it(`Test: ${ps.test_name}`, async () => {
+      const d = await ps.parser(ps.file_content, ps.file_name);
+      const dsp = ps.expect.purls.sort();
       const dp = d.purls.sort();
-
-      for (let i = Math.min(dsp.length, dp.length)-1; i >= 0; i--) {
-        expect(dp[i]).to.eql(dsp[i]);
-      }
-
-      expect(ds.expect.file).to.equal(d.file);
-      expect(dsp.length).to.equal(dp.length);
+      expect(dp).to.be.deep.equal(dsp);
     })
+  }
 
-  })
+  const OnlyTestWPriority = ParserSpec.filter(ps => ps.priority);
+  if (OnlyTestWPriority.length)
+    OnlyTestWPriority.forEach(async (ps) => await TestCase(ps));
+  else
+    ParserSpec.forEach(async (ps) => await TestCase(ps));
 
 });
