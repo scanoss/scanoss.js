@@ -66,7 +66,7 @@ Note: the --dependencies flag is not applicable here, given that manifest files 
 
 The manifest files acknowledged during the scanning process are:
 
-    * Python: requirements.txt
+    * Python: requirements.txt, pyproject.toml
     * Java: pom.xml
     * Javascript: package.json, package-lock.json, yarn.lock
     * Ruby: Gemfile, Gemfile.lock
