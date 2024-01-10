@@ -4,7 +4,10 @@
 ![Build and Test status](https://github.com/scanoss/scanoss.js/actions/workflows/build_test.yml/badge.svg)
 </div>
 
+# Note: Development Branch
 
+This branch is for the development of version 1.0.0 and is currently a work in progress. 
+The content here is subject to change and should not be considered final or used in production environments.
 
 
 # Scanoss JS Package
