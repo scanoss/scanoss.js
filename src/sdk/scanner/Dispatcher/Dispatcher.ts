@@ -15,6 +15,12 @@ import { Utils } from '../../Utils/Utils';
 
 const MAX_CONCURRENT_REQUEST = 30;
 
+enum ERRORS {
+  HTTP = 'HTTP',
+  ABORT_CONTROLLER = 'AbortError',
+  TIMEOUT = 'TIMEOUT'
+}
+
 export class Dispatcher extends EventEmitter {
   private scannerCfg: ScannerCfg;
 
@@ -132,11 +138,17 @@ export class Dispatcher extends EventEmitter {
         this.emitUnrecoberableError(error, disptItem, response);
       }
 
-      if (error.name === 'AbortError') {
+      if (error.name === ERRORS.HTTP) {
+        this.emitUnrecoberableError(error, disptItem, response);
+      }
+
+
+      //This is an error triggered by the AbortController
+      if (error.name === ERRORS.ABORT_CONTROLLER) {
         error = new Error(
           `Timeout reached for packet with request ID ${disptItem.uuid}`
         );
-        error.name = 'TIMEOUT';
+        error.name = ERRORS.TIMEOUT;
       }
 
       disptItem.increaseErrorCounter();
@@ -195,7 +207,7 @@ export class Dispatcher extends EventEmitter {
         const err = new Error(
           `\nHTTP Status code: ${response.status}\nServer Response:\n${plain_response}\n`
         );
-        err.name = 'HTTP_ERROR';
+        err.name = ERRORS.HTTP;
         throw err;
       }
 

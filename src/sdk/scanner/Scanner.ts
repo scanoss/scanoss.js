@@ -223,7 +223,7 @@ export class Scanner extends EventEmitter {
     this.dispatcher.on(
       ScannerEvents.DISPATCHER_NEW_DATA,
       async (response: DispatcherResponse) => {
-        this.processingNewData = true;
+        console.log("ScannerEvents.DISPATCHER_NEW_DATA")
         this.processedFiles += response.getNumberOfFilesScanned();
         this.reportLog(
           `[ SCANNER ]: Received results of ${response.getNumberOfFilesScanned()} files`
@@ -231,15 +231,12 @@ export class Scanner extends EventEmitter {
         this.emit(ScannerEvents.DISPATCHER_NEW_DATA, response);
         this.insertIntoBuffer(response);
         if (this.bufferReachedLimit()) this.bufferToFiles(); //Uses sync to ensure no new data is appended to the buffer
-        this.processingNewData = false;
-        if (this.scanFinished) await this.finishJob();
       }
     );
 
     this.dispatcher.on(ScannerEvents.DISPATCHER_FINISHED, async () => {
       if (!this.wfpProvider.hasPendingFiles()) {
-        if (this.processingNewData) this.scanFinished = true;
-        else await this.finishJob();
+        await this.finishJob();
       }
     });
 
