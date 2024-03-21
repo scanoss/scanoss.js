@@ -34,6 +34,7 @@ parentPort.on('message', async (scannableItem) => {
   }
 
   scannableItem.fingerprint = fingerprint;
+  scannableItem.content = null;
   parentPort.postMessage(scannableItem);
 
   });
@@ -457,27 +458,45 @@ export class WfpCalculator extends WfpProvider {
     }
     const path = this.fileList[this.fileListIndex];
     const contentSource = path.replace(`${this.folderRoot}`, '');
-    const content = await fs.promises.readFile(path);
-    this.fileListIndex += 1;
-    if (!(this.fileListIndex % this.scannerCfg.WINNOWING_REPORT_STATUS_AFTER_X))
-      this.emit(
-        ScannerEvents.WINNOWING_STATUS,
-        this.scannerCfg.WINNOWING_REPORT_STATUS_AFTER_X
-      );
+    const content = await this.readFile(path);
+      this.fileListIndex += 1;
+      if (!(this.fileListIndex % this.scannerCfg.WINNOWING_REPORT_STATUS_AFTER_X))
+        this.emit(
+          ScannerEvents.WINNOWING_STATUS,
+          this.scannerCfg.WINNOWING_REPORT_STATUS_AFTER_X
+        );
 
-    const scannable = new ScannableItem(
-      content,
-      contentSource,
-      this.winnowingMode,
-      this.scannerCfg.WFP_FILE_MAX_SIZE
-    );
-    return scannable;
+      const scannable = new ScannableItem(
+        content,
+        contentSource,
+        this.winnowingMode,
+        this.scannerCfg.WFP_FILE_MAX_SIZE
+      );
+      return scannable;
   }
+
+  async readFile(path: string): Promise<Buffer> {
+    if(! await this.isFileGreaterThanLimit(path)) {
+      return await fs.promises.readFile(path);
+    }
+    return  Buffer.alloc(0);
+  }
+
+  async isFileGreaterThanLimit(path: string) {
+      const stats = await fs.promises.stat(path);
+      const fileSizeInBytes = stats.size;
+      const fileSizeInGB = fileSizeInBytes / (1024 * 1024 * 1024); // Convert bytes to gigabytes
+      return fileSizeInGB >= 2;
+  }
+
 
   async nextStepMachine() {
     if (!this.continue) return;
     const scannableItem = await this.getNextScannableItem();
-    if (scannableItem) this.worker.postMessage(scannableItem);
+    if (scannableItem){
+      this.sendLog(`[ SCANNER ]: WFP Calculator initialized: File=${scannableItem.getContentSource()}`);
+      this.worker.postMessage(scannableItem);
+    }
     else {
       this.finishWinnowing();
       this.forceStopWorker();
