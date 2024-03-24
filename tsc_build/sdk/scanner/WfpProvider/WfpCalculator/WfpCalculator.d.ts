@@ -1,7 +1,7 @@
 /// <reference types="node" />
-import { ScannableItem } from '../../Scannable/ScannableItem';
-import { ScannerCfg } from '../../ScannerCfg';
-import { IWfpProviderInput, WfpProvider } from '../WfpProvider';
+import { ScannableItem } from "../../Scannable/ScannableItem";
+import { ScannerCfg } from "../../ScannerCfg";
+import { IWfpProviderInput, WfpProvider } from "../WfpProvider";
 export declare class WfpCalculator extends WfpProvider {
     private fileList;
     private fileListIndex;
@@ -9,7 +9,7 @@ export declare class WfpCalculator extends WfpProvider {
     constructor(scannerCfg?: ScannerCfg);
     init(): void;
     prepareWorker(): void;
-    recoveryIndex(): -1 | 0;
+    recoveryIndex(): 0 | -1;
     forceStopWorker(): void;
     getNextScannableItem(): Promise<ScannableItem>;
     readFile(path: string): Promise<Buffer>;

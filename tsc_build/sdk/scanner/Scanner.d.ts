@@ -1,6 +1,6 @@
-import EventEmitter from 'eventemitter3';
-import { ScannerCfg } from './ScannerCfg';
-import { ScannerInput } from './ScannerTypes';
+import EventEmitter from "eventemitter3";
+import { ScannerCfg } from "./ScannerCfg";
+import { ScannerInput } from "./ScannerTypes";
 export declare class Scanner extends EventEmitter {
     private scannerCfg;
     private workDirectory;

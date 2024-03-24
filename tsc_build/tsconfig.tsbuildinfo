@@ -1191,9 +1191,14 @@
         "signature": "341043ce470435f4e40cd238f03e5c68136989bf22c323ca2fdd70dd005af94d",
         "affectsGlobalScope": false
       },
+      "../src/sdk/scanner/WfpProvider/WfpCalculator/WfpCalculator.worker.ts": {
+        "version": "04988105a535a221884f9b07e7b5eae7ec5dca2c1165f666ce152873635fe1fb",
+        "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881",
+        "affectsGlobalScope": false
+      },
       "../src/sdk/scanner/WfpProvider/WfpCalculator/WfpCalculator.ts": {
-        "version": "1aebf8b673819ec790110de3a6242fead1344cbc25f25f48e0758c8afb564ebc",
-        "signature": "69691fb56e42fa94924a7a4556a3e5a95dca072b463f2323078ce75de324bdc6",
+        "version": "da016251248080544cac7c0502b592d2fa9b6c2880e5b5252dc65d6893fb802c",
+        "signature": "7a05a2a5828e80322a029881d4c1f36496b355ef3090e5e73473192252e7cc50",
         "affectsGlobalScope": false
       },
       "../src/sdk/scanner/WfpProvider/WfpSplitter/WfpSplitter.ts": {
@@ -1202,8 +1207,8 @@
         "affectsGlobalScope": false
       },
       "../src/sdk/scanner/Scanner.ts": {
-        "version": "732dac123d264d8c81eb8e3101a5d4de607ba790bf4a368348f59c617eb5d67b",
-        "signature": "31e4883f4cc34e3eeb6a800383f16af7f151a1806ffc226afefe33c818be61dd",
+        "version": "e5302ea28318ce9b0adafad214983d76c4bc83a888ff814abae61b50014a8ff2",
+        "signature": "261a346d34fdd7a96786d3d683af21e63e7af9a16c0d6e183a4bfc40849974ea",
         "affectsGlobalScope": false
       },
       "../src/sdk/Filtering/DefaultFilterForScanning.ts": {
@@ -2982,7 +2987,13 @@
         "../src/sdk/scanner/ScannerCfg.ts",
         "../src/sdk/scanner/ScannerTypes.ts",
         "../src/sdk/scanner/WfpProvider/FingerprintPackage.ts",
+        "../src/sdk/scanner/WfpProvider/WfpCalculator/WfpCalculator.worker.ts",
         "../src/sdk/scanner/WfpProvider/WfpProvider.ts"
+      ],
+      "../src/sdk/scanner/WfpProvider/WfpCalculator/WfpCalculator.worker.ts": [
+        "../node_modules/@types/node/crypto.d.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/worker_threads.d.ts"
       ],
       "../src/sdk/scanner/WfpProvider/WfpProvider.ts": [
         "../node_modules/@types/node/util.d.ts",
@@ -4647,6 +4658,7 @@
       "../src/sdk/scanner/ScannerTypes.ts",
       "../src/sdk/scanner/WfpProvider/FingerprintPackage.ts",
       "../src/sdk/scanner/WfpProvider/WfpCalculator/WfpCalculator.ts",
+      "../src/sdk/scanner/WfpProvider/WfpCalculator/WfpCalculator.worker.ts",
       "../src/sdk/scanner/WfpProvider/WfpProvider.ts",
       "../src/sdk/scanner/WfpProvider/WfpSplitter/WfpSplitter.ts",
       "../src/sdk/tree/File.ts",
