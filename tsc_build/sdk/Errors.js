@@ -1,0 +1,2 @@
+export const ERROR_SERVICES_GRPC_API_TOKEN_REQUIRED = 'Error: API token is required for this gRPC service. Please provide a valid token.';
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiRXJyb3JzLmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsiLi4vLi4vc3JjL3Nkay9FcnJvcnMudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUEsTUFBTSxDQUFDLE1BQU0sc0NBQXNDLEdBQ2pELG1GQUFtRixDQUFDIn0=

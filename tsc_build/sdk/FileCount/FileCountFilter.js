@@ -1,0 +1,8 @@
+import { FilterScope, FilterType, FilterListType, NameFilter } from '../Filtering/Filtering';
+export const FileCountFilter = {
+    type: FilterListType.BANNED,
+    filters: [
+        { ftype: FilterType.NAME, condition: NameFilter.STARTS, value: '.', scope: FilterScope.ALL },
+    ],
+};
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiRmlsZUNvdW50RmlsdGVyLmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsiLi4vLi4vLi4vc3JjL3Nkay9GaWxlQ291bnQvRmlsZUNvdW50RmlsdGVyLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBLE9BQU8sRUFDTCxXQUFXLEVBQ1gsVUFBVSxFQUNWLGNBQWMsRUFDZCxVQUFVLEVBQ1gsTUFBTSx3QkFBd0IsQ0FBQztBQUVoQyxNQUFNLENBQUMsTUFBTSxlQUFlLEdBQVk7SUFDdEMsSUFBSSxFQUFFLGNBQWMsQ0FBQyxNQUFNO0lBQzNCLE9BQU8sRUFBRTtRQUNQLEVBQUUsS0FBSyxFQUFFLFVBQVUsQ0FBQyxJQUFJLEVBQUUsU0FBUyxFQUFFLFVBQVUsQ0FBQyxNQUFNLEVBQUUsS0FBSyxFQUFFLEdBQUcsRUFBRSxLQUFLLEVBQUUsV0FBVyxDQUFDLEdBQUcsRUFBRTtLQUM3RjtDQUNGLENBQUMifQ==
