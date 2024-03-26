@@ -35,8 +35,8 @@ async function main() {
   scan.addOption(new Option("-M, --timeout <timeout>", "Timeout (in seconds) for API communication (optional -default 120)"));
   scan.addOption(new Option("    --obfuscate", "Obfuscate fingerprints"));
   scan.addOption(new Option("-D, --dependencies", "Add dependency scanning"));
-  scan.addOption(new Option("    --apiurl <apiurl>", "SCANOSS API URL (optional - default: https://osskb.org/api/scan/direct)"));
-  scan.addOption(new Option("    --api2url <api2url>", "SCANOSS gRPC API 2.0 URL (optional - default: scanoss.com:443)"));
+  scan.addOption(new Option("    --apiurl <apiurl>", "SCANOSS API URL (optional - default: https://api.osskb.org/scan/direct)"));
+  scan.addOption(new Option("    --api2url <api2url>", "SCANOSS gRPC API 2.0 URL (optional - default: api.scanoss.com:443)"));
   scan.addOption(new Option("-k, --key <key>", "SCANOSS API Key token (optional - not required for default OSSKB URL)"));
   scan.addOption(new Option("    --ignore-cert-errors", "Ignore self signed certificate errors"));
   scan.addOption(new Option("    --ca-cert <cert>", "Specify a path for a cert used in SSL/TLS connection"));
@@ -56,7 +56,7 @@ async function main() {
   dependencies.addArgument(new Argument("<source>"));
 
   dependencies.addOption(new Option("-o, --output <filename>", "Output result file name (optional - default stdout)"));
-  dependencies.addOption(new Option("-a, --grpc-host <host>", "SCANOSS GRPC HOST (optional - default: scanoss.com:443)"));
+  dependencies.addOption(new Option("-a, --grpc-host <host>", "SCANOSS GRPC HOST (optional - default: api.scanoss.com:443)"));
 
   dependencies.action((source, options) => {
     depHandler(source, options).catch((e) => {
