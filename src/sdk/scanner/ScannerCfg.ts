@@ -3,8 +3,9 @@ import { BaseConfig } from '../BaseConfig';
 export class ScannerCfg extends BaseConfig {
   // Client Timestamp, default value is scanoss-js/${version}
   public CLIENT_TIMESTAMP = '';
+
   // API URL
-  public API_URL = 'https://osskb.org/api/scan/direct';
+  public API_URL = 'https://api.osskb.org/scan/direct';
 
   public API_KEY = '';
 
