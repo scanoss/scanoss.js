@@ -177,7 +177,6 @@ export const defaultFilterForScanning: IFilter = {
     { condition: '=', value: '.utf-8', ftype: FilterType.EXTENSION, scope: FilterScope.FILE },
     { condition: '=', value: '.vim', ftype: FilterType.EXTENSION, scope: FilterScope.FILE },
     { condition: '=', value: '.wav', ftype: FilterType.EXTENSION, scope: FilterScope.FILE },
-    { condition: '=', value: '.whl', ftype: FilterType.EXTENSION, scope: FilterScope.FILE },
     { condition: '=', value: '.woff', ftype: FilterType.EXTENSION, scope: FilterScope.FILE },
     { condition: '=', value: '.xht', ftype: FilterType.EXTENSION, scope: FilterScope.FILE },
     { condition: '=', value: '.xhtml', ftype: FilterType.EXTENSION, scope: FilterScope.FILE },
@@ -201,6 +200,13 @@ export const defaultFilterForScanning: IFilter = {
     { condition: '=', value: '.cover', ftype: FilterType.EXTENSION, scope: FilterScope.FILE },
     { condition: '=', value: '.gem', ftype: FilterType.EXTENSION, scope: FilterScope.FILE },
     { condition: '=', value: '.lst', ftype: FilterType.EXTENSION, scope: FilterScope.FILE },
+    { condition: '=', value: '.woff2', ftype: FilterType.EXTENSION, scope: FilterScope.FILE },
+    { condition: '=', value: '.pickle', ftype: FilterType.EXTENSION, scope: FilterScope.FILE },
+    { condition: '=', value: '.pdb', ftype: FilterType.EXTENSION, scope: FilterScope.FILE },
+    { condition: '=', value: '.gml', ftype: FilterType.EXTENSION, scope: FilterScope.FILE },
+    { condition: '=', value: '.pot', ftype: FilterType.EXTENSION, scope: FilterScope.FILE },
+    { condition: '=', value: '.plt', ftype: FilterType.EXTENSION, scope: FilterScope.FILE },
+
   ],
 };
 
