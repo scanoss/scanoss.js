@@ -32,8 +32,6 @@ if [ "$dir" = "" ] ; then
   export dir=.
 fi
 
-echo $dir
-
 # Get latest git tagged version
 version=$(git describe --tags --abbrev=0)
 if [[ -z "$version" ]] ; then
@@ -43,8 +41,6 @@ if [[ -z "$version" ]] ; then
   echo "Error: Failed to determine a valid version number" >&2
   exit 1
 fi
-
-echo $version
 
 # Defining the package.json path
 package_path="$dir/../package.json"
