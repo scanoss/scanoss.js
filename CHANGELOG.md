@@ -2,6 +2,58 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.11.5](https://github.com/scanoss/scanoss.js/compare/v0.11.4...v0.11.5) (2024-04-17)
+
+### [0.11.4](https://github.com/scanoss/scanoss.js/compare/v0.11.3...v0.11.4) (2024-04-02)
+
+### [0.11.3](https://github.com/scanoss/scanoss.js/compare/v0.11.2...v0.11.3) (2024-01-09)
+
+### [0.11.2](https://github.com/scanoss/scanoss.js/compare/v0.11.1...v0.11.2) (2024-01-09)
+
+### [0.11.1](https://github.com/scanoss/scanoss.js/compare/v0.11.0...v0.11.1) (2024-01-09)
+
+### [0.11.0](https://github.com/scanoss/scanoss.js/compare/v0.10.5...v0.11.0) (2024-01-04)
+
+### [0.10.5](https://github.com/scanoss/scanoss.js/compare/v0.10.4...v0.10.5) (2023-12-29)
+
+### [0.10.4](https://github.com/scanoss/scanoss.js/compare/v0.10.3...v0.10.4) (2023-12-28)
+
+### [0.10.3](https://github.com/scanoss/scanoss.js/compare/v0.10.2...v0.10.3) (2023-12-22)
+
+### [0.10.2](https://github.com/scanoss/scanoss.js/compare/v0.10.1...v0.10.2) (2023-12-19)
+
+### [0.10.1](https://github.com/scanoss/scanoss.js/compare/v0.10.0...v0.10.1) (2023-11-22)
+
+### [0.10.0](https://github.com/scanoss/scanoss.js/compare/v0.9.2...v0.10.0) (2023-11-22)
+
+### [0.9.3](https://github.com/scanoss/scanoss.js/compare/v0.9.2...v0.9.3) (2023-10-20)
+
+### [0.9.2](https://github.com/scanoss/scanoss.js/compare/v0.9.1...v0.9.2) (2023-10-09)
+
+### [0.9.1](https://github.com/scanoss/scanoss.js/compare/v0.9.0...v0.9.1) (2023-05-18)
+
+### [0.9.0](https://github.com/scanoss/scanoss.js/compare/v0.8.7...v0.9.0) (2023-04-19)
+
+### [0.8.8](https://github.com/scanoss/scanoss.js/compare/v0.8.7...v0.8.8) (2023-04-16)
+
+### [0.8.7](https://github.com/scanoss/scanoss.js/compare/v0.8.6...v0.8.7) (2023-04-12)
+
+### [0.8.6](https://github.com/scanoss/scanoss.js/compare/v0.8.5...v0.8.6) (2023-03-28)
+
+### [0.8.5](https://github.com/scanoss/scanoss.js/compare/v0.8.0...v0.8.5) (2023-03-17)
+
+### [0.8.0](https://github.com/scanoss/scanoss.js/compare/v0.7.8...v0.8.0) (2023-02-20)
+
+### [0.7.8](https://github.com/scanoss/scanoss.js/compare/v0.4.0...v0.7.8) (2023-01-25)
+
+### [0.4.0](https://github.com/scanoss/scanoss.js/compare/v0.4.0-beta...v0.4.0) (2022-09-30)
+
+### [0.4.0-beta](https://github.com/scanoss/scanoss.js/compare/v0.4.0-alpha.0...v0.4.0-beta) (2022-08-31)
+
+### [0.4.0-alpha.0](https://github.com/scanoss/scanoss.js/compare/v0.3.0...v0.4.0-alpha.0) (2022-08-19)
+
+### [0.3.0](https://github.com/scanoss/scanoss.js/compare/v0.2.18...v0.3.0) (2022-07-02)
+
 ### [0.2.18](https://github.com/scanoss/scanoss.js/compare/v0.2.16...v0.2.18) (2022-02-23)
 
 ### [0.2.16](https://github.com/scanoss/scanoss.js/compare/v0.2.14...v0.2.16) (2022-02-14)
