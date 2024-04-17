@@ -14,8 +14,18 @@ jobs:
         with:
           node-version: '16.x'
           registry-url: 'https://registry.npmjs.org'
-      - run: npm ci
-      - run: npm run build
-      - run: npm publish
+      - name: Publish new package to npmjs
+        run: |
+           npm ci
+           npm run build
+           npm publish
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+            NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Create Draft Release ${{ github.ref_type }} - ${{ github.ref_name }}
+        if: github.ref_type == 'tag' && startsWith(github.ref_name, 'v')
+        uses: softprops/action-gh-release@v1
+        with:
+          draft: true
+
+
