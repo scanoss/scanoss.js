@@ -5,6 +5,7 @@ import { Utils } from "../../sdk/Utils/Utils";
 import { depHandler } from "../commands/dep";
 import { scanHandler } from "../commands/scan";
 import { wfpHandler } from "../commands/wfp";
+import { cryptoHandler } from '../commands/crypto';
 
 function CLIErrorHandler(e: Error) {
   console.error(" ");
@@ -82,14 +83,32 @@ async function main() {
   });
 
 
+  const cryptography = new Command("crypto");
+  cryptography.description("Scan local cryptography");
+  cryptography.addArgument(new Argument("<source>"));
+
+  // Options
+  cryptography.addOption(new Option("-r, --rules <rules>", "Crypto rules"));
+  cryptography.addOption(new Option("-o, --output <filename>", "Output result file name (optional - default stdout)"));
+
+  cryptography.action((source, options) => {
+    cryptoHandler(source, options).catch((e) => {
+      CLIErrorHandler(e);
+    });
+  });
+
   const program = new Command();
   program.version(Utils.getPackageVersion());
   program.description("The SCANOSS JS package provides a simple, easy to consume module for interacting with SCANOSS APIs/Engine.");
   program.addCommand(scan);
   program.addCommand(dependencies);
   program.addCommand(fingerprint);
+  program.addCommand(cryptography);
 
   await program.parseAsync(process.argv);
+
+
+
 }
 
 try {
