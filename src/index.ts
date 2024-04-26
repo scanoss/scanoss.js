@@ -14,6 +14,11 @@ export * from './sdk/Dependencies/DependencyScannerCfg';
 export * from './sdk/Dependencies/DependencyScanner';
 export * from './sdk/Dependencies/LocalDependency/LocalDependency';
 
+// *** Cryptography scanner exports *** //
+export * from './sdk/Cryptography/CryptographyScanner';
+export * from './sdk/Cryptography/CryptoCfg';
+export * from './sdk/Cryptography/CryptographyTypes';
+
 // *** Report export *** //
 export * from './sdk/Report/Report';
 export * from './sdk/Report/DataLayer/DataLayerTypes';
