@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.12.0](https://github.com/scanoss/scanoss.js/compare/v0.11.5...v0.12.0) (2024-05-06)
+
 ### [0.11.5](https://github.com/scanoss/scanoss.js/compare/v0.11.4...v0.11.5) (2024-04-19)
 
 ### [0.11.4](https://github.com/scanoss/scanoss.js/compare/v0.11.3...v0.11.4) (2024-04-02)
