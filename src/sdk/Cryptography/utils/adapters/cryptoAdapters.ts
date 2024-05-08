@@ -7,7 +7,7 @@ import { ICryptoItem, ILocalCryptographyResponse } from '../../CryptographyTypes
  * @returns An ILocalCryptographyResponse object containing mapped cryptographic items.
  */
 export function mapToILocalCryptographyResponse(ci: Array<CryptoItem>): ILocalCryptographyResponse {
-  const fileList: Array<ICryptoItem> = ci.map((c)=> ({  file: c.getPath(),  algorithms: c.getAlgorithms() }));
+  const fileList: Array<ICryptoItem> = ci.map((c)=> ({  file: c.file,  algorithms: c.algorithms }));
   return {
     fileList
   }
