@@ -35,7 +35,7 @@ export async function cryptoHandler(rootPath: string, options: any){
   console.log("Searching for local cryptography...")
   const results = await cryptoScanner.scan(fileList);
 
-  if(options.output) {
+  if (options.output) {
     await fs.promises.writeFile(options.output, JSON.stringify(results, null, 2));
     console.log(`Results found in ${options.output}`);
   } else {
