@@ -14,6 +14,8 @@ export class LocalCrypto {
 
   private cryptoRules: Map<string, RegExp>;
 
+  private readonly MAX_FILE_SIZE = 2 * 1024 * 1024 * 1024;
+
   /**
    * Constructs a new LocalCrypto.
    * @param cryptoRules An array of CryptoAlgorithmRules used to create the search rules.
@@ -30,9 +32,11 @@ export class LocalCrypto {
   public async search(files: Array<string>): Promise<Array<CryptoItem>> {
     if (files.length <= 0) return [];
     const cryptoItems = files.map((f)=> { return new CryptoItem(f) });
-    await Promise.all(cryptoItems.map(async (c) => {
+
+    for(let c of cryptoItems) {
       await this.searchCrypto(c);
-    }));
+    }
+
     return cryptoItems;
   }
 
@@ -43,7 +47,12 @@ export class LocalCrypto {
    */
   private async searchCrypto(cryptoItem: CryptoItem){
     const cryptoFound = new Array<string>();
-    let content =  await fs.promises.readFile(cryptoItem.getPath(), 'utf-8');
+    const stats = await fs.promises.stat(cryptoItem.getPath());
+    if (stats.size > this.MAX_FILE_SIZE) {
+      cryptoItem.setAlgorithms([]);
+      return;
+    }
+    let content = await fs.promises.readFile(cryptoItem.getPath(), 'utf-8');
     this.cryptoRules.forEach((value, key) => {
       try {
         const matches = content.match(value);
@@ -54,10 +63,15 @@ export class LocalCrypto {
         console.error(e);
       }
     });
+    // Release memory
+    content = null;
     const results: Array<CryptoAlgorithm> = [];
     cryptoFound.forEach((cf)=>{
       results.push(this.cryptoMapper.get(cf));
     });
     cryptoItem.setAlgorithms(results);
   }
+
 }
+
+
