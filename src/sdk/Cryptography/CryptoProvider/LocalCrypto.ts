@@ -4,25 +4,29 @@ import {
 } from '../CryptoDef/CryptoDef';
 import fs from 'fs';
 import { CryptoAlgorithm, CryptoAlgorithmRules } from '../CryptographyTypes';
+import { ThreadPool } from '../Worker/ThreadPool';
+
 
 /**
  * Represents a CryptoCalculator used for searching cryptographic algorithms in files.
  */
 export class LocalCrypto {
 
-  private cryptoMapper : Map<string, CryptoAlgorithm>;
+  private cryptoMapper: Map<string, CryptoAlgorithm>;
 
   private cryptoRules: Map<string, RegExp>;
 
-  private readonly MAX_FILE_SIZE = 2 * 1024 * 1024 * 1024;
+  private threads: number;
 
   /**
    * Constructs a new LocalCrypto.
    * @param cryptoRules An array of CryptoAlgorithmRules used to create the search rules.
+   * @param threads Number of threads to be use to scan local cryptography (default = 5).
    */
-  constructor(cryptoRules: Array<CryptoAlgorithmRules>) {
+  constructor(cryptoRules: Array<CryptoAlgorithmRules>, threads: number) {
     this.cryptoRules = createCryptoKeywordMapper(cryptoRules);
-    this.cryptoMapper = getCryptoMapper(cryptoRules)
+    this.cryptoMapper = getCryptoMapper(cryptoRules);
+    this.threads = threads;
   }
 
   /**
@@ -31,47 +35,11 @@ export class LocalCrypto {
    */
   public async search(files: Array<string>): Promise<Array<CryptoItem>> {
     if (files.length <= 0) return [];
-    const cryptoItems = files.map((f)=> { return new CryptoItem(f) });
-
-    for(let c of cryptoItems) {
-      await this.searchCrypto(c);
-    }
-
-    return cryptoItems;
-  }
-
-  /**
-   * Asynchronously searches for cryptographic algorithms in the content of a file.
-   * @param cryptoItem The CryptoItem to search for cryptographic algorithms.
-   * @returns A promise that resolves when the search is complete.
-   */
-  private async searchCrypto(cryptoItem: CryptoItem){
-    const cryptoFound = new Array<string>();
-    const stats = await fs.promises.stat(cryptoItem.getPath());
-    if (stats.size > this.MAX_FILE_SIZE) {
-      cryptoItem.setAlgorithms([]);
-      return;
-    }
-    let content = await fs.promises.readFile(cryptoItem.getPath(), 'utf-8');
-    this.cryptoRules.forEach((value, key) => {
-      try {
-        const matches = content.match(value);
-        if (matches) {
-          cryptoFound.push(key);
-        }
-      } catch (e){
-        console.error(e);
-      }
+    const threadPool = new ThreadPool(this.threads, this.cryptoRules, this.cryptoMapper);
+    files.forEach((f) => {
+      threadPool.enqueueTask(new CryptoItem(f))
     });
-    // Release memory
-    content = null;
-    const results: Array<CryptoAlgorithm> = [];
-    cryptoFound.forEach((cf)=>{
-      results.push(this.cryptoMapper.get(cf));
-    });
-    cryptoItem.setAlgorithms(results);
+    await threadPool.init();
+    return await threadPool.processQueue();
   }
-
 }
-
-

@@ -32,7 +32,7 @@ export class CryptographyScanner {
    */
   public async scan(files: Array<string>): Promise<ILocalCryptographyResponse> {
     const cryptographyRules = await this.loadRules(this.cryptoConfig.getRulesPath());
-    const localCrypto = new LocalCrypto(cryptographyRules);
+    const localCrypto = new LocalCrypto(cryptographyRules, this.cryptoConfig.getNumberOfThreads());
     const cryptoItems = await localCrypto.search(files);
     return mapToILocalCryptographyResponse(cryptoItems);
   }

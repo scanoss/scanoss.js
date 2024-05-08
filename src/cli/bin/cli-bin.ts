@@ -90,6 +90,7 @@ async function main() {
   // Options
   cryptography.addOption(new Option("-r, --rules <rules>", "Crypto rules"));
   cryptography.addOption(new Option("-o, --output <filename>", "Output result file name (optional - default stdout)"));
+  cryptography.addOption(new Option("-T, --threads <threads>", "Number of threads to use while scanning (optional - default 5)"));
 
   cryptography.action((source, options) => {
     cryptoHandler(source, options).catch((e) => {
