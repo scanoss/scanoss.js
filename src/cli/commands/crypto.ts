@@ -11,7 +11,7 @@ import { DependencyFilter } from '../../sdk/tree/Filters/DependencyFilter';
 import { CryptoCfg } from '../../sdk/Cryptography/CryptoCfg';
 import fs from 'fs';
 
-export async function cryptoHandler(rootPath: string, options: any){
+export async function cryptoHandler(rootPath: string, options: any): Promise<void> {
   rootPath = rootPath.replace(/\/$/, '');  // Remove trailing slash if exists
   rootPath = rootPath.replace(/^\./, process.env.PWD);  // Convert relative path to absolute path.
   const pathIsFolder = await isFolder(rootPath);
@@ -19,9 +19,10 @@ export async function cryptoHandler(rootPath: string, options: any){
   let cryptoRules = null;
   if(options.rules) cryptoRules = options.rules;
 
+  let threads = null;
+  if(options.threads) threads = options.threads;
 
-  const cryptoScanner = new CryptographyScanner(new CryptoCfg(cryptoRules));
-
+  const cryptoScanner = new CryptographyScanner(new CryptoCfg({threads, rulesPath: cryptoRules}));
 
   let fileList: Array<string> = [];
   fileList.push(rootPath);
@@ -35,7 +36,7 @@ export async function cryptoHandler(rootPath: string, options: any){
   console.log("Searching for local cryptography...")
   const results = await cryptoScanner.scan(fileList);
 
-  if (options.output) {
+  if(options.output) {
     await fs.promises.writeFile(options.output, JSON.stringify(results, null, 2));
     console.log(`Results found in ${options.output}`);
   } else {
