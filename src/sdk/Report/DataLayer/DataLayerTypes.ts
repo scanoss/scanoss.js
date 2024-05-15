@@ -1,3 +1,9 @@
+import {
+  CryptoAlgorithm,
+  ICryptoItem
+} from '../../Cryptography/CryptographyTypes';
+import { CryptoItem } from '../../Cryptography/Scanneable/CryptoItem';
+
 /*************  Component interface definition  *************/
 export interface ComponentDataLayer {
   key: string; // purl[0]
@@ -43,6 +49,7 @@ export interface Health {
   stars: number;
   forks: number;
 }
+
 /*************  Component interface definition  *************/
 
 /*************  Dependency interface definition  *************/
@@ -116,6 +123,19 @@ export interface SummaryDataLayer {
   totalFiles: number;
 }
 
+
+export interface ComponentCryptography {
+  purl: string;
+  version: string;
+  algorithms: Array<CryptoAlgorithm>;
+}
+
+/*********************** Files ****************************/
+export interface CryptographyDataLayer {
+  files: Array<CryptoItem>;
+  components: Array<ComponentCryptography>;
+}
+
 // Each layer is created to group by differents criteria.
 export interface IDataLayers {
   licenses: LicenseDataLayer[];
@@ -124,6 +144,7 @@ export interface IDataLayers {
   dependencies: DependencyDataLayer[];
   vulnerabilities: VulnerabilityDataLayer[];
   summary: SummaryDataLayer;
+  cryptography: CryptographyDataLayer;
 }
 
 export interface DataProvider {

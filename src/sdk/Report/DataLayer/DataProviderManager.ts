@@ -19,6 +19,7 @@ export class DataProviderManager {
       summary: null,
       licenses: null,
       licensesObligations: null,
+      cryptography: null,
     };
 
     for (const layer of this.dataLayersProviders)

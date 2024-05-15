@@ -29,6 +29,9 @@ import { DecompressionFilter } from '../../sdk/tree/Filters/DecompressionFilter'
 import { DecompressionManager } from '../../sdk/Decompress/DecompressionManager';
 import path from 'path';
 import { LicenseObligationDataProvider } from '../../sdk/Report/DataLayer/DataProviders/LicenseObligationDataProvider';
+import {
+  CryptographyDataProvider
+} from '../../sdk/Report/DataLayer/DataProviders/CryptographyDataProvider';
 
 export async function scanHandler(
   rootPath: string,
@@ -192,6 +195,9 @@ export async function scanHandler(
         scannersResults.dependencies
       )
     );
+
+    dataProviderManager.addDataProvider(new CryptographyDataProvider(null,scannersResults.scanner));
+
     const report = new Report(dataProviderManager);
     scannerResultsString = await report.getHTML();
   }
