@@ -8,6 +8,7 @@ import File from './File';
 import Folder from './Folder';
 import { FilterList } from '../Filtering/Filtering';
 import { Filter } from './Filters/Filter';
+import { isBinaryFileSync } from 'isbinaryfile';
 
 export class Tree {
   private rootFolder: Folder;
@@ -44,7 +45,10 @@ export class Tree {
         const f: Folder = new Folder(fullPath, dirEntry.name);
         const subTree = this.buildRec(`${path}/${dirEntry.name}`, f);
         root.addChild(subTree);
-      } else root.addChild(new File(fullPath, dirEntry.name));
+      } else {
+        const file = new File(fullPath, dirEntry.name, isBinaryFileSync(fullPath));
+        root.addChild(file);
+      }
     }
     return root;
   }
