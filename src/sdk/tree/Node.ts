@@ -10,9 +10,12 @@ export default abstract class Node {
 
   protected action: string;
 
+  protected isBinaryFile: boolean;
+
   constructor(path: string, label: string) {
     this.path = path;
     this.label = label;
+    this.isBinaryFile = false;
   }
 
   public abstract getNode(path: string): Node;
@@ -29,6 +32,10 @@ export default abstract class Node {
 
   public getType(): NodeType {
     return this.type;
+  }
+
+  public isBinary(): boolean {
+    return this.isBinaryFile;
   }
 
 }
