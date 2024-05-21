@@ -10,10 +10,9 @@ export class FilterAND extends Filter {
         this.filters =  filters;
     }
 
-
     public evaluate(node: Node): boolean {
-        let valid = false;
-       for(let i = 0; i < this.filters.length ; i++){
+       let valid = false;
+       for(let i = 0; i < this.filters.length; i++) {
            valid = this.filters[i].evaluate(node);
            if(!valid) return false;
         }
