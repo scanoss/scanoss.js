@@ -11,6 +11,9 @@ import { DependencyFilter } from '../../sdk/tree/Filters/DependencyFilter';
 import { CryptoCfg } from '../../sdk/Cryptography/CryptoCfg';
 import fs from 'fs';
 import { BinaryFilter } from '../../sdk/tree/Filters/BinaryFilter';
+import { ScanFilter } from '../../sdk/tree/Filters/ScanFilter';
+import { FilterAND } from '../../sdk/tree/Filters/FilterAND';
+import { isBinaryFileSync } from 'isbinaryfile';
 
 export async function cryptoHandler(rootPath: string, options: any): Promise<void> {
   rootPath = rootPath.replace(/\/$/, '');  // Remove trailing slash if exists
@@ -31,7 +34,7 @@ export async function cryptoHandler(rootPath: string, options: any): Promise<voi
   if (pathIsFolder) {
     const tree = new Tree(rootPath);
     tree.build();
-    fileList = tree.getFileList(new BinaryFilter());
+    fileList = tree.getFileList(new FilterAND([new BinaryFilter(), new ScanFilter('')]));
   }
 
   console.log("Searching for local cryptography...")
