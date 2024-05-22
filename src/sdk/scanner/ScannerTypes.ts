@@ -42,17 +42,25 @@ export enum SbomMode {
   SBOM_IDENTIFY = 'identify'
 }
 
-export interface ScannerInput {
-  fileList: Array<string>;
-  folderRoot?: string;
+export interface BaseScannerInput {
+  wfpPath?: string;
+  sbom?: string;
+  sbomMode?: SbomMode;
   engineFlags?: number;
   winnowing?: {
     mode: WinnowingMode,
   }
-  wfpPath?: string;
-  sbom?: string;
-  sbomMode?: SbomMode;
+}
+
+export interface ScannerInput extends BaseScannerInput {
+  fileList: Array<string>;
+  folderRoot?: string;
 };
+
+export interface ContentScannerInput extends BaseScannerInput{
+  content: string,
+  key: string,
+}
 
 /********************** Scanner results types **********************/
 

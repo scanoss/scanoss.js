@@ -9,7 +9,12 @@ import { Dispatcher } from './Dispatcher/Dispatcher';
 import { DispatchableItem } from './Dispatcher/DispatchableItem';
 import { DispatcherResponse } from './Dispatcher/DispatcherResponse';
 import { ScannerCfg } from './ScannerCfg';
-import { ScannerEvents, ScannerInput, ScannerResults } from './ScannerTypes';
+import {
+  ContentScannerInput, ScannerComponent,
+  ScannerEvents,
+  ScannerInput,
+  ScannerResults
+} from './ScannerTypes';
 
 import { WfpProvider } from './WfpProvider/WfpProvider';
 import { FingerprintPackage } from './WfpProvider/FingerprintPackage';
@@ -18,11 +23,15 @@ import { WfpSplitter } from './WfpProvider/WfpSplitter/WfpSplitter';
 
 import sortPaths from 'sort-paths';
 import { v4 as uuidv4 } from 'uuid';
+import path from 'path';
 
 let finishPromiseResolve;
 let finishPromiseReject;
 
 export class Scanner extends EventEmitter {
+
+  private readonly SCAN_FOLDER_NAME = 'scanner';
+
   private scannerCfg: ScannerCfg;
 
   private workDirectory: string;
@@ -67,6 +76,10 @@ export class Scanner extends EventEmitter {
     this.scannerId = new Date().getTime().toString();
   }
 
+  private getScanFolderId(){
+    return `${this.SCAN_FOLDER_NAME}-${this.getScannerId()}`;
+  }
+
   public init() {
     this.scanFinished = false;
     this.processingNewData = false;
@@ -89,7 +102,7 @@ export class Scanner extends EventEmitter {
     this.setDispatcherListeners();
 
     if (this.workDirectory === undefined)
-      this.setWorkDirectory(`${os.tmpdir()}/scanner-${this.getScannerId()}`);
+      this.setWorkDirectory(`${os.tmpdir()}/${this.getScanFolderId()}`);
   }
 
   public setWorkDirectory(workDirectory: string) {
@@ -118,7 +131,8 @@ export class Scanner extends EventEmitter {
     if (fs.existsSync(this.wfpFilePath)) fs.unlinkSync(this.wfpFilePath);
   }
 
-  public scan(scannerInput: Array<ScannerInput>): Promise<string> {
+  public async scan(scannerInput: Array<ScannerInput>):Promise<string> {
+
     this.init();
     this.createOutputFiles();
     this.scannerInput = scannerInput;
@@ -147,6 +161,43 @@ export class Scanner extends EventEmitter {
       });
     }
     return this.finishPromise;
+  }
+
+  /**
+   * Scans the provided content.
+   *
+   * @param {ContentScannerInput} contentScannerInput - The input containing content and file name.
+   * @param {string} contentScannerInput.content - The content to be scanned.
+   * @param {string} contentScannerInput.key - Unique key to be referenced on scan result .
+   * @returns {Promise<ScannerComponent | null>} - The scan result as a `ScannerComponent` or `null` if no content is provided.
+   *
+   * @throws {Error} - Throws an error if there is an issue during the scan.
+   *
+   * */
+  public async scanContents(contentScannerInput: ContentScannerInput):Promise<ScannerComponent | null> {
+      if (!contentScannerInput.content) {
+        this.reportLog('[ SCANNER ]: No input provided', 'warning');
+        return null;
+      }
+      const workingDir = `${os.tmpdir()}/${this.getScanFolderId()}`;
+      this.setWorkDirectory(workingDir);
+      this.workDirectory = workingDir;
+
+      await fs.promises.writeFile(`${workingDir}/${contentScannerInput.key}`, contentScannerInput.content, 'utf-8');
+
+      const rootPath = path.resolve(`${workingDir}/${contentScannerInput.key}`);
+
+      // Build the input for a common scan
+      const scannerInput: ScannerInput = {
+        folderRoot: workingDir,
+        fileList: [rootPath],
+      };
+      const input = {...contentScannerInput, ...scannerInput};
+
+      // Perform a common scan
+      const resultPath = await this.scan([input]);
+
+      return JSON.parse(await fs.promises.readFile(resultPath, 'utf-8')) as ScannerComponent;
   }
 
   public getScannerId() {
