@@ -50,19 +50,26 @@ export interface BaseScannerInput {
   winnowing?: {
     mode: WinnowingMode,
   }
+  scanSource?:string;
 }
 
 export interface ScannerInput extends BaseScannerInput {
-  fileList: Array<string>;
+  fileList?: Array<string>;
   folderRoot?: string;
+  content?: ContentScannerInput;
 };
 
-export interface ContentScannerInput extends BaseScannerInput{
-  content: string,
+export interface ContentScannerInput extends BaseScannerInput {
+  data: string,
   key: string,
 }
 
-/********************** Scanner results types **********************/
+export interface ScannerResponse {
+  resultPath: string
+  results?: ScannerComponent
+}
+
+/********************** BaseScanner results types **********************/
 
 export type ScannerResults = Record<string , ScannerComponent[]>;
 
@@ -134,4 +141,4 @@ export interface ScannerComponent {
     elapsed: string;
   };
 }
-/********************** Scanner results types **********************/
+/********************** BaseScanner results types **********************/

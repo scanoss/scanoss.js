@@ -84,12 +84,12 @@ The SDK provides a simple way to interact with the Scanoss APIs from your JS cod
 
 ```typescript
 // Import as ES6
-import { Scanner, ScannerEvents, ScannerTypes } from 'scanoss';
+import { BaseScanner, ScannerEvents, ScannerTypes } from 'scanoss';
 
 // Import as CommonJS
-// const { Scanner, ScannerEvents } = require('scanoss');
+// const { BaseScanner, ScannerEvents } = require('scanoss');
 
-const scanner = new Scanner();
+const scanner = new BaseScanner();
 
 // Set the folder path where the module will save the scan results and fingerprints
 // If is not specified, the module will create a folder on tmp

@@ -1,6 +1,5 @@
 import fs from 'fs';
 
-import { Scanner } from '../../sdk/scanner/Scanner';
 import {
   SbomMode,
   ScannerEvents,
@@ -32,6 +31,9 @@ import { LicenseObligationDataProvider } from '../../sdk/Report/DataLayer/DataPr
 import {
   CryptographyDataProvider
 } from '../../sdk/Report/DataLayer/DataProviders/CryptographyDataProvider';
+import { FileScanner } from '../../sdk/scanner/FileScanner';
+import { Scanner } from '../../sdk/scanner/Scanner';
+
 
 export async function scanHandler(
   rootPath: string,
@@ -150,14 +152,14 @@ export async function scanHandler(
   }
 
   //Launch parallel scanners
-  const pScanner = scanner.scan([scannerInput]);
+  const pScanner = scanner.scan(scannerInput);
 
-  const [scannerResultPath, depResults] = await Promise.all([
+  const [scannerResult, depResults] = await Promise.all([
     pScanner,
     pDependencyScanner,
   ]);
   const scannerResults = JSON.parse(
-    await fs.promises.readFile(scannerResultPath, 'utf-8')
+    await fs.promises.readFile(scannerResult.resultPath, 'utf-8')
   );
 
   //TODO Unify results.json and dependency.json. What happens with result.json that includes dependencies?

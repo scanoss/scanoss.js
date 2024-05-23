@@ -1,7 +1,8 @@
 // *** Code scanner exports *** //
-export * from './sdk/scanner/Scanner';
+export * from './sdk/scanner/BaseScanner';
 export * from './sdk/scanner/ScannerTypes';
 export * from './sdk/scanner/ScannerCfg';
+export * from './sdk/scanner/Scanner';
 export * from './sdk/scanner/WfpProvider/WfpCalculator/WfpCalculator';
 
 // *** Fingerprint exports *** //

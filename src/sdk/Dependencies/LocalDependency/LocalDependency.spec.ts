@@ -1,7 +1,7 @@
 import { LocalDependencies } from './LocalDependency';
 import { assert, expect } from 'chai';
 
-describe('Suit test for LocalDependency Scanner', () => {
+describe('Suit test for LocalDependency BaseScanner', () => {
 
   it('Testing wildcard string matching',  function () {
     const localDependencyScanner = new LocalDependencies();
