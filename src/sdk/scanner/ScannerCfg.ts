@@ -5,7 +5,7 @@ export class ScannerCfg extends BaseConfig {
   public CLIENT_TIMESTAMP = '';
 
   // API URL
-  public API_URL = 'https://api.osskb.org/scan/direct';
+  public API_URL = null;
 
   public API_KEY = '';
 
@@ -40,4 +40,9 @@ export class ScannerCfg extends BaseConfig {
   public DISPATCHER_QUEUE_SIZE_MAX_LIMIT = 2000;
 
   public DISPATCHER_QUEUE_SIZE_MIN_LIMIT = 1000;
+
+  constructor() {
+    super();
+    this.API_URL = ScannerCfg.getDefaultURL();
+  }
 }

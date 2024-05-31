@@ -32,6 +32,8 @@ export class Scanner extends EventEmitter {
 
   private readonly SCAN_FOLDER_NAME = 'scanner';
 
+  private readonly DEFAULT_PREMIUM_URL = 'https://api.scanoss.com/scan/direct';
+
   private scannerCfg: ScannerCfg;
 
   private workDirectory: string;
@@ -89,6 +91,9 @@ export class Scanner extends EventEmitter {
     this.filesToScan = {};
     this.filesNotScanned = {};
     this.obfuscateMap = {};
+
+    // Use premium URL if API KEY is set and not API URL was set.
+    this.scannerCfg.API_URL = (this.scannerCfg.API_KEY && this.scannerCfg.API_URL === ScannerCfg.getDefaultURL()) ? this.DEFAULT_PREMIUM_URL : this.scannerCfg.API_URL;
 
     this.wfpProvider = new WfpCalculator(this.scannerCfg);
     this.dispatcher = new Dispatcher(this.scannerCfg);
