@@ -43,4 +43,8 @@ export abstract class BaseConfig {
 
     }
   }
+
+  public static getDefaultURL (): string {
+    return 'https://api.osskb.org/scan/direct';
+  }
 }
