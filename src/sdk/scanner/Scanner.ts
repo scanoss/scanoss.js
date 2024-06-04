@@ -82,6 +82,14 @@ export class Scanner extends EventEmitter {
     return `${this.SCAN_FOLDER_NAME}-${this.getScannerId()}`;
   }
 
+  private async removeWorkingDir(){
+    try {
+      await fs.promises.rm(this.workDirectory,{ recursive: true , force: true });
+    }catch(e) {
+      this.reportLog(`[ SCANNER ]: Unable to remove Working Dir: ${this.workDirectory}`);
+    }
+  }
+
   public init() {
     this.scanFinished = false;
     this.processingNewData = false;
@@ -202,7 +210,12 @@ export class Scanner extends EventEmitter {
       // Perform a common scan
       const resultPath = await this.scan([input]);
 
-      return JSON.parse(await fs.promises.readFile(resultPath, 'utf-8')) as ScannerComponent;
+      const results  = JSON.parse(await fs.promises.readFile(resultPath, 'utf-8')) as ScannerComponent;
+
+      // Only removes working dir on scan content
+      await this.removeWorkingDir();
+
+      return results;
   }
 
   public getScannerId() {
