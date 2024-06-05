@@ -3,7 +3,6 @@
 import EventEmitter from 'eventemitter3';
 import fetch, { Response } from 'node-fetch';
 import PQueue from 'p-queue';
-
 import { ScannerEvents } from '../ScannerTypes';
 import { DispatcherResponse } from './DispatcherResponse';
 import { ScannerCfg } from '../ScannerCfg';
@@ -12,6 +11,7 @@ import { DispatchableItem } from './DispatchableItem';
 import { HttpsProxyAgent } from 'https-proxy-agent';
 import { HttpProxyAgent } from 'http-proxy-agent';
 import { Utils } from '../../Utils/Utils';
+
 
 const MAX_CONCURRENT_REQUEST = 30;
 
@@ -205,7 +205,7 @@ export class Dispatcher extends EventEmitter {
       if (!response.ok) {
         plain_response = await response.text();
         const err = new Error(
-          `\nHTTP Status code: ${response.status}\nServer Response:\n${plain_response}\n`
+          `\nHTTP Status code: ${response.status}\nServer Response:\n${plain_response}${response.status === 404 ?`Requested URL was not found:\n${this.scannerCfg.API_URL}\n` : '' }`
         );
         err.name = ERRORS.HTTP;
         throw err;
