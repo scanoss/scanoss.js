@@ -25,6 +25,7 @@
     "@grpc/grpc-js": "^1.5.5",
     "abort-controller": "^3.0.0",
     "adm-zip": "^0.5.9",
+    "antlr4": "^4.13.1-patch-1",
     "cli-progress": "^3.9.1",
     "commander": "^11.1.0",
     "eventemitter3": "^4.0.7",

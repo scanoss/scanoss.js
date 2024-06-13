@@ -28,7 +28,7 @@ export class LocalDependencies {
       'pom.xml': pomParser,
       'package.json': packageParser,
       'package-lock.json': packagelockParser,
-      Gemfile: gemfileParser,
+      'Gemfile': gemfileParser,
       'Gemfile.lock': gemfilelockParser,
       'go.mod': goModParser,
       'go.sum': goSumParser,
@@ -66,6 +66,7 @@ export class LocalDependencies {
     return results;
   }
 
+  // The logic for the string wildcard match algorithm was an imitation from here:
   // https://www.codeproject.com/Articles/5163931/Fast-String-Matching-with-Wildcards-Globs-and-Giti
   public stringMatchWithWildcard(text: string, pattern: string): boolean {
     let iText = 0;
@@ -97,7 +98,6 @@ export class LocalDependencies {
     return iPattern >= pattern.length ? true : false;
   }
 
-  // The logic for the string wildcard match algorithm was an imitation from here:
 
   private getParserFunc(filePath: string): ParserFuncType {
     const fileName = path.basename(filePath);
