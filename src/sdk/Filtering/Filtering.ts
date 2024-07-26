@@ -53,6 +53,10 @@ class AbstractFilter {
   evaluate(path: string): boolean {
     return true;
   }
+
+   getScope(): FilterScope {
+    return this.scope;
+  }
 }
 
 export class NameFilter extends AbstractFilter {
@@ -64,7 +68,7 @@ export class NameFilter extends AbstractFilter {
   constructor(condition: string, value: string, scope: FilterScope) {
     super(condition, value);
     this.ftype = FilterType.NAME;
-    this.scope = scope || super.scope;
+    this.scope = scope || this.getScope();
   }
 
   evaluate(path: string): boolean {
@@ -99,7 +103,7 @@ export class ContentFilter extends AbstractFilter {
   constructor(condition: string, value: string, scope: FilterScope) {
     super(condition, value);
     this.ftype = FilterType.CONTENT;
-    this.scope = scope || super.scope; // Verificar
+    this.scope = scope || this.getScope(); // Verificar
   }
 
   evaluate(path: string): boolean {
@@ -118,7 +122,7 @@ export class ExtensionFilter extends AbstractFilter {
   constructor(condition: string, value: string, scope: FilterScope) {
     super(condition, value);
     this.ftype = FilterType.EXTENSION;
-    this.scope = scope || super.scope; // Verificar
+    this.scope = scope || this.getScope(); // Verificar
   }
 
   evaluate(path: string): boolean {
@@ -135,7 +139,7 @@ export class SizeFilter extends AbstractFilter {
   constructor(condition: string, value: string, scope: FilterScope) {
     super(condition, value);
     this.ftype = FilterType.SIZE;
-    this.scope = scope || super.scope; // Verificar
+    this.scope = scope || this.getScope(); // Verificar
   }
 
   evaluate(path: string): boolean {
@@ -171,7 +175,7 @@ export class DateFilter extends AbstractFilter {
   constructor(condition: string, value: string, scope: FilterScope) {
     super(condition, value);
     this.ftype = FilterType.NAME;
-    this.scope = scope || super.scope; // Verificar
+    this.scope = scope || this.getScope(); // Verificar
   }
 
   evaluate(path: string): boolean {

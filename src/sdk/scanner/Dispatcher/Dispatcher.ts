@@ -8,9 +8,8 @@ import { DispatcherResponse } from './DispatcherResponse';
 import { ScannerCfg } from '../ScannerCfg';
 import { GlobalControllerAborter } from './GlobalControllerAborter';
 import { DispatchableItem } from './DispatchableItem';
-import { HttpsProxyAgent } from 'https-proxy-agent';
-import { HttpProxyAgent } from 'http-proxy-agent';
 import { Utils } from '../../Utils/Utils';
+import { ProxyAgent } from "proxy-agent";
 
 
 const MAX_CONCURRENT_REQUEST = 30;
@@ -32,11 +31,7 @@ export class Dispatcher extends EventEmitter {
 
   private queueMinLimitReached: boolean;
 
-  private recoverableErrors;
-
-  private proxyAgent: HttpsProxyAgent | HttpProxyAgent;
-
-  private caCert: string;
+  private proxyAgent:  ProxyAgent;
 
   constructor(scannerCfg = new ScannerCfg()) {
     super();
@@ -48,29 +43,21 @@ export class Dispatcher extends EventEmitter {
   }
 
   init() {
-    //Loads proxy from SDK config, if not, loads from env variables, if not, leave empty
-    this.proxyAgent = null;
-    this.caCert = null;
 
-    const proxyAddr =
-      this.scannerCfg.PROXY ||
-      process.env.https_proxy ||
-      process.env.HTTPS_PROXY ||
-      process.env.http_proxy ||
-      process.env.HTTP_PROXY ||
-      null;
+    process.env.NO_PROXY = process.env.NO_PROXY || this.scannerCfg.NO_PROXY
+    process.env.HTTP_PROXY = process.env.HTTP_PROXY || this.scannerCfg.HTTP_PROXY
+    process.env.HTTPS_PROXY = process.env.HTTPS_PROXY ||this.scannerCfg.HTTPS_PROXY
+    this.proxyAgent = new ProxyAgent();
+
+
     const caCertPath =
       this.scannerCfg.CA_CERT || process.env.NODE_EXTRA_CA_CERTS;
 
     if (caCertPath) Utils.loadCaCertFromFile(caCertPath);
-    else if (this.scannerCfg.IGNORE_CERT_ERRORS || proxyAddr)
+    else if (this.scannerCfg.IGNORE_CERT_ERRORS )
       process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
-    if (proxyAddr) {
-      if (this.scannerCfg.API_URL.trim().startsWith('https'))
-        this.proxyAgent = new HttpsProxyAgent(proxyAddr);
-      else this.proxyAgent = new HttpProxyAgent(proxyAddr);
-    }
+
 
     this.pQueue = new PQueue({
       concurrency: this.scannerCfg.CONCURRENCY_LIMIT,
