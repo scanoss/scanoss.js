@@ -42,7 +42,7 @@ async function main() {
   scan.addOption(new Option("    --ignore-cert-errors", "Ignore self signed certificate errors"));
   scan.addOption(new Option("    --ca-cert <cert>", "Specify a path for a cert used in SSL/TLS connection"));
   scan.addOption(new Option("    --proxy <proxy>", "Proxy URL to use for connections (optional). Can also use the environment variable \"HTTPS_PROXY=[ip]:[port]\" and \"grcp_proxy=[ip]:[port]\" for gRPC"));
-  scan.addOption(new Option("    --pac <pac>", "Proxy auto configuration (optional). Specify a file, http url or ftp url"));
+  scan.addOption(new Option("    --grpc_proxy <grpc_proxy>", "GRPC Proxy URL to use for connections (optional)." ));
   scan.addOption(new Option("-v, --verbose", "Makes scan operation verbose"));
 
   scan.action((source, options) => {
