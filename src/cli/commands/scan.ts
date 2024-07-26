@@ -46,8 +46,7 @@ export async function scanHandler(
   let dependencyInput: Array<string> = [];
   const dependencyScannerCfg = new DependencyScannerCfg();
   if (options.api2url) dependencyScannerCfg.API_URL = options.api2url;
-  if (options.proxy) dependencyScannerCfg.PROXY = options.proxy;
-  if (options.pac) dependencyScannerCfg.PAC = options.pac;
+  if (options.grpc_proxy) dependencyScannerCfg.GRPC_PROXY = options.grpc_proxy;
   await dependencyScannerCfg.validate();
   const dependencyScanner = new DependencyScanner(dependencyScannerCfg);
 
@@ -64,8 +63,12 @@ export async function scanHandler(
     scannerCfg.MAX_RETRIES_FOR_RECOVERABLES_ERRORS = options.maxRetry;
   if (options.caCert) scannerCfg.CA_CERT = options.caCert;
   if (options.ignoreCertErrors) scannerCfg.IGNORE_CERT_ERRORS = true;
-  if (options.pac) scannerCfg.PAC = options.pac;
-  if (options.proxy) scannerCfg.PROXY = options.proxy;
+
+  if (options.proxy) {
+    scannerCfg.HTTPS_PROXY = options.proxy;
+    scannerCfg.HTTP_PROXY = options.proxy;
+  }
+
   if (options.obfuscate) scannerCfg.WFP_OBFUSCATION = true;
 
   await scannerCfg.validate();
