@@ -54,8 +54,10 @@ export class Dispatcher extends EventEmitter {
       this.scannerCfg.CA_CERT || process.env.NODE_EXTRA_CA_CERTS;
 
     if (caCertPath) Utils.loadCaCertFromFile(caCertPath);
-    else if (this.scannerCfg.IGNORE_CERT_ERRORS )
-      process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+
+    if (this.scannerCfg.IGNORE_CERT_ERRORS )  process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+    else process.env.NODE_TLS_REJECT_UNAUTHORIZED='1'
+
 
 
 
