@@ -2,19 +2,18 @@
   "name": "scanoss",
   "version": "0.15.0",
   "description": "The SCANOSS JS package provides a simple, easy to consume module for interacting with SCANOSS APIs/Engine.",
-  "main": "build/main/index.js",
-  "typings": "build/main/index.d.ts",
-  "module": "build/module/index.js",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
   "repository": "https://github.com/scanoss/scanoss.js",
   "license": "MIT",
   "keywords": [],
   "bin": {
-    "scanoss-js": "build/main/cli/bin/cli-bin.js"
+    "scanoss-js": "dist/cli/bin/cli-bin.js"
   },
   "scripts": {
-    "build": "run-p build:*",
-    "build:main": "tsc -p tsconfig.json",
-    "build:module": "tsc -p tsconfig.module.json",
+    "build": "npm run build:cli && npm run build:sdk",
+    "build:sdk": "webpack --config webpack.config.js",
+    "build:cli": "tsc -p tsconfig.json",
     "test": "nyc mocha -r ts-node/register 'tests/**/*.ts' 'src/**/*.spec.ts'",
     "install-dev": "npm run build && npm run test && npm install -g ."
   },
@@ -57,15 +56,20 @@
     "codecov": "^3.5.0",
     "deep-equal-in-any-order": "^2.0.1",
     "mocha": "^10.2.0",
+    "node-polyfill-webpack-plugin": "^4.0.0",
     "npm-run-all": "^4.1.5",
     "nyc": "^15.1.0",
     "prettier": "^2.8.8",
+    "ts-loader": "^9.5.1",
     "ts-node": "^10.9.1",
-    "typescript": "^5.5.4"
+    "typescript": "^5.5.4",
+    "webpack": "^5.93.0",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^5.0.4"
   },
   "files": [
-    "build/main",
-    "build/module",
+    "dist/index.js",
+    "dist/cli",
     "!**/*.json",
     "assets/**",
     "!**/*.spec.*",

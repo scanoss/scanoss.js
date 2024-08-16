@@ -1,11 +1,9 @@
 {
   "compilerOptions": {
     "incremental": true,
-    "target": "es2018",
-    "outDir": "build/main",
-    //"rootDir": "src",
+    "target": "esnext",
     "moduleResolution": "node",
-    "module": "commonjs",
+    "module": "esnext",
     "declaration": true,
     "inlineSourceMap": true,
     "esModuleInterop": true /* Enables emit interoperability between CommonJS and ES Modules via creation of namespace objects for all imports. Implies 'allowSyntheticDefaultImports'. */,
@@ -22,10 +20,12 @@
     "pretty": true /* Stylize errors and messages using color and context. */,
 
     "lib": ["es2017"],
-    "types": ["mocha","node"],
-    "typeRoots": ["node_modules/@types", "src/types"]
+    "types": ["mocha", "node"],
+    "typeRoots": ["node_modules/@types", "src/types"],
+
+    "outDir": "dist"
   },
-  "include": ["./src" , "./src/**/*.html" , "./src/**/*.ts", "./src/scanoss/*" ],
+  "include": ["./src", "./src/**/*.html", "./src/**/*.ts", "./src/scanoss/*"],
   "exclude": ["node_modules", "tests/data/*"],
   "compileOnSave": false
 }
