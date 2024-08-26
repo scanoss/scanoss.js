@@ -39,4 +39,7 @@ export * from './sdk/Services/Grpc/CryptographyService';
 export * from './sdk/Services/Grpc/DependencyService';
 export { PurlRequest, EchoRequest } from './sdk/Services/Grpc/BaseService';
 
+// *** Http ***//
+export * from './sdk/Services/http/HttpProxy'
+
 export { logger } from './sdk/Logger';
