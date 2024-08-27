@@ -40,6 +40,6 @@ export * from './sdk/Services/Grpc/DependencyService';
 export { PurlRequest, EchoRequest } from './sdk/Services/Grpc/BaseService';
 
 // *** Http ***//
-export * from './sdk/Services/http/HttpProxy'
+export * from './sdk/Services/http/HttpClient'
 
 export { logger } from './sdk/Logger';
