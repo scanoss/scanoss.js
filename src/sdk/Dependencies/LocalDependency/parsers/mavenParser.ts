@@ -15,9 +15,9 @@ export function pomParser(fileContent: string, filePath: string): Promise<ILocal
     if(path.basename(filePath) != MANIFEST_FILE)
       return Promise.resolve(results);
 
-    const dependencies = fileContent.match(/<dependency>((?:.|\n)*?)<\/dependency>/gm);
-    if(dependencies) {
 
+    const dependencies = fileContent.match(/<dependency>[\s\S]*?<\/dependency>/gm);
+    if(dependencies) {
       dependencies.forEach(dependency => {
         // Extract groupId. It's the purl namespace
         const groupId = dependency.match(/<groupId>([^<]*)<\/groupId>/);
