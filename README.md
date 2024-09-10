@@ -5,7 +5,7 @@
 </div>
 
 
-
+# ** WARNING ** : Work In Progress 
 
 # Scanoss JS Package
 
@@ -21,136 +21,96 @@ To download and install the Scanoss CLI run the following command: `npm install 
 
 On the other hand, if you need to install the module in your own Node.js project and consume it as a dependency, execute the following command `npm install scanoss`
 
-## CLI Usage
 
-Running the bare command will list the available sub-commands:
 
-```Usage: scanoss-js [options] [command]
-Usage: scanoss-js [options] [command]
+## SDK Basic Usage
 
-The SCANOSS JS package provides a simple, easy to consume module for interacting with SCANOSS APIs/Engine.
+```javascript
+import { ScanossSDK } from 'scanoss';
 
-Options:
-  -V, --version            output the version number
-  -h, --help               display help for command
+// Initialize the SDK with your API key
+const sdk = new ScanossSDK('your-api-key-here');
 
-Commands:
-  scan [options] <source>  Scan a folder/file
-  dep [options] <source>   Scan for dependencies
-  wfp [options] <source>   Generates fingerprints for a folder/file
-  help [command]           display help for command
+// Example: Analyze dependencies
+const dependencies = await sdk.dependencies.decorate(dependencyList);
+
+// Example: Scan a folder
+const scanResult = await sdk.scanning.scanFolder('./project');
+
+// Example: Check vulnerabilities
+const vulnerabilities = await sdk.vulnerability.check(purls);
+
+// Example: Analyze cryptography usage
+const cryptoUsage = await sdk.crypto.analyze(files);
 ```
 
-### Command `scan`
+## Namespaces
 
-* For a quick and free analysis of your project, simply input: `scanoss-js scan -o results.json <source-folder>`
+The SCANOSS SDK is organized into several namespaces, each focusing on a specific area of functionality:
 
+### Dependencies Namespace
 
-* Using an API Token for Scanning: `scanoss-js scan -o results.json --key <your_token> --apiurl <your_apiurl> <source-folder>`
+The `dependencies` namespace provides tools for analyzing and managing project dependencies.
 
+```javascript
+// Decorate a list of dependencies with additional information
+const decoratedDeps = await sdk.dependencies.decorate(dependencyList);
 
-* Include Dependency detection in scanning: `scanoss-js scan -o results.json --dependencies <source-folder>`
-
-### Command `wfp`
-* Generate Hashes without analysis: `scanoss-js wfp -o fingerprints.wfp <source-folder>`
-
- 
-* Subsequent scanning of previously generated Hashes: `scanoss-js scan -w fingerprints.wfp -o results.json`
-
-Note: the --dependencies flag is not applicable here, given that manifest files aren't encompassed within the hashes.
-
-
-
-### Command `dep`
-* Focus Exclusively on Dependencies: `scanoss-js dep .`
-
-The manifest files acknowledged during the scanning process are:
-
-    * Python: requirements.txt, pyproject.toml
-    * Java: pom.xml
-    * Javascript: package.json, package-lock.json, yarn.lock
-    * Ruby: Gemfile, Gemfile.lock
-    * Golang: go.mod, go.sum
-    * .NET/NuGet: *.csproj, packages.config
-    * Gradle: build.gradle
-
-
-
-
-## SDK Usage
-The SDK provides a simple way to interact with the Scanoss APIs from your JS code. Here are two examples for performing code scanning and dependency scanning
-
-### Code Scanning 
-
-```typescript
-// Import as ES6
-import { Scanner, ScannerEvents, ScannerTypes } from 'scanoss';
-
-// Import as CommonJS
-// const { Scanner, ScannerEvents } = require('scanoss');
-
-const scanner = new Scanner();
-
-// Set the folder path where the module will save the scan results and fingerprints
-// If is not specified, the module will create a folder on tmp
-// directory using a timestamp as a name
-scanner.setWorkDirectory('/yourProjectFolder/ScanResults/');
-
-// Set the scanner log event handler
-scanner.on(ScannerEvents.SCANNER_LOG, (logTxt) => console.log(logTxt));
-
-// Set the scanner finish event handler
-scanner.on(ScannerEvents.SCAN_DONE, (resultPath) => {
-  console.log('Path to results: ', resultPath);
-});
-
-const scannerInput = {
-  fileList: ['/yourProjectFolder/example1.c', '/yourProjectFolder/example2.c'],
-};
-
-// Launch the scanner
-scanner.scan([scannerInput]);
+// Parse dependency files
+const purls = sdk.dependencies.fromFiles(['package.json', 'requirements.txt']).getPurls();
 ```
 
-The scanner object provides a set of events that can be used to trigger custom actions. 
-These events are listed in the table above and were previously mentioned.
+### Scanning Namespace
 
-| Event Name          | Description                         |
-| ------------------- | ----------------------------------- |
-| SCANNER_LOG         | Report any internal scanner events  |
-| SCAN_DONE           | Scan completed                      |
-| DISPATCHER_NEW_DATA | New data received but not persisted |
-| RESULTS_APPENDED    | Results added to scan report file   |
+The `scanning` namespace offers functionality for scanning codebases and identifying components.
 
+```javascript
+// Scan a folder
+const scanResult = await sdk.scanning.scanFolder('./project');
 
-
-
-## Local Development and Usage
-If you want to develop this package and use it locally in your project (without publishing it), follow these steps:
-
-#### 1 - Creating a Symbolic Link for the Development Package:
-In the root of the scanoss.js package, run the command:
-
-```bash
-npm install && npm run build && npm link . 
+// Generate fingerprints for a list of files
+const fingerprints = sdk.scanning.fingerprintFiles(fileList);
 ```
-This command creates a global symbolic link in your system that points to the local location of your package. This means you can use the package in any other Node.js project on your machine as if it were installed globally.
 
-#### 2 - Using the Package in Your Project:
+### Vulnerability Namespace
 
-In the root of the project where you want to use the scanoss package, run the command:
+The `vulnerability` namespace provides tools for checking and analyzing vulnerabilities in your dependencies.
 
-```bash
-npm link scanoss
+```javascript
+// Check vulnerabilities for a list of PURLs
+const vulnerabilities = await sdk.vulnerability.check(purlList);
+
+// Get detailed information about a specific vulnerability
+const vulnDetails = await sdk.vulnerability.getDetails(vulnId);
 ```
-This will create a symbolic link in your project to the globally linked scanoss package. Any changes made in the package will be immediately reflected in the consuming project.
 
-#### 3 - Disconnecting the Link:
+### Crypto Namespace
 
-Remember that once you finish developing or using the package locally, you should break the link to avoid potential issues with future versions or with installing other packages. To do this, simply run:
+The `crypto` namespace offers functionality for analyzing cryptography usage in your codebase.
 
-```bash
-npm unlink scanoss
+```javascript
+// Analyze cryptography usage in a list of files
+const cryptoUsage = await sdk.crypto.analyze(fileList);
+
+// Get information about supported cryptographic algorithms
+const algorithms = await sdk.crypto.getAlgorithms();
 ```
-in both the project and the scanoss package. This will remove the symbolic links and restore the normal state of the packages.
+
+## Error Handling
+
+The SDK uses custom error classes for different types of errors. 
+
+```javascript
+try {
+  const result = await sdk.dependencies.decorate(dependencyList);
+} catch (error) {
+  if (error instanceof TransportNotSetError) {
+    console.error('API key not set or invalid');
+  } else {
+    console.error('An error occurred:', error.message);
+  }
+}
+```
+
+
 
