@@ -43,3 +43,5 @@ export { PurlRequest, EchoRequest } from './sdk/Services/Grpc/BaseService';
 export * from './sdk/Services/http/HttpClient'
 
 export { logger } from './sdk/Logger';
+
+export * from './sdk/SCANOSS';

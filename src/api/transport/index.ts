@@ -1,4 +1,3 @@
-// Define the Strategy interface
 import { ExtractServiceMethod, ScanossServices } from "../types";
 
 export interface Transport {

@@ -1,18 +1,7 @@
 import { CryptographyService } from "./Cryptography";
 import { DependencyService } from "./Dependency";
 
-/**
- * ScanossServices interface
- *
- * This interface defines the structure of all services provided by the SCANOSS SDK.
- * It serves as a single source of truth for available services and their methods.
- * Each property represents a specific service (e.g., cryptography, dependency) and
- * maps to its corresponding service interface.
- */
-export interface ScanossServices {
-  cryptography: CryptographyService;
-  dependency: DependencyService;
-}
+
 
 /**
  * Common Request and Common Response Interfaces
@@ -76,6 +65,22 @@ export interface ServiceMethod<P = any, R = any> {
   result: R;
 }
 
+
+
+/**
+ * ScanossServices interface
+ *
+ * This interface defines the structure of all services provided by the SCANOSS SDK.
+ * It serves as a single source of truth for available services and their methods.
+ * Each property represents a specific service (e.g., cryptography, dependency) and
+ * maps to its corresponding service interface.
+ *
+ * NOTE: Any new services added to the SDK should be added to this interface and create the api class for it.
+ */
+export interface ScanossServices {
+  cryptography: CryptographyService;
+  dependency: DependencyService;
+}
 // Export all types from common, cryptography, and dependency modules
 export * from "./Cryptography";
 export * from "./Dependency";
