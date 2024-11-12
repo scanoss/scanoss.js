@@ -1,0 +1,238 @@
+{
+  "@context": "https://openvex.dev/ns/v0.2.0",
+  "@id": "https://openvex.dev/docs/public/vex-4dccc586d4a5b30bc0159640a10ad2466688726f895aac4bc94fc063b94da1cf",
+  "author": "Unknown Author",
+  "timestamp": "2024-10-11T16:28:18.448899+02:00",
+  "last_updated": "2024-10-11T16:28:18.91871+02:00",
+  "version": 19,
+  "statements": [
+    {
+      "vulnerability": {
+        "name": "CVE-2015-8860"
+      },
+      "timestamp": "2024-10-11T16:28:18.448901+02:00",
+      "products": [
+        {
+          "@id": "pkg:npm/tar"
+        }
+      ],
+      "status": "under_investigation"
+    },
+    {
+      "vulnerability": {
+        "name": "CVE-2018-1002204"
+      },
+      "timestamp": "2024-10-11T16:28:18.477165+02:00",
+      "products": [
+        {
+          "@id": "pkg:npm/adm-zip"
+        }
+      ],
+      "status": "under_investigation"
+    },
+    {
+      "vulnerability": {
+        "name": "CVE-2018-20834"
+      },
+      "timestamp": "2024-10-11T16:28:18.506224+02:00",
+      "products": [
+        {
+          "@id": "pkg:npm/tar"
+        }
+      ],
+      "status": "under_investigation"
+    },
+    {
+      "vulnerability": {
+        "name": "CVE-2018-3739"
+      },
+      "timestamp": "2024-10-11T16:28:18.531646+02:00",
+      "products": [
+        {
+          "@id": "pkg:npm/https-proxy-agent"
+        }
+      ],
+      "status": "under_investigation"
+    },
+    {
+      "vulnerability": {
+        "name": "CVE-2019-10196"
+      },
+      "timestamp": "2024-10-11T16:28:18.55723+02:00",
+      "products": [
+        {
+          "@id": "pkg:npm/http-proxy-agent"
+        }
+      ],
+      "status": "under_investigation"
+    },
+    {
+      "vulnerability": {
+        "name": "CVE-2020-15168"
+      },
+      "timestamp": "2024-10-11T16:28:18.582776+02:00",
+      "products": [
+        {
+          "@id": "pkg:npm/node-fetch"
+        }
+      ],
+      "status": "under_investigation"
+    },
+    {
+      "vulnerability": {
+        "name": "CVE-2020-7768"
+      },
+      "timestamp": "2024-10-11T16:28:18.610085+02:00",
+      "products": [
+        {
+          "@id": "pkg:npm/@grpc/grpc-js"
+        }
+      ],
+      "status": "under_investigation"
+    },
+    {
+      "vulnerability": {
+        "name": "CVE-2021-23406"
+      },
+      "timestamp": "2024-10-11T16:28:18.635426+02:00",
+      "products": [
+        {
+          "@id": "pkg:npm/pac-resolver"
+        }
+      ],
+      "status": "under_investigation"
+    },
+    {
+      "vulnerability": {
+        "name": "CVE-2021-32803"
+      },
+      "timestamp": "2024-10-11T16:28:18.66279+02:00",
+      "products": [
+        {
+          "@id": "pkg:npm/tar"
+        }
+      ],
+      "status": "under_investigation"
+    },
+    {
+      "vulnerability": {
+        "name": "CVE-2021-32804"
+      },
+      "timestamp": "2024-10-11T16:28:18.68714+02:00",
+      "products": [
+        {
+          "@id": "pkg:npm/tar"
+        }
+      ],
+      "status": "under_investigation"
+    },
+    {
+      "vulnerability": {
+        "name": "CVE-2021-37701"
+      },
+      "timestamp": "2024-10-11T16:28:18.712697+02:00",
+      "products": [
+        {
+          "@id": "pkg:npm/tar"
+        }
+      ],
+      "status": "under_investigation"
+    },
+    {
+      "vulnerability": {
+        "name": "CVE-2021-37712"
+      },
+      "timestamp": "2024-10-11T16:28:18.737657+02:00",
+      "products": [
+        {
+          "@id": "pkg:npm/tar"
+        }
+      ],
+      "status": "under_investigation"
+    },
+    {
+      "vulnerability": {
+        "name": "CVE-2021-37713"
+      },
+      "timestamp": "2024-10-11T16:28:18.764331+02:00",
+      "products": [
+        {
+          "@id": "pkg:npm/tar"
+        }
+      ],
+      "status": "under_investigation"
+    },
+    {
+      "vulnerability": {
+        "name": "CVE-2022-0235"
+      },
+      "timestamp": "2024-10-11T16:28:18.789464+02:00",
+      "products": [
+        {
+          "@id": "pkg:npm/node-fetch"
+        }
+      ],
+      "status": "under_investigation"
+    },
+    {
+      "vulnerability": {
+        "name": "CVE-2022-2596"
+      },
+      "timestamp": "2024-10-11T16:28:18.813637+02:00",
+      "products": [
+        {
+          "@id": "pkg:npm/node-fetch"
+        }
+      ],
+      "status": "under_investigation"
+    },
+    {
+      "vulnerability": {
+        "name": "CVE-2023-42282"
+      },
+      "timestamp": "2024-10-11T16:28:18.838458+02:00",
+      "products": [
+        {
+          "@id": "pkg:npm/ip"
+        }
+      ],
+      "status": "under_investigation"
+    },
+    {
+      "vulnerability": {
+        "name": "CVE-2024-28863"
+      },
+      "timestamp": "2024-10-11T16:28:18.864174+02:00",
+      "products": [
+        {
+          "@id": "pkg:npm/tar"
+        }
+      ],
+      "status": "under_investigation"
+    },
+    {
+      "vulnerability": {
+        "name": "CVE-2024-29415"
+      },
+      "timestamp": "2024-10-11T16:28:18.888924+02:00",
+      "products": [
+        {
+          "@id": "pkg:npm/ip"
+        }
+      ],
+      "status": "under_investigation"
+    },
+    {
+      "vulnerability": {
+        "name": "CVE-2024-37168"
+      },
+      "timestamp": "2024-10-11T16:28:18.918711+02:00",
+      "products": [
+        {
+          "@id": "pkg:npm/@grpc/grpc-js"
+        }
+      ],
+      "status": "under_investigation"
+    }
+  ]
+}
