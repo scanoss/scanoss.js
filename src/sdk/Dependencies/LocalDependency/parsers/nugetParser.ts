@@ -15,7 +15,7 @@ export function csprojParser(fileContent: string, filePath: string): Promise<ILo
 
     const packageReference: Array<Element> = [];
     itemGroups.forEach(itemGroup => {
-      itemGroup.elements.forEach(item => {
+      itemGroup.elements?.forEach(item => {
         if (item.name == "PackageReference")
           packageReference.push(item);
       });
@@ -33,7 +33,7 @@ export function csprojParser(fileContent: string, filePath: string): Promise<ILo
     });
 
   } catch (e) {
-    console.error(e);
+    console.error("File path:",filePath, e);
     return Promise.resolve({file: filePath, purls: []});
   }
 
