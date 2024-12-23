@@ -44,6 +44,7 @@ async function main() {
   scan.addOption(new Option("    --proxy <proxy>", "Proxy URL to use for connections (optional). Can also use the environment variable \"HTTPS_PROXY=[ip]:[port]\" and \"grcp_proxy=[ip]:[port]\" for gRPC"));
   scan.addOption(new Option("    --grpc_proxy <grpc_proxy>", "GRPC Proxy URL to use for connections (optional)." ));
   scan.addOption(new Option("-v, --verbose", "Makes scan operation verbose"));
+  scan.addOption(new Option("--settings <filename>", "Settings file to use for scanning (optional - default scanoss.json)"));
 
   scan.action((source, options) => {
     scanHandler(source, options).catch((e) => {
