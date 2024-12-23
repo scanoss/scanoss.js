@@ -1,5 +1,4 @@
 import fs from 'fs';
-
 import { Scanner } from '../../sdk/scanner/Scanner';
 import {
   SbomMode,
@@ -32,13 +31,18 @@ import { LicenseObligationDataProvider } from '../../sdk/Report/DataLayer/DataPr
 import {
   CryptographyDataProvider
 } from '../../sdk/Report/DataLayer/DataProviders/CryptographyDataProvider';
+import {
+  ScannerResultsRuleFactory
+} from "../../sdk/scanner/ScannnerResultPostProcessor/rules/rule-factory";
+import {
+  Settings
+} from "../../sdk/scanner/ScannnerResultPostProcessor/interfaces/types";
 
 export async function scanHandler(
   rootPath: string,
   options: any
 ): Promise<void> {
   rootPath = path.resolve(rootPath);
-
   const pathIsFolder = await isFolder(rootPath);
   const projectName = getProjectNameFromPath(rootPath);
 
@@ -146,6 +150,12 @@ export async function scanHandler(
     scannerInput.sbomMode = SbomMode.SBOM_IGNORE;
   }
 
+
+  if(options.settings){
+    scannerInput.settings = JSON.parse(fs.readFileSync(options.settings, "utf-8")) as unknown as Settings;
+    scannerInput.sbomMode = SbomMode.SBOM_IGNORE;
+  }
+
   // Dependency scanner
   let pDependencyScanner = Promise.resolve(<IDependencyResponse>{});
   if (options.dependencies) {
@@ -159,9 +169,10 @@ export async function scanHandler(
     pScanner,
     pDependencyScanner,
   ]);
-  const scannerResults = JSON.parse(
+  let scannerResults = JSON.parse(
     await fs.promises.readFile(scannerResultPath, 'utf-8')
   );
+
 
   //TODO Unify results.json and dependency.json. What happens with result.json that includes dependencies?
   const scannersResults = {

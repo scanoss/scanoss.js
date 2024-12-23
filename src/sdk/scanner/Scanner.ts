@@ -24,6 +24,10 @@ import { WfpSplitter } from './WfpProvider/WfpSplitter/WfpSplitter';
 import sortPaths from 'sort-paths';
 import { v4 as uuidv4 } from 'uuid';
 import path from 'path';
+import { Settings } from "./ScannnerResultPostProcessor/interfaces/types";
+import {
+  ScannerResultsRuleFactory
+} from "./ScannnerResultPostProcessor/rules/rule-factory";
 
 let finishPromiseResolve;
 let finishPromiseReject;
@@ -71,6 +75,9 @@ export class Scanner extends EventEmitter {
   private responseBuffer;
 
   private filesNotScanned;
+
+  private settings: Settings;
+
 
   constructor(scannerCfg = new ScannerCfg()) {
     super();
@@ -149,6 +156,15 @@ export class Scanner extends EventEmitter {
     this.init();
     this.createOutputFiles();
     this.scannerInput = scannerInput;
+    this.settings = scannerInput[0].settings ?  { ...scannerInput[0].settings } : null;
+
+
+    if (scannerInput[0].settings) {
+      const include = scannerInput[0].settings.bom.include;
+      const sbom = { components: [] };
+      sbom.components = include.map((i)=> { return { purl: i.purl } });
+      scannerInput[0].sbom = JSON.stringify(sbom);
+    }
 
     this.reportLog(`[ SCANNER ]: Scanner instance id ${this.getScannerId()}`);
 
@@ -431,9 +447,15 @@ export class Scanner extends EventEmitter {
 
   private async finishScan() {
     if (!this.isBufferEmpty()) this.bufferToFiles();
-    const results = JSON.parse(
+    let results = JSON.parse(
       await fs.promises.readFile(this.resultFilePath, 'utf8')
     );
+    if (this.settings) {
+      const scannerResultsRules = ScannerResultsRuleFactory.create(this.settings, results);
+      scannerResultsRules.forEach(r => {
+        results = r.run();
+      });
+    }
 
     if (
       this.scannerCfg.WFP_OBFUSCATION &&
@@ -455,6 +477,7 @@ export class Scanner extends EventEmitter {
       this.resultFilePath,
       JSON.stringify(resultSorted, null, 2)
     );
+
     await fs.promises.writeFile(
       this.obfuscateMapFilePath,
       JSON.stringify(this.obfuscateMap, null, 2)
@@ -464,6 +487,8 @@ export class Scanner extends EventEmitter {
         this.processedFiles
       }, Not Scanned: ${Object.keys(this.filesNotScanned).length})`
     );
+
+
     this.reportLog(`[ SCANNER ]: Results on: ${this.resultFilePath}`);
     this.running = false;
     this.emit(
