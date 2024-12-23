@@ -1,4 +1,5 @@
 import path from 'path';
+import { Settings } from "./ScannnerResultPostProcessor/interfaces/types";
 
 export enum ScannerEvents {
   WINNOWING_STARTING = 'WINNOWING_STARTING',
@@ -46,6 +47,7 @@ export interface BaseScannerInput {
   wfpPath?: string;
   sbom?: string;
   sbomMode?: SbomMode;
+  settings?: Settings;
   engineFlags?: number;
   winnowing?: {
     mode: WinnowingMode,
