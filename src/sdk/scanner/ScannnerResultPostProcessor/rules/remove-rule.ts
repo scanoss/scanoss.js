@@ -12,8 +12,9 @@ export class RemoveRule extends Rule {
         for (const [resultPath, results] of (Object.entries(this.scanResults) as Array<[string, Array<any>]>)) {
             for(const bomItem of this.removeBomItems) {
                 if(this.applyRule(resultPath,results,bomItem)) {
-                    delete this.scanResults[resultPath];
-                    break;
+                   const { server} =  this.scanResults[resultPath][0];
+                   this.scanResults[resultPath] = [{id: 'none', server}];
+                   break;
                 }
             }
         }

@@ -1,5 +1,6 @@
 import {Rule} from "./rule";
 import {ReplaceBomItem, Settings} from "../interfaces/types";
+import { PackageURL } from 'packageurl-js';
 
 interface ComponentData {
     vendor: string;
@@ -21,16 +22,50 @@ export class ReplaceRule extends Rule {
         this.loadComponentData();
     }
 
+    private generateBaseUrlFromPurl(pkg: PackageURL) {
+
+        switch (pkg.type) {
+
+          case 'github':
+            return `https://github.com/${pkg.namespace}/${pkg.name}`;
+
+          case 'npm':
+            return `https://registry.npmjs.org/${pkg.name}`;
+
+          case 'maven': {
+            const groupPath = (pkg.namespace || '').replace(/\./g, '/');
+            const artifactId = pkg.name;
+            return `https://repo1.maven.org/maven2/${groupPath}/${artifactId}`;
+          }
+
+          case 'pypi':
+            return `https://pypi.org/simple/${pkg.name}/`;
+
+          case 'golang':
+            if (pkg.namespace && pkg.namespace.includes('github.com')) {
+              return `https://${pkg.namespace}/${pkg.name}`;
+            }
+            return `https://proxy.golang.org/${pkg.namespace}/${pkg.name}`;
+
+          case 'nuget':
+            return `https://api.nuget.org/v3-flatcontainer/${pkg.name.toLowerCase()}`;
+
+          default:
+           return ''
+        }
+    }
+
     private replace(result: any, bomItem: ReplaceBomItem){
         result.purl = [bomItem.replace_with];
+        const pkg  = PackageURL.fromString(bomItem.replace_with);
         const cachedComponent = this.componentData.get(bomItem.replace_with);
-        result.vendor = cachedComponent?.vendor ?? '';
+        result.vendor = cachedComponent?.vendor ?? pkg.namespace;
         result.licenses = cachedComponent?.licenses ?? [];
-        result.component = cachedComponent?.component ?? '';
-        result.url = cachedComponent?.url ?? '';
-        result.version =  cachedComponent?.version ?? '';
-        result.latest = cachedComponent?.latest ?? '';
-        result.release_date = cachedComponent?.release_date ?? '';
+        result.component = cachedComponent?.component ?? pkg.name;
+        result.url = cachedComponent?.url ?? this.generateBaseUrlFromPurl(pkg);
+        result.version =  cachedComponent?.version ?? '0.0.0-unknown';
+        result.latest = cachedComponent?.latest ?? '0.0.0-unknown';
+        result.release_date = cachedComponent?.release_date ?? '-';
     }
 
     private loadComponentData(): void{

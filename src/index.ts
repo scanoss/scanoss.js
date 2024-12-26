@@ -3,6 +3,7 @@ export * from './sdk/scanner/Scanner';
 export * from './sdk/scanner/ScannerTypes';
 export * from './sdk/scanner/ScannerCfg';
 export * from './sdk/scanner/WfpProvider/WfpCalculator/WfpCalculator';
+export * from './sdk/scanner/ScannnerResultPostProcessor/interfaces/types';
 
 // *** Fingerprint exports *** //
 export * from './sdk/scanner/Fingerprint';
