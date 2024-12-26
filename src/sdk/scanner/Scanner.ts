@@ -28,6 +28,7 @@ import { Settings } from "./ScannnerResultPostProcessor/interfaces/types";
 import {
   ScannerResultsRuleFactory
 } from "./ScannnerResultPostProcessor/rules/rule-factory";
+import { RemoveRule } from "./ScannnerResultPostProcessor/rules/remove-rule";
 
 let finishPromiseResolve;
 let finishPromiseReject;
@@ -415,6 +416,13 @@ export class Scanner extends EventEmitter {
     this.reportLog(
       `[ SCANNER ]: Persisted results of ${responses.getNumberOfFilesScanned()} files...`
     );
+
+/*    if (this.settings) {
+      console.log("SERVER RESPONSE: ", responses.serverResponse);
+      const removeRule = new RemoveRule(responses.serverResponse, this.settings);
+      responses.serverResponse = removeRule.run();
+    }*/
+
     this.emit(ScannerEvents.RESULTS_APPENDED, responses, this.filesNotScanned);
     return responses;
   }
