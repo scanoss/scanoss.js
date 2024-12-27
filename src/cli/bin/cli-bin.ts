@@ -45,7 +45,7 @@ async function main() {
   scan.addOption(new Option("    --grpc_proxy <grpc_proxy>", "GRPC Proxy URL to use for connections (optional)." ));
   scan.addOption(new Option("-v, --verbose", "Makes scan operation verbose"));
   scan.addOption(new Option("-st, --settings <filename>", "Settings file to use for scanning (optional - default scanoss.json)"));
-  scan.addOption(new Option("-stf, --skip-settings-file", ""));
+  scan.addOption(new Option("-stf, --skip-settings-file", "Skips settings file"));
 
   scan.action((source, options) => {
     scanHandler(source, options).catch((e) => {
