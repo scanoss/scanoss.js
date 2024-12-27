@@ -29,6 +29,7 @@ import {
   ScannerResultsRuleFactory
 } from "./ScannnerResultPostProcessor/rules/rule-factory";
 import { RemoveRule } from "./ScannnerResultPostProcessor/rules/remove-rule";
+import { validateSettingsFile } from "../../cli/commands/helpers";
 
 let finishPromiseResolve;
 let finishPromiseReject;
@@ -161,10 +162,11 @@ export class Scanner extends EventEmitter {
 
 
     if (scannerInput[0].settings) {
-      const include = scannerInput[0].settings.bom.include;
-      const sbom = { components: [] };
-      sbom.components = include.map((i)=> { return { purl: i.purl } });
-      scannerInput[0].sbom = JSON.stringify(sbom);
+        validateSettingsFile(scannerInput[0].settings);
+        const include = scannerInput[0].settings.bom.include.map((i)=> i.purl);
+        const replace  = scannerInput[0].settings.bom.replace.map((r)=> r.replace_with);
+        const sbom = { components: [...include, ...replace] };
+        scannerInput[0].sbom = JSON.stringify(sbom);
     }
 
     this.reportLog(`[ SCANNER ]: Scanner instance id ${this.getScannerId()}`);

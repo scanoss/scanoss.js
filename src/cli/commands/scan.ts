@@ -11,7 +11,11 @@ import { ScannerCfg } from '../../sdk/scanner/ScannerCfg';
 import { Tree } from '../../sdk/tree/Tree';
 import cliProgress from 'cli-progress';
 import { DispatcherResponse } from '../../sdk/scanner/Dispatcher/DispatcherResponse';
-import { getProjectNameFromPath, isFolder } from './helpers';
+import {
+  getProjectNameFromPath,
+  getSettingsFilePath,
+  isFolder
+} from "./helpers";
 
 import { DependencyScannerCfg } from '../../sdk/Dependencies/DependencyScannerCfg';
 import { DependencyScanner } from '../../sdk/Dependencies/DependencyScanner';
@@ -32,9 +36,6 @@ import {
   CryptographyDataProvider
 } from '../../sdk/Report/DataLayer/DataProviders/CryptographyDataProvider';
 import {
-  ScannerResultsRuleFactory
-} from "../../sdk/scanner/ScannnerResultPostProcessor/rules/rule-factory";
-import {
   Settings
 } from "../../sdk/scanner/ScannnerResultPostProcessor/interfaces/types";
 
@@ -45,6 +46,8 @@ export async function scanHandler(
   rootPath = path.resolve(rootPath);
   const pathIsFolder = await isFolder(rootPath);
   const projectName = getProjectNameFromPath(rootPath);
+
+
 
   // Create dependency scanner and set parameters
   let dependencyInput: Array<string> = [];
@@ -79,6 +82,26 @@ export async function scanHandler(
   const scanner = new Scanner(scannerCfg);
 
   let scannerInput: ScannerInput = { fileList: [] };
+
+  // SBOM Ingestion
+  if (options.ignore) {
+    scannerInput.sbom = fs.readFileSync(options.ignore, 'utf-8');
+    scannerInput.sbomMode = SbomMode.SBOM_IGNORE;
+  }
+
+  // Settings Ingestion
+  if (!options.skipSettingsFile) {
+    const settingsFilePath = await getSettingsFilePath(options.settings, rootPath);
+    if (settingsFilePath) {
+      try {
+        scannerInput.settings = JSON.parse(fs.readFileSync(settingsFilePath, "utf-8")) as unknown as Settings;
+        scannerInput.sbomMode = SbomMode.SBOM_IDENTIFY;
+      } catch(e) {
+        throw new Error(`SCANOSS Settings file cannot be found at: ${settingsFilePath}.`);
+      }
+    }
+  }
+
   scannerInput.folderRoot = rootPath + path.sep; // This will remove the project root path from the results.
   if (options.flags) scannerInput.engineFlags = options.flags;
   if (options.wfp) scannerInput.wfpPath = rootPath;
@@ -143,17 +166,6 @@ export async function scanHandler(
     });
   } else {
     scanner.on(ScannerEvents.SCANNER_LOG, (logText) => console.error(logText));
-  }
-
-  if (options.ignore) {
-    scannerInput.sbom = fs.readFileSync(options.ignore, 'utf-8');
-    scannerInput.sbomMode = SbomMode.SBOM_IGNORE;
-  }
-
-
-  if(options.settings){
-    scannerInput.settings = JSON.parse(fs.readFileSync(options.settings, "utf-8")) as unknown as Settings;
-    scannerInput.sbomMode = SbomMode.SBOM_IGNORE;
   }
 
   // Dependency scanner
