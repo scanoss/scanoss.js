@@ -158,10 +158,10 @@ export class Scanner extends EventEmitter {
     this.init();
     this.createOutputFiles();
     this.scannerInput = scannerInput;
-    this.settings = scannerInput[0].settings ?  { ...scannerInput[0].settings } : null;
+    this.settings = scannerInput[0]?.settings ?  { ...scannerInput[0].settings } : null;
 
 
-    if (scannerInput[0].settings) {
+    if (scannerInput[0]?.settings) {
         validateSettingsFile(scannerInput[0].settings);
         const include = scannerInput[0].settings.bom.include.map((i)=> i.purl);
         const replace  = scannerInput[0].settings.bom.replace.map((r)=> r.replace_with);
@@ -311,7 +311,6 @@ export class Scanner extends EventEmitter {
     this.dispatcher.on(
       ScannerEvents.DISPATCHER_NEW_DATA,
       async (response: DispatcherResponse) => {
-        console.log("ScannerEvents.DISPATCHER_NEW_DATA")
         this.processedFiles += response.getNumberOfFilesScanned();
         this.reportLog(
           `[ SCANNER ]: Received results of ${response.getNumberOfFilesScanned()} files`
