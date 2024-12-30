@@ -35,6 +35,10 @@ export abstract class Rule {
             return this.byPurl(results,bomItem);
         }
 
+        if (bomItem.path) {
+          return this.byPath(resultPath,bomItem);
+        }
+
         return false;
     }
 

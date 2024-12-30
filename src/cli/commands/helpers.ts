@@ -60,12 +60,6 @@ export function validateSettingsFile(settings: Settings) {
     if (!Array.isArray(bom.remove)) {
       throw new Error("[ SETTINGS FILE ]: 'remove' must be an array");
     }
-
-    bom.remove.forEach((item, index) => {
-      if (!item.purl) {
-        throw new Error(`[ SETTINGS FILE ]: Missing required 'purl' in remove item.\n ${JSON.stringify(item,null,2)}`);
-      }
-    });
   }
 
   if (bom.replace) {
@@ -74,9 +68,6 @@ export function validateSettingsFile(settings: Settings) {
     }
 
     bom.replace.forEach((item, index) => {
-      if (!item.purl) {
-        throw new Error(`[ SETTINGS FILE ]: Missing required 'purl' in replace item.\n ${JSON.stringify(item,null,2)} `);
-      }
       if (!item.replace_with) {
         throw new Error(`[ SETTINGS FILE ]: Missing required 'replace_with' in replace item.\n ${JSON.stringify(item,null,2)}`);
       }
