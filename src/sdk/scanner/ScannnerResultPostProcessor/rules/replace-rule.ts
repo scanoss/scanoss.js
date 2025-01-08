@@ -56,6 +56,7 @@ export class ReplaceRule extends Rule {
     }
 
     private replace(result: any, bomItem: ReplaceBomItem){
+        if (result.id === 'none') return;
         result.purl = [bomItem.replace_with];
         const pkg  = PackageURL.fromString(bomItem.replace_with);
         const cachedComponent = this.componentData.get(bomItem.replace_with);
