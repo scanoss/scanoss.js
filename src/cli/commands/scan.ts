@@ -1,40 +1,60 @@
-import fs from 'fs';
-import { Scanner } from '../../sdk/scanner/Scanner';
+import fs from "fs";
+import { Scanner } from "../../sdk/scanner/Scanner";
 import {
   SbomMode,
   ScannerEvents,
   ScannerInput,
   ScannerResults,
-  WinnowingMode,
-} from '../../sdk/scanner/ScannerTypes';
-import { ScannerCfg } from '../../sdk/scanner/ScannerCfg';
-import { Tree } from '../../sdk/tree/Tree';
-import cliProgress from 'cli-progress';
-import { DispatcherResponse } from '../../sdk/scanner/Dispatcher/DispatcherResponse';
+  WinnowingMode
+} from "../../sdk/scanner/ScannerTypes";
+import { ScannerCfg } from "../../sdk/scanner/ScannerCfg";
+import { Tree } from "../../sdk/tree/Tree";
+import cliProgress from "cli-progress";
+import {
+  DispatcherResponse
+} from "../../sdk/scanner/Dispatcher/DispatcherResponse";
 import {
   getProjectNameFromPath,
   getSettingsFilePath,
   isFolder
 } from "./helpers";
 
-import { DependencyScannerCfg } from '../../sdk/Dependencies/DependencyScannerCfg';
-import { DependencyScanner } from '../../sdk/Dependencies/DependencyScanner';
-import { IDependencyResponse } from '../../sdk/Dependencies/DependencyTypes';
-import { ScanFilter } from '../../sdk/tree/Filters/ScanFilter';
-import { DependencyFilter } from '../../sdk/tree/Filters/DependencyFilter';
-import { Report } from '../../sdk/Report/Report';
-import { DataProviderManager } from '../../sdk/Report/DataLayer/DataProviderManager';
-import { ComponentDataProvider } from '../../sdk/Report/DataLayer/DataProviders/ComponentDataProvider';
-import { DependencyDataProvider } from '../../sdk/Report/DataLayer/DataProviders/DependencyDataProvider';
-import { LicenseDataProvider } from '../../sdk/Report/DataLayer/DataProviders/LicenseDataProvider';
-import { SummaryDataProvider } from '../../sdk/Report/DataLayer/DataProviders/SummaryDataProvider';
-import { DecompressionFilter } from '../../sdk/tree/Filters/DecompressionFilter';
-import { DecompressionManager } from '../../sdk/Decompress/DecompressionManager';
-import path from 'path';
-import { LicenseObligationDataProvider } from '../../sdk/Report/DataLayer/DataProviders/LicenseObligationDataProvider';
+import {
+  DependencyScannerCfg
+} from "../../sdk/Dependencies/DependencyScannerCfg";
+import { DependencyScanner } from "../../sdk/Dependencies/DependencyScanner";
+import { IDependencyResponse } from "../../sdk/Dependencies/DependencyTypes";
+import { ScanFilter } from "../../sdk/tree/Filters/ScanFilter";
+import { DependencyFilter } from "../../sdk/tree/Filters/DependencyFilter";
+import { Report } from "../../sdk/Report/Report";
+import {
+  DataProviderManager
+} from "../../sdk/Report/DataLayer/DataProviderManager";
+import {
+  ComponentDataProvider
+} from "../../sdk/Report/DataLayer/DataProviders/ComponentDataProvider";
+import {
+  DependencyDataProvider
+} from "../../sdk/Report/DataLayer/DataProviders/DependencyDataProvider";
+import {
+  LicenseDataProvider
+} from "../../sdk/Report/DataLayer/DataProviders/LicenseDataProvider";
+import {
+  SummaryDataProvider
+} from "../../sdk/Report/DataLayer/DataProviders/SummaryDataProvider";
+import {
+  DecompressionFilter
+} from "../../sdk/tree/Filters/DecompressionFilter";
+import {
+  DecompressionManager
+} from "../../sdk/Decompress/DecompressionManager";
+import path from "path";
+import {
+  LicenseObligationDataProvider
+} from "../../sdk/Report/DataLayer/DataProviders/LicenseObligationDataProvider";
 import {
   CryptographyDataProvider
-} from '../../sdk/Report/DataLayer/DataProviders/CryptographyDataProvider';
+} from "../../sdk/Report/DataLayer/DataProviders/CryptographyDataProvider";
 import {
   Settings
 } from "../../sdk/scanner/ScannnerResultPostProcessor/interfaces/types";
@@ -94,8 +114,8 @@ export async function scanHandler(
     const settingsFilePath = await getSettingsFilePath(options.settings, rootPath);
     if (settingsFilePath) {
       try {
-        scannerInput.settings = JSON.parse(fs.readFileSync(settingsFilePath, "utf-8")) as unknown as Settings;
-        scannerInput.sbomMode = SbomMode.SBOM_IDENTIFY;
+        const scanossSettings = JSON.parse(fs.readFileSync(settingsFilePath, "utf-8")) as unknown as Settings;
+        scannerInput.settings = scanossSettings;
       } catch(e) {
         throw new Error(`SCANOSS Settings file cannot be found at: ${settingsFilePath}.`);
       }
