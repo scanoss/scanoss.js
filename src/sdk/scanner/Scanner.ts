@@ -10,11 +10,11 @@ import { DispatchableItem } from './Dispatcher/DispatchableItem';
 import { DispatcherResponse } from './Dispatcher/DispatcherResponse';
 import { ScannerCfg } from './ScannerCfg';
 import {
-  ContentScannerInput, ScannerComponent,
+  ContentScannerInput, SbomMode, ScannerComponent,
   ScannerEvents,
   ScannerInput,
   ScannerResults
-} from './ScannerTypes';
+} from "./ScannerTypes";
 
 import { WfpProvider } from './WfpProvider/WfpProvider';
 import { FingerprintPackage } from './WfpProvider/FingerprintPackage';
@@ -160,13 +160,22 @@ export class Scanner extends EventEmitter {
     this.scannerInput = scannerInput;
     this.settings = scannerInput[0]?.settings ?  { ...scannerInput[0].settings } : null;
 
-
     if (scannerInput[0]?.settings) {
-        validateSettingsFile(scannerInput[0].settings);
-        const include = scannerInput[0].settings.bom.include.map((i)=> i.purl);
-        const replace  = scannerInput[0].settings.bom.replace.map((r)=> r.replace_with);
-        const sbom = { components: [...include, ...replace] };
-        scannerInput[0].sbom = JSON.stringify(sbom);
+      scannerInput.forEach((si)=>{
+        validateSettingsFile(si.settings);
+        let components = [];
+        const { bom } = si.settings;
+        const sbomMode = bom?.include && bom.include.length > 0
+          ? SbomMode.SBOM_IDENTIFY : undefined;
+
+        // Only use ignore if include isn't present
+        if (bom?.include?.length) {
+          components = bom.include.map(item => ({ purl: item.purl }));
+        }
+        // Set legacy BOM
+        si.sbom = JSON.stringify({ components });
+        si.sbomMode = sbomMode;
+      });
     }
 
     this.reportLog(`[ SCANNER ]: Scanner instance id ${this.getScannerId()}`);
