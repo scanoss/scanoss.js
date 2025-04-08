@@ -54,7 +54,6 @@ export class BaseService {
       gRPCPurlMessage.setRequirement(requirement);
       return gRPCPurlMessage;
     });
-
     const gRPCPurlRequest = new CommonMessages.PurlRequest();
     gRPCPurlRequest.setPurlsList(GRPCPurlList);
 
