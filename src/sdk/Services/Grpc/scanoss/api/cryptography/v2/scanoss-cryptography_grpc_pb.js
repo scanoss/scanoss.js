@@ -98,6 +98,17 @@ function deserialize_scanoss_api_cryptography_v2_HintsInRangeResponse(buffer_arg
   return scanoss_api_cryptography_v2_scanoss$cryptography_pb.HintsInRangeResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
+function serialize_scanoss_api_cryptography_v2_HintsResponse(arg) {
+  if (!(arg instanceof scanoss_api_cryptography_v2_scanoss$cryptography_pb.HintsResponse)) {
+    throw new Error('Expected argument of type scanoss.api.cryptography.v2.HintsResponse');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_scanoss_api_cryptography_v2_HintsResponse(buffer_arg) {
+  return scanoss_api_cryptography_v2_scanoss$cryptography_pb.HintsResponse.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
 function serialize_scanoss_api_cryptography_v2_VersionsInRangeResponse(arg) {
   if (!(arg instanceof scanoss_api_cryptography_v2_scanoss$cryptography_pb.VersionsInRangeResponse)) {
     throw new Error('Expected argument of type scanoss.api.cryptography.v2.VersionsInRangeResponse');
@@ -137,7 +148,7 @@ getAlgorithms: {
     responseSerialize: serialize_scanoss_api_cryptography_v2_AlgorithmResponse,
     responseDeserialize: deserialize_scanoss_api_cryptography_v2_AlgorithmResponse,
   },
-  // Given a list of PURLS and version ranges get a list of cryptographic algorithms used
+  // Given a list of PURLS and version ranges, get a list of cryptographic algorithms used
 getAlgorithmsInRange: {
     path: '/scanoss.api.cryptography.v2.Cryptography/GetAlgorithmsInRange',
     requestStream: false,
@@ -149,7 +160,7 @@ getAlgorithmsInRange: {
     responseSerialize: serialize_scanoss_api_cryptography_v2_AlgorithmsInRangeResponse,
     responseDeserialize: deserialize_scanoss_api_cryptography_v2_AlgorithmsInRangeResponse,
   },
-  // Given a list of PURLS and version ranges get a list of versions that do/do not contain cryptographic algorithms
+  // Given a list of PURLS and version ranges, get a list of versions that do/do not contain cryptographic algorithms
 getVersionsInRange: {
     path: '/scanoss.api.cryptography.v2.Cryptography/GetVersionsInRange',
     requestStream: false,
@@ -161,7 +172,7 @@ getVersionsInRange: {
     responseSerialize: serialize_scanoss_api_cryptography_v2_VersionsInRangeResponse,
     responseDeserialize: deserialize_scanoss_api_cryptography_v2_VersionsInRangeResponse,
   },
-  // Get algorithms for a range of versions
+  // Given a list of PURLS and version ranges, get hints related to protocol/library/sdk/framework
 getHintsInRange: {
     path: '/scanoss.api.cryptography.v2.Cryptography/GetHintsInRange',
     requestStream: false,
@@ -172,6 +183,18 @@ getHintsInRange: {
     requestDeserialize: deserialize_scanoss_api_common_v2_PurlRequest,
     responseSerialize: serialize_scanoss_api_cryptography_v2_HintsInRangeResponse,
     responseDeserialize: deserialize_scanoss_api_cryptography_v2_HintsInRangeResponse,
+  },
+  // Given a list of PURLS, get hints related to protocol/library/sdk/framework
+getEncryptionHints: {
+    path: '/scanoss.api.cryptography.v2.Cryptography/GetEncryptionHints',
+    requestStream: false,
+    responseStream: false,
+    requestType: scanoss_api_common_v2_scanoss$common_pb.PurlRequest,
+    responseType: scanoss_api_cryptography_v2_scanoss$cryptography_pb.HintsResponse,
+    requestSerialize: serialize_scanoss_api_common_v2_PurlRequest,
+    requestDeserialize: deserialize_scanoss_api_common_v2_PurlRequest,
+    responseSerialize: serialize_scanoss_api_cryptography_v2_HintsResponse,
+    responseDeserialize: deserialize_scanoss_api_cryptography_v2_HintsResponse,
   },
 };
 

@@ -2,7 +2,7 @@ import {
   CryptoAlgorithm,
   ICryptoItem
 } from '../../Cryptography/CryptographyTypes';
-import { CryptoItem } from '../../Cryptography/Scanneable/CryptoItem';
+import { CryptoItem } from '../../Cryptography/Algorithm/Scanneable/CryptoItem';
 
 /*************  Component interface definition  *************/
 export interface ComponentDataLayer {

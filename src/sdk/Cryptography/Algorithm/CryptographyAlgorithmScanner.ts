@@ -1,20 +1,26 @@
 import fs from 'fs';
-import { Tree } from '../tree/Tree';
-import { LocalCrypto } from './CryptoProvider/LocalCrypto';
-import { CryptoCfg } from './CryptoCfg';
+import { Tree } from '../../tree/Tree';
+import { CryptoCfg } from '../CryptoCfg';
 import {
-  CryptoAlgorithmRules,
-  ILocalCryptographyResponse
-} from './CryptographyTypes';
+  CryptoAlgorithmRules, ICryptoItem,
+  ILocalCryptographyResponse, LocalCryptoAlgorithmJob
+} from "../CryptographyTypes";
 import {
   mapToILocalCryptographyResponse
 } from './utils/adapters/cryptoAdapters';
 import path from 'path';
+import {
+  createCryptoKeywordMapper,
+  getCryptoMapper
+} from "./Helper/Helper";
+import { Job } from "../../Utils/Concurrency/Job";
+import { WorkerPool } from "../../Utils/Concurrency/WorkerPool";
+import { cryptographyAlgorithmProcessor } from "./AlgorithmProcessor";
 
 /**
  * A class responsible for scanning files for cryptographic items.
  */
-export class CryptographyScanner {
+export class CryptographyAlgorithmScanner {
   private cryptoConfig: CryptoCfg;
 
   /**
@@ -25,15 +31,33 @@ export class CryptographyScanner {
     this.cryptoConfig = cryptoCfg;
   }
 
+
+  private async  buildJobs(files: string[]): Promise<Array<Job<LocalCryptoAlgorithmJob>>> {
+    const cryptographyRules = await this.loadRules(this.cryptoConfig.getRulesPath());
+    const rules = createCryptoKeywordMapper(cryptographyRules);
+    const cryptoMapper = getCryptoMapper(cryptographyRules);
+    const localCryptoJobs: Array<Job<LocalCryptoAlgorithmJob>> = [];
+    files.forEach((f) => {
+      const newJob = new Job<LocalCryptoAlgorithmJob>({
+        file:f,
+        rules,
+        cryptoMapper
+      });
+      localCryptoJobs.push(newJob)
+    });
+    return localCryptoJobs;
+  }
+
   /**
    * Scans an array of files for cryptographic items.
    * @param files An array of file paths to scan.
    * @returns A promise that resolves to an ILocalCryptographyResponse.
    */
   public async scan(files: Array<string>): Promise<ILocalCryptographyResponse> {
-    const cryptographyRules = await this.loadRules(this.cryptoConfig.getRulesPath());
-    const localCrypto = new LocalCrypto(cryptographyRules, this.cryptoConfig.getNumberOfThreads());
-    const cryptoItems = await localCrypto.search(files);
+    const workerPool = new WorkerPool<LocalCryptoAlgorithmJob, ICryptoItem>(cryptographyAlgorithmProcessor, this.cryptoConfig.getNumberOfThreads());
+    const jobs = await this.buildJobs(files);
+    workerPool.loadJobs(jobs)
+    const cryptoItems =  await workerPool.run();
     return mapToILocalCryptographyResponse(cryptoItems);
   }
 
@@ -58,7 +82,7 @@ export class CryptographyScanner {
   private async loadRules(rulePath?: string): Promise<Array<CryptoAlgorithmRules>> {
     const cryptoRulePath = rulePath ? rulePath :  path.join(
       __dirname,
-      '../../../../assets/data/defaultCryptoRules.json');
+      '../../../../../assets/data/defaultCryptoAlgorithmRules.json');
     const rules = await fs.promises.readFile(cryptoRulePath,'utf-8');
     return JSON.parse(rules);
   }

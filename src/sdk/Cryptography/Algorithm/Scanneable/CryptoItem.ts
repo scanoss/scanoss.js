@@ -1,4 +1,4 @@
-import { CryptoAlgorithm, ICryptoItem } from '../CryptographyTypes';
+import { CryptoAlgorithm, ICryptoItem } from '../../CryptographyTypes';
 
 /**
  * Represents a cryptographic item containing information about a file and cryptographic algorithms found in it.

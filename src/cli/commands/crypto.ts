@@ -4,8 +4,8 @@ import {
 } from '../../sdk/Dependencies/DependencyScannerCfg';
 import { DependencyScanner } from '../../sdk/Dependencies/DependencyScanner';
 import {
-  CryptographyScanner
-} from '../../sdk/Cryptography/CryptographyScanner';
+  CryptographyAlgorithmScanner
+} from '../../sdk/Cryptography/Algorithm/CryptographyAlgorithmScanner';
 import { Tree } from '../../sdk/tree/Tree';
 import { DependencyFilter } from '../../sdk/tree/Filters/DependencyFilter';
 import { CryptoCfg } from '../../sdk/Cryptography/CryptoCfg';
@@ -14,6 +14,9 @@ import { BinaryFilter } from '../../sdk/tree/Filters/BinaryFilter';
 import { ScanFilter } from '../../sdk/tree/Filters/ScanFilter';
 import { FilterAND } from '../../sdk/tree/Filters/FilterAND';
 import { isBinaryFileSync } from 'isbinaryfile';
+import {
+  CryptographyHintScanner
+} from "../../sdk/Cryptography/Hint/CryptographyHintsScanner";
 
 export async function cryptoHandler(rootPath: string, options: any): Promise<void> {
   rootPath = rootPath.replace(/\/$/, '');  // Remove trailing slash if exists
@@ -26,7 +29,9 @@ export async function cryptoHandler(rootPath: string, options: any): Promise<voi
   let threads = null;
   if(options.threads) threads = options.threads;
 
-  const cryptoScanner = new CryptographyScanner(new CryptoCfg({threads, rulesPath: cryptoRules}));
+  const cryptoScanner = new CryptographyAlgorithmScanner(new CryptoCfg({threads, rulesPath: cryptoRules}));
+
+  const cryptoHintScanner =  new CryptographyHintScanner(new CryptoCfg({threads, rulesPath: cryptoRules}))
 
   let fileList: Array<string> = [];
   fileList.push(rootPath);
@@ -39,6 +44,8 @@ export async function cryptoHandler(rootPath: string, options: any): Promise<voi
 
   console.log("Searching for local cryptography...")
   const results = await cryptoScanner.scan(fileList);
+  const cryptoHintResults = await cryptoHintScanner.scan(fileList);
+  console.log(cryptoHintResults);
 
   if(options.output) {
     await fs.promises.writeFile(options.output, JSON.stringify(results, null, 2));
