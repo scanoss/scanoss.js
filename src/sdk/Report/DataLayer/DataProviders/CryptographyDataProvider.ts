@@ -9,15 +9,14 @@ import {
 } from '../../../scanner/ScannerTypes';
 import { IDependencyResponse } from '../../../Dependencies/DependencyTypes';
 import {
-  CryptoAlgorithm,
-  ICryptoItem
-} from '../../../Cryptography/CryptographyTypes';
+  CryptoAlgorithm, LocalCryptographyResponse
+} from "../../../Cryptography/CryptographyTypes";
 
 export class CryptographyDataProvider implements DataProvider {
-  private files: Array<ICryptoItem>;
+  private files: LocalCryptographyResponse;
   private scanRawResults: ScannerResults;
   private componentList: Array<ScannerComponent>;
-  constructor(files: Array<ICryptoItem>,   scanRawResults: ScannerResults,) {
+  constructor(files: LocalCryptographyResponse,   scanRawResults: ScannerResults,) {
     this.files = files;
     this.scanRawResults = scanRawResults;
   }

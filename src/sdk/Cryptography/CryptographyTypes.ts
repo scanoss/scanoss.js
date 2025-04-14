@@ -6,13 +6,9 @@ export interface CryptoAlgorithmRules extends CryptoAlgorithm {
   keywords: Array<string>;
 }
 
-export interface ICryptoItem {
+export interface CryptoAlgorithmJobResponse {
   file: string;
   algorithms: Array<CryptoAlgorithm>;
-}
-
-export interface ILocalCryptographyResponse {
-  fileList: Array<ICryptoItem>;
 }
 
 export interface LocalCryptoAlgorithmJob {
@@ -39,7 +35,26 @@ export interface LocalCryptoHintJob {
   rules: Array<CryptoHintRule>;
 }
 
-export interface CryptoJobResponse {
+export interface CryptoHintJobResponse {
   file: string;
   hints: Array<CryptoHintRule>;
+}
+
+export interface CryptoHintResponse{
+  "id": string;
+  "name": string;
+  "description": string;
+  "url"?: string;
+  "category": string;
+  "purl"?: string;
+}
+
+export interface CryptoAlgorithmResponse extends CryptoAlgorithm {}
+
+export interface LocalCryptographyResponse {
+  fileList: Array<{
+    file: string;
+    algorithms: Array<CryptoAlgorithmResponse>;
+    hints: Array<CryptoHintResponse>;
+  }>;
 }

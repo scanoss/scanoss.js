@@ -1,30 +1,32 @@
 import { CryptoCfg } from "../CryptoCfg";
 import { Job } from "../../Utils/Concurrency/Job";
 import {
-  CryptoHintRule, CryptoJobResponse,
+  CryptoHintRule, CryptoHintJobResponse,
   LocalCryptoHintJob
 } from "../CryptographyTypes";
 import path from "path";
 import fs from "fs";
 import { WorkerPool } from "../../Utils/Concurrency/WorkerPool";
 import { cryptographyHintProcessor } from "./HintProcessor";
+import { BaseCryptographyScanner } from "../BaseCryptographyScanner";
+import { CryptographyResultCollector } from "../CryptographyResultCollector";
 
 /**
  * A class responsible for scanning files for cryptographic items.
  */
-export class CryptographyHintScanner {
-  private cryptoConfig: CryptoCfg;
+export class CryptographyHintScanner extends BaseCryptographyScanner<Array<CryptoHintJobResponse>>{
 
   /**
    * Constructs a new CryptographyScanner.
    * @param cryptoCfg The cryptographic configuration.
+   * @param resultCollector cryptography results collector
    */
-  constructor(cryptoCfg: CryptoCfg) {
-    this.cryptoConfig = cryptoCfg;
+  constructor(cryptoCfg: CryptoCfg, resultCollector: CryptographyResultCollector) {
+    super(cryptoCfg,resultCollector);
   }
 
   private async buildJobs(files: string[]): Promise<Array<Job<LocalCryptoHintJob>>> {
-    const rules = await this.loadRules(this.cryptoConfig.getRulesPath());
+    const rules = await this.loadRules(this.config.getLibraryRulesPath());
     const jobs: Array<Job<LocalCryptoHintJob>> = [];
     files.forEach((f) => {
       const newJob = new Job<LocalCryptoHintJob>({
@@ -41,11 +43,13 @@ export class CryptographyHintScanner {
    * @param files An array of file paths to scan.
    * @returns A promise that resolves to an ILocalCryptographyResponse.
    */
-  public async scan(files: Array<string>): Promise<Array<CryptoJobResponse>> {
-    const workerPool = new WorkerPool<LocalCryptoHintJob, CryptoJobResponse>(cryptographyHintProcessor, this.cryptoConfig.getNumberOfThreads());
+  public async scan(files: Array<string>): Promise<Array<CryptoHintJobResponse>> {
+    const workerPool = new WorkerPool<LocalCryptoHintJob, CryptoHintJobResponse>(cryptographyHintProcessor, this.config.getNumberOfThreads());
     const jobs = await this.buildJobs(files);
     workerPool.loadJobs(jobs)
-    return await workerPool.run();
+    const results = await workerPool.run();
+    this.resultCollector.collectHintResults(results)
+    return results;
   }
 
   /**

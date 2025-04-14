@@ -90,7 +90,8 @@ async function main() {
   cryptography.addArgument(new Argument("<source>"));
 
   // Options
-  cryptography.addOption(new Option("-r, --rules <rules>", "Crypto rules"));
+  cryptography.addOption(new Option("-ar, --algorithm-rules <algorithm_rules>", "Path to crypto algorithms rules file"));
+  cryptography.addOption(new Option("-lr, --library-rules <library_rules>", "Path to crypto library rules file"));
   cryptography.addOption(new Option("-o, --output <filename>", "Output result file name (optional - default stdout)"));
   cryptography.addOption(new Option("-T, --threads <threads>", "Number of threads to use while scanning (optional - default 5)"));
 

@@ -2,12 +2,8 @@ import fs from 'fs';
 import { Tree } from '../../tree/Tree';
 import { CryptoCfg } from '../CryptoCfg';
 import {
-  CryptoAlgorithmRules, ICryptoItem,
-  ILocalCryptographyResponse, LocalCryptoAlgorithmJob
+  CryptoAlgorithmRules, CryptoAlgorithmJobResponse, LocalCryptoAlgorithmJob
 } from "../CryptographyTypes";
-import {
-  mapToILocalCryptographyResponse
-} from './utils/adapters/cryptoAdapters';
 import path from 'path';
 import {
   createCryptoKeywordMapper,
@@ -16,24 +12,26 @@ import {
 import { Job } from "../../Utils/Concurrency/Job";
 import { WorkerPool } from "../../Utils/Concurrency/WorkerPool";
 import { cryptographyAlgorithmProcessor } from "./AlgorithmProcessor";
+import { BaseCryptographyScanner } from "../BaseCryptographyScanner";
+import { CryptographyResultCollector } from "../CryptographyResultCollector";
 
 /**
  * A class responsible for scanning files for cryptographic items.
  */
-export class CryptographyAlgorithmScanner {
-  private cryptoConfig: CryptoCfg;
+export class CryptographyAlgorithmScanner extends BaseCryptographyScanner<Array<CryptoAlgorithmJobResponse>> {
 
   /**
    * Constructs a new CryptographyScanner.
    * @param cryptoCfg The cryptographic configuration.
+   * @param resultCollector cryptography results collector
    */
-  constructor(cryptoCfg: CryptoCfg) {
-    this.cryptoConfig = cryptoCfg;
+  constructor(cryptoCfg: CryptoCfg, resultCollector: CryptographyResultCollector) {
+    super(cryptoCfg,resultCollector);
   }
 
 
   private async  buildJobs(files: string[]): Promise<Array<Job<LocalCryptoAlgorithmJob>>> {
-    const cryptographyRules = await this.loadRules(this.cryptoConfig.getRulesPath());
+    const cryptographyRules = await this.loadRules(this.config.getAlgorithmRulesPath());
     const rules = createCryptoKeywordMapper(cryptographyRules);
     const cryptoMapper = getCryptoMapper(cryptographyRules);
     const localCryptoJobs: Array<Job<LocalCryptoAlgorithmJob>> = [];
@@ -53,12 +51,13 @@ export class CryptographyAlgorithmScanner {
    * @param files An array of file paths to scan.
    * @returns A promise that resolves to an ILocalCryptographyResponse.
    */
-  public async scan(files: Array<string>): Promise<ILocalCryptographyResponse> {
-    const workerPool = new WorkerPool<LocalCryptoAlgorithmJob, ICryptoItem>(cryptographyAlgorithmProcessor, this.cryptoConfig.getNumberOfThreads());
+  public async scan(files: Array<string>): Promise<Array<CryptoAlgorithmJobResponse>> {
+    const workerPool = new WorkerPool<LocalCryptoAlgorithmJob, CryptoAlgorithmJobResponse>(cryptographyAlgorithmProcessor, this.config.getNumberOfThreads());
     const jobs = await this.buildJobs(files);
     workerPool.loadJobs(jobs)
-    const cryptoItems =  await workerPool.run();
-    return mapToILocalCryptographyResponse(cryptoItems);
+    const results = await workerPool.run();
+    this.resultCollector.collectAlgorithmResults(results);
+    return results;
   }
 
   /**
@@ -67,7 +66,7 @@ export class CryptographyAlgorithmScanner {
    * @returns A promise that resolves to an ILocalCryptographyResponse.
    * @throws Error if the specified path is not a directory.
    */
-  public async scanFolder(path: string): Promise<ILocalCryptographyResponse> {
+  public async scanFolder(path: string): Promise<Array<CryptoAlgorithmJobResponse>> {
     if (!(await fs.promises.lstat(path)).isDirectory())
       throw new Error('Specified path is not a directory');
     const tree = new Tree(path);

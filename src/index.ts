@@ -16,8 +16,7 @@ export * from './sdk/Dependencies/DependencyScanner';
 export * from './sdk/Dependencies/LocalDependency/LocalDependency';
 
 // *** Cryptography scanner exports *** //
-export * from './sdk/Cryptography/Algorithm/CryptographyAlgorithmScanner';
-export * from './sdk/Cryptography/Hint/CryptographyHintsScanner';
+export * from './sdk/Cryptography/CryptographyScanner';
 export * from './sdk/Cryptography/CryptoCfg';
 export * from './sdk/Cryptography/CryptographyTypes';
 
