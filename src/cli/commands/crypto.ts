@@ -23,8 +23,6 @@ export async function cryptoHandler(rootPath: string, options: any): Promise<voi
   rootPath = rootPath.replace(/^\./, process.env.PWD);  // Convert relative path to absolute path.
   const pathIsFolder = await isFolder(rootPath);
 
-  console.log(JSON.stringify(options));
-
   let algorithmRules = null;
   let libraryRules = null;
   if(options.algorithmRules) algorithmRules = options.algorithmRules;

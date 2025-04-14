@@ -16,6 +16,8 @@ import { CryptographyResultCollector } from "../CryptographyResultCollector";
  */
 export class CryptographyHintScanner extends BaseCryptographyScanner<Array<CryptoHintJobResponse>>{
 
+  private readonly DEFAULT_CRYPTO_LIBRARY_RULE_FILENAME = 'scanoss-crypto-library-rules.json';
+
   /**
    * Constructs a new CryptographyScanner.
    * @param cryptoCfg The cryptographic configuration.
@@ -59,7 +61,7 @@ export class CryptographyHintScanner extends BaseCryptographyScanner<Array<Crypt
   private async loadRules(rulePath?: string): Promise<Array<CryptoHintRule>> {
     const cryptoRulePath = rulePath ? rulePath :  path.join(
       __dirname,
-      '../../../../../assets/data/default-scanoss-crypto-libraries.json');
+      '../../../../../assets/data', this.DEFAULT_CRYPTO_LIBRARY_RULE_FILENAME);
     const rules = await fs.promises.readFile(cryptoRulePath,'utf-8');
     return JSON.parse(rules);
   }

@@ -20,6 +20,8 @@ import { CryptographyResultCollector } from "../CryptographyResultCollector";
  */
 export class CryptographyAlgorithmScanner extends BaseCryptographyScanner<Array<CryptoAlgorithmJobResponse>> {
 
+  private readonly DEFAULT_CRYPTO_ALGORITHM_RULE_FILENAME = 'scanoss-crypto-algorithm-rules.json';
+
   /**
    * Constructs a new CryptographyScanner.
    * @param cryptoCfg The cryptographic configuration.
@@ -81,7 +83,7 @@ export class CryptographyAlgorithmScanner extends BaseCryptographyScanner<Array<
   private async loadRules(rulePath?: string): Promise<Array<CryptoAlgorithmRules>> {
     const cryptoRulePath = rulePath ? rulePath :  path.join(
       __dirname,
-      '../../../../../assets/data/defaultCryptoAlgorithmRules.json');
+      '../../../../../assets/data', this.DEFAULT_CRYPTO_ALGORITHM_RULE_FILENAME);
     const rules = await fs.promises.readFile(cryptoRulePath,'utf-8');
     return JSON.parse(rules);
   }

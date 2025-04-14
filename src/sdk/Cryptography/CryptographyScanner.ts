@@ -4,7 +4,6 @@ import {
 } from "./Algorithm/CryptographyAlgorithmScanner";
 import { CryptographyHintScanner } from "./Hint/CryptographyHintsScanner";
 import {
-  CryptoAlgorithmResponse,
   LocalCryptographyResponse
 } from "./CryptographyTypes";
 import { CryptographyResultCollector } from "./CryptographyResultCollector";
