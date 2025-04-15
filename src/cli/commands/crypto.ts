@@ -4,8 +4,8 @@ import {
 } from '../../sdk/Dependencies/DependencyScannerCfg';
 import { DependencyScanner } from '../../sdk/Dependencies/DependencyScanner';
 import {
-  CryptographyAlgorithmScanner
-} from '../../sdk/Cryptography/Algorithm/CryptographyAlgorithmScanner';
+  FileCryptographyAlgorithmScanner
+} from '../../sdk/Cryptography/Algorithm/Files/FileCryptographyAlgorithmScanner';
 import { Tree } from '../../sdk/tree/Tree';
 import { DependencyFilter } from '../../sdk/tree/Filters/DependencyFilter';
 import { CryptoCfg } from '../../sdk/Cryptography/CryptoCfg';
@@ -45,7 +45,7 @@ export async function cryptoHandler(rootPath: string, options: any): Promise<voi
   }
 
   console.log("Searching for local cryptography...")
-  const results = await cryptoScanner.scan(fileList);
+  const results = await cryptoScanner.scanFiles(fileList);
 
   if(options.output) {
     await fs.promises.writeFile(options.output, JSON.stringify(results, null, 2));

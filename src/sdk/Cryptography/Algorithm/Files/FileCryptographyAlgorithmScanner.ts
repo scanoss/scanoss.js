@@ -1,24 +1,33 @@
 import fs from 'fs';
-import { Tree } from '../../tree/Tree';
-import { CryptoCfg } from '../CryptoCfg';
+import { Tree } from '../../../tree/Tree';
+import { CryptoCfg } from '../../CryptoCfg';
 import {
-  CryptoAlgorithmRules, CryptoAlgorithmJobResponse, LocalCryptoAlgorithmJob
-} from "../CryptographyTypes";
+  CryptoAlgorithmRules,
+  CryptoAlgorithmJobResponse,
+  LocalCryptoAlgorithmJob,
+  CryptoHintJobResponse
+} from "../../CryptographyTypes";
 import path from 'path';
 import {
   createCryptoKeywordMapper,
   getCryptoMapper
 } from "./Helper/Helper";
-import { Job } from "../../Utils/Concurrency/Job";
-import { WorkerPool } from "../../Utils/Concurrency/WorkerPool";
+import { Job } from "../../../Utils/Concurrency/Job";
+import { WorkerPool } from "../../../Utils/Concurrency/WorkerPool";
 import { cryptographyAlgorithmProcessor } from "./AlgorithmProcessor";
-import { BaseCryptographyScanner } from "../BaseCryptographyScanner";
-import { CryptographyResultCollector } from "../CryptographyResultCollector";
+import { BaseCryptographyScanner } from "../../BaseCryptographyScanner";
+import {
+  FileCryptographyResultCollector
+} from "../../Helper/ResultCollector/File/FileCryptographyResultCollector";
+
 
 /**
  * A class responsible for scanning files for cryptographic items.
  */
-export class CryptographyAlgorithmScanner extends BaseCryptographyScanner<Array<CryptoAlgorithmJobResponse>> {
+export class FileCryptographyAlgorithmScanner extends BaseCryptographyScanner<
+  FileCryptographyResultCollector,
+  Array<string>,
+  Array<CryptoAlgorithmJobResponse>>{
 
   private readonly DEFAULT_CRYPTO_ALGORITHM_RULE_FILENAME = 'scanoss-crypto-algorithm-rules.json';
 
@@ -27,7 +36,7 @@ export class CryptographyAlgorithmScanner extends BaseCryptographyScanner<Array<
    * @param cryptoCfg The cryptographic configuration.
    * @param resultCollector cryptography results collector
    */
-  constructor(cryptoCfg: CryptoCfg, resultCollector: CryptographyResultCollector) {
+  constructor(cryptoCfg: CryptoCfg, resultCollector: FileCryptographyResultCollector) {
     super(cryptoCfg,resultCollector);
   }
 
@@ -83,7 +92,7 @@ export class CryptographyAlgorithmScanner extends BaseCryptographyScanner<Array<
   private async loadRules(rulePath?: string): Promise<Array<CryptoAlgorithmRules>> {
     const cryptoRulePath = rulePath ? rulePath :  path.join(
       __dirname,
-      '../../../../../assets/data', this.DEFAULT_CRYPTO_ALGORITHM_RULE_FILENAME);
+      '../../../../../../assets/data', this.DEFAULT_CRYPTO_ALGORITHM_RULE_FILENAME);
     const rules = await fs.promises.readFile(cryptoRulePath,'utf-8');
     return JSON.parse(rules);
   }

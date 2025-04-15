@@ -17,7 +17,6 @@ export interface LocalCryptoAlgorithmJob {
   cryptoMapper:Map<string, CryptoAlgorithm>;
 }
 
-
 // Local Crypto Hints
 export interface CryptoHintRule {
   "id": string;
@@ -37,7 +36,7 @@ export interface LocalCryptoHintJob {
 
 export interface CryptoHintJobResponse {
   file: string;
-  hints: Array<CryptoHintRule>;
+  hints: Array<CryptoHintResponse>;
 }
 
 export interface CryptoHintResponse{
@@ -51,10 +50,19 @@ export interface CryptoHintResponse{
 
 export interface CryptoAlgorithmResponse extends CryptoAlgorithm {}
 
+export interface LocalCryptography {
+  file: string;
+  algorithms: Array<CryptoAlgorithmResponse>;
+  hints: Array<CryptoHintResponse>;
+}
+
 export interface LocalCryptographyResponse {
-  fileList: Array<{
-    file: string;
-    algorithms: Array<CryptoAlgorithmResponse>;
-    hints: Array<CryptoHintResponse>;
-  }>;
+  fileList: Array<LocalCryptography>;
+}
+
+export interface CryptographyResponse {
+  purl: string;
+  version: string;
+  algorithms: Array<CryptoAlgorithmResponse>;
+  hints: Array<CryptoHintResponse>;
 }

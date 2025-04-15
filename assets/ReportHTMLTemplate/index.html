@@ -676,7 +676,7 @@
                 <thead>
                   <tr>
                     <th>Component</th>
-                    <th>Version</th>
+                    <th>Type</th>
                     <th>Cryptography</th>
                   </tr>
                 </thead>
@@ -697,6 +697,7 @@
               <thead>
               <tr>
                 <th>File</th>
+                <th>Type</th>
                 <th>Cryptography</th>
               </tr>
               </thead>
@@ -706,6 +707,7 @@
 
             <template id="tpl-local-cryptography-row">
               <tr>
+                <td></td>
                 <td></td>
                 <td></td>
               </tr>
@@ -1178,9 +1180,9 @@
 
         for (const crypto of cryptography.components) {
           const clon = template.content.cloneNode(true);
-          clon.querySelector('td:nth-child(1)').innerHTML = crypto.purl;
-          clon.querySelector('td:nth-child(2)').innerHTML = crypto.version;
-          clon.querySelector('td:nth-child(3)').innerHTML = crypto.algorithms.map(e => `${e.algorithm} (${e.strength})`).join(' - ');
+          clon.querySelector('td:nth-child(1)').innerHTML = crypto.source;
+          clon.querySelector('td:nth-child(2)').innerHTML = crypto.type;
+          clon.querySelector('td:nth-child(3)').innerHTML = crypto.values.join(' - ');
           table.appendChild(clon);
         }
       }
@@ -1195,8 +1197,9 @@
 
         for (const crypto of cryptography.files) {
           const clon = template.content.cloneNode(true);
-          clon.querySelector('td:nth-child(1)').innerHTML = crypto.file;
-          clon.querySelector('td:nth-child(2)').innerHTML = crypto.algorithms.map(e => `${e.algorithm} (${e.strength})`).join(' - ');
+          clon.querySelector('td:nth-child(1)').innerHTML = crypto.source;
+          clon.querySelector('td:nth-child(2)').innerHTML = crypto.type;
+          clon.querySelector('td:nth-child(3)').innerHTML = crypto.values.join(' - ');
           table.appendChild(clon);
         }
       }

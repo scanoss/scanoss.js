@@ -1,20 +1,27 @@
-import { CryptoCfg } from "../CryptoCfg";
-import { Job } from "../../Utils/Concurrency/Job";
+import { CryptoCfg } from "../../CryptoCfg";
+import { Job } from "../../../Utils/Concurrency/Job";
 import {
   CryptoHintRule, CryptoHintJobResponse,
   LocalCryptoHintJob
-} from "../CryptographyTypes";
+} from "../../CryptographyTypes";
 import path from "path";
 import fs from "fs";
-import { WorkerPool } from "../../Utils/Concurrency/WorkerPool";
+import { WorkerPool } from "../../../Utils/Concurrency/WorkerPool";
 import { cryptographyHintProcessor } from "./HintProcessor";
-import { BaseCryptographyScanner } from "../BaseCryptographyScanner";
-import { CryptographyResultCollector } from "../CryptographyResultCollector";
+import { BaseCryptographyScanner } from "../../BaseCryptographyScanner";
+import {
+  FileCryptographyResultCollector
+} from "../../Helper/ResultCollector/File/FileCryptographyResultCollector";
+
 
 /**
  * A class responsible for scanning files for cryptographic items.
  */
-export class CryptographyHintScanner extends BaseCryptographyScanner<Array<CryptoHintJobResponse>>{
+export class FileCryptographyHintScanner
+  extends BaseCryptographyScanner<
+    FileCryptographyResultCollector,
+    Array<string>,
+    Array<CryptoHintJobResponse>>{
 
   private readonly DEFAULT_CRYPTO_LIBRARY_RULE_FILENAME = 'scanoss-crypto-library-rules.json';
 
@@ -23,7 +30,7 @@ export class CryptographyHintScanner extends BaseCryptographyScanner<Array<Crypt
    * @param cryptoCfg The cryptographic configuration.
    * @param resultCollector cryptography results collector
    */
-  constructor(cryptoCfg: CryptoCfg, resultCollector: CryptographyResultCollector) {
+  constructor(cryptoCfg: CryptoCfg, resultCollector: FileCryptographyResultCollector) {
     super(cryptoCfg,resultCollector);
   }
 
@@ -61,7 +68,7 @@ export class CryptographyHintScanner extends BaseCryptographyScanner<Array<Crypt
   private async loadRules(rulePath?: string): Promise<Array<CryptoHintRule>> {
     const cryptoRulePath = rulePath ? rulePath :  path.join(
       __dirname,
-      '../../../../../assets/data', this.DEFAULT_CRYPTO_LIBRARY_RULE_FILENAME);
+      '../../../../../../assets/data', this.DEFAULT_CRYPTO_LIBRARY_RULE_FILENAME);
     const rules = await fs.promises.readFile(cryptoRulePath,'utf-8');
     return JSON.parse(rules);
   }

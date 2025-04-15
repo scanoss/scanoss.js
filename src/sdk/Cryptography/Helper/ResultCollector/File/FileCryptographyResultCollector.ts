@@ -1,14 +1,14 @@
 import {
   CryptoAlgorithmJobResponse, CryptoAlgorithmResponse,
   CryptoHintJobResponse, CryptoHintResponse, LocalCryptographyResponse
-} from "./CryptographyTypes";
+} from "../../../CryptographyTypes";
 
 export interface CryptographyCollector {
   collectAlgorithmResults(algorithmResults: Array<CryptoAlgorithmJobResponse>): void
   collectHintResults(algorithmResults: Array<CryptoHintJobResponse>): void
 }
 
-export class CryptographyResultCollector implements CryptographyCollector {
+export class FileCryptographyResultCollector implements CryptographyCollector {
 
   private resultMapper = new Map<string,{
     file: string;

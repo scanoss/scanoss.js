@@ -58,6 +58,15 @@ import {
 import {
   Settings
 } from "../../sdk/scanner/ScannnerResultPostProcessor/interfaces/types";
+import { CryptoCfg } from "../../sdk/Cryptography/CryptoCfg";
+import {
+  CryptographyScanner
+} from "../../sdk/Cryptography/CryptographyScanner";
+import {
+  CryptographyResponse, LocalCryptography
+} from "../../sdk/Cryptography/CryptographyTypes";
+
+
 
 export async function scanHandler(
   rootPath: string,
@@ -211,8 +220,46 @@ export async function scanHandler(
     scanner: scannerResults as ScannerResults,
     ...(options.dependencies && { dependencies: depResults }),
   };
+  let scannerResultsString = JSON.stringify(scannerResults, null, 2);
 
-  let scannerResultsString = JSON.stringify(scannersResults, null, 2);
+  // Crypto
+  const resultsWithCrypto = {
+    scanner: scannerResults as ScannerResults,
+    ...{ cryptography: { files: [] as unknown as Array<LocalCryptography> ,
+        components: [] as unknown as Array<CryptographyResponse> } },
+  };
+  if (options.cryptography) {
+    // Local Cryptography
+    const cryptoCfg = new CryptoCfg({
+      threads: 5,
+      libraryRulesPath: null,
+      algorithmRulesPath: null,
+      apiKey: options.key,
+      proxy: options.proxy,
+    });
+    const cryptoScanner = new CryptographyScanner(cryptoCfg);
+    let localCrypto = await cryptoScanner.scanFiles(scannerInput.fileList);
+    localCrypto.fileList = localCrypto.fileList.map((c)=>{
+      return {...c, file: c.file.replace(rootPath + path.sep, "") }
+    })
+    resultsWithCrypto.cryptography.files = localCrypto.fileList;
+
+    // Component Cryptography
+    if (options.key) {
+      let componentList: any = Object.values(scannersResults.scanner).flat();
+      componentList = componentList.filter(
+        (component) => component.id !== 'none'
+      );
+      const cryptoRequest = {
+        purlsList: componentList.map((c) => {
+          return { purl: c.purl[0], requirement: c.version }
+        })
+      }
+      resultsWithCrypto.cryptography.components = await cryptoScanner.scanComponents(cryptoRequest);
+    }
+    scannerResultsString = JSON.stringify(resultsWithCrypto, null, 2);
+  }
+
 
   if (options.format && options.format.toLowerCase() === 'html') {
     const dataProviderManager = new DataProviderManager();
@@ -242,7 +289,8 @@ export async function scanHandler(
       )
     );
 
-    dataProviderManager.addDataProvider(new CryptographyDataProvider(null,scannersResults.scanner));
+
+    dataProviderManager.addDataProvider(new CryptographyDataProvider(resultsWithCrypto.cryptography.files, resultsWithCrypto.cryptography.components));
 
     const report = new Report(dataProviderManager);
     scannerResultsString = await report.getHTML();

@@ -1,6 +1,7 @@
 import path from 'path';
 import { Settings } from "./ScannnerResultPostProcessor/interfaces/types";
 
+
 export enum ScannerEvents {
   WINNOWING_STARTING = 'WINNOWING_STARTING',
   WINNOWING_NEW_CONTENT = 'WINNOWING_NEW_CONTENT',
@@ -117,7 +118,7 @@ export interface ScannerComponent {
   quality: {
     score: string;
     source: string; }[];
-  cryptography: any[];
+  cryptography: any,
   health: {
     creation_date: string;
     issues: number;

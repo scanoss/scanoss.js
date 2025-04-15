@@ -1,5 +1,4 @@
-import { CryptoAlgorithm, CryptoAlgorithmRules } from '../../CryptographyTypes';
-
+import { CryptoAlgorithm, CryptoAlgorithmRules } from '../../../CryptographyTypes';
 
 /**
  * Function to create a mapping of regular expressions based on provided crypto definitions.

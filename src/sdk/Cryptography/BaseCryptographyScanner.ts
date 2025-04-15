@@ -1,15 +1,15 @@
 import { CryptoCfg } from "./CryptoCfg";
-import { CryptographyResultCollector } from "./CryptographyResultCollector";
 
-export abstract class BaseCryptographyScanner<T> {
+export abstract class BaseCryptographyScanner<T,I,R> {
 
   protected config: CryptoCfg;
 
-  protected resultCollector: CryptographyResultCollector;
-  constructor(cfg: CryptoCfg, cryptoResultCollector: CryptographyResultCollector) {
+  protected resultCollector: T;
+
+  constructor(cfg: CryptoCfg, cryptoResultCollector: T) {
     this.config = cfg;
     this.resultCollector = cryptoResultCollector;
   }
 
-  public abstract scan(files: Array<string>):Promise<T>;
+  public abstract scan(files: I):Promise<R>;
 }

@@ -36,6 +36,7 @@ async function main() {
   scan.addOption(new Option("-M, --timeout <timeout>", "Timeout (in seconds) for API communication (optional -default 120)"));
   scan.addOption(new Option("    --obfuscate", "Obfuscate fingerprints"));
   scan.addOption(new Option("-D, --dependencies", "Add dependency scanning"));
+  scan.addOption(new Option("-C, --cryptography", "Add cryptography scanning"));
   scan.addOption(new Option("    --apiurl <apiurl>", "SCANOSS API URL (optional - default: https://api.osskb.org/scan/direct)"));
   scan.addOption(new Option("    --api2url <api2url>", "SCANOSS gRPC API 2.0 URL (optional - default: api.scanoss.com:443)"));
   scan.addOption(new Option("-k, --key <key>", "SCANOSS API Key token (optional - not required for default OSSKB URL)"));
