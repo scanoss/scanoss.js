@@ -29,13 +29,15 @@ export class FileCryptographyResultCollector implements CryptographyCollector {
 
   public collectAlgorithmResults(algorithmResults: Array<CryptoAlgorithmJobResponse>){
     algorithmResults.forEach((r)=> {
-     const result = this.getOrCreateFileResult(r.file);
-     result.algorithms = r.algorithms;
+      if (r.algorithms.length <= 0) return;
+      const result = this.getOrCreateFileResult(r.file);
+      result.algorithms = r.algorithms;
     });
   }
 
   public collectHintResults(hintsResults: Array<CryptoHintJobResponse>){
     hintsResults.forEach((r)=> {
+      if (r.hints.length <= 0) return;
       const result = this.getOrCreateFileResult(r.file);
       result.hints = r.hints;
     });
