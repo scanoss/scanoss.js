@@ -40,7 +40,13 @@ export class FileAlgorithmScanner extends BaseCryptographyScanner<
     super(cryptoCfg,resultCollector);
   }
 
-
+  /**
+   Builds a collection of cryptographic algorithm analysis jobs from an array of files.
+   This method loads cryptography rules, creates required mappers, and initializes
+   job objects for each file that will be used for crypto pattern detection.
+   @param files An array of file paths to analyze for cryptographic algorithm usage.
+   @returns A promise that resolves to an array of job objects configured for crypto analysis.
+   */
   private async  buildJobs(files: string[]): Promise<Array<Job<LocalCryptoAlgorithmJob>>> {
     const cryptographyRules = await this.loadRules(this.config.getAlgorithmRulesPath());
     const rules = createCryptoKeywordMapper(cryptographyRules);

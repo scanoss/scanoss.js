@@ -34,6 +34,13 @@ export class FileHintScanner
     super(cryptoCfg,resultCollector);
   }
 
+  /**
+   * Builds a collection of cryptographic hint analysis jobs from an array of files.
+   * This method loads library rules and initializes job objects for each file
+   * that will be used for cryptographic hint detection.
+   * @param files An array of file paths to analyze for cryptographic hints.
+   * @returns A promise that resolves to an array of job objects configured for hint analysis.
+   */
   private async buildJobs(files: string[]): Promise<Array<Job<LocalCryptoHintJob>>> {
     const rules = await this.loadRules(this.config.getLibraryRulesPath());
     const jobs: Array<Job<LocalCryptoHintJob>> = [];

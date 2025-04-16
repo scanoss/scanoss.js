@@ -8,6 +8,11 @@ export interface CryptographyCollector {
   collectHintResults(algorithmResults: Array<CryptoHintJobResponse>): void
 }
 
+/**
+ * Collects and organizes cryptographic scan results for individual files.
+ * This class implements the CryptographyCollector interface and maintains
+ * a mapping of file paths to their respective algorithm and hint detection results.
+ */
 export class FileCryptographyResultCollector implements CryptographyCollector {
 
   private resultMapper = new Map<string,{
@@ -16,6 +21,11 @@ export class FileCryptographyResultCollector implements CryptographyCollector {
     hints: Array<CryptoHintResponse>;
   }>
 
+  /**
+   * Gets an existing result entry for a file or creates a new one if it doesn't exist.
+   * @param file The path to the file.
+   * @returns The result entry for the specified file.
+   */
   private getOrCreateFileResult(file: string) {
     if (!this.resultMapper.has(file)) {
       this.resultMapper.set(file, {
@@ -27,7 +37,12 @@ export class FileCryptographyResultCollector implements CryptographyCollector {
     return this.resultMapper.get(file);
   }
 
-  public collectAlgorithmResults(algorithmResults: Array<CryptoAlgorithmJobResponse>){
+  /**
+   * Collects algorithm detection results and organizes them by file.
+   * Skips files that have no detected algorithms.
+   * @param algorithmResults The array of algorithm job responses to collect.
+   */
+  public collectAlgorithmResults(algorithmResults:Array<CryptoAlgorithmJobResponse>):void{
     algorithmResults.forEach((r)=> {
       if (r.algorithms.length <= 0) return;
       const result = this.getOrCreateFileResult(r.file);
@@ -35,7 +50,12 @@ export class FileCryptographyResultCollector implements CryptographyCollector {
     });
   }
 
-  public collectHintResults(hintsResults: Array<CryptoHintJobResponse>){
+  /**
+   * Collects hint detection results and organizes them by file.
+   * Skips files that have no detected hints.
+   * @param hintsResults The array of hint job responses to collect.
+   */
+  public collectHintResults(hintsResults: Array<CryptoHintJobResponse>):void {
     hintsResults.forEach((r)=> {
       if (r.hints.length <= 0) return;
       const result = this.getOrCreateFileResult(r.file);
@@ -43,10 +63,13 @@ export class FileCryptographyResultCollector implements CryptographyCollector {
     });
   }
 
-  public getResults(): LocalCryptographyResponse{
+  /**
+   * Retrieves all collected cryptography results for files.
+   * @returns A LocalCryptographyResponse containing results for all files.
+   */
+  public getResults():LocalCryptographyResponse {
     return {
       fileList: Array.from(this.resultMapper.values())
     }
   }
-
 }
