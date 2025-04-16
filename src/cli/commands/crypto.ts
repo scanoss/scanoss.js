@@ -16,13 +16,13 @@ import { FilterAND } from '../../sdk/tree/Filters/FilterAND';
 import {
   CryptographyScanner
 } from "../../sdk/Cryptography/CryptographyScanner";
+import path from "path";
 
 
 export async function cryptoHandler(rootPath: string, options: any): Promise<void> {
   rootPath = rootPath.replace(/\/$/, '');  // Remove trailing slash if exists
   rootPath = rootPath.replace(/^\./, process.env.PWD);  // Convert relative path to absolute path.
   const pathIsFolder = await isFolder(rootPath);
-
   let algorithmRules = null;
   let libraryRules = null;
   if(options.algorithmRules) algorithmRules = options.algorithmRules;
@@ -46,6 +46,9 @@ export async function cryptoHandler(rootPath: string, options: any): Promise<voi
 
   console.log("Searching for local cryptography...")
   const results = await cryptoScanner.scanFiles(fileList);
+  results.fileList.forEach((c)=>{
+    c.file = c.file.replace(rootPath, "");
+  });
 
   if(options.output) {
     await fs.promises.writeFile(options.output, JSON.stringify(results, null, 2));
