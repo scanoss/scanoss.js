@@ -1,5 +1,4 @@
-import { CryptoAlgorithm, CryptoAlgorithmRules } from '../CryptographyTypes';
-
+import { CryptoAlgorithm, CryptoAlgorithmRules } from '../../../CryptographyTypes';
 
 /**
  * Function to create a mapping of regular expressions based on provided crypto definitions.
@@ -28,7 +27,7 @@ export function createCryptoKeywordMapper(cryptoRulesDefinitions: Array<CryptoAl
  *          containing the algorithm's name and strength.
  */
 export function getCryptoMapper(cryptoDefinitions: Array<CryptoAlgorithmRules>): Map<string, CryptoAlgorithm> {
-   const cryptoMapper = new Map<string, any>();
+   const cryptoMapper = new Map<string, CryptoAlgorithm>();
 
    cryptoDefinitions.forEach((c) => {
     const { algorithm, strength } = c;

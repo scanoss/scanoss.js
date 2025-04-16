@@ -19,7 +19,6 @@ export class BaseService {
     status: CommonMessages.StatusResponse.AsObject;
   }) {
     const { status, ...responseWithoutStatus } = response;
-
     if (status.status === CommonMessages.StatusCode.FAILED) {
       logger.log(
         `[ GRPC ${this.SERVICE_NAME} ] - Server GRPC Code: ${status.status} - ${status.message}`,
@@ -54,7 +53,6 @@ export class BaseService {
       gRPCPurlMessage.setRequirement(requirement);
       return gRPCPurlMessage;
     });
-
     const gRPCPurlRequest = new CommonMessages.PurlRequest();
     gRPCPurlRequest.setPurlsList(GRPCPurlList);
 
