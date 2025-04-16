@@ -24,7 +24,7 @@ import {
 /**
  * A class responsible for scanning files for cryptographic items.
  */
-export class FileCryptographyAlgorithmScanner extends BaseCryptographyScanner<
+export class FileAlgorithmScanner extends BaseCryptographyScanner<
   FileCryptographyResultCollector,
   Array<string>,
   Array<CryptoAlgorithmJobResponse>>{

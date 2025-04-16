@@ -118,7 +118,7 @@ export interface ScannerComponent {
   quality: {
     score: string;
     source: string; }[];
-  cryptography: any,
+  cryptography: any[];
   health: {
     creation_date: string;
     issues: number;

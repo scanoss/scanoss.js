@@ -1,21 +1,23 @@
 import {
   ComponentCryptographyResultCollector
 } from "../../Helper/ResultCollector/Component/ComponentCryptographyResultColletor";
+import {
+  AlgorithmResponse,
+  CryptographyService
+} from "../../../Services/Grpc/CryptographyService";
 import { PurlRequest } from "../../../Services/Grpc/BaseService";
-import { CryptographyService,
-  HintsResponse } from "../../../Services/Grpc/CryptographyService";
 import { BaseCryptographyScanner } from "../../BaseCryptographyScanner";
 
-export class ComponentCryptographyHintScanner
+export class ComponentAlgorithmScanner
   extends BaseCryptographyScanner<
     ComponentCryptographyResultCollector,
     PurlRequest,
-    HintsResponse>{
+    AlgorithmResponse>{
 
-  public async scan(req: PurlRequest):Promise<HintsResponse>{
+  public async scan(req: PurlRequest):Promise<AlgorithmResponse> {
     const cryptographyService = new CryptographyService(this.config.getApikey(), this.config.getProxy());
-    const results = await cryptographyService.getEncryptionHints(req);
-    this.resultCollector.collectHintResults(results);
+    const results = await cryptographyService.getAlgorithms(req);
+    this.resultCollector.collectAlgorithmResults(results);
     return results;
   }
 }

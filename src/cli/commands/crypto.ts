@@ -4,8 +4,8 @@ import {
 } from '../../sdk/Dependencies/DependencyScannerCfg';
 import { DependencyScanner } from '../../sdk/Dependencies/DependencyScanner';
 import {
-  FileCryptographyAlgorithmScanner
-} from '../../sdk/Cryptography/Algorithm/Files/FileCryptographyAlgorithmScanner';
+  FileAlgorithmScanner
+} from '../../sdk/Cryptography/Algorithm/Files/FileAlgorithmScanner';
 import { Tree } from '../../sdk/tree/Tree';
 import { DependencyFilter } from '../../sdk/tree/Filters/DependencyFilter';
 import { CryptoCfg } from '../../sdk/Cryptography/CryptoCfg';

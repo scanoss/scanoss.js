@@ -1,8 +1,8 @@
 import { CryptoCfg } from "./CryptoCfg";
 import {
-  FileCryptographyAlgorithmScanner
-} from "./Algorithm/Files/FileCryptographyAlgorithmScanner";
-import { FileCryptographyHintScanner } from "./Hint/Files/CryptographyHintsScanner";
+  FileAlgorithmScanner
+} from "./Algorithm/Files/FileAlgorithmScanner";
+import { FileHintScanner } from "./Hint/Files/FileHintScanner";
 import {
   CryptographyResponse,
   LocalCryptographyResponse
@@ -15,11 +15,11 @@ import {
   ComponentCryptographyResultCollector
 } from "./Helper/ResultCollector/Component/ComponentCryptographyResultColletor";
 import {
-  ComponentCryptographyAlgorithmScanner
-} from "./Algorithm/Components/ComponentCryptographyAlgorithmScanner";
+  ComponentAlgorithmScanner
+} from "./Algorithm/Components/ComponentAlgorithmScanner";
 import {
-  ComponentCryptographyHintScanner
-} from "./Hint/Components/ComponentCryptographyHintScanner";
+  ComponentHintScanner
+} from "./Hint/Components/ComponentHintScanner";
 
 
 export class CryptographyScanner {
@@ -32,8 +32,8 @@ export class CryptographyScanner {
 
   public async scanFiles(files: Array<string>):Promise<LocalCryptographyResponse> {
     const cryptoResultCollector = new FileCryptographyResultCollector();
-    const cryptoAlgorithmScanner = new FileCryptographyAlgorithmScanner(this.config,cryptoResultCollector);
-    const cryptoHintScanner = new FileCryptographyHintScanner(this.config, cryptoResultCollector);
+    const cryptoAlgorithmScanner = new FileAlgorithmScanner(this.config,cryptoResultCollector);
+    const cryptoHintScanner = new FileHintScanner(this.config, cryptoResultCollector);
     await cryptoAlgorithmScanner.scan(files);
     await cryptoHintScanner.scan(files);
     return cryptoResultCollector.getResults();
@@ -41,8 +41,8 @@ export class CryptographyScanner {
 
   public async scanComponents(req: PurlRequest):Promise<Array<CryptographyResponse>> {
     const componentCryptoResultCollector = new ComponentCryptographyResultCollector();
-    const componentCryptoAlgorithmScanner = new ComponentCryptographyAlgorithmScanner(this.config, componentCryptoResultCollector);
-    const componentCryptoHintScanner = new ComponentCryptographyHintScanner(this.config, componentCryptoResultCollector);
+    const componentCryptoAlgorithmScanner = new ComponentAlgorithmScanner(this.config, componentCryptoResultCollector);
+    const componentCryptoHintScanner = new ComponentHintScanner(this.config, componentCryptoResultCollector);
     await componentCryptoAlgorithmScanner.scan(req);
     await componentCryptoHintScanner.scan(req);
     return componentCryptoResultCollector.getResults();

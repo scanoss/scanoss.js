@@ -17,7 +17,7 @@ import {
 /**
  * A class responsible for scanning files for cryptographic items.
  */
-export class FileCryptographyHintScanner
+export class FileHintScanner
   extends BaseCryptographyScanner<
     FileCryptographyResultCollector,
     Array<string>,
