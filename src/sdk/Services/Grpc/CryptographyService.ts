@@ -6,6 +6,9 @@ import { ERROR_SERVICES_GRPC_API_TOKEN_REQUIRED } from '../../Errors';
 export interface AlgorithmResponse
   extends CryptographyMessages.AlgorithmResponse.AsObject {}
 
+export interface HintsResponse
+  extends CryptographyMessages.HintsInRangeResponse.AsObject {}
+
 export class CryptographyService extends BaseService {
   private client: CryptographyClient;
 
@@ -29,6 +32,23 @@ export class CryptographyService extends BaseService {
   public async getAlgorithms(req: PurlRequest): Promise<AlgorithmResponse> {
     return new Promise((resolve, reject) => {
       this.client.getAlgorithms(
+        this.buildGRPCPurlRequest(req),
+        (err, response) => {
+          if (err) reject(err);
+          try {
+            // @ts-ignore
+            resolve(this.handleResponse(response.toObject()));
+          } catch (e) {
+            reject(e);
+          }
+        }
+      );
+    });
+  }
+
+  public async getEncryptionHints(req: PurlRequest): Promise<HintsResponse> {
+    return new Promise((resolve, reject) => {
+      this.client.getHintsInRange(
         this.buildGRPCPurlRequest(req),
         (err, response) => {
           if (err) reject(err);

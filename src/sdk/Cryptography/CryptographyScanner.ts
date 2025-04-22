@@ -1,66 +1,67 @@
-import fs from 'fs';
-import { Tree } from '../tree/Tree';
-import { LocalCrypto } from './CryptoProvider/LocalCrypto';
-import { CryptoCfg } from './CryptoCfg';
+import { CryptoCfg } from "./CryptoCfg";
 import {
-  CryptoAlgorithmRules,
-  ILocalCryptographyResponse
-} from './CryptographyTypes';
+  FileAlgorithmScanner
+} from "./Algorithm/Files/FileAlgorithmScanner";
+import { FileHintScanner } from "./Hint/Files/FileHintScanner";
 import {
-  mapToILocalCryptographyResponse
-} from './utils/adapters/cryptoAdapters';
-import path from 'path';
+  CryptographyResponse,
+  LocalCryptographyResponse
+} from "./CryptographyTypes";
+import { PurlRequest } from "../Services/Grpc/BaseService";
+import {
+  FileCryptographyResultCollector
+} from "./Helper/ResultCollector/File/FileCryptographyResultCollector";
+import {
+  ComponentCryptographyResultCollector
+} from "./Helper/ResultCollector/Component/ComponentCryptographyResultColletor";
+import {
+  ComponentAlgorithmScanner
+} from "./Algorithm/Components/ComponentAlgorithmScanner";
+import {
+  ComponentHintScanner
+} from "./Hint/Components/ComponentHintScanner";
+
+
 
 /**
- * A class responsible for scanning files for cryptographic items.
+ * Provides functionality to scan files and components for cryptographic items.
+ * This class acts as the primary entry point for cryptographic scanning.
  */
 export class CryptographyScanner {
-  private cryptoConfig: CryptoCfg;
 
-  /**
-   * Constructs a new CryptographyScanner.
-   * @param cryptoCfg The cryptographic configuration.
-   */
-  constructor(cryptoCfg: CryptoCfg) {
-    this.cryptoConfig = cryptoCfg;
+  private readonly config: CryptoCfg;
+
+  constructor(cfg: CryptoCfg) {
+    this.config = cfg;
   }
 
   /**
    * Scans an array of files for cryptographic items.
+   * Performs both algorithm detection and library scanning.
    * @param files An array of file paths to scan.
-   * @returns A promise that resolves to an ILocalCryptographyResponse.
+   * @returns {LocalCryptographyResponse} A promise that resolves to a LocalCryptographyResponse containing scan results.
    */
-  public async scan(files: Array<string>): Promise<ILocalCryptographyResponse> {
-    const cryptographyRules = await this.loadRules(this.cryptoConfig.getRulesPath());
-    const localCrypto = new LocalCrypto(cryptographyRules, this.cryptoConfig.getNumberOfThreads());
-    const cryptoItems = await localCrypto.search(files);
-    return mapToILocalCryptographyResponse(cryptoItems);
+  public async scanFiles(files: Array<string>):Promise<LocalCryptographyResponse> {
+    const cryptoResultCollector = new FileCryptographyResultCollector();
+    const cryptoAlgorithmScanner = new FileAlgorithmScanner(this.config,cryptoResultCollector);
+    const cryptoHintScanner = new FileHintScanner(this.config, cryptoResultCollector);
+    await cryptoAlgorithmScanner.scan(files);
+    await cryptoHintScanner.scan(files);
+    return cryptoResultCollector.getResults();
   }
 
   /**
-   * Scans a folder for cryptographic items.
-   * @param path The path of the folder to scan.
-   * @returns A promise that resolves to an ILocalCryptographyResponse.
-   * @throws Error if the specified path is not a directory.
+   * Scans components for cryptographic.
+   * Performs both algorithm detection and library scanning at the component level.
+   * @param req A request containing PURL's to scan
+   * @returns {CryptographyResponse} A promise that resolves to an array of CryptographyResponse objects.
    */
-  public async scanFolder(path: string): Promise<ILocalCryptographyResponse> {
-    if (!(await fs.promises.lstat(path)).isDirectory())
-      throw new Error('Specified path is not a directory');
-    const tree = new Tree(path);
-    tree.build();
-    return await this.scan(tree.getFileList());
+  public async scanComponents(req: PurlRequest):Promise<Array<CryptographyResponse>> {
+    const componentCryptoResultCollector = new ComponentCryptographyResultCollector();
+    const componentCryptoAlgorithmScanner = new ComponentAlgorithmScanner(this.config, componentCryptoResultCollector);
+    const componentCryptoHintScanner = new ComponentHintScanner(this.config, componentCryptoResultCollector);
+    await componentCryptoAlgorithmScanner.scan(req);
+    await componentCryptoHintScanner.scan(req);
+    return componentCryptoResultCollector.getResults();
   }
-
-  /**
-   * Loads custom cryptographic rules from a file.
-   * @returns A promise that resolves to the loaded rules.
-   */
-  private async loadRules(rulePath?: string): Promise<Array<CryptoAlgorithmRules>> {
-    const cryptoRulePath = rulePath ? rulePath :  path.join(
-      __dirname,
-      '../../../../assets/data/defaultCryptoRules.json');
-    const rules = await fs.promises.readFile(cryptoRulePath,'utf-8');
-    return JSON.parse(rules);
-  }
-
 }

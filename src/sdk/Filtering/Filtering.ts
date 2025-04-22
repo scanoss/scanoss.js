@@ -147,7 +147,6 @@ export class SizeFilter extends AbstractFilter {
 
     if (this.condition === SizeFilter.BIGGER) {
       if (stat.size > parseInt(this.value, 10)) {
-        //   console.log("NO aceptado por que NO es mayor");
         return false;
       }
       return true;
