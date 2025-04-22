@@ -38,18 +38,30 @@ Commands:
   scan [options] <source>  Scan a folder/file
   dep [options] <source>   Scan for dependencies
   wfp [options] <source>   Generates fingerprints for a folder/file
+  crypto [options] <source>  Scan local cryptography
   help [command]           display help for command
 ```
 
 ### Command `scan`
+* **Quick Analysis**: For a fast and free analysis of your project, simply run:
+  `scanoss-js scan -o results.json <source-folder>`
 
-* For a quick and free analysis of your project, simply input: `scanoss-js scan -o results.json <source-folder>`
+* **API Token Scanning**: Use your API token for enhanced scanning capabilities:
+  `scanoss-js scan -o results.json --key <your_token> --apiurl <your_apiurl> <source-folder>`
+
+* **Dependency Detection**: Include dependency detection in your scan:
+  `scanoss-js scan -o results.json --dependencies <source-folder>`
+
+* **Cryptography Detection**: Include cryptographic algorithm and library detection:
+  `scanoss-js scan results.json --cryptography --key <your_token>`
+
+  * You can also specify custom algorithm and library detection rules:
+    `scanoss-js scan results.json --cryptography --key <your_token> --algorithm-rules <path-to-algorithm-rules.json> --library-rules <path-to-library-rules.json>`
+    See examples of [algorithm rules](#example-algorithm-rules-file) and [library rules](#example-library-rules-file) files below.
 
 
-* Using an API Token for Scanning: `scanoss-js scan -o results.json --key <your_token> --apiurl <your_apiurl> <source-folder>`
+> **Note**: Component cryptography scanning is only performed when a token is provided. Without a token, only local cryptography scanning is performed. Custom rules for algorithms and libraries are applied to local cryptography detection in either case.
 
-
-* Include Dependency detection in scanning: `scanoss-js scan -o results.json --dependencies <source-folder>`
 
 ### Command `wfp`
 * Generate Hashes without analysis: `scanoss-js wfp -o fingerprints.wfp <source-folder>`
@@ -75,6 +87,66 @@ The manifest files acknowledged during the scanning process are:
     * Gradle: build.gradle
 
 
+### Command `crypto`
+* Focus exclusively on local cryptographic algorithm and library detection: 
+```bash
+scanoss-js crypto .
+```
+
+Us can also specify custom cryptography algorithm detection rules and library detection rules:
+``` bash
+scanoss-js crypto . --algorithm-rules <path-to-algorithm-rules.json> --library-rules <path-to-library-rules.json>
+```
+See examples of [algorithm rules](#example-algorithm-rules-file) and [library rules](#example-library-rules-file) files below.
+
+### Example Algorithm Rules File
+
+```json
+ [
+  {
+    "algorithm": "md5",
+    "strength": "128",
+    "keywords": [
+      "md5_file",
+      "md5crypt",
+      "md5_block_data_order",
+      "ossl_md5_sha1_",
+      "MD5_Init"
+    ]
+  },
+  {
+    "algorithm": "crc32",
+    "strength": "32",
+    "keywords": [
+      "..."
+    ]
+  }
+]
+```
+
+### Example Library Rules File
+```json
+[
+    {
+      "id": "library/webcrypto",
+      "name": "Web Cryptography API",
+      "description": "A JavaScript API for performing basic cryptographic operations in web applications.",
+      "keywords": [
+        "window.crypto.subtle",
+        "crypto.subtle.",
+        "crypto.getRandomValues",
+        "NodeWebCrypto",
+        "WebCryptoAPI"
+      ],
+      "url": "https://developer.mozilla.org/en-US/docs/Web/API/Web_Crypto_API",
+      "category": "library",
+      "purl": "pkg:generic/webcrypto",
+      "tags": [
+        "JavaScript"
+      ]
+    }
+]
+```
 
 
 ## SDK Usage

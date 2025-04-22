@@ -1,6 +1,7 @@
 import path from 'path';
 import { Settings } from "./ScannnerResultPostProcessor/interfaces/types";
 
+
 export enum ScannerEvents {
   WINNOWING_STARTING = 'WINNOWING_STARTING',
   WINNOWING_NEW_CONTENT = 'WINNOWING_NEW_CONTENT',

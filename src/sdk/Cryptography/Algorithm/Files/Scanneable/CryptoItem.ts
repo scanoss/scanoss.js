@@ -1,9 +1,9 @@
-import { CryptoAlgorithm, ICryptoItem } from '../CryptographyTypes';
+import { CryptoAlgorithm } from '../../../CryptographyTypes';
 
 /**
  * Represents a cryptographic item containing information about a file and cryptographic algorithms found in it.
  */
-export class CryptoItem implements ICryptoItem {
+export class CryptoItem {
 
   file: string;
   algorithms: Array<CryptoAlgorithm>;

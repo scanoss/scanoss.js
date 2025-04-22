@@ -1,8 +1,7 @@
 import {
-  CryptoAlgorithm,
-  ICryptoItem
-} from '../../Cryptography/CryptographyTypes';
-import { CryptoItem } from '../../Cryptography/Scanneable/CryptoItem';
+  CryptoAlgorithm, LocalCryptographyResponse
+} from "../../Cryptography/CryptographyTypes";
+import { CryptoItem } from '../../Cryptography/Algorithm/Files/Scanneable/CryptoItem';
 
 /*************  Component interface definition  *************/
 export interface ComponentDataLayer {
@@ -130,13 +129,19 @@ export interface ComponentCryptography {
   algorithms: Array<CryptoAlgorithm>;
 }
 
-/*********************** Files ****************************/
-export interface CryptographyDataLayer {
-  files: Array<CryptoItem>;
-  components: Array<ComponentCryptography>;
+export interface CryptographyData {
+  source: string;
+  type: string; // algorithm | library | sdk
+  values: Array<string>; // md5 | library/openssl | crc32
 }
 
-// Each layer is created to group by differents criteria.
+/*********************** Files ****************************/
+export interface CryptographyDataLayer {
+  files: Array<CryptographyData>;
+  components: Array<CryptographyData>;
+}
+
+// Each layer is created to group by different criteria.
 export interface IDataLayers {
   licenses: LicenseDataLayer[];
   licensesObligations: LicenseObligation[];
