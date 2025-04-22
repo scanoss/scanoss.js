@@ -171,11 +171,18 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
     },
   };
   if (options.cryptography) {
+
+    // Load rules
+    let algorithmRules = null;
+    let libraryRules = null;
+    if(options.algorithmRules) algorithmRules = options.algorithmRules;
+    if(options.libraryRules) libraryRules = options.libraryRules;
+
     // Local Cryptography
     const cryptoCfg = new CryptoCfg({
       threads: 5,
-      libraryRulesPath: null,
-      algorithmRulesPath: null,
+      libraryRulesPath: libraryRules,
+      algorithmRulesPath: algorithmRules,
       apiKey: options.key,
       proxy: options.proxy,
     });

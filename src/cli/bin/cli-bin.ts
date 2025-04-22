@@ -37,6 +37,8 @@ async function main() {
   scan.addOption(new Option("    --obfuscate", "Obfuscate fingerprints"));
   scan.addOption(new Option("-D, --dependencies", "Add dependency scanning"));
   scan.addOption(new Option("-C, --cryptography", "Add cryptography scanning"));
+  scan.addOption(new Option("-ar, --algorithm-rules <algorithm_rules>", "Path to crypto algorithms rules file (optional)."));
+  scan.addOption(new Option("-lr, --library-rules <library_rules>", "Path to crypto library rules file (optional)."));
   scan.addOption(new Option("    --apiurl <apiurl>", "SCANOSS API URL (optional - default: https://api.osskb.org/scan/direct)"));
   scan.addOption(new Option("    --api2url <api2url>", "SCANOSS gRPC API 2.0 URL (optional - default: api.scanoss.com:443)"));
   scan.addOption(new Option("-k, --key <key>", "SCANOSS API Key token (optional - not required for default OSSKB URL)"));
@@ -91,8 +93,8 @@ async function main() {
   cryptography.addArgument(new Argument("<source>"));
 
   // Options
-  cryptography.addOption(new Option("-ar, --algorithm-rules <algorithm_rules>", "Path to crypto algorithms rules file"));
-  cryptography.addOption(new Option("-lr, --library-rules <library_rules>", "Path to crypto library rules file"));
+  cryptography.addOption(new Option("-ar, --algorithm-rules <algorithm_rules>", "Path to crypto algorithms rules file (optional)."));
+  cryptography.addOption(new Option("-lr, --library-rules <library_rules>", "Path to crypto library rules file (optional)."));
   cryptography.addOption(new Option("-o, --output <filename>", "Output result file name (optional - default stdout)"));
   cryptography.addOption(new Option("-T, --threads <threads>", "Number of threads to use while scanning (optional - default 5)"));
 
