@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-## [0.16.0] (2025-04-14)
+## [0.16.0] (2025-04-22)
 ### Added
 - Added local cryptography library scanning
 
@@ -56,4 +56,4 @@ All notable changes to this project will be documented in this file. See [standa
 ### [0.15.5](https://github.com/scanoss/scanoss.js/compare/v0.15.4...v0.15.5) (2024-12-30)
 ### [0.15.6](https://github.com/scanoss/scanoss.js/compare/v0.15.5...v0.15.6) (2025-01-08)
 ### [0.15.7](https://github.com/scanoss/scanoss.js/compare/v0.15.6...v0.15.7) (2025-03-05)
-### [0.16.0](https://github.com/scanoss/scanoss.js/compare/v0.15.7...v0.16.0) (2025-04-14)
+### [0.16.0](https://github.com/scanoss/scanoss.js/compare/v0.15.7...v0.16.0) (2025-04-22)
