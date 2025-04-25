@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.16.2] (2025-04-25)
+### Added
+-  Added filtering for binary and large files(>2GB) on local cryptography scanning
+### Fixed
+- Fixed scanoss.json settings file injection
+
 ## [0.16.1] (2025-04-24)
 ### Added
 - Added local cryptography library scanning
@@ -57,3 +63,4 @@ All notable changes to this project will be documented in this file. See [standa
 ### [0.15.6](https://github.com/scanoss/scanoss.js/compare/v0.15.5...v0.15.6) (2025-01-08)
 ### [0.15.7](https://github.com/scanoss/scanoss.js/compare/v0.15.6...v0.15.7) (2025-03-05)
 ### [0.16.1](https://github.com/scanoss/scanoss.js/compare/v0.15.7...v0.16.1) (2025-04-24)
+### [0.16.2](https://github.com/scanoss/scanoss.js/compare/v0.16.1...v0.16.2) (2025-04-25)
