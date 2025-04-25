@@ -4,7 +4,8 @@ All notable changes to this project will be documented in this file. See [standa
 
 ## [0.16.2] (2025-04-25)
 ### Added
--  Added filtering for binary and large files(>2GB) on local cryptography scanning
+- Added filtering for binary and large files(>2GB) on local cryptography scanning
+- Support for new crypto algorithms rules definitions
 ### Fixed
 - Fixed scanoss.json settings file injection
 

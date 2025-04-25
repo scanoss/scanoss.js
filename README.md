@@ -104,7 +104,8 @@ See examples of [algorithm rules](#example-algorithm-rules-file) and [library ru
 ```json
  [
   {
-    "algorithm": "md5",
+    "algorithmId": "md5",
+    "algorithm": "MD5 Message-Digest Algorithm",
     "strength": "128",
     "keywords": [
       "md5_file",
