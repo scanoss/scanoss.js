@@ -20,6 +20,7 @@ import {
 import {
   ComponentHintScanner
 } from "./Hint/Components/ComponentHintScanner";
+import { excludeBinariesAndLargeFiles } from "./Helper/CryptographyHelper";
 
 
 
@@ -45,8 +46,9 @@ export class CryptographyScanner {
     const cryptoResultCollector = new FileCryptographyResultCollector();
     const cryptoAlgorithmScanner = new FileAlgorithmScanner(this.config,cryptoResultCollector);
     const cryptoHintScanner = new FileHintScanner(this.config, cryptoResultCollector);
-    await cryptoAlgorithmScanner.scan(files);
-    await cryptoHintScanner.scan(files);
+    const processableFiles = await excludeBinariesAndLargeFiles(files);
+    await cryptoAlgorithmScanner.scan(processableFiles);
+    await cryptoHintScanner.scan(processableFiles);
     return cryptoResultCollector.getResults();
   }
 
