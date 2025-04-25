@@ -1,4 +1,7 @@
-import { CryptoAlgorithmResponse, CryptographyResponse, CryptoHintResponse
+import {
+  CryptoAlgorithmResponse,
+  CryptographyResponse,
+  CryptoHintResponse
 } from "../../../CryptographyTypes";
 import {
   AlgorithmResponse, HintsResponse

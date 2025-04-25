@@ -97,39 +97,6 @@ export class CryptographyDataProvider implements DataProvider {
    }
   }
 
-  private getCrypto(scanComponents: Array<ScannerComponent>):Array<ComponentCryptography> {
-    const componentCrypto = [];
-    scanComponents.forEach((c)=>{
-        if(c.cryptography && c.cryptography.length > 0){
-          const crypto = {
-            purl: c.purl,
-            version: c.version,
-            algorithms: c.cryptography
-          }
-          componentCrypto.push(crypto);
-        }
-    });
-    return this.normalizeAlgorithms(componentCrypto)
-  }
-
-  private normalizeAlgorithms(crypto: Array<ComponentCryptography>):Array<ComponentCryptography> {
-    crypto.forEach((c)=>{
-      c.algorithms = this.removeRepeatedAlgorithms(c.algorithms);
-    })
-
-    return crypto;
-
-  }
-
-  private removeRepeatedAlgorithms(algorithms: Array<CryptoAlgorithm>):Array<CryptoAlgorithm> {
-    const algorithmsMapper = new Map<string, { algorithm: string, strength: string }>();
-    algorithms.forEach((a) => {
-      const algorithmToLowerCase = a.algorithm.toLowerCase();
-      algorithmsMapper.set(algorithmToLowerCase, {...a, algorithm: algorithmToLowerCase})
-    });
-    return Array.from(algorithmsMapper.values());
-  }
-
   getLayerName(): string {
     return '';
   }

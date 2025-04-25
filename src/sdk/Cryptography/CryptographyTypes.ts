@@ -2,13 +2,21 @@ export interface CryptoAlgorithm {
   algorithm: string;
   strength: string;
 }
-export interface CryptoAlgorithmRules extends CryptoAlgorithm {
+
+export interface LocalCryptoAlgorithm {
+  algorithm: string;
+  algorithmId: string;
+  strength: string;
+  category: string;
+}
+
+export interface CryptoAlgorithmRules extends LocalCryptoAlgorithm {
   keywords: Array<string>;
 }
 
 export interface CryptoAlgorithmJobResponse {
   file: string;
-  algorithms: Array<CryptoAlgorithm>;
+  algorithms: Array<LocalCryptoAlgorithm>;
 }
 
 export interface LocalCryptoAlgorithmJob {
@@ -48,7 +56,8 @@ export interface CryptoHintResponse{
   "purl"?: string;
 }
 
-export interface CryptoAlgorithmResponse extends CryptoAlgorithm {}
+export interface CryptoAlgorithmResponse extends CryptoAlgorithm {
+}
 
 export interface LocalCryptography {
   file: string;

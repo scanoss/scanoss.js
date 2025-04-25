@@ -47,7 +47,7 @@ export class FileAlgorithmScanner extends BaseCryptographyScanner<
    @param files An array of file paths to analyze for cryptographic algorithm usage.
    @returns A promise that resolves to an array of job objects configured for crypto analysis.
    */
-  private async  buildJobs(files: string[]): Promise<Array<Job<LocalCryptoAlgorithmJob>>> {
+  private async buildJobs(files: string[]): Promise<Array<Job<LocalCryptoAlgorithmJob>>> {
     const cryptographyRules = await this.loadRules(this.config.getAlgorithmRulesPath());
     const rules = createCryptoKeywordMapper(cryptographyRules);
     const cryptoMapper = getCryptoMapper(cryptographyRules);

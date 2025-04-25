@@ -1,4 +1,8 @@
-import { CryptoAlgorithm, CryptoAlgorithmRules } from '../../../CryptographyTypes';
+import {
+  CryptoAlgorithm,
+  CryptoAlgorithmRules,
+  LocalCryptoAlgorithm
+} from "../../../CryptographyTypes";
 
 /**
  * Function to create a mapping of regular expressions based on provided crypto definitions.
@@ -9,13 +13,15 @@ import { CryptoAlgorithm, CryptoAlgorithmRules } from '../../../CryptographyType
 export function createCryptoKeywordMapper(cryptoRulesDefinitions: Array<CryptoAlgorithmRules>): Map<string, RegExp> {
   const mapper = new Map<string,RegExp>();
   cryptoRulesDefinitions.forEach(c=> {
-    const words = [];
-    c.keywords.forEach((k)=>{
-      const escapedWord = k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      words.push(escapedWord);
-
-    });
-    mapper.set(c.algorithm, new RegExp(words.join('|'), 'gi'));
+   // Skips those rules with empty keywords
+    if(c.keywords.length > 0) {
+      const words = [];
+      c.keywords.forEach((k) => {
+        const escapedWord = k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        words.push(escapedWord);
+      });
+      mapper.set(c?.algorithmId ? c?.algorithmId : c.algorithm, new RegExp(words.join('|'), 'gi'));
+    }
   });
   return mapper;
 }
@@ -28,11 +34,10 @@ export function createCryptoKeywordMapper(cryptoRulesDefinitions: Array<CryptoAl
  */
 export function getCryptoMapper(cryptoDefinitions: Array<CryptoAlgorithmRules>): Map<string, CryptoAlgorithm> {
    const cryptoMapper = new Map<string, CryptoAlgorithm>();
-
    cryptoDefinitions.forEach((c) => {
-    const { algorithm, strength } = c;
+    const { algorithm, strength , algorithmId } = c;
     // Add the algorithm and its details to the map.
-    cryptoMapper.set(c.algorithm, { algorithm, strength });
+    cryptoMapper.set(c?.algorithmId ? c?.algorithmId : c.algorithm , { algorithm: algorithmId? algorithmId: algorithm , strength });
   });
   return cryptoMapper;
 }
