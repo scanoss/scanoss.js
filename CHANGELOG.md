@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file. See [standa
 ## [0.16.3] (2025-04-30)
 ### Fixed
 - Corrected slash encoding in npm parser for package identifiers
+- Fixed cryptographic scanning freezes when processing empty input files
 
 ## [0.16.2] (2025-04-25)
 ### Added
