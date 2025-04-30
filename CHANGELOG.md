@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.16.3] (2025-04-30)
+### Fixed
+- Corrected slash encoding in npm parser for package identifiers
+
 ## [0.16.2] (2025-04-25)
 ### Added
 - Added filtering for binary and large files(>2GB) on local cryptography scanning
@@ -65,3 +69,4 @@ All notable changes to this project will be documented in this file. See [standa
 ### [0.15.7](https://github.com/scanoss/scanoss.js/compare/v0.15.6...v0.15.7) (2025-03-05)
 ### [0.16.1](https://github.com/scanoss/scanoss.js/compare/v0.15.7...v0.16.1) (2025-04-24)
 ### [0.16.2](https://github.com/scanoss/scanoss.js/compare/v0.16.1...v0.16.2) (2025-04-25)
+### [0.16.3](https://github.com/scanoss/scanoss.js/compare/v0.16.2...v0.16.3) (2025-04-30)
