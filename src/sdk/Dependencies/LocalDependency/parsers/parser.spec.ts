@@ -4,7 +4,7 @@ import pyProjectToml from "./python/PyProjectToml";
 import { pomParser } from "./mavenParser";
 import { buildGradleParser } from "./buildGradleParser";
 import { goSumParser } from "./golangParser";
-import { packagelockParser, yarnLockParser } from "./npmParser";
+import { packagelockParser, packageParser, yarnLockParser } from "./npmParser";
 import { csprojParser, packagesConfigParser } from "./nugetParser";
 
 interface ParserSpecI {
@@ -233,6 +233,28 @@ const ParserSpec: ParserSpecI[] = [
     file_content: "",
     expect: { file: "pyproject.toml", purls: [] },
     parser: pyProjectToml
+  },
+  /****************************************************************************/
+  /*              package.json DEPENDENCY TEST DATA                      */
+  /****************************************************************************/
+  {
+    test_name: "package.json example 1",
+    source: "",
+    note: "",
+    file_name: "package.json",
+    file_content: "{\n  \"name\": \"ce-1960\",\n  \"version\": \"1.0.0\",\n  \"dependencies\": {\n    \"p-queue\": \"^8.0.1\",\n    \"@typescript-eslint/eslint-plugin\": \"6.7.4\",\n    \"eventemitter3\": \"5.0.1\",\n    \"eslint-config-airbnb-typescript\": \"17.1.0\"\n  },\n  \"devDependencies\": {\n    \"@typescript-eslint/utils\": \"6.7.4\",\n    \"@jridgewell/gen-mapping\": \"^0.3.2\"\n  }\n}",
+    expect: {
+      file: "package.json",
+      purls: [
+        {purl: "pkg:npm/p-queue", requirement: "^8.0.1", scope: "dependencies"},
+        {purl: "pkg:npm/%40typescript-eslint/eslint-plugin", requirement: "6.7.4", scope: "dependencies"},
+        {purl: "pkg:npm/eventemitter3", requirement: "5.0.1", scope: "dependencies"},
+        {purl: "pkg:npm/eslint-config-airbnb-typescript", requirement: "17.1.0", scope: "dependencies"},
+        {purl: "pkg:npm/%40typescript-eslint/utils", requirement: "6.7.4", scope: "devDependencies"},
+        {purl: "pkg:npm/%40jridgewell/gen-mapping", requirement: "^0.3.2", scope: "devDependencies"}
+      ]
+    },
+    parser: packageParser
   }
 ];
 

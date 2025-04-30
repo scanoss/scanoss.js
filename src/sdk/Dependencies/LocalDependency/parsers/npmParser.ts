@@ -9,6 +9,14 @@ const PURL_TYPE = "npm";
 // See reference on: https://docs.npmjs.com/cli/v8/configuring-npm/package-json
 const MANIFEST_FILE = "package.json";
 
+/**
+ * Normalizes npm package URLs by keeping the slash after a scoped package name
+ * while preserving proper encoding of the @ symbol.
+ * Example: pkg:npm/%40types%2Fnode → pkg:npm/%40types/node
+ */
+function normalizeNpmPurlFormat(purl: string): string {
+  return purl.replace(/(%40[^\/]+)%2F/g, '$1/');
+}
 export function packageParser(fileContent: string, filePath: string): Promise<ILocalDependency> {
   // If the file is not manifest file, return an empty results
   const results: ILocalDependency = { file: filePath, purls: [] };
@@ -21,12 +29,16 @@ export function packageParser(fileContent: string, filePath: string): Promise<IL
 
   for (const name of deps) {
     const purlString = new PackageURL(PURL_TYPE, undefined, name, undefined, undefined, undefined).toString();
-    results.purls.push({ purl: purlString, scope: "dependencies", requirement: o.dependencies[name] });
+    // Apply standard npm purl formatting for proper display of scoped packages
+    const normalizedPurl = normalizeNpmPurlFormat(purlString);
+    results.purls.push({ purl: normalizedPurl, scope: "dependencies", requirement: o.dependencies[name] });
   }
 
   for (const name of devDeps) {
     const purlString = new PackageURL(PURL_TYPE, undefined, name, undefined, undefined, undefined).toString();
-    results.purls.push({ purl: purlString, scope: "devDependencies", requirement: o.devDependencies[name] });
+    // Apply standard npm purl formatting for proper display of scoped packages
+    const normalizedPurl = normalizeNpmPurlFormat(purlString);
+    results.purls.push({ purl: normalizedPurl, scope: "devDependencies", requirement: o.devDependencies[name] });
   }
 
   return Promise.resolve(results);
