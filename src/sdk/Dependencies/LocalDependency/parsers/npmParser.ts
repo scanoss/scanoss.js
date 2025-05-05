@@ -9,6 +9,30 @@ const PURL_TYPE = "npm";
 // See reference on: https://docs.npmjs.com/cli/v8/configuring-npm/package-json
 const MANIFEST_FILE = "package.json";
 
+/**
+ * Extracts namespace and package name from a dependency string.
+ * For scoped packages like '@angular/core', namespace would be '@angular' and packageName would be 'core'.
+ * For regular packages like 'lodash', namespace would be undefined and packageName would be 'lodash'.
+ *
+ * @param {string} dep - The dependency string to parse
+ * @returns {Object} An object containing the namespace and package name
+ */
+function getNameAndNameSpaceFromDep(dep: string): { namespace: string | undefined, packageName: string } {
+  const firstSlashIndex = dep.indexOf('/');
+
+  if (firstSlashIndex === -1) {
+    // No slash found, the entire string is the package name
+    return { namespace: undefined, packageName: dep };
+  }
+
+  // Split at the first occurrence of '/'
+  const namespace = dep.substring(0, firstSlashIndex);
+  const packageName = dep.substring(firstSlashIndex + 1);
+
+  return { namespace, packageName };
+}
+
+
 export function packageParser(fileContent: string, filePath: string): Promise<ILocalDependency> {
   // If the file is not manifest file, return an empty results
   const results: ILocalDependency = { file: filePath, purls: [] };
@@ -20,12 +44,14 @@ export function packageParser(fileContent: string, filePath: string): Promise<IL
   let deps = Object.keys(o.dependencies || {});
 
   for (const name of deps) {
-    const purlString = new PackageURL(PURL_TYPE, undefined, name, undefined, undefined, undefined).toString();
+    const { namespace , packageName } = getNameAndNameSpaceFromDep(name);
+    const purlString = new PackageURL(PURL_TYPE, namespace, packageName, undefined ,undefined, undefined).toString();
     results.purls.push({ purl: purlString, scope: "dependencies", requirement: o.dependencies[name] });
   }
 
   for (const name of devDeps) {
-    const purlString = new PackageURL(PURL_TYPE, undefined, name, undefined, undefined, undefined).toString();
+    const { namespace , packageName } = getNameAndNameSpaceFromDep(name);
+    const purlString = new PackageURL(PURL_TYPE, namespace, packageName, undefined ,undefined, undefined).toString();
     results.purls.push({ purl: purlString, scope: "devDependencies", requirement: o.devDependencies[name] });
   }
 

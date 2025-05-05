@@ -44,6 +44,8 @@ export class CryptographyScanner {
    */
   public async scanFiles(files: Array<string>):Promise<LocalCryptographyResponse> {
     const cryptoResultCollector = new FileCryptographyResultCollector();
+    // Skip cryptographic analysis when no files are present to analyze
+    if (files.length <= 0) return cryptoResultCollector.getResults();
     const cryptoAlgorithmScanner = new FileAlgorithmScanner(this.config,cryptoResultCollector);
     const cryptoHintScanner = new FileHintScanner(this.config, cryptoResultCollector);
     const processableFiles = await excludeBinariesAndLargeFiles(files);
