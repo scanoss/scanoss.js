@@ -10,13 +10,18 @@ const PURL_TYPE = "npm";
 const MANIFEST_FILE = "package.json";
 
 /**
- * Normalizes npm package URLs by keeping the slash after a scoped package name
- * while preserving proper encoding of the @ symbol.
- * Example: pkg:npm/%40types%2Fnode → pkg:npm/%40types/node
+ * Extracts namespace and name from dependency
+ * @param {string} dep - dependency
+ * @returns {Object} Object containing namespace and name properties
  */
-function normalizeNpmPurlFormat(purl: string): string {
-  return purl.replace(/(%40[^\/]+)%2F/g, '$1/');
+function getNameAndNameSpaceFromDep(dep:string):{namespace:string, packageName:string} {
+  const parts = dep.split('/');
+  const namespace = parts.length > 1 ? parts[0] : undefined;
+  const packageName = parts.length > 1 ? parts[1] : parts[0];
+  return { namespace, packageName };
 }
+
+
 export function packageParser(fileContent: string, filePath: string): Promise<ILocalDependency> {
   // If the file is not manifest file, return an empty results
   const results: ILocalDependency = { file: filePath, purls: [] };
@@ -28,17 +33,15 @@ export function packageParser(fileContent: string, filePath: string): Promise<IL
   let deps = Object.keys(o.dependencies || {});
 
   for (const name of deps) {
-    const purlString = new PackageURL(PURL_TYPE, undefined, name, undefined, undefined, undefined).toString();
-    // Apply standard npm purl formatting for proper display of scoped packages
-    const normalizedPurl = normalizeNpmPurlFormat(purlString);
-    results.purls.push({ purl: normalizedPurl, scope: "dependencies", requirement: o.dependencies[name] });
+    const { namespace , packageName } = getNameAndNameSpaceFromDep(name);
+    const purlString = new PackageURL(PURL_TYPE, namespace, packageName, undefined ,undefined, undefined).toString();
+    results.purls.push({ purl: purlString, scope: "dependencies", requirement: o.dependencies[name] });
   }
 
   for (const name of devDeps) {
-    const purlString = new PackageURL(PURL_TYPE, undefined, name, undefined, undefined, undefined).toString();
-    // Apply standard npm purl formatting for proper display of scoped packages
-    const normalizedPurl = normalizeNpmPurlFormat(purlString);
-    results.purls.push({ purl: normalizedPurl, scope: "devDependencies", requirement: o.devDependencies[name] });
+    const { namespace , packageName } = getNameAndNameSpaceFromDep(name);
+    const purlString = new PackageURL(PURL_TYPE, namespace, packageName, undefined ,undefined, undefined).toString();
+    results.purls.push({ purl: purlString, scope: "devDependencies", requirement: o.devDependencies[name] });
   }
 
   return Promise.resolve(results);
