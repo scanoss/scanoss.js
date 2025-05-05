@@ -10,14 +10,25 @@ const PURL_TYPE = "npm";
 const MANIFEST_FILE = "package.json";
 
 /**
- * Extracts namespace and name from dependency
- * @param {string} dep - dependency
- * @returns {Object} Object containing namespace and name properties
+ * Extracts namespace and package name from a dependency string.
+ * For scoped packages like '@angular/core', namespace would be '@angular' and packageName would be 'core'.
+ * For regular packages like 'lodash', namespace would be undefined and packageName would be 'lodash'.
+ *
+ * @param {string} dep - The dependency string to parse
+ * @returns {Object} An object containing the namespace and package name
  */
-function getNameAndNameSpaceFromDep(dep:string):{namespace:string, packageName:string} {
-  const parts = dep.split('/');
-  const namespace = parts.length > 1 ? parts[0] : undefined;
-  const packageName = parts.length > 1 ? parts[1] : parts[0];
+function getNameAndNameSpaceFromDep(dep: string): { namespace: string | undefined, packageName: string } {
+  const firstSlashIndex = dep.indexOf('/');
+
+  if (firstSlashIndex === -1) {
+    // No slash found, the entire string is the package name
+    return { namespace: undefined, packageName: dep };
+  }
+
+  // Split at the first occurrence of '/'
+  const namespace = dep.substring(0, firstSlashIndex);
+  const packageName = dep.substring(firstSlashIndex + 1);
+
   return { namespace, packageName };
 }
 
