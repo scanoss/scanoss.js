@@ -59,8 +59,8 @@ export function goModParser(fileContent: string, filePath: string): Promise<ILoc
 
         const {namespace, name, version} = getDepDataGoModFromLine(line)
 
-        const purlString = new PackageURL(PURL_TYPE, namespace, name, version, undefined, undefined).toString();
-        results.purls.push({purl: purlString});
+        const purlString = new PackageURL(PURL_TYPE, namespace, name, undefined, undefined, undefined).toString();
+        results.purls.push({purl: purlString, requirement: version});
 
         require.push(line);
 
@@ -118,8 +118,7 @@ export function goSumParser(fileContent: string, filePath: string): Promise<ILoc
 
     if (!name) continue
 
-    //const purlString = new PackageURL(PURL_TYPE, namespace, name, undefined, undefined, undefined).toString();
-    const purlString = `pkg:${PURL_TYPE}/${namespace}/${name}`
+    const purlString = new PackageURL(PURL_TYPE, namespace, name, undefined, undefined, undefined).toString();
     results.purls.push({purl: purlString, requirement: version})
   }
 
