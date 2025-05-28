@@ -43,22 +43,22 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
   });
   const dependencyScanner = new DependencyScanner(dependencyScannerCfg);
 
-  const scannerCfg: IScannerCfg = {}
-  if (options.concurrency) scannerCfg.CONCURRENCY_LIMIT = parseInt(options.concurrency);
-  if (options.postSize) scannerCfg.WFP_FILE_MAX_SIZE = parseInt(options.postSize) * 1024;
-  if (options.apiurl) scannerCfg.API_URL = options.apiurl;
-  if (options.key) scannerCfg.API_KEY = options.key;
-  if (options.timeout) scannerCfg.TIMEOUT = options.timeout * 1000;
-  if (options.maxRetry) scannerCfg.MAX_RETRIES_FOR_RECOVERABLES_ERRORS = options.maxRetry;
-  if (options.caCert) scannerCfg.CA_CERT = options.caCert;
-  if (options.ignoreCertErrors) scannerCfg.IGNORE_CERT_ERRORS = true;
-  if (options.obfuscate) scannerCfg.WFP_OBFUSCATION = true;
+
+  const scannerConfig = new ScannerCfg();
+  if (options.concurrency) scannerConfig.CONCURRENCY_LIMIT = parseInt(options.concurrency);
+  if (options.postSize) scannerConfig.WFP_FILE_MAX_SIZE = parseInt(options.postSize) * 1024;
+  if (options.apiurl) scannerConfig.API_URL = options.apiurl;
+  if (options.key) scannerConfig.API_KEY = options.key;
+  if (options.timeout) scannerConfig.TIMEOUT = options.timeout * 1000;
+  if (options.maxRetry) scannerConfig.MAX_RETRIES_FOR_RECOVERABLES_ERRORS = options.maxRetry;
+  if (options.caCert) scannerConfig.CA_CERT = options.caCert;
+  if (options.ignoreCertErrors) scannerConfig.IGNORE_CERT_ERRORS = true;
+  if (options.obfuscate) scannerConfig.WFP_OBFUSCATION = true;
   if (options.proxy) {
-    scannerCfg.HTTPS_PROXY = options.proxy;
-    scannerCfg.HTTP_PROXY = options.proxy;
+    scannerConfig.HTTPS_PROXY = options.proxy;
+    scannerConfig.HTTP_PROXY = options.proxy;
   }
-  if (options.obfuscate) scannerCfg.WFP_OBFUSCATION = true;
-  const scannerConfig = new ScannerCfg(scannerCfg);
+  if (options.obfuscate) scannerConfig.WFP_OBFUSCATION = true;
   const scanner = new Scanner(scannerConfig);
 
 

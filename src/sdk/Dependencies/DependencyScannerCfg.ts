@@ -1,7 +1,7 @@
-import { BaseConfig, IBaseConfig } from "../BaseConfig";
+import { BaseConfig } from "../BaseConfig";
 
 export class DependencyScannerCfg extends BaseConfig {
-  constructor(config?: IBaseConfig) {
+  constructor(config?: DependencyScannerCfg) {
     super(config);
     this.API_URL = 'https://api.scanoss.com';
   }
