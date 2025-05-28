@@ -24,7 +24,7 @@ export class CryptographyService extends BaseService {
     if (proxy) process.env.grpc_proxy = proxy;
 
     this.client = new CryptographyClient(
-      this.GRPC_ENDPOINT,
+      this.HOSTNAME,
       this.generateChannelCredentials()
     );
   }

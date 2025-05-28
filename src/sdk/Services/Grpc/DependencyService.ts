@@ -2,20 +2,24 @@ import * as grpc from '@grpc/grpc-js';
 import { DependenciesClient } from './scanoss/api/dependencies/v2/scanoss-dependencies_grpc_pb';
 import * as DependenciesMessages from './scanoss/api/dependencies/v2/scanoss-dependencies_pb';
 import * as CommonMessages from './scanoss/api/common/v2/scanoss-common_pb';
+import { BaseService } from "./BaseService";
 
-export class DependencyService {
+export class DependencyService extends BaseService{
   private client: DependenciesClient;
 
   private metadata;
 
-  constructor(endpoint: string, proxy?: string, ca_cert?: Buffer) {
-    if (proxy) process.env.grpc_proxy = proxy;
+  constructor(hostname: string, proxyUrl?: string, ca_cert?: Buffer) {
+    super({
+      HOSTNAME: hostname,
+      IS_PREMIUM_SERVICE: false,
+      PROXY_URL: proxyUrl,
+      CA_CERT_BUFF: ca_cert,
+    });
 
     this.client = new DependenciesClient(
-      endpoint,
-      ca_cert
-        ? grpc.credentials.createSsl(ca_cert)
-        : grpc.credentials.createSsl()
+      hostname,
+      this.generateChannelCredentials()
     );
   }
 
