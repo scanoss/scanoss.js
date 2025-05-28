@@ -12,7 +12,7 @@ export interface HintsResponse
 export class CryptographyService extends BaseService {
   private client: CryptographyClient;
 
-  constructor(token: string, proxy?: string) {
+  constructor(token: string, proxy?: string, ca_cert?: Buffer) {
     super();
     this.SERVICE_NAME = 'CryptographyService';
     this.IS_PREMIUM_SERVICE = true;

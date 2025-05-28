@@ -9,8 +9,6 @@ export class ScannerCfg extends BaseConfig {
 
   public API_KEY = '';
 
-  public CA_CERT = '';
-
   //Set to true to ignore self certificates issues
   public IGNORE_CERT_ERRORS = false;
 
