@@ -27,6 +27,7 @@ import { Settings } from "../../sdk/scanner/ScannnerResultPostProcessor/interfac
 import { CryptoCfg } from "../../sdk/Cryptography/CryptoCfg";
 import { CryptographyScanner } from "../../sdk/Cryptography/CryptographyScanner";
 import { CryptographyResponse, LocalCryptography } from "../../sdk/Cryptography/CryptographyTypes";
+import { Utils } from "../../sdk/Utils/Utils";
 
 export async function scanHandler(rootPath: string, options: any): Promise<void> {
   // TODO: Add flag to enable debug. False by default.  logger.enableDebug(options.debug);
@@ -37,6 +38,7 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
   // Create dependency scanner and set parameters
   let dependencyInput: Array<string> = [];
   const dependencyScannerCfg = new DependencyScannerCfg();
+  if (options.caCert) dependencyScannerCfg.CA_CERT = options.caCert;
   if (options.api2url) dependencyScannerCfg.API_URL = options.api2url;
   if (options.grpc_proxy) dependencyScannerCfg.GRPC_PROXY = options.grpc_proxy;
   await dependencyScannerCfg.validate();
@@ -147,29 +149,22 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
     pDependencyScanner = dependencyScanner.scan(dependencyInput);
   }
 
+  const results = {
+    scanner: {},
+    dependencies: {} as unknown as IDependencyResponse,
+    cryptography: {
+          files: [] as unknown as Array<LocalCryptography>,
+          components: [] as unknown as Array<CryptographyResponse>,
+    },
+  }
+
   //Launch parallel scanners
   const pScanner = scanner.scan([scannerInput]);
 
   const [scannerResultPath, depResults] = await Promise.all([pScanner, pDependencyScanner]);
-  let scannerResults = JSON.parse(await fs.promises.readFile(scannerResultPath, "utf-8"));
+  results.scanner = JSON.parse(await fs.promises.readFile(scannerResultPath, "utf-8"));
+  results.dependencies = depResults;
 
-  //TODO Unify results.json and dependency.json. What happens with result.json that includes dependencies?
-  const scannersResults = {
-    scanner: scannerResults as ScannerResults,
-    ...(options.dependencies && { dependencies: depResults }),
-  };
-  let scannerResultsString = JSON.stringify(scannerResults, null, 2);
-
-  // Crypto
-  const resultsWithCrypto = {
-    scanner: scannerResults as ScannerResults,
-    ...{
-      cryptography: {
-        files: [] as unknown as Array<LocalCryptography>,
-        components: [] as unknown as Array<CryptographyResponse>,
-      },
-    },
-  };
   if (options.cryptography) {
 
     // Load rules
@@ -191,43 +186,44 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
     localCrypto.fileList = localCrypto.fileList.map((c) => {
       return { ...c, file: c.file.replace(rootPath, "") };
     });
-    resultsWithCrypto.cryptography.files = localCrypto.fileList;
+    results.cryptography.files = localCrypto.fileList;
 
     // Component Cryptography
     if (options.key) {
-      let componentList: any = Object.values(scannersResults.scanner).flat();
+      let componentList: any = Object.values(results.scanner).flat();
       componentList = componentList.filter((component) => component.id !== "none");
       const cryptoRequest = {
         purlsList: componentList.map((c) => {
           return { purl: c.purl[0], requirement: c.version };
         }),
       };
-      resultsWithCrypto.cryptography.components = await cryptoScanner.scanComponents(cryptoRequest);
+      results.cryptography.components = await cryptoScanner.scanComponents(cryptoRequest);
     }
-    scannerResultsString = JSON.stringify(resultsWithCrypto, null, 2);
   }
+
+  let resultString = JSON.stringify(results, null, 2);
 
   if (options.format && options.format.toLowerCase() === "html") {
     const dataProviderManager = new DataProviderManager();
     dataProviderManager.addDataProvider(
-      new ComponentDataProvider(scannersResults.scanner, scannersResults.dependencies)
+      new ComponentDataProvider(results.scanner, results.dependencies)
     );
-    dataProviderManager.addDataProvider(new DependencyDataProvider(scannersResults.dependencies));
-    dataProviderManager.addDataProvider(new LicenseDataProvider(scannersResults.scanner, scannersResults.dependencies));
-    dataProviderManager.addDataProvider(new SummaryDataProvider(projectName, new Date(), scannersResults.scanner));
+    dataProviderManager.addDataProvider(new DependencyDataProvider(results.dependencies));
+    dataProviderManager.addDataProvider(new LicenseDataProvider(results.scanner, results.dependencies));
+    dataProviderManager.addDataProvider(new SummaryDataProvider(projectName, new Date(), results.scanner));
 
     dataProviderManager.addDataProvider(
-      new LicenseObligationDataProvider(scannersResults.scanner, scannersResults.dependencies)
+      new LicenseObligationDataProvider(results.scanner, results.dependencies)
     );
 
     dataProviderManager.addDataProvider(
-      new CryptographyDataProvider(resultsWithCrypto.cryptography.files, resultsWithCrypto.cryptography.components)
+      new CryptographyDataProvider(results.cryptography.files, results.cryptography.components)
     );
 
     const report = new Report(dataProviderManager);
-    scannerResultsString = await report.getHTML();
+    resultString = await report.getHTML();
   }
 
-  if (options.output) await fs.promises.writeFile(options.output, scannerResultsString);
-  else console.log(scannerResultsString);
+  if (options.output) await fs.promises.writeFile(options.output, resultString);
+  else console.log(resultString);
 }

@@ -28,7 +28,7 @@ export class DependencyScanner {
       cfg.API_URL = `${hostname}:${port}`;
     }
 
-    this.grpcDependencyService = new DependencyService(cfg.API_URL, cfg.GRPC_PROXY);
+    this.grpcDependencyService = new DependencyService(cfg.API_URL, cfg.GRPC_PROXY, cfg.CA_CERT_BUFF);
     this.localDependency = new LocalDependencies();
   }
 
