@@ -27,7 +27,6 @@ import { Settings } from "../../sdk/scanner/ScannnerResultPostProcessor/interfac
 import { CryptoCfg } from "../../sdk/Cryptography/CryptoCfg";
 import { CryptographyScanner } from "../../sdk/Cryptography/CryptographyScanner";
 import { CryptographyResponse, LocalCryptography } from "../../sdk/Cryptography/CryptographyTypes";
-import { Utils } from "../../sdk/Utils/Utils";
 
 export async function scanHandler(rootPath: string, options: any): Promise<void> {
   // TODO: Add flag to enable debug. False by default.  logger.enableDebug(options.debug);

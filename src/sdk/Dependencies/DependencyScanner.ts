@@ -16,17 +16,17 @@ export class DependencyScanner {
 
   private grpcDependencyService: DependencyService;
 
-  constructor(cfg = new DependencyScannerCfg()) {
-    //Extract host from URL  (hostname:port)
-    if (cfg.API_URL.startsWith('http')) {
-      const apiURL = new URL(cfg.API_URL);
-      let hostname: string;
-      let port: string;
+  private config: DependencyScannerCfg = new DependencyScannerCfg();
 
-      if (!apiURL.port) port = apiURL.protocol === 'https:' ? '443' : '80';
-      hostname = apiURL.host;
-      cfg.API_URL = `${hostname}:${port}`;
-    }
+  constructor(cfg?: DependencyScannerCfg) {
+
+    if (cfg)
+      this.config = cfg;
+
+    //TODO: Remove
+    //Extract host from URL  (hostname:port)
+
+    cfg.validate()
 
     this.grpcDependencyService = new DependencyService(cfg.API_URL, cfg.GRPC_PROXY, cfg.CA_CERT_BUFF);
     this.localDependency = new LocalDependencies();
