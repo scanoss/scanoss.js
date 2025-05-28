@@ -1,13 +1,5 @@
 import { isFolder } from './helpers';
-import {
-  DependencyScannerCfg
-} from '../../sdk/Dependencies/DependencyScannerCfg';
-import { DependencyScanner } from '../../sdk/Dependencies/DependencyScanner';
-import {
-  FileAlgorithmScanner
-} from '../../sdk/Cryptography/Algorithm/Files/FileAlgorithmScanner';
 import { Tree } from '../../sdk/tree/Tree';
-import { DependencyFilter } from '../../sdk/tree/Filters/DependencyFilter';
 import { CryptoCfg } from '../../sdk/Cryptography/CryptoCfg';
 import fs from 'fs';
 import { BinaryFilter } from '../../sdk/tree/Filters/BinaryFilter';
@@ -16,7 +8,6 @@ import { FilterAND } from '../../sdk/tree/Filters/FilterAND';
 import {
   CryptographyScanner
 } from "../../sdk/Cryptography/CryptographyScanner";
-import path from "path";
 
 
 export async function cryptoHandler(rootPath: string, options: any): Promise<void> {

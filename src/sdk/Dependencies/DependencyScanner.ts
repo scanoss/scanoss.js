@@ -20,15 +20,11 @@ export class DependencyScanner {
 
   constructor(cfg?: DependencyScannerCfg) {
 
-    if (cfg)
-      this.config = cfg;
+    if (cfg) this.config = cfg;
 
-    //TODO: Remove
-    //Extract host from URL  (hostname:port)
+    this.config.validate()
 
-    cfg.validate()
-
-    this.grpcDependencyService = new DependencyService(cfg.API_URL, cfg.GRPC_PROXY, cfg.CA_CERT_BUFF);
+    this.grpcDependencyService = new DependencyService(this.config.API_URL, this.config.GRPC_PROXY, this.config.CA_CERT);
     this.localDependency = new LocalDependencies();
   }
 

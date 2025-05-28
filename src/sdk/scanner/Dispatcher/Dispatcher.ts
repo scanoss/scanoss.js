@@ -36,6 +36,7 @@ export class Dispatcher extends EventEmitter {
   constructor(scannerCfg = new ScannerCfg()) {
     super();
     this.scannerCfg = scannerCfg;
+
     if (this.scannerCfg.CONCURRENCY_LIMIT > MAX_CONCURRENT_REQUEST)
       this.scannerCfg.CONCURRENCY_LIMIT = MAX_CONCURRENT_REQUEST;
 

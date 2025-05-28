@@ -11,9 +11,7 @@ export async function depHandler(rootPath: string, options: any): Promise<void> 
   rootPath = rootPath.replace(/\/$/, '');  // Remove trailing slash if exists
   rootPath = rootPath.replace(/^\./, process.env.PWD);  // Convert relative path to absolute path.
   const pathIsFolder = await isFolder(rootPath);
-  const dependencyScannerCfg = new DependencyScannerCfg();
-  if(options.grpcHost) dependencyScannerCfg.API_URL = options.grpcHost;
-
+  const dependencyScannerCfg = new DependencyScannerCfg({ API_URL: options.grpcHost });
   const dependencyScanner = new DependencyScanner(dependencyScannerCfg);
 
   let fileList: Array<string> = [];

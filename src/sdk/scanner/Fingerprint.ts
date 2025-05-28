@@ -33,9 +33,12 @@ export class Fingerprint extends EventEmitter {
   private configureWfpCalculator() {
 
     // TODO: Maybe the fingerprints shouldn't be truncated. Determine this optimal value.
-    const cfg = new ScannerCfg();
-    cfg.WFP_FILE_MAX_SIZE = 10 * 1024 *1024;
-    cfg.WINNOWING_REPORT_STATUS_AFTER_X = this.reportStatusAfter;
+    const cfg = new ScannerCfg({
+      WFP_FILE_MAX_SIZE:  10 * 1024 *1024,
+      WINNOWING_REPORT_STATUS_AFTER_X: this.reportStatusAfter
+    });
+    //cfg.WFP_FILE_MAX_SIZE = 10 * 1024 *1024;
+    // cfg.WINNOWING_REPORT_STATUS_AFTER_X = this.reportStatusAfter;
     this.wfpCalculator = new WfpCalculator(cfg);
 
 

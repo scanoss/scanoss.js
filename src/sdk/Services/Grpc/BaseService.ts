@@ -40,7 +40,6 @@ export class BaseService {
     this.PROXY_URL = PROXY_URL
     this.IS_PREMIUM_SERVICE = IS_PREMIUM_SERVICE;
     this.SERVICE_NAME = SERVICE_NAME;
-    this.CA_CERT_BUFF = CA_CERT_BUFF;
 
     if (PROXY_URL) process.env.grpc_proxy = PROXY_URL;
   }
@@ -100,10 +99,8 @@ export class BaseService {
 
   protected generateChannelCredentials(): grpc.ChannelCredentials {
 
-    if (this.CA_CERT_BUFF) {
 
-    }
-    const channelCredentials = grpc.credentials.createSsl();
+    //const channelCredentials = grpc.credentials.createSsl();
     /*
     static createSsl(
         rootCerts?: Buffer | null,

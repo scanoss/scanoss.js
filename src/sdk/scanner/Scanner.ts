@@ -111,7 +111,6 @@ export class Scanner extends EventEmitter {
 
     // Use premium URL if API KEY is set and not API URL was set.
     this.scannerCfg.API_URL = (this.scannerCfg.API_KEY && this.scannerCfg.API_URL === ScannerCfg.getDefaultURL()) ? this.DEFAULT_PREMIUM_URL : this.scannerCfg.API_URL;
-
     this.wfpProvider = new WfpCalculator(this.scannerCfg);
     this.dispatcher = new Dispatcher(this.scannerCfg);
 

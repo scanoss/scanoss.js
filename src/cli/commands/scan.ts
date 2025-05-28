@@ -1,7 +1,7 @@
 import fs from "fs";
 import { Scanner } from "../../sdk/scanner/Scanner";
 import { SbomMode, ScannerEvents, ScannerInput, ScannerResults, WinnowingMode } from "../../sdk/scanner/ScannerTypes";
-import { ScannerCfg } from "../../sdk/scanner/ScannerCfg";
+import { IScannerCfg, ScannerCfg } from "../../sdk/scanner/ScannerCfg";
 import { Tree } from "../../sdk/tree/Tree";
 import cliProgress from "cli-progress";
 import { DispatcherResponse } from "../../sdk/scanner/Dispatcher/DispatcherResponse";
@@ -36,15 +36,14 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
 
   // Create dependency scanner and set parameters
   let dependencyInput: Array<string> = [];
-  const dependencyScannerCfg = new DependencyScannerCfg();
-  if (options.caCert) dependencyScannerCfg.CA_CERT = options.caCert;
-  if (options.api2url) dependencyScannerCfg.API_URL = options.api2url;
-  if (options.grpc_proxy) dependencyScannerCfg.GRPC_PROXY = options.grpc_proxy;
-  await dependencyScannerCfg.validate();
+  const dependencyScannerCfg = new DependencyScannerCfg({
+    CA_CERT: options.caCert,
+    API_URL: options.api2url,
+    GRPC_PROXY: options.grpc_proxy,
+  });
   const dependencyScanner = new DependencyScanner(dependencyScannerCfg);
 
-  // Create scanner and set connections parameters
-  const scannerCfg = new ScannerCfg();
+  const scannerCfg: IScannerCfg = {}
   if (options.concurrency) scannerCfg.CONCURRENCY_LIMIT = parseInt(options.concurrency);
   if (options.postSize) scannerCfg.WFP_FILE_MAX_SIZE = parseInt(options.postSize) * 1024;
   if (options.apiurl) scannerCfg.API_URL = options.apiurl;
@@ -53,16 +52,15 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
   if (options.maxRetry) scannerCfg.MAX_RETRIES_FOR_RECOVERABLES_ERRORS = options.maxRetry;
   if (options.caCert) scannerCfg.CA_CERT = options.caCert;
   if (options.ignoreCertErrors) scannerCfg.IGNORE_CERT_ERRORS = true;
-
+  if (options.obfuscate) scannerCfg.WFP_OBFUSCATION = true;
   if (options.proxy) {
     scannerCfg.HTTPS_PROXY = options.proxy;
     scannerCfg.HTTP_PROXY = options.proxy;
   }
-
   if (options.obfuscate) scannerCfg.WFP_OBFUSCATION = true;
+  const scannerConfig = new ScannerCfg(scannerCfg);
+  const scanner = new Scanner(scannerConfig);
 
-  await scannerCfg.validate();
-  const scanner = new Scanner(scannerCfg);
 
   let scannerInput: ScannerInput = { fileList: [] };
 
@@ -157,6 +155,7 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
     },
   }
 
+  console.log("SCANNER INPUT", scannerInput);
   //Launch parallel scanners
   const pScanner = scanner.scan([scannerInput]);
 
