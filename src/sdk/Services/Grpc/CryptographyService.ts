@@ -12,11 +12,15 @@ export interface HintsResponse
 export class CryptographyService extends BaseService {
   private client: CryptographyClient;
 
-  constructor(token: string, proxy?: string, ca_cert?: Buffer) {
-    super();
-    this.SERVICE_NAME = 'CryptographyService';
-    this.IS_PREMIUM_SERVICE = true;
-    this.API_TOKEN = token;
+  constructor(token: string, proxy?: string, caCert?: string) {
+    super({
+      PROXY_URL: proxy,
+      CA_CERT: caCert,
+      SERVICE_NAME: "CryptographyService",
+      IS_PREMIUM_SERVICE: true,
+      API_TOKEN: token,
+    });
+
 
     if (this.IS_PREMIUM_SERVICE && !this.API_TOKEN)
       throw new Error(ERROR_SERVICES_GRPC_API_TOKEN_REQUIRED);

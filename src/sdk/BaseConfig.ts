@@ -27,21 +27,9 @@ export class BaseConfig {
     }
   }
 
-  public async validate() {
+  public validate() {
     if (this.CA_CERT)
-      this.CA_CERT_BUFF = await fs.promises.readFile(this.CA_CERT);
-
-
-    if (this.API_URL.startsWith('http')) {
-      const apiURL = new URL(cfg.API_URL);
-      let hostname: string;
-      let port: string;
-
-      if (!apiURL.port) port = apiURL.protocol === 'https:' ? '443' : '80';
-      hostname = apiURL.host;
-      cfg.API_URL = `${hostname}:${port}`;
-    }
-
+      this.CA_CERT_BUFF = fs.readFileSync(this.CA_CERT);
   }
 
   public static getDefaultURL (): string {

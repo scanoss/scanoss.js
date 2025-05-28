@@ -40,7 +40,7 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
   if (options.caCert) dependencyScannerCfg.CA_CERT = options.caCert;
   if (options.api2url) dependencyScannerCfg.API_URL = options.api2url;
   if (options.grpc_proxy) dependencyScannerCfg.GRPC_PROXY = options.grpc_proxy;
-  await dependencyScannerCfg.validate();
+  dependencyScannerCfg.validate();
   const dependencyScanner = new DependencyScanner(dependencyScannerCfg);
 
   // Create scanner and set connections parameters
@@ -61,7 +61,6 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
 
   if (options.obfuscate) scannerCfg.WFP_OBFUSCATION = true;
 
-  await scannerCfg.validate();
   const scanner = new Scanner(scannerCfg);
 
   let scannerInput: ScannerInput = { fileList: [] };

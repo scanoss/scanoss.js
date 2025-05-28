@@ -9,12 +9,12 @@ export class DependencyService extends BaseService{
 
   private metadata;
 
-  constructor(hostname: string, proxyUrl?: string, ca_cert?: Buffer) {
+  constructor(hostname: string, proxyUrl?: string, caCertPath?: string) {
     super({
       HOSTNAME: hostname,
       IS_PREMIUM_SERVICE: false,
       PROXY_URL: proxyUrl,
-      CA_CERT_BUFF: ca_cert,
+      CA_CERT: caCertPath,
     });
 
     this.client = new DependenciesClient(

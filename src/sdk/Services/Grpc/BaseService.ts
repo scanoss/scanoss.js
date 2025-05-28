@@ -6,6 +6,7 @@ import Level = Logger.Level;
 import { ERROR_SERVICES_GRPC_API_TOKEN_REQUIRED } from '../../Errors';
 import { BaseConfig } from "../../BaseConfig";
 import * as buffer from "node:buffer";
+import fs from "fs";
 
 export interface PurlRequest extends CommonMessages.PurlRequest.AsObject {}
 
@@ -27,22 +28,25 @@ export class BaseService {
                 SERVICE_NAME,
                 CA_CERT,
               }: {
-    HOSTNAME: string;
+    HOSTNAME?: string;
     PROXY_URL?: string
     API_TOKEN?: string;
     IS_PREMIUM_SERVICE?: boolean;
     SERVICE_NAME?: string;
     CA_CERT?: string;
   }) {
-
     this.HOSTNAME = HOSTNAME;
     this.API_TOKEN = API_TOKEN;
     this.PROXY_URL = PROXY_URL
     this.IS_PREMIUM_SERVICE = IS_PREMIUM_SERVICE;
     this.SERVICE_NAME = SERVICE_NAME;
-    this.CA_CERT_BUFF = CA_CERT_BUFF;
+    this.CA_CERT = CA_CERT;
 
     if (PROXY_URL) process.env.grpc_proxy = PROXY_URL;
+
+    if (this.IS_PREMIUM_SERVICE && !this.API_TOKEN)
+      throw new Error(ERROR_SERVICES_GRPC_API_TOKEN_REQUIRED);
+
   }
 
 
@@ -99,37 +103,23 @@ export class BaseService {
   }
 
   protected generateChannelCredentials(): grpc.ChannelCredentials {
+    let cc = grpc.credentials.createSsl();
 
-    if (this.CA_CERT_BUFF) {
-
+    if (this.CA_CERT) {
+      const caCert = fs.readFileSync(this.CA_CERT);
+      cc = grpc.credentials.createSsl(caCert);
     }
-    const channelCredentials = grpc.credentials.createSsl();
-    /*
-    static createSsl(
-        rootCerts?: Buffer | null,
-        privateKey?: Buffer | null,
-        certChain?: Buffer | null,
-        verifyOptions?: VerifyOptions,
-        ): ChannelCredentials
-     */
 
-    if (this.IS_PREMIUM_SERVICE && !this.API_TOKEN)
-      throw new Error(ERROR_SERVICES_GRPC_API_TOKEN_REQUIRED);
+    if (this.API_TOKEN) {
+      const metaCallback = (_params, callback) => {
+        const metadata = new grpc.Metadata();
+        metadata.add(HEADER_NAME_API_TOKEN, this.API_TOKEN);
+        callback(null, metadata);
+      };
+      const callCredentials= grpc.credentials.createFromMetadataGenerator(metaCallback);
+      cc = grpc.credentials.combineChannelCredentials( cc, callCredentials );
+    }
 
-    if (!this.IS_PREMIUM_SERVICE && !this.API_TOKEN)
-      return grpc.credentials.createSsl();
-
-    const channelCredentials = grpc.credentials.createSsl();
-    const metaCallback = (_params, callback) => {
-      const metadata = new grpc.Metadata();
-      metadata.add(HEADER_NAME_API_TOKEN, this.API_TOKEN);
-      callback(null, metadata);
-    };
-    const callCredentials =
-      grpc.credentials.createFromMetadataGenerator(metaCallback);
-    return grpc.credentials.combineChannelCredentials(
-      channelCredentials,
-      callCredentials
-    );
+    return cc;
   }
 }
