@@ -4,9 +4,6 @@ export class ScannerCfg extends BaseConfig {
   // Client Timestamp, default value is scanoss-js/${version}
   public CLIENT_TIMESTAMP = '';
 
-  // API URL
-  public API_URL = null;
-
   public API_KEY = '';
 
   //Set to true to ignore self certificates issues
