@@ -21,9 +21,6 @@ export class DependencyScanner {
   constructor(cfg?: DependencyScannerCfg) {
 
     if (cfg) this.config = cfg;
-
-    this.config.validate()
-
     this.grpcDependencyService = new DependencyService(this.config.API_URL, this.config.GRPC_PROXY, this.config.CA_CERT);
     this.localDependency = new LocalDependencies();
   }
