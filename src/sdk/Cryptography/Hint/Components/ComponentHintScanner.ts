@@ -27,7 +27,8 @@ export class ComponentHintScanner
   public async scan(req: PurlRequest):Promise<HintsResponse>{
     const cryptographyService = new CryptographyService(
       this.config.getApikey(), // API KEY
-      this.config.GRPC_PROXY,
+      this.config.API_URL, // Destination Host
+      this.config.GRPC_PROXY, // Proxy Host
       this.config.CA_CERT);
     const results = await cryptographyService.getEncryptionHints(req);
     this.resultCollector.collectHintResults(results);
