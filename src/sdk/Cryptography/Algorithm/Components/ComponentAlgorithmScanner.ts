@@ -27,10 +27,10 @@ export class ComponentAlgorithmScanner
    * @returns {AlgorithmResponse} A promise that resolves to an AlgorithmResponse containing detected cryptographic algorithms.
    */
   public async scan(req: PurlRequest):Promise<AlgorithmResponse> {
-    console.log("Scanning Component Crypto Algorithms...");
     const cryptographyService = new CryptographyService(
       this.config.getApikey(), // API KEY
-      this.config.GRPC_PROXY,
+      this.config.API_URL, // Destination Host
+      this.config.GRPC_PROXY, // Proxy Host
       this.config.CA_CERT);
     const results:AlgorithmResponse = await cryptographyService.getAlgorithms(req);
     this.resultCollector.collectAlgorithmResults(results);

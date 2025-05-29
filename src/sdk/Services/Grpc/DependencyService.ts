@@ -1,24 +1,30 @@
 import * as grpc from '@grpc/grpc-js';
-import { DependenciesClient } from './scanoss/api/dependencies/v2/scanoss-dependencies_grpc_pb';
+import { DependenciesClient, DependenciesService } from "./scanoss/api/dependencies/v2/scanoss-dependencies_grpc_pb";
 import * as DependenciesMessages from './scanoss/api/dependencies/v2/scanoss-dependencies_pb';
 import * as CommonMessages from './scanoss/api/common/v2/scanoss-common_pb';
 import { BaseService } from "./BaseService";
 
 export class DependencyService extends BaseService{
+  public static readonly serviceName = 'DependencyService';
   private client: DependenciesClient;
 
-  private metadata;
-
-  constructor(hostname: string, proxyUrl?: string, caCertPath?: string) {
+  /**
+   * Creates DependencyService Instance.
+   * @param {string} hostName - Optional. Destination Host.
+   * @param {string} proxyHost -Optional. Proxy Host.
+   * @param {string} caCertPath - Optional. Path to certificates.
+   */
+  constructor(hostName?: string, proxyHost?: string, caCertPath?: string) {
     super({
-      HOSTNAME: hostname,
+      HOSTNAME: hostName,
       IS_PREMIUM_SERVICE: false,
-      PROXY_URL: proxyUrl,
+      SERVICE_NAME: DependencyService.serviceName,
+      PROXY_URL: proxyHost,
       CA_CERT: caCertPath,
     });
 
     this.client = new DependenciesClient(
-      hostname,
+      this.HOSTNAME,
       this.generateChannelCredentials()
     );
   }
