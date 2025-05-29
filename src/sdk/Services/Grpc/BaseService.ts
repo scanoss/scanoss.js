@@ -4,8 +4,6 @@ import { Logger, logger } from '../../Logger';
 import { HEADER_NAME_API_TOKEN, SCANOSS_GRPC_ENDPOINT } from '../../Constants';
 import Level = Logger.Level;
 import { ERROR_SERVICES_GRPC_API_TOKEN_REQUIRED } from '../../Errors';
-import { BaseConfig } from "../../BaseConfig";
-import * as buffer from "node:buffer";
 import fs from "fs";
 
 export interface PurlRequest extends CommonMessages.PurlRequest.AsObject {}
@@ -13,12 +11,12 @@ export interface PurlRequest extends CommonMessages.PurlRequest.AsObject {}
 export interface EchoRequest extends CommonMessages.EchoRequest.AsObject {}
 
 export class BaseService {
-  protected HOSTNAME: string = SCANOSS_GRPC_ENDPOINT;
-  protected API_TOKEN: string = '';
-  protected IS_PREMIUM_SERVICE: boolean = false;
-  protected SERVICE_NAME: string = '';
-  protected CA_CERT: string;    //This is
-  protected PROXY_URL: string;
+  protected _HOSTNAME: string = SCANOSS_GRPC_ENDPOINT;
+  protected _API_TOKEN: string = '';
+  protected _IS_PREMIUM_SERVICE: boolean = false;
+  protected _SERVICE_NAME: string = '';
+  protected _CA_CERT: string;
+  protected _PROXY_URL: string;
 
   constructor({
                 HOSTNAME,
@@ -35,18 +33,18 @@ export class BaseService {
     SERVICE_NAME?: string;
     CA_CERT?: string;
   }) {
-    this.HOSTNAME = HOSTNAME;
     this.API_TOKEN = API_TOKEN;
-    this.PROXY_URL = PROXY_URL
+    this.PROXY_URL = PROXY_URL;
     this.IS_PREMIUM_SERVICE = IS_PREMIUM_SERVICE;
     this.SERVICE_NAME = SERVICE_NAME;
     this.CA_CERT = CA_CERT;
+    this.HOSTNAME = HOSTNAME;
 
-    if (PROXY_URL) process.env.grpc_proxy = PROXY_URL;
+
+    if (this.PROXY_URL) process.env.grpc_proxy = this.PROXY_URL;
 
     if (this.IS_PREMIUM_SERVICE && !this.API_TOKEN)
       throw new Error(ERROR_SERVICES_GRPC_API_TOKEN_REQUIRED);
-
   }
 
 
@@ -56,7 +54,7 @@ export class BaseService {
     const { status, ...responseWithoutStatus } = response;
     if (status.status === CommonMessages.StatusCode.FAILED) {
       logger.log(
-        `[ GRPC ${this.SERVICE_NAME} ] - Server GRPC Code: ${status.status} - ${status.message}`,
+        `[ GRPC ${this._SERVICE_NAME} ] - Server GRPC Code: ${status.status} - ${status.message}`,
         Level.error
       );
       throw new Error(status.message);
@@ -66,12 +64,12 @@ export class BaseService {
       status.status === CommonMessages.StatusCode.UNSPECIFIED
     ) {
       logger.log(
-        `[ GRPC ${this.SERVICE_NAME} ] - Server GRPC Code: ${status.status} - ${status.message}`,
+        `[ GRPC ${this._SERVICE_NAME} ] - Server GRPC Code: ${status.status} - ${status.message}`,
         Level.warn
       );
     } else if (status.status === CommonMessages.StatusCode.SUCCESS) {
       logger.log(
-        `[ GRPC ${this.SERVICE_NAME} ] - Server GRPC Code: ${status.status} - ${status.message}`,
+        `[ GRPC ${this._SERVICE_NAME} ] - Server GRPC Code: ${status.status} - ${status.message}`,
         Level.info
       );
     }
@@ -105,7 +103,7 @@ export class BaseService {
   protected generateChannelCredentials(): grpc.ChannelCredentials {
     let cc = grpc.credentials.createSsl();
 
-    if (this.CA_CERT) {
+    if (this.CA_CERT && this.PROXY_URL) {
       const caCert = fs.readFileSync(this.CA_CERT);
       cc = grpc.credentials.createSsl(caCert);
     }
@@ -121,5 +119,69 @@ export class BaseService {
     }
 
     return cc;
+  }
+
+  set SERVICE_NAME(serviceName: string) {
+    this._SERVICE_NAME = serviceName;
+  }
+
+  get SERVICE_NAME() {
+    return this._SERVICE_NAME;
+  }
+
+  set HOSTNAME(host: string) {
+    if(host !== null && host !== ''){
+      //Extract host from URL  (hostname:port)
+      if (host.startsWith('http')) {
+        const apiURL = new URL(host);
+        let hostname: string;
+        let port: string;
+
+        if (!apiURL.port) port = apiURL.protocol === 'https:' ? '443' : '80';
+        hostname = apiURL.host;
+        this._HOSTNAME = `${hostname}:${port}`;
+        return;
+      }
+      this._HOSTNAME = host;
+    }
+
+  }
+
+  get HOSTNAME() {
+    return this._HOSTNAME;
+  }
+
+  set API_TOKEN(apiToken: string) {
+    if (apiToken != null && apiToken != '') this._API_TOKEN = apiToken;
+  }
+
+  get API_TOKEN() {
+    return this._API_TOKEN;
+  }
+
+  set IS_PREMIUM_SERVICE(isPremiumService: boolean) {
+    if (isPremiumService != null) this._IS_PREMIUM_SERVICE = isPremiumService;
+  }
+
+  get IS_PREMIUM_SERVICE() {
+    return this._IS_PREMIUM_SERVICE;
+  }
+
+  set CA_CERT(caCertPath: string) {
+    if (caCertPath != null && caCertPath!='') this._CA_CERT = caCertPath;
+  }
+
+  get CA_CERT() {
+    return this._CA_CERT;
+  }
+
+  set PROXY_URL(proxyURL: string) {
+    if (proxyURL != null && proxyURL!=''){
+      this._PROXY_URL = proxyURL;
+    }
+  }
+
+  get PROXY_URL() {
+    return this._PROXY_URL;
   }
 }
