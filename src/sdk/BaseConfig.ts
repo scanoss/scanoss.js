@@ -45,6 +45,11 @@ export class BaseConfig {
     this._NO_PROXY = value;
   }
 
+  /**
+   * Sets the API URL for service connections with validation
+   * @param value - The API URL (must start with http:// or https://)
+   * @throws {Error} When the URL is empty, missing http/https protocol, or has invalid format
+   */
   set API_URL(value: string) {
     if (!value) {
       throw new Error('API_URL is required and cannot be empty');
@@ -66,12 +71,18 @@ export class BaseConfig {
     this._GRPC_PROXY = value;
   }
 
-  set CA_CERT(value: string) {
+  /**
+   * Sets the CA certificate file path for gRPC connections
+   * @param caCertPath - Path to the CA certificate file
+   * @throws {Error} When the certificate file does not exist or cannot be read
+   */
+  set CA_CERT(caCertPath: string) {
+    if (caCertPath == null || caCertPath === '') return;
     try {
-        fs.readFileSync(value);
-        this._CA_CERT = value;
-    }catch(e) {
-      throw new Error(`Certificate file not found: '${value}'`);
+        fs.readFileSync(caCertPath);
+        this._CA_CERT = caCertPath;
+    } catch(e) {
+      throw new Error(`Certificate file not found: '${caCertPath}'`);
     }
   }
 
