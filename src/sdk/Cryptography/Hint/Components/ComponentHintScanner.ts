@@ -25,7 +25,11 @@ export class ComponentHintScanner
    * @returns {HintsResponse} A promise that resolves to a HintsResponse containing detected cryptographic hints.
    */
   public async scan(req: PurlRequest):Promise<HintsResponse>{
-    const cryptographyService = new CryptographyService(this.config.getApikey(), this.config.getProxy());
+    const cryptographyService = new CryptographyService(
+      this.config.getApikey(), // API KEY
+      this.config.API_URL, // Destination Host
+      this.config.GRPC_PROXY, // Proxy Host
+      this.config.CA_CERT);
     const results = await cryptographyService.getEncryptionHints(req);
     this.resultCollector.collectHintResults(results);
     return results;

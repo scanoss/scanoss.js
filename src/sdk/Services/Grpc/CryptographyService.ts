@@ -10,21 +10,27 @@ export interface HintsResponse
   extends CryptographyMessages.HintsInRangeResponse.AsObject {}
 
 export class CryptographyService extends BaseService {
+  public static readonly serviceName = 'CryptographyService';
   private client: CryptographyClient;
 
-  constructor(token: string, proxy?: string, ca_cert?: Buffer) {
-    super();
-    this.SERVICE_NAME = 'CryptographyService';
-    this.IS_PREMIUM_SERVICE = true;
-    this.API_TOKEN = token;
-
-    if (this.IS_PREMIUM_SERVICE && !this.API_TOKEN)
-      throw new Error(ERROR_SERVICES_GRPC_API_TOKEN_REQUIRED);
-
-    if (proxy) process.env.grpc_proxy = proxy;
-
+  /**
+   * Creates CryptographyService Instance.
+   * @param {string} token - Optional. API TOKEN.
+   * @param {string} hostName - Optional. Destination Host.
+   * @param {string} proxyHost -Optional. Proxy Host.
+   * @param {string} caCertPath - Optional. Path to certificates.
+   */
+  constructor(token: string, hostName: string ,proxyHost?: string, caCertPath?: string) {
+    super({
+      HOSTNAME: hostName,
+      PROXY_URL: proxyHost,
+      CA_CERT: caCertPath,
+      SERVICE_NAME: CryptographyService.serviceName,
+      IS_PREMIUM_SERVICE: true,
+      API_TOKEN: token,
+    });
     this.client = new CryptographyClient(
-      this.GRPC_ENDPOINT,
+      this.HOSTNAME,
       this.generateChannelCredentials()
     );
   }

@@ -27,7 +27,6 @@ import { Settings } from "../../sdk/scanner/ScannnerResultPostProcessor/interfac
 import { CryptoCfg } from "../../sdk/Cryptography/CryptoCfg";
 import { CryptographyScanner } from "../../sdk/Cryptography/CryptographyScanner";
 import { CryptographyResponse, LocalCryptography } from "../../sdk/Cryptography/CryptographyTypes";
-import { Utils } from "../../sdk/Utils/Utils";
 
 export async function scanHandler(rootPath: string, options: any): Promise<void> {
   // TODO: Add flag to enable debug. False by default.  logger.enableDebug(options.debug);
@@ -41,7 +40,6 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
   if (options.caCert) dependencyScannerCfg.CA_CERT = options.caCert;
   if (options.api2url) dependencyScannerCfg.API_URL = options.api2url;
   if (options.grpc_proxy) dependencyScannerCfg.GRPC_PROXY = options.grpc_proxy;
-  await dependencyScannerCfg.validate();
   const dependencyScanner = new DependencyScanner(dependencyScannerCfg);
 
   // Create scanner and set connections parameters
@@ -62,7 +60,6 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
 
   if (options.obfuscate) scannerCfg.WFP_OBFUSCATION = true;
 
-  await scannerCfg.validate();
   const scanner = new Scanner(scannerCfg);
 
   let scannerInput: ScannerInput = { fileList: [] };
@@ -179,8 +176,13 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
       libraryRulesPath: libraryRules,
       algorithmRulesPath: algorithmRules,
       apiKey: options.key,
-      proxy: options.proxy,
     });
+
+    // Proxy setup
+    if (options.caCert) cryptoCfg.CA_CERT = options.caCert; // Path to Certs
+    if (options.api2url) cryptoCfg.API_URL = options.api2url; // Destination Host
+    if (options.grpc_proxy) cryptoCfg.GRPC_PROXY = options.grpc_proxy; // Proxy Host
+
     const cryptoScanner = new CryptographyScanner(cryptoCfg);
     let localCrypto = await cryptoScanner.scanFiles(scannerInput.fileList);
     localCrypto.fileList = localCrypto.fileList.map((c) => {

@@ -44,7 +44,7 @@ async function main() {
   scan.addOption(new Option("-k, --key <key>", "SCANOSS API Key token (optional - not required for default OSSKB URL)"));
   scan.addOption(new Option("    --ignore-cert-errors", "Ignore self signed certificate errors"));
   scan.addOption(new Option("    --ca-cert <cert>", "Specify a path for a cert used in SSL/TLS connection"));
-  scan.addOption(new Option("    --proxy <proxy>", "Proxy URL to use for connections (optional). Can also use the environment variable \"HTTPS_PROXY=[ip]:[port]\" and \"grcp_proxy=[ip]:[port]\" for gRPC"));
+  scan.addOption(new Option("    --proxy <proxy>", "Proxy URL to use for connections (optional). Can also use the environment variable \"HTTPS_PROXY=[protocol]://[ip]:[port]\" and \"grcp_proxy=[protocol]://[ip]:[port]\" for gRPC"));
   scan.addOption(new Option("    --grpc_proxy <grpc_proxy>", "GRPC Proxy URL to use for connections (optional)." ));
   scan.addOption(new Option("-v, --verbose", "Makes scan operation verbose"));
   scan.addOption(new Option("-st, --settings <filename>", "Settings file to use for scanning (optional - default scanoss.json)"));
