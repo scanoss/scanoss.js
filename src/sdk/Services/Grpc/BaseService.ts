@@ -144,7 +144,6 @@ export class BaseService {
       }
       this._HOSTNAME = host;
     }
-
   }
 
   get HOSTNAME() {
