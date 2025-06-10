@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.17.0] (2025-06-10)
+### Fixed
+- Fixed ca-certs on gRPC protocol
+### Changed
+- Improved validation on scanner config
+
+## [0.16.5] (2025-05-28)
+### Fixed
+- Fixed ca-certs on grpc dependency service
+
+## [0.16.5] (2025-05-28)
+### Fixed
+- Fixed ca-certs on grpc dependency service
+
 ## [0.16.3] (2025-04-30)
 ### Fixed
 - Corrected slash encoding in npm parser for package identifiers
@@ -71,3 +85,5 @@ All notable changes to this project will be documented in this file. See [standa
 ### [0.16.1](https://github.com/scanoss/scanoss.js/compare/v0.15.7...v0.16.1) (2025-04-24)
 ### [0.16.2](https://github.com/scanoss/scanoss.js/compare/v0.16.1...v0.16.2) (2025-04-25)
 ### [0.16.3](https://github.com/scanoss/scanoss.js/compare/v0.16.2...v0.16.3) (2025-04-30)
+### [0.16.5](https://github.com/scanoss/scanoss.js/compare/v0.16.3...v0.16.5) (2025-05-28)
+### [0.17.0](https://github.com/scanoss/scanoss.js/compare/v0.16.5...v0.17.0) (2025-06-10)
