@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.17.1] (2025-06-16)
+### Changed
+- Implemented chunked processing for dependency requests
+
 ## [0.17.0] (2025-06-10)
 ### Fixed
 - Fixed ca-certs on gRPC protocol
@@ -87,3 +91,4 @@ All notable changes to this project will be documented in this file. See [standa
 ### [0.16.3](https://github.com/scanoss/scanoss.js/compare/v0.16.2...v0.16.3) (2025-04-30)
 ### [0.16.5](https://github.com/scanoss/scanoss.js/compare/v0.16.3...v0.16.5) (2025-05-28)
 ### [0.17.0](https://github.com/scanoss/scanoss.js/compare/v0.16.5...v0.17.0) (2025-06-10)
+### [0.17.1](https://github.com/scanoss/scanoss.js/compare/v0.17.0...v0.17.1) (2025-06-16)
