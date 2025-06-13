@@ -21,4 +21,5 @@ export interface FilesList {
 
 export interface IDependencyResponse {
     filesList: FilesList[];
+    status?: string;
 }
