@@ -1,4 +1,4 @@
-import { ILocalDependencies } from './LocalDependency/DependencyTypes';
+import { ILocalDependencies, ILocalPurl } from "./LocalDependency/DependencyTypes";
 import { DependencyService } from '../Services/Grpc/DependencyService';
 import {
   DependencyRequest,
@@ -10,6 +10,7 @@ import { IDependencyResponse } from './DependencyTypes';
 import { PackageURL } from 'packageurl-js';
 import fs from 'fs';
 import { Tree } from '../tree/Tree';
+import { logger } from "../Logger";
 
 export class DependencyScanner {
   private localDependency: LocalDependencies;
@@ -37,14 +38,40 @@ export class DependencyScanner {
     let localDependencies = await this.localDependency.search(files);
     if (localDependencies.files.length === 0) return { filesList: [] };
     localDependencies = this.purlAdapter(localDependencies);
-    const request = this.buildRequest(localDependencies);
-    const grpcResponse = await this.grpcDependencyService.get(request);
-    const response = grpcResponse.toObject();
-
-    // Extract scope from localDependencies and add it to response
-    // Also adds the requirements field from localDependency to the response if the server didn't
-    // replay back a version
+    const requests: DependencyRequest[] = this.buildRequests(localDependencies);
+    const response: IDependencyResponse = await this.getDependencies(requests);
     this.repairOutput(localDependencies, response);
+    return response;
+  }
+
+  private async getDependencies(requests: Array<DependencyRequest>): Promise<IDependencyResponse> {
+    const responseMapper = new Map<string,DependencyResponse>;
+    for (const request of requests) {
+      try {
+        const grpcResponse = await this.grpcDependencyService.get(request);
+        const file = grpcResponse.getFilesList()[0].getFile();
+        if(responseMapper.has(file)){
+          responseMapper.get(file).getFilesList()[0].setDependenciesList(grpcResponse.getFilesList()[0].getDependenciesList());
+        }else{
+          responseMapper.set(file,grpcResponse);
+        }
+      }catch(e) {
+        console.error(e);
+        logger.log(`Error while scanning dependencies.", ${request.getFilesList()[0].getFile()}, ${request.getFilesList()[0].getPurlsList()}`)
+      }
+    }
+    const response: IDependencyResponse = {
+      filesList: [],
+      status: 'Success',
+    }
+    responseMapper.forEach((depResponse: DependencyResponse)=>{
+      const responseToObj = depResponse.toObject();
+      response.filesList.push(responseToObj.filesList[0]);
+      // Override response status with dependency error/warning message if dependency failed
+      if(depResponse.getStatus().getStatus() !== 1) {
+        response.status = depResponse.getStatus().getMessage()
+      }
+    });
     return response;
   }
 
@@ -67,24 +94,37 @@ export class DependencyScanner {
     return localDependencies;
   }
 
-  private buildRequest(
+  private chunkPurls(purls: Array<ILocalPurl>): Array<Array<ILocalPurl>> {
+    const chunks = [];
+    for (let i = 0; i < purls.length; i += this.config.CHUNK_REQUEST_SIZE) {
+      chunks.push(purls.slice(i, i + this.config.CHUNK_REQUEST_SIZE));
+    }
+    return chunks;
+  }
+
+  private buildRequests(
     localDependencies: ILocalDependencies
-  ): DependencyRequest {
+  ): Array<DependencyRequest> {
     try {
-      const depRequest = new DependencyRequest();
-      depRequest.setDepth(1);
+      const requests = [];
       for (const file of localDependencies.files) {
-        const fileMsg = new DependencyRequest.Files();
-        fileMsg.setFile(file.file);
-        for (const purl of file.purls) {
-          const purlMsg = new DependencyRequest.Purls();
-          purlMsg.setPurl(purl.purl);
-          if (purl?.requirement) purlMsg.setRequirement(purl.requirement);
-          fileMsg.addPurls(purlMsg);
+        const chunkedPurls = this.chunkPurls(file.purls)
+        for (const purls of chunkedPurls) {
+          const depRequest = new DependencyRequest();
+          depRequest.setDepth(1);
+          const fileMsg = new DependencyRequest.Files();
+          fileMsg.setFile(file.file);
+            for (const purl of purls) {
+              const purlMsg = new DependencyRequest.Purls();
+              purlMsg.setPurl(purl.purl);
+              if (purl?.requirement) purlMsg.setRequirement(purl.requirement);
+              fileMsg.addPurls(purlMsg);
+            }
+            depRequest.addFiles(fileMsg);
+            requests.push(depRequest);
         }
-        depRequest.addFiles(fileMsg);
       }
-      return depRequest;
+      return requests;
     } catch (e) {
       console.error(e);
       return null;
@@ -93,7 +133,7 @@ export class DependencyScanner {
 
   private repairOutput(
     localdependency: ILocalDependencies,
-    serverResponse: DependencyResponse.AsObject
+    serverResponse: IDependencyResponse
   ) {
     // Create a map with key = [filename + purl] and the value is an object containing:
     // * The scope of the local dependency
