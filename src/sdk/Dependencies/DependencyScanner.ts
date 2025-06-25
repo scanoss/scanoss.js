@@ -45,15 +45,20 @@ export class DependencyScanner {
   }
 
   private async getDependencies(requests: Array<DependencyRequest>): Promise<IDependencyResponse> {
-    const responseMapper = new Map<string,DependencyResponse>;
+    const responseMapper = new Map<string,IDependencyResponse>;
     for (const request of requests) {
       try {
         const grpcResponse = await this.grpcDependencyService.get(request);
         const file = grpcResponse.getFilesList()[0].getFile();
+        const responseToObject = grpcResponse.toObject();
         if(responseMapper.has(file)){
-          responseMapper.get(file).getFilesList()[0].setDependenciesList(grpcResponse.getFilesList()[0].getDependenciesList());
+          responseMapper.get(file).filesList[0].dependenciesList.push(...responseToObject.filesList[0].dependenciesList);
+          // Change response status if one response is not success
+          if(responseToObject.status.message!=="Success"){
+            responseMapper.get(file).status = responseToObject.status.message;
+          }
         }else{
-          responseMapper.set(file,grpcResponse);
+          responseMapper.set(file,responseToObject as any);
         }
       }catch(e) {
         console.error(e);
@@ -64,12 +69,10 @@ export class DependencyScanner {
       filesList: [],
       status: 'Success',
     }
-    responseMapper.forEach((depResponse: DependencyResponse)=>{
-      const responseToObj = depResponse.toObject();
-      response.filesList.push(responseToObj.filesList[0]);
-      // Override response status with dependency error/warning message if dependency failed
-      if(depResponse.getStatus().getStatus() !== 1) {
-        response.status = depResponse.getStatus().getMessage()
+    responseMapper.forEach((depResponse: IDependencyResponse)=>{
+      response.filesList.push(depResponse.filesList[0]);
+      if(depResponse.status !== 'Success'){
+        response.status = depResponse.status;
       }
     });
     return response;

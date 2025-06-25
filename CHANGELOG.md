@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.17.2] (2025-06-25)
+### Fixed
+-  Fixed dependency scan response concatenation
+
 ## [0.17.1] (2025-06-16)
 ### Changed
 - Implemented chunked processing for dependency requests
@@ -92,3 +96,4 @@ All notable changes to this project will be documented in this file. See [standa
 ### [0.16.5](https://github.com/scanoss/scanoss.js/compare/v0.16.3...v0.16.5) (2025-05-28)
 ### [0.17.0](https://github.com/scanoss/scanoss.js/compare/v0.16.5...v0.17.0) (2025-06-10)
 ### [0.17.1](https://github.com/scanoss/scanoss.js/compare/v0.17.0...v0.17.1) (2025-06-16)
+### [0.17.2](https://github.com/scanoss/scanoss.js/compare/v0.17.1...v0.17.2) (2025-06-25)

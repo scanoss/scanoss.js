@@ -1,5 +1,5 @@
 import { BaseConfig, IBaseConfig } from "../BaseConfig";
-const DEFAULT_CHUNK_REQUEST_SIZE = 10;
+const DEFAULT_CHUNK_REQUEST_SIZE = 15;
 
 export interface IDependencyScannerCfg  extends IBaseConfig {
   CHUNK_REQUEST_SIZE?: number;
