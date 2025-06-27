@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.17.3] (2025-06-27)
+### Fixed
+- Empty winnowing.wfp file now created when scanning empty directories or filtered content
+
 ## [0.17.2] (2025-06-25)
 ### Fixed
 -  Fixed dependency scan response concatenation
