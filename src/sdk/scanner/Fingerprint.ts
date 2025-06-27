@@ -56,7 +56,11 @@ export class Fingerprint extends EventEmitter {
 
     //If folder does not exist, create
     const pathFolder = path.dirname(this.fingerprintPath);
-    if(!fs.existsSync(pathFolder)) fs.mkdirSync(pathFolder, { recursive: true });
+    if(!fs.existsSync(pathFolder)) fs.mkdirSync(this.fingerprintPath, { recursive: true });
+    if(!fs.existsSync(this.fingerprintPath)) {
+      fs.writeFileSync(this.fingerprintPath, '');
+    }
+
 
     this.queue = jobs;
 
@@ -64,6 +68,8 @@ export class Fingerprint extends EventEmitter {
       this.configureWfpCalculator();
       await this.wfpCalculator.start(job);
     }
+
+
 
     this.emit(ScannerEvents.WINNOWING_FINISHED);
   }
