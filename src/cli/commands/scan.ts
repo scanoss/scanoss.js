@@ -170,20 +170,16 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
     if(options.algorithmRules) algorithmRules = options.algorithmRules;
     if(options.libraryRules) libraryRules = options.libraryRules;
 
-    // Local Cryptography
-    const cryptoCfg = new CryptoCfg({
-      threads: 5,
-      libraryRulesPath: libraryRules,
-      algorithmRulesPath: algorithmRules,
-      apiKey: options.key,
-    });
+    const cfg = new CryptoCfg();
+    if(options.algorithmRules) cfg.ALGORITHM_RULES_PATH = options.algorithmRules;
+    if(options.libraryRules) cfg.LIBRARY_RULES_PATH = options.libraryRules;
+    if(options.threads) cfg.THREADS = options.threads;
+    if(options.key) cfg.API_KEY = options.key;
+    if (options.caCert) cfg.CA_CERT = options.caCert;
+    if (options.ignoreCertErrors) cfg.IGNORE_CA_CERT_ERR = true;
+    if (options.apiurl) cfg.API_URL = options.apiurl;
 
-    // Proxy setup
-    if (options.caCert) cryptoCfg.CA_CERT = options.caCert; // Path to Certs
-    if (options.api2url) cryptoCfg.API_URL = options.api2url; // Destination Host
-    if (options.grpc_proxy) cryptoCfg.GRPC_PROXY = options.grpc_proxy; // Proxy Host
-
-    const cryptoScanner = new CryptographyScanner(cryptoCfg);
+    const cryptoScanner = new CryptographyScanner(cfg);
     let localCrypto = await cryptoScanner.scanFiles(scannerInput.fileList);
     localCrypto.fileList = localCrypto.fileList.map((c) => {
       return { ...c, file: c.file.replace(rootPath, "") };

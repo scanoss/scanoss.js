@@ -60,7 +60,7 @@ export class DependencyScanner {
         }else{
           responseMapper.set(file,responseToObject as any);
         }
-      }catch(e) {
+      } catch(e) {
         console.error(e);
         logger.log(`Error while scanning dependencies.", ${request.getFilesList()[0].getFile()}, ${request.getFilesList()[0].getPurlsList()}`)
       }

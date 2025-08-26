@@ -28,7 +28,7 @@ export class ComponentAlgorithmScanner
    */
   public async scan(req: PurlRequest):Promise<AlgorithmResponse> {
     const cryptographyService = new CryptographyService(
-      this.config.getApikey(), // API KEY
+      this.config.API_KEY, // API KEY
       this.config.API_URL, // Destination Host
       this.config.GRPC_PROXY, // Proxy Host
       this.config.CA_CERT);
