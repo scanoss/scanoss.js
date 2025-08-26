@@ -1,28 +1,31 @@
 import { ILocalDependencies, ILocalPurl } from "./LocalDependency/DependencyTypes";
-import { DependencyClient } from '../Clients/Dependency/DependencyClient';
-import {
-  DependencyRequest,
-  DependencyResponse,
-} from '../Clients/Grpc/scanoss/api/dependencies/v2/scanoss-dependencies_pb';
 import { LocalDependencies } from './LocalDependency/LocalDependency';
 import { DependencyScannerCfg } from './DependencyScannerCfg';
-import { IDependencyResponse } from './DependencyTypes';
 import { PackageURL } from 'packageurl-js';
 import fs from 'fs';
 import { Tree } from '../tree/Tree';
 import { logger } from "../Logger";
+import { DependencyHttpClient } from "../Clients/Dependency/DependencyHttpClient";
+import {
+  DependencyFile, DependencyRequest,
+  DependencyResponse,
+  IDependencyClient,
+  Status
+} from "../Clients/Dependency/IDependencyClient";
+import { BaseConfig } from "../BaseConfig";
+
 
 export class DependencyScanner {
   private localDependency: LocalDependencies;
 
-  private grpcDependencyService: DependencyClient;
+  private dependencyClient: IDependencyClient;
 
   private config: DependencyScannerCfg = new DependencyScannerCfg();
 
   constructor(cfg?: DependencyScannerCfg) {
-
     if (cfg) this.config = cfg;
-    this.grpcDependencyService = new DependencyClient(this.config.API_URL, this.config.GRPC_PROXY, this.config.CA_CERT);
+    else this.config = new DependencyScannerCfg();
+    this.dependencyClient = new DependencyHttpClient(this.config.API_KEY, this.config.API_URL, this.config.GRPC_PROXY, this.config.CA_CERT);
     this.localDependency = new LocalDependencies();
   }
 
@@ -34,48 +37,56 @@ export class DependencyScanner {
     return await this.scan(tree.getFileList());
   }
 
-  public async scan(files: Array<string>): Promise<IDependencyResponse> {
+  public async scan(files: Array<string>): Promise<DependencyResponse> {
     let localDependencies = await this.localDependency.search(files);
-    if (localDependencies.files.length === 0) return { filesList: [] };
+    if (localDependencies.files.length === 0) return { filesList: [], status:{ status: 'success', message: 'No dependencies found' } };
     localDependencies = this.purlAdapter(localDependencies);
     const requests: DependencyRequest[] = this.buildRequests(localDependencies);
-    const response: IDependencyResponse = await this.getDependencies(requests);
+    const response: DependencyResponse = await this.getDependencies(requests);
     this.repairOutput(localDependencies, response);
     return response;
   }
 
-  private async getDependencies(requests: Array<DependencyRequest>): Promise<IDependencyResponse> {
-    const responseMapper = new Map<string,IDependencyResponse>;
+  private async getDependencies(requests: Array<DependencyRequest>): Promise<DependencyResponse> {
+    const responseMapper = new Map<string, DependencyFile>();
+    let overallStatus: Status = { status: 'success', message: 'Success' };
+
     for (const request of requests) {
       try {
-        const grpcResponse = await this.grpcDependencyService.get(request);
-        const file = grpcResponse.getFilesList()[0].getFile();
-        const responseToObject = grpcResponse.toObject();
-        if(responseMapper.has(file)){
-          responseMapper.get(file).filesList[0].dependenciesList.push(...responseToObject.filesList[0].dependenciesList);
-          // Change response status if one response is not success
-          if(responseToObject.status.message!=="Success"){
-            responseMapper.get(file).status = responseToObject.status.message;
+        const dependencyResponse = await this.dependencyClient.getDependencies(request);
+        dependencyResponse.filesList.forEach((file) => {
+          if (responseMapper.has(file.file)) {
+            const existingFile = responseMapper.get(file.file)!;
+            existingFile.dependenciesList.push(...file.dependenciesList);
+            // Update status if current file has an error
+            if (file.status !== 'success' && existingFile.status === 'success') {
+              existingFile.status = file.status;
+            }
+          } else {
+            responseMapper.set(file.file, {
+              file: file.file,
+              dependenciesList: [...file.dependenciesList],
+              status: file.status,
+              id: file.id
+            });
           }
-        }else{
-          responseMapper.set(file,responseToObject as any);
+        });
+
+        // Update overall status if any request failed
+        if (dependencyResponse.status.status !== 'success') {
+          overallStatus = dependencyResponse.status;
         }
-      } catch(e) {
+      } catch (e) {
         console.error(e);
-        logger.log(`Error while scanning dependencies.", ${request.getFilesList()[0].getFile()}, ${request.getFilesList()[0].getPurlsList()}`)
+        logger.log(`Error while scanning dependencies: ${JSON.stringify(request, null, 2)}`);
+        overallStatus = { status: 'error', message: 'Failed to scan some dependencies' };
       }
     }
-    const response: IDependencyResponse = {
-      filesList: [],
-      status: 'Success',
-    }
-    responseMapper.forEach((depResponse: IDependencyResponse)=>{
-      response.filesList.push(depResponse.filesList[0]);
-      if(depResponse.status !== 'Success'){
-        response.status = depResponse.status;
-      }
-    });
-    return response;
+
+    return {
+      filesList: Array.from(responseMapper.values()),
+      status: overallStatus
+    };
   }
 
   private purlAdapter(
@@ -109,22 +120,22 @@ export class DependencyScanner {
     localDependencies: ILocalDependencies
   ): Array<DependencyRequest> {
     try {
-      const requests = [];
+      const requests: DependencyRequest[] = [];
       for (const file of localDependencies.files) {
-        const chunkedPurls = this.chunkPurls(file.purls)
+        const chunkedPurls = this.chunkPurls(file.purls);
         for (const purls of chunkedPurls) {
-          const depRequest = new DependencyRequest();
-          depRequest.setDepth(1);
-          const fileMsg = new DependencyRequest.Files();
-          fileMsg.setFile(file.file);
-            for (const purl of purls) {
-              const purlMsg = new DependencyRequest.Purls();
-              purlMsg.setPurl(purl.purl);
-              if (purl?.requirement) purlMsg.setRequirement(purl.requirement);
-              fileMsg.addPurls(purlMsg);
-            }
-            depRequest.addFiles(fileMsg);
-            requests.push(depRequest);
+          const depRequest: DependencyRequest = {
+            files: [
+              {
+                file: file.file,
+                purls: purls.map(purl => ({
+                  purl: purl.purl,
+                  requirement: purl.requirement
+                }))
+              }
+            ]
+          };
+          requests.push(depRequest);
         }
       }
       return requests;
@@ -136,7 +147,7 @@ export class DependencyScanner {
 
   private repairOutput(
     localdependency: ILocalDependencies,
-    serverResponse: IDependencyResponse
+    serverResponse: DependencyResponse
   ) {
     // Create a map with key = [filename + purl] and the value is an object containing:
     // * The scope of the local dependency

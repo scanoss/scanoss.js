@@ -9,19 +9,20 @@ import {
   ScannerResults,
 } from '../../../scanner/ScannerTypes';
 import { IDependencyResponse } from '../../../Dependencies/DependencyTypes';
+import { DependencyResponse } from "../../../Clients/Dependency/IDependencyClient";
 
 export class LicenseDataProvider implements DataProvider {
   private scanResults: ScannerResults;
 
   private componentList: ScannerComponent[];
 
-  private dependencies: IDependencyResponse;
+  private dependencies: DependencyResponse;
 
   private licenseStorage: Record<string, LicenseDataLayer>;
 
   private licenseLayer: Array<LicenseDataLayer>;
 
-  constructor(scanResults: ScannerResults, dependencies?: IDependencyResponse) {
+  constructor(scanResults: ScannerResults, dependencies?: DependencyResponse) {
     this.scanResults = scanResults;
     this.dependencies = dependencies;
 

@@ -3,9 +3,9 @@ import {
 } from "../../Helper/ResultCollector/Component/ComponentCryptographyResultColletor";
 
 import { BaseCryptographyScanner } from "../../BaseCryptographyScanner";
-import { CryptographyHttpClient } from "../../../Clients/Cryptography/CryptographyHttpClient";
 import { Component } from "../../../shared/interfaces/Component";
 import { AlgorithmResponse } from "../../../Clients/Cryptography/ICryptographyClient";
+import { CryptographyClient } from "../../../Clients/Cryptography/CryptographyClient";
 
 /**
  * Scanner for detecting cryptographic algorithms in software components.
@@ -26,7 +26,7 @@ export class ComponentAlgorithmScanner
    * @returns {AlgorithmResponse} A promise that resolves to an AlgorithmResponse containing detected cryptographic algorithms.
    */
   public async scan(components: Component[]):Promise<AlgorithmResponse> {
-    const cryptographyClient = new CryptographyHttpClient(
+    const cryptographyClient = new CryptographyClient(
       this.config.API_KEY, // API KEY
       this.config.API_URL, // Destination Host
       this.config.GRPC_PROXY, // Proxy Host

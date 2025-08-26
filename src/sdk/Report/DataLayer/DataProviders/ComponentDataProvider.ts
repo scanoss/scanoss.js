@@ -9,17 +9,18 @@ import {
   ScannerResults,
 } from '../../../scanner/ScannerTypes';
 import { IDependencyResponse } from '../../../Dependencies/DependencyTypes';
+import { DependencyResponse } from "../../../Clients/Dependency/IDependencyClient";
 
 export class ComponentDataProvider implements DataProvider {
   private scanRawResults: ScannerResults;
 
   private componentList: Array<ScannerComponent>;
 
-  private dependencies: IDependencyResponse;
+  private dependencies: DependencyResponse;
 
   constructor(
     scanRawResults: ScannerResults,
-    dependencies?: IDependencyResponse
+    dependencies?: DependencyResponse
   ) {
     this.scanRawResults = scanRawResults;
     this.dependencies = dependencies;
@@ -62,7 +63,7 @@ export class ComponentDataProvider implements DataProvider {
   }
 
   private parseComponentsFromDependencies(
-    dependencies: IDependencyResponse
+    dependencies: DependencyResponse
   ): Array<ComponentDataLayer> {
     const componentLayer: Array<ComponentDataLayer> = [];
     if (!dependencies) return componentLayer;

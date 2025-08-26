@@ -4,7 +4,7 @@ import fs from 'fs';
  * Base configuration class for SCANOSS SDK services.
  * Provides common proxy and network configuration settings for HTTP and gRPC connections.
  */
-export class BaseConfig {
+export abstract class BaseConfig {
   /** HTTPS proxy server URL */
   private _HTTPS_PROXY: string = '';
 
@@ -39,10 +39,9 @@ export class BaseConfig {
       this.GRPC_PROXY = config.GRPC_PROXY || '';
       this.CA_CERT = config.CA_CERT || '';
       this.IGNORE_CA_CERT_ERR = config.IGNORE_CA_CERT_ERR ?? false;
+      this.API_URL = config.API_URL || BaseConfig.getDefaultURL();
     }
-    if(!this.API_URL){
-      this.API_URL = BaseConfig.getDefaultURL();
-    }
+    this.API_URL = this.API_URL || BaseConfig.getDefaultURL();
   }
 
   /**
@@ -50,8 +49,26 @@ export class BaseConfig {
    * @returns The default API endpoint URL
    */
   public static getDefaultURL(): string {
-    return 'https://api.osskb.org/scan/direct';
+    return 'https://api.osskb.org';
   }
+
+  /**
+   * Returns the premium SCANOSS API URL.
+   * @returns The premium API endpoint URL
+   */
+  public static getPremiumURL(): string {
+    return 'https://api.scanoss.com';
+  }
+
+  /**
+   * Resolves the appropriate API URL based on API key presence and current URL.
+   * If an API key is provided and the current URL is the default, returns the premium
+   * URL, otherwise returns the current URL.
+   * @param apiKey - The API key (if any)
+   * @param currentUrl - The current API URL
+   * @returns The resolved API URL
+   */
+  protected abstract resolveApiUrl(apiKey: string, currentUrl: string): string;
 
   /**
    * Sets the HTTPS proxy server URL.
