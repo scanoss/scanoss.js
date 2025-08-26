@@ -3,6 +3,7 @@ import { ProxyAgent } from 'proxy-agent';
 import { Transport } from '../Transport/Transport';
 import { Utils } from '../../Utils/Utils';
 import FormData from 'form-data';
+import { Component } from "../../shared/interfaces/Component";
 export interface HttpProxyConfig {
     PAC_PROXY?: string;
     API_KEY?: string;
@@ -13,7 +14,7 @@ export interface HttpProxyConfig {
     CA_CERT?: string;
     HOST_URL: string;
 }
-export class HttpClient  extends Transport<Response>  {
+export class HttpClient extends Transport<Response>  {
 
     private readonly proxyAgent: ProxyAgent;
     protected cfg: HttpProxyConfig;
@@ -54,7 +55,7 @@ export class HttpClient  extends Transport<Response>  {
             agent: this.proxyAgent,
             method: 'get',
             headers: {
-               ...(this.cfg.API_KEY && { 'X-Session': this.cfg.API_KEY }),
+               ...(this.cfg.API_KEY && { 'x-api-key': this.cfg.API_KEY }),
              },
         });
     }
@@ -65,7 +66,8 @@ export class HttpClient  extends Transport<Response>  {
       method: 'post',
       body: JSON.stringify(body),
       headers: {
-        ...(this.cfg.API_KEY && { 'X-Session': this.cfg.API_KEY })
+        'Content-Type': 'application/json',
+        ...(this.cfg.API_KEY && { 'x-api-key': this.cfg.API_KEY })
       },
     });
   }
@@ -75,7 +77,7 @@ export class HttpClient  extends Transport<Response>  {
       agent: this.proxyAgent,
       method: 'delete',
       headers: {
-        ...(this.cfg.API_KEY && { 'X-Session': this.cfg.API_KEY }),
+        ...(this.cfg.API_KEY && { 'x-api-key': this.cfg.API_KEY }),
       },
     });
   }
@@ -86,8 +88,15 @@ export class HttpClient  extends Transport<Response>  {
       method: 'put',
       body: body,
       headers: {
-        ...(this.cfg.API_KEY && { 'X-Session': this.cfg.API_KEY })
+        ...(this.cfg.API_KEY && { 'x-api-key': this.cfg.API_KEY })
       },
     });
+  }
+
+  protected handleError(error: unknown, context: string): Error {
+    if (error instanceof Error) {
+      return new Error(`${context}: ${error.message}`);
+    }
+    return new Error(`${context}: Unknown error occurred`);
   }
 }

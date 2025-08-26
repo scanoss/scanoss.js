@@ -7,22 +7,22 @@ import fs from 'fs';
 export class BaseConfig {
   /** HTTPS proxy server URL */
   private _HTTPS_PROXY: string = '';
-  
+
   /** HTTP proxy server URL */
   private _HTTP_PROXY: string = '';
-  
+
   /** Comma-separated list of hosts to bypass proxy for */
   private _NO_PROXY: string = '';
-  
+
   /** API URL for service connections */
   private _API_URL: string = '';
-  
+
   /** gRPC proxy server URL */
   private _GRPC_PROXY: string = '';
-  
+
   /** Path to the CA certificate file for SSL/TLS connections */
   private _CA_CERT = '';
-  
+
   /** Whether to ignore CA certificate errors */
   private _IGNORE_CA_CERT_ERR?: boolean = false;
 
@@ -35,10 +35,13 @@ export class BaseConfig {
       this.HTTPS_PROXY = config.HTTPS_PROXY || '';
       this.HTTP_PROXY = config.HTTP_PROXY || '';
       this.NO_PROXY = config.NO_PROXY || '';
-      this.API_URL = config.API_URL || BaseConfig.getDefaultURL();
+      this.API_URL = config.API_URL;
       this.GRPC_PROXY = config.GRPC_PROXY || '';
       this.CA_CERT = config.CA_CERT || '';
       this.IGNORE_CA_CERT_ERR = config.IGNORE_CA_CERT_ERR ?? false;
+    }
+    if(!this.API_URL){
+      this.API_URL = BaseConfig.getDefaultURL();
     }
   }
 

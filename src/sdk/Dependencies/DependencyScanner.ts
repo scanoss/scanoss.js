@@ -1,9 +1,9 @@
 import { ILocalDependencies, ILocalPurl } from "./LocalDependency/DependencyTypes";
-import { DependencyService } from '../Services/Grpc/DependencyService';
+import { DependencyClient } from '../Clients/Dependency/DependencyClient';
 import {
   DependencyRequest,
   DependencyResponse,
-} from '../Services/Grpc/scanoss/api/dependencies/v2/scanoss-dependencies_pb';
+} from '../Clients/Grpc/scanoss/api/dependencies/v2/scanoss-dependencies_pb';
 import { LocalDependencies } from './LocalDependency/LocalDependency';
 import { DependencyScannerCfg } from './DependencyScannerCfg';
 import { IDependencyResponse } from './DependencyTypes';
@@ -15,14 +15,14 @@ import { logger } from "../Logger";
 export class DependencyScanner {
   private localDependency: LocalDependencies;
 
-  private grpcDependencyService: DependencyService;
+  private grpcDependencyService: DependencyClient;
 
   private config: DependencyScannerCfg = new DependencyScannerCfg();
 
   constructor(cfg?: DependencyScannerCfg) {
 
     if (cfg) this.config = cfg;
-    this.grpcDependencyService = new DependencyService(this.config.API_URL, this.config.GRPC_PROXY, this.config.CA_CERT);
+    this.grpcDependencyService = new DependencyClient(this.config.API_URL, this.config.GRPC_PROXY, this.config.CA_CERT);
     this.localDependency = new LocalDependencies();
   }
 

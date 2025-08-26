@@ -10,7 +10,7 @@ export interface PurlRequest extends CommonMessages.PurlRequest.AsObject {}
 
 export interface EchoRequest extends CommonMessages.EchoRequest.AsObject {}
 
-export class BaseService {
+export class BaseGRPCService {
   protected _HOSTNAME: string = SCANOSS_GRPC_ENDPOINT;
   protected _API_TOKEN: string = '';
   protected _IS_PREMIUM_SERVICE: boolean = false;

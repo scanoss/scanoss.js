@@ -15,8 +15,8 @@ export class CryptoCfg extends BaseConfig {
 
    API_KEY: string = '';
 
-
    constructor() {
      super();
+     this.API_URL = 'https://api.scanoss.com';
    }
 }

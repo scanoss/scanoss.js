@@ -1,10 +1,10 @@
 import * as grpc from '@grpc/grpc-js';
-import { DependenciesClient, DependenciesService } from "./scanoss/api/dependencies/v2/scanoss-dependencies_grpc_pb";
-import * as DependenciesMessages from './scanoss/api/dependencies/v2/scanoss-dependencies_pb';
-import * as CommonMessages from './scanoss/api/common/v2/scanoss-common_pb';
-import { BaseService } from "./BaseService";
+import { DependenciesClient } from "../Grpc/scanoss/api/dependencies/v2/scanoss-dependencies_grpc_pb";
+import * as DependenciesMessages from '../Grpc/scanoss/api/dependencies/v2/scanoss-dependencies_pb';
+import * as CommonMessages from '../Grpc/scanoss/api/common/v2/scanoss-common_pb';
+import { BaseGRPCService } from "../Grpc/BaseGRPCService";
 
-export class DependencyService extends BaseService{
+export class DependencyClient extends BaseGRPCService{
   public static readonly serviceName = 'DependencyService';
   private client: DependenciesClient;
 
@@ -18,7 +18,7 @@ export class DependencyService extends BaseService{
     super({
       HOSTNAME: hostName,
       IS_PREMIUM_SERVICE: false,
-      SERVICE_NAME: DependencyService.serviceName,
+      SERVICE_NAME: DependencyClient.serviceName,
       PROXY_URL: proxyHost,
       CA_CERT: caCertPath,
     });

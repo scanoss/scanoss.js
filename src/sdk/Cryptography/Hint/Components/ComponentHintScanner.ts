@@ -1,10 +1,10 @@
 import {
   ComponentCryptographyResultCollector
 } from "../../Helper/ResultCollector/Component/ComponentCryptographyResultColletor";
-import { PurlRequest } from "../../../Services/Grpc/BaseService";
-import { CryptographyService,
-  HintsResponse } from "../../../Services/Grpc/CryptographyService";
 import { BaseCryptographyScanner } from "../../BaseCryptographyScanner";
+import { CryptographyHttpClient } from "../../../Clients/Cryptography/CryptographyHttpClient";
+import { Component } from "../../../shared/interfaces/Component";
+import { HintsInRangeResponse } from "../../../Clients/Cryptography/ICryptographyClient";
 
 /**
  * Scanner for detecting cryptographic hints in software components.
@@ -14,8 +14,8 @@ import { BaseCryptographyScanner } from "../../BaseCryptographyScanner";
 export class ComponentHintScanner
   extends BaseCryptographyScanner<
     ComponentCryptographyResultCollector,
-    PurlRequest,
-    HintsResponse>{
+    Component[],
+    HintsInRangeResponse>{
 
   /**
    * Scans components identified by PURL for cryptographic hints.
@@ -24,13 +24,13 @@ export class ComponentHintScanner
    * @param req A request containing PURL (Package URL) identifiers for components to scan.
    * @returns {HintsResponse} A promise that resolves to a HintsResponse containing detected cryptographic hints.
    */
-  public async scan(req: PurlRequest):Promise<HintsResponse>{
-    const cryptographyService = new CryptographyService(
+  public async scan(req: Component[]):Promise<HintsInRangeResponse>{
+    const cryptographyClient = new CryptographyHttpClient(
       this.config.API_KEY, // API KEY
       this.config.API_URL, // Destination Host
       this.config.GRPC_PROXY, // Proxy Host
       this.config.CA_CERT);
-    const results = await cryptographyService.getEncryptionHints(req);
+    const results = await cryptographyClient.getEncryptionHints(req);
     this.resultCollector.collectHintResults(results);
     return results;
   }

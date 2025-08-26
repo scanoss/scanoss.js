@@ -1,12 +1,11 @@
 import {
   ComponentCryptographyResultCollector
 } from "../../Helper/ResultCollector/Component/ComponentCryptographyResultColletor";
-import {
-  AlgorithmResponse,
-  CryptographyService
-} from "../../../Services/Grpc/CryptographyService";
-import { PurlRequest } from "../../../Services/Grpc/BaseService";
+
 import { BaseCryptographyScanner } from "../../BaseCryptographyScanner";
+import { CryptographyHttpClient } from "../../../Clients/Cryptography/CryptographyHttpClient";
+import { Component } from "../../../shared/interfaces/Component";
+import { AlgorithmResponse } from "../../../Clients/Cryptography/ICryptographyClient";
 
 /**
  * Scanner for detecting cryptographic algorithms in software components.
@@ -16,23 +15,23 @@ import { BaseCryptographyScanner } from "../../BaseCryptographyScanner";
 export class ComponentAlgorithmScanner
   extends BaseCryptographyScanner<
     ComponentCryptographyResultCollector,
-    PurlRequest,
+    Component[],
     AlgorithmResponse>{
 
   /**
    * Scans components identified by PURL for cryptographic algorithms.
    * This method connects to a cryptography service to retrieve algorithm
    * information for the specified components.
-   * @param req A request containing PURL (Package URL) identifiers for components to scan.
+   * @param components A request containing PURL (Package URL) identifiers for components to scan.
    * @returns {AlgorithmResponse} A promise that resolves to an AlgorithmResponse containing detected cryptographic algorithms.
    */
-  public async scan(req: PurlRequest):Promise<AlgorithmResponse> {
-    const cryptographyService = new CryptographyService(
+  public async scan(components: Component[]):Promise<AlgorithmResponse> {
+    const cryptographyClient = new CryptographyHttpClient(
       this.config.API_KEY, // API KEY
       this.config.API_URL, // Destination Host
       this.config.GRPC_PROXY, // Proxy Host
       this.config.CA_CERT);
-    const results:AlgorithmResponse = await cryptographyService.getAlgorithms(req);
+    const results:AlgorithmResponse = await cryptographyClient.getAlgorithms(components);
     this.resultCollector.collectAlgorithmResults(results);
     return results;
   }

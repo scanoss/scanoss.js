@@ -1,3 +1,5 @@
+import { Component } from "../shared/interfaces/Component";
+
 export interface CryptoAlgorithm {
   algorithm: string;
   strength: string;
@@ -74,4 +76,8 @@ export interface CryptographyResponse {
   version: string;
   algorithms: Array<CryptoAlgorithmResponse>;
   hints: Array<CryptoHintResponse>;
+}
+
+export interface CryptoRequest {
+  purls: Component[];
 }

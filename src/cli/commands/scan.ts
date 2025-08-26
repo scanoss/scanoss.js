@@ -178,7 +178,6 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
     if (options.caCert) cfg.CA_CERT = options.caCert;
     if (options.ignoreCertErrors) cfg.IGNORE_CA_CERT_ERR = true;
     if (options.apiurl) cfg.API_URL = options.apiurl;
-
     const cryptoScanner = new CryptographyScanner(cfg);
     let localCrypto = await cryptoScanner.scanFiles(scannerInput.fileList);
     localCrypto.fileList = localCrypto.fileList.map((c) => {
@@ -190,11 +189,9 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
     if (options.key) {
       let componentList: any = Object.values(results.scanner).flat();
       componentList = componentList.filter((component) => component.id !== "none");
-      const cryptoRequest = {
-        purlsList: componentList.map((c) => {
+      const cryptoRequest = componentList.map((c) => {
           return { purl: c.purl[0], requirement: c.version };
-        }),
-      };
+        });
       results.cryptography.components = await cryptoScanner.scanComponents(cryptoRequest);
     }
   }
