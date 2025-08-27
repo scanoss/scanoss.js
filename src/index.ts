@@ -38,7 +38,7 @@ export { IDirSummary } from './sdk/FileCount/Interfaces';
 
 export * from './sdk/Clients/Cryptography/CryptographyClient';
 export * from './sdk/Clients/Dependency/DependencyClient';
-export { PurlRequest, EchoRequest } from './sdk/Clients/Grpc/BaseGRPCService';
+export { PurlRequest, EchoRequest } from './sdk/Clients/Grpc/BaseGRPCClient';
 
 // *** Http ***//
 export * from './sdk/Clients/http/HttpClient'
