@@ -35,8 +35,14 @@ export class CryptoCfg extends BaseConfig {
        if (apiKey && currentUrl === BaseConfig.getPremiumURL())
          return BaseConfig.getPremiumURL();
        // Case 2: Has API key and using custom URL -> keep custom URL
-       if (apiKey && currentUrl !== BaseConfig.getDefaultURL())
-         return currentUrl;
+       if (apiKey && currentUrl !== BaseConfig.getDefaultURL()) {
+           // Only remove /scan/direct for official SCANOSS API endpoints
+           if (currentUrl.startsWith(BaseConfig.getPremiumURL()) || currentUrl.startsWith(BaseConfig.getDefaultURL())) {
+             return currentUrl.replace(/\/scan\/direct$/, '');
+           }
+           // For other custom URLs, return as-is
+           return currentUrl;
+       }
        // Case 4: No API key and default/empty URL -> use default URL
        return BaseConfig.getPremiumURL();
    }

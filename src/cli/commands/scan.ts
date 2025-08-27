@@ -38,9 +38,9 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
   let dependencyInput: Array<string> = [];
   const dependencyScannerCfg = new DependencyScannerCfg();
   if (options.caCert) dependencyScannerCfg.CA_CERT = options.caCert;
+  if (options.apiurl) dependencyScannerCfg.API_URL = options.apiurl;
   if (options.api2url) dependencyScannerCfg.API_URL = options.api2url;
   if (options.grpc_proxy) dependencyScannerCfg.GRPC_PROXY = options.grpc_proxy;
-  if (options.apiurl) dependencyScannerCfg.API_URL = options.apiurl;
   if (options.key) dependencyScannerCfg.API_KEY = options.key;
   const dependencyScanner = new DependencyScanner(dependencyScannerCfg);
 
@@ -173,6 +173,8 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
     if (options.caCert) cfg.CA_CERT = options.caCert;
     if (options.ignoreCertErrors) cfg.IGNORE_CA_CERT_ERR = true;
     if (options.apiurl) cfg.API_URL = options.apiurl;
+    if (options.api2url) cfg.API_URL = options.apiurl;
+    if(options.grpc_proxy) cfg.GRPC_PROXY = options.grpc_proxy;
     const cryptoScanner = new CryptographyScanner(cfg);
 
 

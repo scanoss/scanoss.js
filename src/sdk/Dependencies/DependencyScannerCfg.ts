@@ -43,9 +43,15 @@ export class DependencyScannerCfg extends BaseConfig {
     // Case 1: Has API key and using default URL -> upgrade to premium scanner URL
     if (apiKey && currentUrl === BaseConfig.getDefaultURL())
       return  BaseConfig.getPremiumURL();
-    // Case 2: Has API key and using custom URL -> append /scan/direct to custom URL
-    if (apiKey && currentUrl !== BaseConfig.getDefaultURL())
+    // Case 2: Has API key and using custom URL
+    if (apiKey && currentUrl !== BaseConfig.getDefaultURL()) {
+      // Only remove /scan/direct for official SCANOSS API endpoints
+      if (currentUrl.startsWith(BaseConfig.getPremiumURL()) || currentUrl.startsWith(BaseConfig.getDefaultURL())) {
+        return currentUrl.replace(/\/scan\/direct$/, '');
+      }
+      // For other custom URLs, return as-is
       return currentUrl;
+    }
     // Case 3: No API key but using custom URL -> append /scan/direct to custom URL
     if (!apiKey && currentUrl !== BaseConfig.getDefaultURL())
       return currentUrl;
