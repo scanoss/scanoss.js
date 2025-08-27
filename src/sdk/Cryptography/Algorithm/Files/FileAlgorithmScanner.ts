@@ -5,7 +5,6 @@ import {
   CryptoAlgorithmRules,
   CryptoAlgorithmJobResponse,
   LocalCryptoAlgorithmJob,
-  CryptoHintJobResponse
 } from "../../CryptographyTypes";
 import path from 'path';
 import {

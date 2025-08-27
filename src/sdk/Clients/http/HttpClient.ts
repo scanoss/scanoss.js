@@ -3,7 +3,7 @@ import { ProxyAgent } from 'proxy-agent';
 import { Transport } from '../Transport/Transport';
 import { Utils } from '../../Utils/Utils';
 import FormData from 'form-data';
-import { Component } from "../../shared/interfaces/Component";
+
 export interface HttpProxyConfig {
     PAC_PROXY?: string;
     API_KEY?: string;

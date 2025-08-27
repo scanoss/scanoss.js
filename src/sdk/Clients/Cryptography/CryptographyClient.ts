@@ -1,7 +1,5 @@
 import { CryptographyClient as GrpcCryptographyClient } from '../Grpc/scanoss/api/cryptography/v2/scanoss-cryptography_grpc_pb';
-import * as CryptographyMessages from '../Grpc/scanoss/api/cryptography/v2/scanoss-cryptography_pb';
 import { BaseGRPCService, PurlRequest } from '../Grpc/BaseGRPCService';
-import { ERROR_SERVICES_GRPC_API_TOKEN_REQUIRED } from '../../Errors';
 import { Component } from '../../shared/interfaces/Component';
 import {
   ICryptographyClient,
@@ -9,12 +7,6 @@ import {
   HintsInRangeResponse
 } from './ICryptographyClient';
 import { logger } from '../../Logger';
-
-export interface GrpcAlgorithmResponse
-  extends CryptographyMessages.AlgorithmResponse.AsObject {}
-
-export interface GrpcHintsResponse
-  extends CryptographyMessages.HintsInRangeResponse.AsObject {}
 
 export class CryptographyClient extends BaseGRPCService implements ICryptographyClient {
   public static readonly serviceName = 'CryptographyService';

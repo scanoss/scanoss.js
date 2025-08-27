@@ -1,7 +1,6 @@
 import { BaseConfig } from "../BaseConfig";
 const DEFAULT_CHUNK_REQUEST_SIZE = 15;
 
-
 export class DependencyScannerCfg extends BaseConfig {
 
   _API_KEY: string = '';

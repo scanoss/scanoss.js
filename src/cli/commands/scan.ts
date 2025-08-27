@@ -1,12 +1,11 @@
 import fs from "fs";
 import { Scanner } from "../../sdk/scanner/Scanner";
-import { SbomMode, ScannerEvents, ScannerInput, ScannerResults, WinnowingMode } from "../../sdk/scanner/ScannerTypes";
+import { SbomMode, ScannerEvents, ScannerInput, WinnowingMode } from "../../sdk/scanner/ScannerTypes";
 import { ScannerCfg } from "../../sdk/scanner/ScannerCfg";
 import { Tree } from "../../sdk/tree/Tree";
 import cliProgress from "cli-progress";
 import { DispatcherResponse } from "../../sdk/scanner/Dispatcher/DispatcherResponse";
 import { getProjectNameFromPath, getSettingsFilePath, isFolder } from "./helpers";
-
 import { DependencyScannerCfg } from "../../sdk/Dependencies/DependencyScannerCfg";
 import { DependencyScanner } from "../../sdk/Dependencies/DependencyScanner";
 import { ScanFilter } from "../../sdk/tree/Filters/ScanFilter";
@@ -40,7 +39,10 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
   if (options.caCert) dependencyScannerCfg.CA_CERT = options.caCert;
   if (options.apiurl) dependencyScannerCfg.API_URL = options.apiurl;
   if (options.api2url) dependencyScannerCfg.API_URL = options.api2url;
-  if (options.grpc_proxy) dependencyScannerCfg.GRPC_PROXY = options.grpc_proxy;
+  if (options.proxy) {
+    dependencyScannerCfg.HTTPS_PROXY = options.proxy;
+    dependencyScannerCfg.HTTP_PROXY = options.proxy;
+  }
   if (options.key) dependencyScannerCfg.API_KEY = options.key;
   const dependencyScanner = new DependencyScanner(dependencyScannerCfg);
 

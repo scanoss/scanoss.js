@@ -12,8 +12,6 @@ import {
   IDependencyClient,
   Status
 } from "../Clients/Dependency/IDependencyClient";
-import { BaseConfig } from "../BaseConfig";
-
 
 export class DependencyScanner {
   private localDependency: LocalDependencies;
@@ -25,7 +23,7 @@ export class DependencyScanner {
   constructor(cfg?: DependencyScannerCfg) {
     if (cfg) this.config = cfg;
     else this.config = new DependencyScannerCfg();
-    this.dependencyClient = new DependencyHttpClient(this.config.API_KEY, this.config.API_URL, this.config.GRPC_PROXY, this.config.CA_CERT);
+    this.dependencyClient = new DependencyHttpClient(this.config.API_KEY, this.config.API_URL, this.config.HTTPS_PROXY, this.config.CA_CERT);
     this.localDependency = new LocalDependencies();
   }
 

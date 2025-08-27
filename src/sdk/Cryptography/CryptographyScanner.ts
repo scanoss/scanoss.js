@@ -7,7 +7,6 @@ import {
   CryptographyResponse,
   LocalCryptographyResponse
 } from "./CryptographyTypes";
-import { PurlRequest } from "../Clients/Grpc/BaseGRPCService";
 import {
   FileCryptographyResultCollector
 } from "./Helper/ResultCollector/File/FileCryptographyResultCollector";
