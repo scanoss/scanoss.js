@@ -23,7 +23,8 @@ export class DependencyScanner {
   constructor(cfg?: DependencyScannerCfg) {
     if (cfg) this.config = cfg;
     else this.config = new DependencyScannerCfg();
-    this.dependencyClient = new DependencyHttpClient(this.config.API_KEY, this.config.API_URL, this.config.HTTPS_PROXY, this.config.CA_CERT);
+    this.dependencyClient = new DependencyHttpClient(this.config.API_KEY, this.config.API_URL,this.config.IGNORE_CERT_ERRORS,
+      this.config.HTTPS_PROXY, this.config.CA_CERT);
     this.localDependency = new LocalDependencies();
   }
 
@@ -48,7 +49,8 @@ export class DependencyScanner {
   private async getDependencies(requests: Array<DependencyRequest>): Promise<DependencyResponse> {
     const responseMapper = new Map<string, DependencyFile>();
     let overallStatus: Status = { status: 'success', message: 'Success' };
-
+    const failedRequests = [];
+    let err = null;
     for (const request of requests) {
       try {
         const dependencyResponse = await this.dependencyClient.getDependencies(request);
@@ -75,12 +77,22 @@ export class DependencyScanner {
           overallStatus = dependencyResponse.status;
         }
       } catch (e) {
-        console.error(e);
-        logger.log(`Error while scanning dependencies: ${JSON.stringify(request, null, 2)}`);
-        overallStatus = { status: 'error', message: 'Failed to scan some dependencies' };
+        logger.debug(`Error while scanning dependencies: ${JSON.stringify(request, null, 2)}`);
+        err = e.message;
+        failedRequests.push(request);
       }
     }
 
+    if (err) {
+      logger.error(`ERROR: ${err}`);
+    }
+
+    if (failedRequests.length > 0) {
+      overallStatus = { status: 'SUCCEEDED WITH WARNINGS', message: 'Warning: some dependencies were not scanned' };
+    }
+    if(failedRequests.length > 0 && failedRequests.length >= requests.length){
+      overallStatus = { status: 'FAILED', message: 'Error while scanning dependencies' };
+    }
     return {
       filesList: Array.from(responseMapper.values()),
       status: overallStatus

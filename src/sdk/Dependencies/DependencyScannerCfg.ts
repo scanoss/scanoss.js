@@ -3,6 +3,8 @@ const DEFAULT_CHUNK_REQUEST_SIZE = 15;
 
 export class DependencyScannerCfg extends BaseConfig {
 
+  _IGNORE_CERT_ERRORS = false;
+
   _API_KEY: string = '';
 
   _CHUNK_REQUEST_SIZE = DEFAULT_CHUNK_REQUEST_SIZE;
@@ -11,6 +13,7 @@ export class DependencyScannerCfg extends BaseConfig {
     if(config){
       this.CHUNK_REQUEST_SIZE = config.CHUNK_REQUEST_SIZE ? config.CHUNK_REQUEST_SIZE : DEFAULT_CHUNK_REQUEST_SIZE;
       this.API_KEY =  config.API_KEY ? config.API_KEY : '';
+      this.IGNORE_CERT_ERRORS = config.IGNORE_CERT_ERRORS ? config.IGNORE_CERT_ERRORS : false;
     }
   }
 
@@ -28,6 +31,14 @@ export class DependencyScannerCfg extends BaseConfig {
 
   set API_KEY(value: string){
     this._API_KEY = value;
+  }
+
+  get IGNORE_CERT_ERRORS(): boolean {
+    return this._IGNORE_CERT_ERRORS;
+  }
+
+  set IGNORE_CERT_ERRORS(value: boolean) {
+    this._IGNORE_CERT_ERRORS = value;
   }
 
   /**

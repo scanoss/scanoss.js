@@ -62,7 +62,13 @@ async function main() {
   dependencies.addArgument(new Argument("<source>"));
 
   dependencies.addOption(new Option("-o, --output <filename>", "Output result file name (optional - default stdout)"));
-  dependencies.addOption(new Option("-a, --grpc-host <host>", "SCANOSS GRPC HOST (optional - default: api.scanoss.com:443)"));
+  dependencies.addOption(new Option("    --apiurl <apiurl>", "SCANOSS API URL (optional - default: https://api.osskb.org/scan/direct)"));
+  dependencies.addOption(new Option("-k, --key <key>", "SCANOSS API Key token (optional - not required for default OSSKB URL)"));
+  dependencies.addOption(new Option("    --ignore-cert-errors", "Ignore self signed certificate errors"));
+  dependencies.addOption(new Option("    --ca-cert <cert>", "Specify a path for a cert used in SSL/TLS connection"));
+  dependencies.addOption(new Option("    --proxy <proxy>", "Proxy URL to use for connections (optional). Can also use the environment variable \"HTTPS_PROXY=[protocol]://[ip]:[port]\""));
+  dependencies.addOption(new Option("    --debug", "Enables debugging"));
+
 
   dependencies.action((source, options) => {
     depHandler(source, options).catch((e) => {

@@ -1,19 +1,19 @@
 import { HttpClient } from "../http/HttpClient";
 import { DependencyRequest, DependencyResponse, IDependencyClient } from "./IDependencyClient";
-import { logger } from "../../Logger";
 
 export class DependencyHttpClient extends HttpClient implements IDependencyClient {
 
   private client: HttpClient;
   private readonly baseUrl: string;
 
-  constructor(token: string, hostName: string, proxyHost?: string, caCertPath?: string) {
+  constructor(token: string, hostName: string, ignoreCertErrors: boolean = false,proxyHost?: string, caCertPath?: string) {
     super();
     this.client = new HttpClient({
       HOST_URL: hostName,
       API_KEY: token,
       HTTPS_PROXY: proxyHost,
       CA_CERT: caCertPath,
+      IGNORE_CERT_ERRORS: ignoreCertErrors
     });
     this.baseUrl = hostName;
   }
@@ -28,7 +28,6 @@ export class DependencyHttpClient extends HttpClient implements IDependencyClien
       const errorMessage = `Failed to get dependencies: ${response.status} ${response.statusText} - ${errorText}`;
       throw new Error(errorMessage);
     } catch (error) {
-      logger.log('Error getting dependencies:', error);
       throw this.handleError(error, 'Failed to get dependencies');
     }
   }

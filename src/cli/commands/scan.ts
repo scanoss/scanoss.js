@@ -44,6 +44,7 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
     dependencyScannerCfg.HTTP_PROXY = options.proxy;
   }
   if (options.key) dependencyScannerCfg.API_KEY = options.key;
+  if (options.ignoreCertErrors) dependencyScannerCfg.IGNORE_CERT_ERRORS = true;
   const dependencyScanner = new DependencyScanner(dependencyScannerCfg);
 
   // Create scanner and set connections parameters
