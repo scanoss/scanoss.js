@@ -36,11 +36,11 @@ export * from './sdk/Decompress/DecompressionManager';
 export * from './sdk/FileCount/FileCount';
 export { IDirSummary } from './sdk/FileCount/Interfaces';
 
-export * from './sdk/Services/Grpc/CryptographyService';
-export * from './sdk/Services/Grpc/DependencyService';
-export { PurlRequest, EchoRequest } from './sdk/Services/Grpc/BaseService';
+export * from './sdk/Clients/Cryptography/CryptographyClient';
+export * from './sdk/Clients/Dependency/DependencyClient';
+export { PurlRequest, EchoRequest } from './sdk/Clients/Grpc/BaseGRPCClient';
 
 // *** Http ***//
-export * from './sdk/Services/http/HttpClient'
+export * from './sdk/Clients/http/HttpClient'
 
 export { logger } from './sdk/Logger';

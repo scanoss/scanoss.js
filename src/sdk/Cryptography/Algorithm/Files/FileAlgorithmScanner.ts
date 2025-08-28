@@ -5,7 +5,6 @@ import {
   CryptoAlgorithmRules,
   CryptoAlgorithmJobResponse,
   LocalCryptoAlgorithmJob,
-  CryptoHintJobResponse
 } from "../../CryptographyTypes";
 import path from 'path';
 import {
@@ -48,7 +47,7 @@ export class FileAlgorithmScanner extends BaseCryptographyScanner<
    @returns A promise that resolves to an array of job objects configured for crypto analysis.
    */
   private async buildJobs(files: string[]): Promise<Array<Job<LocalCryptoAlgorithmJob>>> {
-    const cryptographyRules = await this.loadRules(this.config.getAlgorithmRulesPath());
+    const cryptographyRules = await this.loadRules(this.config.ALGORITHM_RULES_PATH);
     const rules = createCryptoKeywordMapper(cryptographyRules);
     const cryptoMapper = getCryptoMapper(cryptographyRules);
     const localCryptoJobs: Array<Job<LocalCryptoAlgorithmJob>> = [];
@@ -69,7 +68,7 @@ export class FileAlgorithmScanner extends BaseCryptographyScanner<
    * @returns A promise that resolves to an ILocalCryptographyResponse.
    */
   public async scan(files: Array<string>): Promise<Array<CryptoAlgorithmJobResponse>> {
-    const workerPool = new WorkerPool<LocalCryptoAlgorithmJob, CryptoAlgorithmJobResponse>(cryptographyAlgorithmProcessor, this.config.getNumberOfThreads());
+    const workerPool = new WorkerPool<LocalCryptoAlgorithmJob, CryptoAlgorithmJobResponse>(cryptographyAlgorithmProcessor, this.config.THREADS);
     const jobs = await this.buildJobs(files);
     workerPool.loadJobs(jobs)
     const results = await workerPool.run();

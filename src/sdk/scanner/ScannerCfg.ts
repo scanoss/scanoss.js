@@ -38,6 +38,35 @@ export class ScannerCfg extends BaseConfig {
 
   constructor() {
     super();
-    this.API_URL = ScannerCfg.getDefaultURL();
+  }
+
+  /**
+   * Resolves the appropriate scanner URL based on API key presence and current URL.
+   * If an API key is provided and the current URL is the default, returns the premium
+   * scanner URL, otherwise appends '/scan/direct' to the current URL.
+   * @param apiKey - The API key (if any)
+   * @param currentUrl - The current API URL
+   * @returns The resolved scanner URL
+   */
+  protected resolveApiUrl(apiKey: string, currentUrl: string): string {
+    // Case 1: Has API key and using default URL -> upgrade to premium scanner URL
+    if (apiKey && currentUrl === BaseConfig.getDefaultURL())
+      return  BaseConfig.getPremiumURL() + '/scan/direct';
+    // Case 2: Has API key and using custom URL -> append /scan/direct to custom URL
+    if (apiKey && currentUrl !== BaseConfig.getDefaultURL())
+      return currentUrl;
+    // Case 3: No API key but using custom URL -> append /scan/direct to custom URL
+    if (!apiKey && currentUrl !== BaseConfig.getDefaultURL())
+      return currentUrl;
+    // Case 4: No API key and default/empty URL -> use default URL with /scan/direct
+    return BaseConfig.getDefaultURL() + '/scan/direct';
+  }
+
+  get API_URL(): string {
+    return this.resolveApiUrl(this.API_KEY, super.API_URL);
+  }
+
+  set API_URL(url: string) {
+    super.API_URL = url;
   }
 }

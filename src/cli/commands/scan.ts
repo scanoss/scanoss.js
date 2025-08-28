@@ -1,15 +1,13 @@
 import fs from "fs";
 import { Scanner } from "../../sdk/scanner/Scanner";
-import { SbomMode, ScannerEvents, ScannerInput, ScannerResults, WinnowingMode } from "../../sdk/scanner/ScannerTypes";
+import { SbomMode, ScannerEvents, ScannerInput, WinnowingMode } from "../../sdk/scanner/ScannerTypes";
 import { ScannerCfg } from "../../sdk/scanner/ScannerCfg";
 import { Tree } from "../../sdk/tree/Tree";
 import cliProgress from "cli-progress";
 import { DispatcherResponse } from "../../sdk/scanner/Dispatcher/DispatcherResponse";
 import { getProjectNameFromPath, getSettingsFilePath, isFolder } from "./helpers";
-
 import { DependencyScannerCfg } from "../../sdk/Dependencies/DependencyScannerCfg";
 import { DependencyScanner } from "../../sdk/Dependencies/DependencyScanner";
-import { IDependencyResponse } from "../../sdk/Dependencies/DependencyTypes";
 import { ScanFilter } from "../../sdk/tree/Filters/ScanFilter";
 import { DependencyFilter } from "../../sdk/tree/Filters/DependencyFilter";
 import { Report } from "../../sdk/Report/Report";
@@ -27,6 +25,7 @@ import { Settings } from "../../sdk/scanner/ScannnerResultPostProcessor/interfac
 import { CryptoCfg } from "../../sdk/Cryptography/CryptoCfg";
 import { CryptographyScanner } from "../../sdk/Cryptography/CryptographyScanner";
 import { CryptographyResponse, LocalCryptography } from "../../sdk/Cryptography/CryptographyTypes";
+import { DependencyResponse } from "../../sdk/Clients/Dependency/IDependencyClient";
 
 export async function scanHandler(rootPath: string, options: any): Promise<void> {
   // TODO: Add flag to enable debug. False by default.  logger.enableDebug(options.debug);
@@ -38,8 +37,14 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
   let dependencyInput: Array<string> = [];
   const dependencyScannerCfg = new DependencyScannerCfg();
   if (options.caCert) dependencyScannerCfg.CA_CERT = options.caCert;
+  if (options.apiurl) dependencyScannerCfg.API_URL = options.apiurl;
   if (options.api2url) dependencyScannerCfg.API_URL = options.api2url;
-  if (options.grpc_proxy) dependencyScannerCfg.GRPC_PROXY = options.grpc_proxy;
+  if (options.proxy) {
+    dependencyScannerCfg.HTTPS_PROXY = options.proxy;
+    dependencyScannerCfg.HTTP_PROXY = options.proxy;
+  }
+  if (options.key) dependencyScannerCfg.API_KEY = options.key;
+  if (options.ignoreCertErrors) dependencyScannerCfg.IGNORE_CERT_ERRORS = true;
   const dependencyScanner = new DependencyScanner(dependencyScannerCfg);
 
   // Create scanner and set connections parameters
@@ -141,14 +146,14 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
   }
 
   // Dependency scanner
-  let pDependencyScanner = Promise.resolve(<IDependencyResponse>{});
+  let pDependencyScanner = Promise.resolve(<DependencyResponse>{});
   if (options.dependencies) {
     pDependencyScanner = dependencyScanner.scan(dependencyInput);
   }
 
   const results = {
     scanner: {},
-    dependencies: {} as unknown as IDependencyResponse,
+    dependencies: {} as unknown as DependencyResponse,
     cryptography: {
           files: [] as unknown as Array<LocalCryptography>,
           components: [] as unknown as Array<CryptographyResponse>,
@@ -163,27 +168,19 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
   results.dependencies = depResults;
 
   if (options.cryptography) {
+    const cfg = new CryptoCfg();
+    if(options.algorithmRules) cfg.ALGORITHM_RULES_PATH = options.algorithmRules;
+    if(options.libraryRules) cfg.LIBRARY_RULES_PATH = options.libraryRules;
+    if(options.threads) cfg.THREADS = options.threads;
+    if(options.key) cfg.API_KEY = options.key;
+    if (options.caCert) cfg.CA_CERT = options.caCert;
+    if (options.ignoreCertErrors) cfg.IGNORE_CA_CERT_ERR = true;
+    if (options.apiurl) cfg.API_URL = options.apiurl;
+    if (options.api2url) cfg.API_URL = options.apiurl;
+    if(options.grpc_proxy) cfg.GRPC_PROXY = options.grpc_proxy;
+    const cryptoScanner = new CryptographyScanner(cfg);
 
-    // Load rules
-    let algorithmRules = null;
-    let libraryRules = null;
-    if(options.algorithmRules) algorithmRules = options.algorithmRules;
-    if(options.libraryRules) libraryRules = options.libraryRules;
 
-    // Local Cryptography
-    const cryptoCfg = new CryptoCfg({
-      threads: 5,
-      libraryRulesPath: libraryRules,
-      algorithmRulesPath: algorithmRules,
-      apiKey: options.key,
-    });
-
-    // Proxy setup
-    if (options.caCert) cryptoCfg.CA_CERT = options.caCert; // Path to Certs
-    if (options.api2url) cryptoCfg.API_URL = options.api2url; // Destination Host
-    if (options.grpc_proxy) cryptoCfg.GRPC_PROXY = options.grpc_proxy; // Proxy Host
-
-    const cryptoScanner = new CryptographyScanner(cryptoCfg);
     let localCrypto = await cryptoScanner.scanFiles(scannerInput.fileList);
     localCrypto.fileList = localCrypto.fileList.map((c) => {
       return { ...c, file: c.file.replace(rootPath, "") };
@@ -194,11 +191,9 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
     if (options.key) {
       let componentList: any = Object.values(results.scanner).flat();
       componentList = componentList.filter((component) => component.id !== "none");
-      const cryptoRequest = {
-        purlsList: componentList.map((c) => {
+      const cryptoRequest = componentList.map((c) => {
           return { purl: c.purl[0], requirement: c.version };
-        }),
-      };
+        });
       results.cryptography.components = await cryptoScanner.scanComponents(cryptoRequest);
     }
   }

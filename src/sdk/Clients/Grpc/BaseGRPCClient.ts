@@ -10,11 +10,10 @@ export interface PurlRequest extends CommonMessages.PurlRequest.AsObject {}
 
 export interface EchoRequest extends CommonMessages.EchoRequest.AsObject {}
 
-export class BaseService {
+export class BaseGRPCClient {
   protected _HOSTNAME: string = SCANOSS_GRPC_ENDPOINT;
   protected _API_TOKEN: string = '';
-  protected _IS_PREMIUM_SERVICE: boolean = false;
-  protected _SERVICE_NAME: string = '';
+  protected _CLIENT_NAME: string = '';
   protected _CA_CERT: string;
   protected _PROXY_URL: string;
 
@@ -22,28 +21,25 @@ export class BaseService {
                 HOSTNAME,
                 PROXY_URL,
                 API_TOKEN,
-                IS_PREMIUM_SERVICE,
-                SERVICE_NAME,
+                CLIENT_NAME,
                 CA_CERT,
               }: {
     HOSTNAME?: string;
     PROXY_URL?: string
     API_TOKEN?: string;
-    IS_PREMIUM_SERVICE?: boolean;
-    SERVICE_NAME?: string;
+    CLIENT_NAME?: string;
     CA_CERT?: string;
   }) {
     this.API_TOKEN = API_TOKEN;
     this.PROXY_URL = PROXY_URL;
-    this.IS_PREMIUM_SERVICE = IS_PREMIUM_SERVICE;
-    this.SERVICE_NAME = SERVICE_NAME;
+    this.CLIENT_NAME = CLIENT_NAME;
     this.CA_CERT = CA_CERT;
     this.HOSTNAME = HOSTNAME;
 
 
     if (this.PROXY_URL) process.env.grpc_proxy = this.PROXY_URL;
 
-    if (this.IS_PREMIUM_SERVICE && !this.API_TOKEN)
+    if (!this.API_TOKEN)
       throw new Error(ERROR_SERVICES_GRPC_API_TOKEN_REQUIRED);
   }
 
@@ -54,7 +50,7 @@ export class BaseService {
     const { status, ...responseWithoutStatus } = response;
     if (status.status === CommonMessages.StatusCode.FAILED) {
       logger.log(
-        `[ GRPC ${this._SERVICE_NAME} ] - Server GRPC Code: ${status.status} - ${status.message}`,
+        `[ GRPC ${this._CLIENT_NAME} ] - Server GRPC Code: ${status.status} - ${status.message}`,
         Level.error
       );
       throw new Error(status.message);
@@ -64,12 +60,12 @@ export class BaseService {
       status.status === CommonMessages.StatusCode.UNSPECIFIED
     ) {
       logger.log(
-        `[ GRPC ${this._SERVICE_NAME} ] - Server GRPC Code: ${status.status} - ${status.message}`,
+        `[ GRPC ${this._CLIENT_NAME} ] - Server GRPC Code: ${status.status} - ${status.message}`,
         Level.warn
       );
     } else if (status.status === CommonMessages.StatusCode.SUCCESS) {
       logger.log(
-        `[ GRPC ${this._SERVICE_NAME} ] - Server GRPC Code: ${status.status} - ${status.message}`,
+        `[ GRPC ${this._CLIENT_NAME} ] - Server GRPC Code: ${status.status} - ${status.message}`,
         Level.info
       );
     }
@@ -121,12 +117,12 @@ export class BaseService {
     return cc;
   }
 
-  set SERVICE_NAME(serviceName: string) {
-    this._SERVICE_NAME = serviceName;
+  set CLIENT_NAME(serviceName: string) {
+    this._CLIENT_NAME = serviceName;
   }
 
-  get SERVICE_NAME() {
-    return this._SERVICE_NAME;
+  get CLIENT_NAME() {
+    return this._CLIENT_NAME;
   }
 
   set HOSTNAME(host: string) {
@@ -156,14 +152,6 @@ export class BaseService {
 
   get API_TOKEN() {
     return this._API_TOKEN;
-  }
-
-  set IS_PREMIUM_SERVICE(isPremiumService: boolean) {
-    if (isPremiumService != null) this._IS_PREMIUM_SERVICE = isPremiumService;
-  }
-
-  get IS_PREMIUM_SERVICE() {
-    return this._IS_PREMIUM_SERVICE;
   }
 
   set CA_CERT(caCertPath: string) {

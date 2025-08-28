@@ -7,7 +7,6 @@ import {
   CryptographyResponse,
   LocalCryptographyResponse
 } from "./CryptographyTypes";
-import { PurlRequest } from "../Services/Grpc/BaseService";
 import {
   FileCryptographyResultCollector
 } from "./Helper/ResultCollector/File/FileCryptographyResultCollector";
@@ -21,6 +20,7 @@ import {
   ComponentHintScanner
 } from "./Hint/Components/ComponentHintScanner";
 import { excludeBinariesAndLargeFiles } from "./Helper/CryptographyHelper";
+import { Component } from "../shared/interfaces/Component";
 
 
 
@@ -60,7 +60,7 @@ export class CryptographyScanner {
    * @param req A request containing PURL's to scan
    * @returns {CryptographyResponse} A promise that resolves to an array of CryptographyResponse objects.
    */
-  public async scanComponents(req: PurlRequest):Promise<Array<CryptographyResponse>> {
+  public async scanComponents(req: Component[]):Promise<Array<CryptographyResponse>> {
     const componentCryptoResultCollector = new ComponentCryptographyResultCollector();
     const componentCryptoAlgorithmScanner = new ComponentAlgorithmScanner(this.config, componentCryptoResultCollector);
     const componentCryptoHintScanner = new ComponentHintScanner(this.config, componentCryptoResultCollector);

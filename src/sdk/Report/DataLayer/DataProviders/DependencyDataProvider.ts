@@ -6,11 +6,12 @@ import {
   Dependency,
 } from '../DataLayerTypes';
 import { IDependencyResponse } from '../../../Dependencies/DependencyTypes';
+import { DependencyResponse } from "../../../Clients/Dependency/IDependencyClient";
 
 export class DependencyDataProvider implements DataProvider {
-  private dependencies: IDependencyResponse;
+  private dependencies: DependencyResponse;
 
-  constructor(dependencies: IDependencyResponse) {
+  constructor(dependencies: DependencyResponse) {
     this.dependencies = dependencies;
   }
 
@@ -30,7 +31,7 @@ export class DependencyDataProvider implements DataProvider {
   }
 
   public parseDependencyData(
-    dependencies: IDependencyResponse
+    dependencies: DependencyResponse
   ): DependencyDataLayer[] {
     const dependencyLayer: Array<DependencyDataLayer> = [];
 

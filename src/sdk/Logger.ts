@@ -2,12 +2,10 @@
 export class Logger {
   private level: Logger.Level;
   private transport: Logger.TransportType;
-  private debug: boolean;
 
   constructor() {
     this.setLevel(Logger.Level.info);
     this.setTransport((msg: string) => {console.log(msg)});
-    this.debug = false;
   }
 
   public setTransport(transport: Logger.TransportType) {
@@ -18,12 +16,32 @@ export class Logger {
     this.level = level;
   }
 
-  public enableDebug(enabled: boolean) {
-    this.debug = enabled;
+  public log(msg: string, level = Logger.Level.info) {
+    if (this.level <= level) {
+      this.transport(msg);
+    }
   }
 
-  public log(msg: string, level = Logger.Level.info) {
-    if (this.debug) {
+  public debug(msg: string) {
+    if (Logger.Level.debug <= this.level) {
+      this.transport(msg);
+    }
+  }
+
+  public error(msg: string) {
+    if (Logger.Level.error <= this.level) {
+      this.transport(msg);
+    }
+  }
+
+  public warn(msg: string) {
+    if (Logger.Level.warn <= this.level) {
+      this.transport(msg);
+    }
+  }
+
+  public info(msg: string) {
+    if (Logger.Level.info <= this.level) {
       this.transport(msg);
     }
   }

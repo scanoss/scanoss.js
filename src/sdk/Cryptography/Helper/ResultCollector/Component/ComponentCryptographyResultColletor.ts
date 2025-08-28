@@ -3,9 +3,7 @@ import {
   CryptographyResponse,
   CryptoHintResponse
 } from "../../../CryptographyTypes";
-import {
-  AlgorithmResponse, HintsResponse
-} from "../../../../Services/Grpc/CryptographyService";
+import { AlgorithmResponse, HintsInRangeResponse } from "../../../../Clients/Cryptography/ICryptographyClient";
 
 /**
  * Collects and organizes cryptographic scan results for software components.
@@ -45,11 +43,11 @@ export class ComponentCryptographyResultCollector {
    * @param algorithmResults The algorithm detection results to collect.
    */
   public collectAlgorithmResults(algorithmResults: AlgorithmResponse):void {
-    algorithmResults.purlsList.forEach((p) => {
+    algorithmResults.purls.forEach((p) => {
       if (p.version) {
         const version = p.version.startsWith('v') ? p.version.slice(1) : p.version;
         const result = this.getOrCreateResult(p.purl,version);
-        result.algorithms = p.algorithmsList;
+        result.algorithms = p.algorithms;
       }
     });
   }
@@ -58,12 +56,12 @@ export class ComponentCryptographyResultCollector {
    * Collects hint detection results and organizes them by component.
    * @param hintResults The hint detection results to collect.
    */
-  public collectHintResults(hintResults: HintsResponse):void {
-    hintResults.purlsList.forEach((h) => {
-      if (h.versionsList.length > 0) {
-        const version = h.versionsList[0].startsWith('v') ? h.versionsList[0].slice(1) : h.versionsList[0];
+  public collectHintResults(hintResults: HintsInRangeResponse):void {
+    hintResults.purls.forEach((h) => {
+      if (h.versions.length > 0) {
+        const version = h.versions[0].startsWith('v') ? h.versions[0].slice(1) : h.versions[0];
         const result = this.getOrCreateResult(h.purl, version);
-        result.hints = h.hintsList;
+        result.hints = h.hints;
       }
     });
   }

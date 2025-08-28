@@ -42,7 +42,7 @@ export class FileHintScanner
    * @returns A promise that resolves to an array of job objects configured for hint analysis.
    */
   private async buildJobs(files: string[]): Promise<Array<Job<LocalCryptoHintJob>>> {
-    const rules = await this.loadRules(this.config.getLibraryRulesPath());
+    const rules = await this.loadRules(this.config.LIBRARY_RULES_PATH);
     const jobs: Array<Job<LocalCryptoHintJob>> = [];
     files.forEach((f) => {
       const newJob = new Job<LocalCryptoHintJob>({
@@ -60,7 +60,7 @@ export class FileHintScanner
    * @returns A promise that resolves to an ILocalCryptographyResponse.
    */
   public async scan(files: Array<string>): Promise<Array<CryptoHintJobResponse>> {
-    const workerPool = new WorkerPool<LocalCryptoHintJob, CryptoHintJobResponse>(cryptographyHintProcessor, this.config.getNumberOfThreads());
+    const workerPool = new WorkerPool<LocalCryptoHintJob, CryptoHintJobResponse>(cryptographyHintProcessor, this.config.THREADS);
     const jobs = await this.buildJobs(files);
     workerPool.loadJobs(jobs)
     const results = await workerPool.run();

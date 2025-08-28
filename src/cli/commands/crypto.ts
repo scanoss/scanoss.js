@@ -14,15 +14,15 @@ export async function cryptoHandler(rootPath: string, options: any): Promise<voi
   rootPath = rootPath.replace(/\/$/, '');  // Remove trailing slash if exists
   rootPath = rootPath.replace(/^\./, process.env.PWD);  // Convert relative path to absolute path.
   const pathIsFolder = await isFolder(rootPath);
-  let algorithmRules = null;
-  let libraryRules = null;
-  if(options.algorithmRules) algorithmRules = options.algorithmRules;
-  if(options.libraryRules) libraryRules = options.libraryRules;
 
-  let threads = null;
-  if(options.threads) threads = options.threads;
-
-  const cfg = new CryptoCfg({threads, algorithmRulesPath: algorithmRules, libraryRulesPath: libraryRules })
+  const cfg = new CryptoCfg();
+  if(options.algorithmRules) cfg.ALGORITHM_RULES_PATH = options.algorithmRules;
+  if(options.libraryRules) cfg.LIBRARY_RULES_PATH = options.libraryRules;
+  if(options.threads) cfg.THREADS = options.threads;
+  if(options.key) cfg.API_KEY = options.key;
+  if (options.caCert) cfg.CA_CERT = options.caCert;
+  if (options.ignoreCertErrors) cfg.IGNORE_CA_CERT_ERR = true;
+  if (options.apiurl) cfg.API_URL = options.apiurl;
 
   const cryptoScanner = new CryptographyScanner(cfg);
 

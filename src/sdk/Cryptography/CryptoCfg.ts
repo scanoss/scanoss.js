@@ -1,72 +1,58 @@
-import { BaseConfig, IBaseConfig } from "../BaseConfig";
+import { BaseConfig } from "../BaseConfig";
 
 /**
  * Represents a configuration for cryptography scanner.
  */
 export class CryptoCfg extends BaseConfig {
 
-  private readonly DEFAULT_THREADS = 5;
+   private readonly DEFAULT_THREADS = 5;
 
-   private readonly algorithmRulesPath: string;
+   ALGORITHM_RULES_PATH: string;
 
-   private readonly libraryRulesPath: string;
+   LIBRARY_RULES_PATH: string;
 
-   private readonly threads: number;
+   THREADS: number = this.DEFAULT_THREADS;
 
-   private readonly apiKey: string;
+   API_KEY: string = '';
 
-
-  /**
-   * Creates an instance of CryptoCfg.
-   * @param {Object} cfg - Configuration object.
-   * @param {number} [cfg.threads=5] - The number of threads to use. Defaults to 5 if not provided.
-   * @param {string} [cfg.rulesPath] - Optional. Path to the cryptography rules file.
-   * @param {string} [cfg.apiKey] - Optional. SCANOSS API Key.
-   */
-   constructor( cfg: {
-     threads?: number,
-     algorithmRulesPath?: string,
-     libraryRulesPath?: string,
-     apiKey?: string,
-     proxy ?: string,
-  }& IBaseConfig) {
-     super();
-     this.algorithmRulesPath = cfg.algorithmRulesPath;
-     this.libraryRulesPath = cfg.libraryRulesPath;
-     this.threads = cfg.threads ? Number(cfg.threads) : this.DEFAULT_THREADS;
-     this.apiKey = cfg.apiKey;
+   constructor(cfg?: CryptoCfg) {
+     super(cfg);
+     if(cfg) {
+       this.API_KEY = cfg.API_KEY ? cfg.API_KEY : '';
+     }
    }
 
   /**
-   * Gets the path to the cryptography algorithm rules file.
-   * @returns The path to the cryptography rules file.
+   * Resolves the appropriate API URL based on API key presence and current URL.
+   * If an API key is provided and the current URL is the default, returns the premium
+   * URL, otherwise returns the current URL.
+   * @param apiKey - The API key (if any)
+   * @param currentUrl - The current API URL
+   * @returns The resolved API URL
    */
-   public getAlgorithmRulesPath(): string {
-     return this.algorithmRulesPath;
+   protected resolveApiUrl(apiKey: string, currentUrl: string): string {
+       // Case 1: Has API key and using default URL -> upgrade to premium URL
+       if (apiKey && currentUrl === BaseConfig.getPremiumURL())
+         return BaseConfig.getPremiumURL();
+       // Case 2: Has API key and using custom URL -> keep custom URL
+       if (apiKey && currentUrl !== BaseConfig.getDefaultURL()) {
+           // Only remove /scan/direct for official SCANOSS API endpoints
+           if (currentUrl.startsWith(BaseConfig.getPremiumURL()) || currentUrl.startsWith(BaseConfig.getDefaultURL())) {
+             return currentUrl.replace(/\/scan\/direct$/, '');
+           }
+           // For other custom URLs, return as-is
+           return currentUrl;
+       }
+       // Case 4: No API key and default/empty URL -> use default URL
+       return BaseConfig.getPremiumURL();
    }
 
-  /**
-  * Gets the path to the cryptography library rules file.
-  * @returns The path to the cryptography rules file.
-  */
-  public getLibraryRulesPath(): string {
-    return this.libraryRulesPath;
-  }
+   public get API_URL(): string{
+     return this.resolveApiUrl(this.API_KEY, super.API_URL);
+   }
 
-  /**
-  * Gets the number of threads to use on local crypto detection.
-  * @returns The number of threads.
-  **/
-  public getNumberOfThreads(){
-    return this.threads;
-  }
-
-  /**
-   * Gets the API Key set.
-   * @returns The API Key.
-   **/
-  public getApikey(): string {
-    return this.apiKey;
-  }
+   public set API_URL(value: string) {
+     super.API_URL = value;
+   }
 
 }

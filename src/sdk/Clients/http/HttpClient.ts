@@ -3,20 +3,21 @@ import { ProxyAgent } from 'proxy-agent';
 import { Transport } from '../Transport/Transport';
 import { Utils } from '../../Utils/Utils';
 import FormData from 'form-data';
+
 export interface HttpProxyConfig {
     PAC_PROXY?: string;
     API_KEY?: string;
-    NO_PROXY?: Array<string>;
+    NO_PROXY?: string;
     HTTP_PROXY?: string;
     HTTPS_PROXY?: string;
     IGNORE_CERT_ERRORS?: boolean;
     CA_CERT?: string;
-
+    HOST_URL: string;
 }
-export class HttpClient  extends Transport<Response>  {
+export class HttpClient extends Transport<Response>  {
 
     private readonly proxyAgent: ProxyAgent;
-    private cfg: HttpProxyConfig;
+    protected cfg: HttpProxyConfig;
 
     constructor(cfg?: HttpProxyConfig){
       super();
@@ -30,7 +31,7 @@ export class HttpClient  extends Transport<Response>  {
         const proxyConfig = {
         HTTP_PROXY: PAC_URL || this.cfg?.HTTP_PROXY || '',
         HTTPS_PROXY:  PAC_URL || this.cfg?.HTTPS_PROXY || '',
-        NO_PROXY: this.cfg?.NO_PROXY ? this.cfg?.NO_PROXY.join(',') : null,
+        NO_PROXY: this.cfg?.NO_PROXY ? this.cfg?.NO_PROXY : null,
         CA_CERT: this.cfg?.CA_CERT || null,
         IGNORE_CERT_ERRORS: this.cfg?.IGNORE_CERT_ERRORS || false
       }
@@ -54,18 +55,19 @@ export class HttpClient  extends Transport<Response>  {
             agent: this.proxyAgent,
             method: 'get',
             headers: {
-               ...(this.cfg.API_KEY && { 'X-Session': this.cfg.API_KEY }),
+               ...(this.cfg.API_KEY && { 'x-api-key': this.cfg.API_KEY }),
              },
         });
     }
 
-  async post(url: string, body: FormData): Promise<Response> {
+  async post(url: string, body: any): Promise<Response> {
     return await fetch(url, {
       agent: this.proxyAgent,
       method: 'post',
-      body: body,
+      body: JSON.stringify(body),
       headers: {
-        ...(this.cfg.API_KEY && { 'X-Session': this.cfg.API_KEY })
+        'Content-Type': 'application/json',
+        ...(this.cfg.API_KEY && { 'x-api-key': this.cfg.API_KEY })
       },
     });
   }
@@ -75,7 +77,7 @@ export class HttpClient  extends Transport<Response>  {
       agent: this.proxyAgent,
       method: 'delete',
       headers: {
-        ...(this.cfg.API_KEY && { 'X-Session': this.cfg.API_KEY }),
+        ...(this.cfg.API_KEY && { 'x-api-key': this.cfg.API_KEY }),
       },
     });
   }
@@ -86,10 +88,15 @@ export class HttpClient  extends Transport<Response>  {
       method: 'put',
       body: body,
       headers: {
-        ...(this.cfg.API_KEY && { 'X-Session': this.cfg.API_KEY })
+        ...(this.cfg.API_KEY && { 'x-api-key': this.cfg.API_KEY })
       },
     });
   }
 
-
+  protected handleError(error: unknown, context: string): Error {
+    if (error instanceof Error) {
+      return new Error(`${context}: ${error.message}`);
+    }
+    return new Error(`${context}: Unknown error occurred`);
+  }
 }
