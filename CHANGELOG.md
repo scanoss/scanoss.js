@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.19.0] (2025-08-29)
+### Changed
+- Removed `api` prefix from dependency and vulnerability API URLs
+### Fixed
+- Fixed license field mapping for dependency responses (spdx_id, is_spdx_approved)  
+
 ## [0.18.0] (2025-08-28)
 ### Added 
 - Added REST protocol implementation for SCANOSS dependency service
@@ -109,4 +115,5 @@ All notable changes to this project will be documented in this file. See [standa
 ### [0.17.1](https://github.com/scanoss/scanoss.js/compare/v0.17.0...v0.17.1) (2025-06-16)
 ### [0.17.2](https://github.com/scanoss/scanoss.js/compare/v0.17.1...v0.17.2) (2025-06-25)
 ### [0.17.3](https://github.com/scanoss/scanoss.js/compare/v0.17.2...v0.17.3) (2025-06-27)
-### [0.17.4](https://github.com/scanoss/scanoss.js/compare/v0.17.3...v0.17.4) (2025-08-27)
+### [0.18.0](https://github.com/scanoss/scanoss.js/compare/v0.17.3...v0.18.0) (2025-08-28)
+### [0.19.0](https://github.com/scanoss/scanoss.js/compare/v0.18.0...v0.19.0) (2025-08-29)

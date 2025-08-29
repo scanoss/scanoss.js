@@ -26,9 +26,12 @@ import { CryptoCfg } from "../../sdk/Cryptography/CryptoCfg";
 import { CryptographyScanner } from "../../sdk/Cryptography/CryptographyScanner";
 import { CryptographyResponse, LocalCryptography } from "../../sdk/Cryptography/CryptographyTypes";
 import { DependencyResponse } from "../../sdk/Clients/Dependency/IDependencyClient";
+import { Logger, logger } from "../../sdk/Logger";
 
 export async function scanHandler(rootPath: string, options: any): Promise<void> {
-  // TODO: Add flag to enable debug. False by default.  logger.enableDebug(options.debug);
+  logger.setLevel(Logger.Level.info);
+  if(options.debug)
+    logger.setLevel(Logger.Level.debug);
   rootPath = path.resolve(rootPath);
   const pathIsFolder = await isFolder(rootPath);
   const projectName = getProjectNameFromPath(rootPath);
@@ -97,7 +100,7 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
 
   if (!options.wfp) {
     if (pathIsFolder) {
-      console.error("\nReading directory...  ");
+      logger.debug(`Reading directory ${rootPath}...`);
       const tree = new Tree(rootPath);
       tree.build();
 
