@@ -49,25 +49,19 @@ export class BaseGRPCClient {
   }) {
     const { status, ...responseWithoutStatus } = response;
     if (status.status === CommonMessages.StatusCode.FAILED) {
-      logger.log(
-        `[ GRPC ${this._CLIENT_NAME} ] - Server GRPC Code: ${status.status} - ${status.message}`,
-        Level.error
-      );
+      logger.error(
+        `[ GRPC ${this._CLIENT_NAME} ] - Server GRPC Code: ${status.status} - ${status.message}`);
       throw new Error(status.message);
     } else if (
       status.status === CommonMessages.StatusCode.WARNING ||
       status.status === CommonMessages.StatusCode.SUCCEEDED_WITH_WARNINGS ||
       status.status === CommonMessages.StatusCode.UNSPECIFIED
     ) {
-      logger.log(
-        `[ GRPC ${this._CLIENT_NAME} ] - Server GRPC Code: ${status.status} - ${status.message}`,
-        Level.warn
-      );
+      logger.debug(
+        `[ GRPC ${this._CLIENT_NAME} ] - Server GRPC Code: ${status.status} - ${status.message}`);
     } else if (status.status === CommonMessages.StatusCode.SUCCESS) {
-      logger.log(
-        `[ GRPC ${this._CLIENT_NAME} ] - Server GRPC Code: ${status.status} - ${status.message}`,
-        Level.info
-      );
+      logger.debug(
+        `[ GRPC ${this._CLIENT_NAME} ] - Server GRPC Code: ${status.status} - ${status.message}`);
     }
 
     return responseWithoutStatus;

@@ -20,7 +20,7 @@ export class DependencyHttpClient extends HttpClient implements IDependencyClien
 
   public async getDependencies(req: DependencyRequest): Promise<DependencyResponse> {
     try{
-      const response = await this.client.post(`${this.baseUrl}/api/v2/dependencies/dependencies`, req);
+      const response = await this.client.post(`${this.baseUrl}/v2/dependencies/dependencies`, req);
       if (response.ok) {
         return this.toDependencyResponse(await response.json());
       }
@@ -44,8 +44,8 @@ export class DependencyHttpClient extends HttpClient implements IDependencyClien
         version: dep.version,
         licensesList: dep.licenses.map(license => ({
           name: license.name,
-          spdxId: license.spdxId,
-          isSpdxApproved: license.isSpdxApproved,
+          spdxId: license.spdx_id,
+          isSpdxApproved: license.is_spdx_approved,
           url: license.url
         })),
         url: dep.url,

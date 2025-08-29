@@ -49,6 +49,7 @@ async function main() {
   scan.addOption(new Option("-v, --verbose", "Makes scan operation verbose"));
   scan.addOption(new Option("-st, --settings <filename>", "Settings file to use for scanning (optional - default scanoss.json)"));
   scan.addOption(new Option("-stf, --skip-settings-file", "Skips settings file"));
+  scan.addOption(new Option("    --debug", "Enables debugging"));
 
   scan.action((source, options) => {
     scanHandler(source, options).catch((e) => {
