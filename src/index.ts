@@ -44,8 +44,8 @@ export * from './sdk/Decompress/DecompressionManager';
 export * from './sdk/FileCount/FileCount';
 export { IDirSummary } from './sdk/FileCount/Interfaces';
 
-export * from './sdk/Clients/Cryptography/CryptographyClient';
-export * from './sdk/Clients/Dependency/DependencyClient';
+export * from './sdk/Clients/Cryptography/CryptographyGRPCClient';
+export * from './sdk/Clients/Dependency/DependencyGRPCClient';
 export { PurlRequest, EchoRequest } from './sdk/Clients/Grpc/BaseGRPCClient';
 
 // *** Http ***//

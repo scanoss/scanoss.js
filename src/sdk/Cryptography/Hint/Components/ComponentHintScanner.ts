@@ -4,9 +4,7 @@ import {
 import { BaseCryptographyScanner } from "../../BaseCryptographyScanner";
 import { HintsInRangeResponse } from "../../../Clients/Cryptography/ICryptographyClient";
 import { Component } from "../../../types/common/types";
-import {
-  CryptographyHttpClient
-} from "../../../Clients/Cryptography/CryptographyHttpClient";
+import { CryptographyGRPCClient } from "../../../Clients/Cryptography/CryptographyGRPCClient";
 
 /**
  * Scanner for detecting cryptographic hints in software components.
@@ -27,7 +25,7 @@ export class ComponentHintScanner
    * @returns {HintsResponse} A promise that resolves to a HintsResponse containing detected cryptographic hints.
    */
   public async scan(req: Component[]):Promise<HintsInRangeResponse>{
-    const cryptographyClient = new CryptographyHttpClient(
+    const cryptographyClient = new CryptographyGRPCClient(
       this.config.API_KEY, // API KEY
       this.config.API_URL, // Destination Host
       this.config.GRPC_PROXY, // Proxy Host
