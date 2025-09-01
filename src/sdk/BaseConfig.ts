@@ -35,7 +35,6 @@ export abstract class BaseConfig {
       this.HTTPS_PROXY = config.HTTPS_PROXY || '';
       this.HTTP_PROXY = config.HTTP_PROXY || '';
       this.NO_PROXY = config.NO_PROXY || '';
-      this.API_URL = config.API_URL;
       this.GRPC_PROXY = config.GRPC_PROXY || '';
       this.CA_CERT = config.CA_CERT || '';
       this.IGNORE_CA_CERT_ERR = config.IGNORE_CA_CERT_ERR ?? false;

@@ -1,3 +1,6 @@
+// *** Common exports *** //
+export * from './sdk/types/common/types';
+
 // *** Code scanner exports *** //
 export * from './sdk/scanner/Scanner';
 export * from './sdk/scanner/ScannerTypes';
@@ -19,6 +22,11 @@ export * from './sdk/Dependencies/LocalDependency/LocalDependency';
 export * from './sdk/Cryptography/CryptographyScanner';
 export * from './sdk/Cryptography/CryptoCfg';
 export * from './sdk/Cryptography/CryptographyTypes';
+
+// *** Vulnerability scanner export *** //
+export * from './sdk/Vulnerability/VulnerabilityScanner';
+export * from './sdk/types/vulnerability/types'
+export * from './sdk/Vulnerability/VulnerabilityCfg'
 
 // *** Report export *** //
 export * from './sdk/Report/Report';

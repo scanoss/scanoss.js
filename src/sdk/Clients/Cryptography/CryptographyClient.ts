@@ -1,12 +1,12 @@
 import { CryptographyClient as GrpcCryptographyClient } from '../Grpc/scanoss/api/cryptography/v2/scanoss-cryptography_grpc_pb';
 import { BaseGRPCClient, PurlRequest } from '../Grpc/BaseGRPCClient';
-import { Component } from '../../shared/interfaces/Component';
 import {
   ICryptographyClient,
   AlgorithmResponse,
   HintsInRangeResponse
 } from './ICryptographyClient';
 import { logger } from '../../Logger';
+import { Component } from "../../types/common/types";
 
 export class CryptographyClient extends BaseGRPCClient implements ICryptographyClient {
   public static readonly clientName = 'Cryptography gRPC Client';

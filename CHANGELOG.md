@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.20.0] (2025-08-29)
+### Added
+- Added vulnerability scanner to SDK with HTTP client support
+- Implemented `vulnerabilitiesComponentes` method for batch vulnerability scanning of multiple components
+- Implemented `vulnerabilitiesComponent` method for single component vulnerability assessment
+
 ## [0.19.0] (2025-08-29)
 ### Changed
 - Removed `api` prefix from dependency and vulnerability API URLs

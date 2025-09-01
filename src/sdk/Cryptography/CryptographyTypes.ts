@@ -1,4 +1,5 @@
-import { Component } from "../shared/interfaces/Component";
+import { Component } from "../types/common/types";
+
 
 export interface CryptoAlgorithm {
   algorithm: string;

@@ -3,9 +3,9 @@ import {
 } from "../../Helper/ResultCollector/Component/ComponentCryptographyResultColletor";
 
 import { BaseCryptographyScanner } from "../../BaseCryptographyScanner";
-import { Component } from "../../../shared/interfaces/Component";
 import { AlgorithmResponse } from "../../../Clients/Cryptography/ICryptographyClient";
 import { CryptographyClient } from "../../../Clients/Cryptography/CryptographyClient";
+import { Component } from "../../../types/common/types";
 
 /**
  * Scanner for detecting cryptographic algorithms in software components.

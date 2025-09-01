@@ -1,4 +1,4 @@
-import { Component } from "../../shared/interfaces/Component";
+import { Component } from "../../types/common/types";
 
 interface License {
   name: string;
@@ -28,7 +28,7 @@ export interface Status {
   message: string;
 }
 
-export interface DependencyResponse {
+export interface DependencyResponse  {
   filesList: DependencyFile[];
   status: Status;
 }

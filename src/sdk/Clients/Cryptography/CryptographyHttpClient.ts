@@ -1,12 +1,12 @@
 import { HttpClient } from "../http/HttpClient";
 import { logger } from "../../Logger";
-import { Component } from "../../shared/interfaces/Component";
 import {
   ICryptographyClient,
   AlgorithmResponse,
   HintsInRangeResponse
 } from "./ICryptographyClient";
 import { validateComponents } from "../helper/clientHelper";
+import { Component } from "../../types/common/types";
 export class CryptographyHttpClient extends HttpClient implements ICryptographyClient {
 
   private client: HttpClient;
