@@ -26,7 +26,7 @@ export class CryptographyHttpClient extends HttpClient implements ICryptographyC
   public async getAlgorithms(components: Component[]): Promise<AlgorithmResponse> {
     try {
       validateComponents(components);
-      const response = await this.client.post(`${this.baseUrl}/api/v2/cryptography/algorithms`, { purls: components });
+      const response = await this.client.post(`${this.baseUrl}/v2/cryptography/algorithms`, { purls: components });
 
       if (response.ok) {
         const algorithms = await response.json();
@@ -46,7 +46,7 @@ export class CryptographyHttpClient extends HttpClient implements ICryptographyC
   public async getEncryptionHints(components: Component[]): Promise<HintsInRangeResponse> {
     try {
       validateComponents(components);
-      const response = await this.client.post(`${this.baseUrl}/api/v2/cryptography/hintsInRange`, { purls: components });
+      const response = await this.client.post(`${this.baseUrl}/v2/cryptography/hintsInRange`, { purls: components });
 
       if (response.ok) {
         const hints = await response.json();

@@ -7,6 +7,9 @@ All notable changes to this project will be documented in this file. See [standa
 - Added vulnerability scanner to SDK with HTTP client support
 - Implemented `vulnerabilitiesComponentes` method for batch vulnerability scanning of multiple components
 - Implemented `vulnerabilitiesComponent` method for single component vulnerability assessment
+### Changed
+- switched cryptography scanner over to use cryptography http client
+
 
 ## [0.19.0] (2025-08-29)
 ### Changed
