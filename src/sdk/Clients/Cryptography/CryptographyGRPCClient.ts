@@ -1,14 +1,14 @@
 import { CryptographyClient as GrpcCryptographyClient } from '../Grpc/scanoss/api/cryptography/v2/scanoss-cryptography_grpc_pb';
 import { BaseGRPCClient, PurlRequest } from '../Grpc/BaseGRPCClient';
-import { Component } from '../../shared/interfaces/Component';
 import {
   ICryptographyClient,
   AlgorithmResponse,
   HintsInRangeResponse
 } from './ICryptographyClient';
 import { logger } from '../../Logger';
+import { Component } from "../../types/common/types";
 
-export class CryptographyClient extends BaseGRPCClient implements ICryptographyClient {
+export class CryptographyGRPCClient extends BaseGRPCClient implements ICryptographyClient {
   public static readonly clientName = 'Cryptography gRPC Client';
   private client: GrpcCryptographyClient;
 
@@ -24,7 +24,7 @@ export class CryptographyClient extends BaseGRPCClient implements ICryptographyC
       HOSTNAME: hostName,
       PROXY_URL: proxyHost,
       CA_CERT: caCertPath,
-      CLIENT_NAME: CryptographyClient.clientName,
+      CLIENT_NAME: CryptographyGRPCClient.clientName,
       API_TOKEN: token,
     });
     this.client = new GrpcCryptographyClient(

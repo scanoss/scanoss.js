@@ -31,20 +31,19 @@ export class CryptoCfg extends BaseConfig {
    * @returns The resolved API URL
    */
    protected resolveApiUrl(apiKey: string, currentUrl: string): string {
-       // Case 1: Has API key and using default URL -> upgrade to premium URL
-       if (apiKey && currentUrl === BaseConfig.getPremiumURL())
-         return BaseConfig.getPremiumURL();
-       // Case 2: Has API key and using custom URL -> keep custom URL
-       if (apiKey && currentUrl !== BaseConfig.getDefaultURL()) {
-           // Only remove /scan/direct for official SCANOSS API endpoints
-           if (currentUrl.startsWith(BaseConfig.getPremiumURL()) || currentUrl.startsWith(BaseConfig.getDefaultURL())) {
-             return currentUrl.replace(/\/scan\/direct$/, '');
-           }
-           // For other custom URLs, return as-is
-           return currentUrl;
-       }
-       // Case 4: No API key and default/empty URL -> use default URL
-       return BaseConfig.getPremiumURL();
+    // Case 1: Has API key and using default URL -> upgrade to premium URL. The default URL is set on the BaseConfig.ts file
+    if (apiKey && currentUrl === BaseConfig.getDefaultURL())
+      return BaseConfig.getPremiumURL();
+    // Case 2: Has API key and using custom URL -> keep custom URL
+    if (apiKey && currentUrl.startsWith(BaseConfig.getPremiumURL()) || currentUrl.startsWith(BaseConfig.getDefaultURL())){
+      // Check if custom URL is not the same as the default one.
+      if (currentUrl.startsWith(BaseConfig.getPremiumURL()) || currentUrl.startsWith(BaseConfig.getDefaultURL())) {
+        return currentUrl.replace(/\/scan\/direct$/, '');
+      }
+      return currentUrl;
+    }
+    // Case 4: No API key and default/empty URL -> use default URL
+    return BaseConfig.getDefaultURL();
    }
 
    public get API_URL(): string{

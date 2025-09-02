@@ -1,3 +1,6 @@
+// *** Common exports *** //
+export * from './sdk/types/common/types';
+
 // *** Code scanner exports *** //
 export * from './sdk/scanner/Scanner';
 export * from './sdk/scanner/ScannerTypes';
@@ -20,6 +23,11 @@ export * from './sdk/Cryptography/CryptographyScanner';
 export * from './sdk/Cryptography/CryptoCfg';
 export * from './sdk/Cryptography/CryptographyTypes';
 
+// *** Vulnerability scanner export *** //
+export * from './sdk/Vulnerability/VulnerabilityScanner';
+export * from './sdk/types/vulnerability/types'
+export * from './sdk/Vulnerability/VulnerabilityCfg'
+
 // *** Report export *** //
 export * from './sdk/Report/Report';
 export * from './sdk/Report/DataLayer/DataLayerTypes';
@@ -36,8 +44,8 @@ export * from './sdk/Decompress/DecompressionManager';
 export * from './sdk/FileCount/FileCount';
 export { IDirSummary } from './sdk/FileCount/Interfaces';
 
-export * from './sdk/Clients/Cryptography/CryptographyClient';
-export * from './sdk/Clients/Dependency/DependencyClient';
+export * from './sdk/Clients/Cryptography/CryptographyGRPCClient';
+export * from './sdk/Clients/Dependency/DependencyGRPCClient';
 export { PurlRequest, EchoRequest } from './sdk/Clients/Grpc/BaseGRPCClient';
 
 // *** Http ***//

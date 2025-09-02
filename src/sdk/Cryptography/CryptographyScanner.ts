@@ -20,9 +20,7 @@ import {
   ComponentHintScanner
 } from "./Hint/Components/ComponentHintScanner";
 import { excludeBinariesAndLargeFiles } from "./Helper/CryptographyHelper";
-import { Component } from "../shared/interfaces/Component";
-
-
+import { Component } from "../types/common/types";
 
 /**
  * Provides functionality to scan files and components for cryptographic items.

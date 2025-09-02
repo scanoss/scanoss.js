@@ -3,7 +3,7 @@ import * as DependenciesMessages from '../Grpc/scanoss/api/dependencies/v2/scano
 import * as CommonMessages from '../Grpc/scanoss/api/common/v2/scanoss-common_pb';
 import { BaseGRPCClient } from "../Grpc/BaseGRPCClient";
 
-export class DependencyClient extends BaseGRPCClient{
+export class DependencyGRPCClient extends BaseGRPCClient{
   public static readonly clientName = 'Dependency gRPC Client';
   private client: DependenciesClient;
 
@@ -16,7 +16,7 @@ export class DependencyClient extends BaseGRPCClient{
   constructor(hostName?: string, proxyHost?: string, caCertPath?: string) {
     super({
       HOSTNAME: hostName,
-      CLIENT_NAME: DependencyClient.clientName,
+      CLIENT_NAME: DependencyGRPCClient.clientName,
       PROXY_URL: proxyHost,
       CA_CERT: caCertPath,
     });

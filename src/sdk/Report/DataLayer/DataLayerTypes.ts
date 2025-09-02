@@ -2,6 +2,7 @@ import {
   CryptoAlgorithm, LocalCryptographyResponse
 } from "../../Cryptography/CryptographyTypes";
 import { CryptoItem } from '../../Cryptography/Algorithm/Files/Scanneable/CryptoItem';
+import { Vulnerability } from "../../types/vulnerability/types";
 
 /*************  Component interface definition  *************/
 export interface ComponentDataLayer {
@@ -70,17 +71,6 @@ export interface Dependency {
 }
 /*************  Dependency interface definition  *************/
 
-/*************  Vulnerability interface definition  *************/
-export interface Vulnerability {
-  id: string;
-  cve: string;
-  url: string;
-  summary: string;
-  severity: string;
-  published: string;
-  modified: string;
-  source: string;
-}
 
 export interface VulnerabilityDataLayer {
   purl: string;

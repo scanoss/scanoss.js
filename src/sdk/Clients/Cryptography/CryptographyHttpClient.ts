@@ -1,12 +1,12 @@
 import { HttpClient } from "../http/HttpClient";
 import { logger } from "../../Logger";
-import { Component } from "../../shared/interfaces/Component";
 import {
   ICryptographyClient,
   AlgorithmResponse,
   HintsInRangeResponse
 } from "./ICryptographyClient";
 import { validateComponents } from "../helper/clientHelper";
+import { Component } from "../../types/common/types";
 export class CryptographyHttpClient extends HttpClient implements ICryptographyClient {
 
   private client: HttpClient;
@@ -26,7 +26,7 @@ export class CryptographyHttpClient extends HttpClient implements ICryptographyC
   public async getAlgorithms(components: Component[]): Promise<AlgorithmResponse> {
     try {
       validateComponents(components);
-      const response = await this.client.post(`${this.baseUrl}/api/v2/cryptography/algorithms`, { purls: components });
+      const response = await this.client.post(`${this.baseUrl}/v2/cryptography/algorithms`, { purls: components });
 
       if (response.ok) {
         const algorithms = await response.json();
@@ -46,7 +46,7 @@ export class CryptographyHttpClient extends HttpClient implements ICryptographyC
   public async getEncryptionHints(components: Component[]): Promise<HintsInRangeResponse> {
     try {
       validateComponents(components);
-      const response = await this.client.post(`${this.baseUrl}/api/v2/cryptography/hintsInRange`, { purls: components });
+      const response = await this.client.post(`${this.baseUrl}/v2/cryptography/hintsInRange`, { purls: components });
 
       if (response.ok) {
         const hints = await response.json();
