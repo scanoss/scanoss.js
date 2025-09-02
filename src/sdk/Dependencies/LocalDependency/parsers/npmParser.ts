@@ -71,7 +71,16 @@ export function packagelockParser(fileContent: string, filePath: string): Promis
   if (path.basename(filePath) != "package-lock.json")
     return Promise.resolve(results);
 
-  const packages = JSON.parse(fileContent)?.packages;
+  const lockData = JSON.parse(fileContent);
+  const lockfileVersion = lockData?.lockfileVersion;
+
+  // Handle v1 format (npm 5-6)
+  if (lockfileVersion === 1) {
+    return packagelockV1Parser(fileContent, filePath);
+  }
+
+  // Handle v2+ format (npm 7+) - original logic
+  const packages = lockData?.packages;
 
   if (!packages) return Promise.resolve(results);
 
@@ -84,6 +93,44 @@ export function packagelockParser(fileContent: string, filePath: string): Promis
     let req = value["version"];
     results.purls.push({ purl: purl, requirement: req });
   }
+
+  return Promise.resolve(results);
+}
+
+// Parse a package-lock.json v1 file (npm 5-6)
+export function packagelockV1Parser(fileContent: string, filePath: string): Promise<ILocalDependency> {
+  const results: ILocalDependency = { file: filePath, purls: [] };
+
+  if (path.basename(filePath) != "package-lock.json")
+    return Promise.resolve(results);
+
+  const lockData = JSON.parse(fileContent);
+  const dependencies = lockData?.dependencies;
+
+  if (!dependencies) return Promise.resolve(results);
+
+  // Recursively parse dependencies tree
+  function parseDependencies(deps: any) {
+    for (const [depName, depData] of Object.entries(deps)) {
+      if (typeof depData === 'object' && depData !== null) {
+        const { namespace, packageName } = getNameAndNameSpaceFromDep(depName);
+        const version = (depData as any).version;
+        
+        if (version) {
+          const purl = new PackageURL(PURL_TYPE, namespace, packageName, undefined, undefined, undefined).toString();
+          results.purls.push({ purl: purl, requirement: version });
+        }
+        
+        // Recursively handle nested dependencies
+        const nestedDeps = (depData as any).dependencies;
+        if (nestedDeps) {
+          parseDependencies(nestedDeps);
+        }
+      }
+    }
+  }
+
+  parseDependencies(dependencies);
 
   return Promise.resolve(results);
 }

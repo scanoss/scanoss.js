@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.21.0] (2025-09-03)
+### Added
+- Implemented parser for `package-lock.json` v1 files.
+
 ## [0.20.0] (2025-09-02)
 ### Added
 - Added vulnerability scanner to SDK with HTTP client support
@@ -127,3 +131,4 @@ All notable changes to this project will be documented in this file. See [standa
 ### [0.18.0](https://github.com/scanoss/scanoss.js/compare/v0.17.3...v0.18.0) (2025-08-28)
 ### [0.19.0](https://github.com/scanoss/scanoss.js/compare/v0.18.0...v0.19.0) (2025-08-29)
 ### [0.20.0](https://github.com/scanoss/scanoss.js/compare/v0.18.0...v0.19.0) (2025-09-02)
+### [0.21.0](https://github.com/scanoss/scanoss.js/compare/v0.18.0...v0.19.0) (2025-09-03)
