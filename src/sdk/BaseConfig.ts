@@ -24,7 +24,7 @@ export abstract class BaseConfig {
   private _CA_CERT = '';
 
   /** Whether to ignore CA certificate errors */
-  private _IGNORE_CA_CERT_ERR?: boolean = false;
+  private _IGNORE_CERT_ERRORS?: boolean = false;
 
   /**
    * Creates a new BaseConfig instance.
@@ -37,7 +37,7 @@ export abstract class BaseConfig {
       this.NO_PROXY = config.NO_PROXY || '';
       this.GRPC_PROXY = config.GRPC_PROXY || '';
       this.CA_CERT = config.CA_CERT || '';
-      this.IGNORE_CA_CERT_ERR = config.IGNORE_CA_CERT_ERR ?? false;
+      this.IGNORE_CERT_ERRORS = config.IGNORE_CERT_ERRORS ?? false;
       this.API_URL = config.API_URL || BaseConfig.getDefaultURL();
     }
     this.API_URL = this.API_URL || BaseConfig.getDefaultURL();
@@ -142,8 +142,8 @@ export abstract class BaseConfig {
    * Sets whether to ignore CA certificate errors.
    * @param value - True to ignore certificate errors, false otherwise
    */
-  set IGNORE_CA_CERT_ERR(value: boolean) {
-    this._IGNORE_CA_CERT_ERR = value;
+  set IGNORE_CERT_ERRORS(value: boolean) {
+    this._IGNORE_CERT_ERRORS = value;
   }
 
   /**
@@ -198,8 +198,8 @@ export abstract class BaseConfig {
    * Gets whether CA certificate errors should be ignored.
    * @returns True if certificate errors are ignored, false otherwise
    */
-  get IGNORE_CA_CERT_ERR(): boolean {
-    return this._IGNORE_CA_CERT_ERR;
+  get IGNORE_CERT_ERRORS(): boolean {
+    return this._IGNORE_CERT_ERRORS;
   }
 
 }
