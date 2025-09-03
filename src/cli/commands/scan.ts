@@ -177,7 +177,7 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
     if(options.threads) cfg.THREADS = options.threads;
     if(options.key) cfg.API_KEY = options.key;
     if (options.caCert) cfg.CA_CERT = options.caCert;
-    if (options.ignoreCertErrors) cfg.IGNORE_CA_CERT_ERR = true;
+    if (options.ignoreCertErrors) cfg.IGNORE_CERT_ERRORS = true;
     if (options.apiurl) cfg.API_URL = options.apiurl;
     if (options.api2url) cfg.API_URL = options.apiurl;
     if(options.grpc_proxy) cfg.GRPC_PROXY = options.grpc_proxy;

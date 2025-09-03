@@ -6,9 +6,6 @@ export class ScannerCfg extends BaseConfig {
 
   public API_KEY = '';
 
-  //Set to true to ignore self certificates issues
-  public IGNORE_CERT_ERRORS = false;
-
   // Level of concurrency
   public CONCURRENCY_LIMIT = 5;
 
