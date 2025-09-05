@@ -12,7 +12,8 @@ import {
   IDependencyClient,
   Status
 } from "../Clients/Dependency/IDependencyClient";
-import { ClientConfig } from "../Clients/http/HttpClient";
+import { ClientConfig } from "../Clients/interfaces/ClientConfig";
+
 
 export class DependencyScanner {
   private localDependency: LocalDependencies;

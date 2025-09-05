@@ -11,6 +11,7 @@ import {
   ComponentStatisticResponse
 } from "../Clients/Components/IComponentsClient";
 import { Component } from "../types/common/types";
+import { ClientConfig } from "../Clients/interfaces/ClientConfig";
 
 export class ComponentsScanner {
 
@@ -31,15 +32,15 @@ export class ComponentsScanner {
       );
       logger.log('Using gRPC client for components service');
     } else {
-      this.componentsClient = new ComponentsHttpClient(
-        this.config.API_KEY,
-        this.config.API_URL,
-        this.config.IGNORE_CERT_ERRORS,
-        this.config.HTTPS_PROXY,
-        this.config.CA_CERT
-      );
+      const clientCfg: ClientConfig = {
+        ...this.config,
+        HOST_URL: this.config.API_URL, // Only map the one that differs. TODO: Migrate to HOST URL on v1 version
+      };
+      this.componentsClient = new ComponentsHttpClient(clientCfg);
       logger.log('Using HTTP client for components service');
     }
+
+
   }
 
   /**
@@ -104,7 +105,7 @@ export class ComponentsScanner {
     try {
       // First search for the component
       const searchResponse = await this.searchComponents({ search: componentName, limit: 1 });
-      
+
       if (searchResponse.components.length === 0) {
         throw new Error(`No component found with name: ${componentName}`);
       }

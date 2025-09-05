@@ -1,15 +1,30 @@
-import { ClientConfig, HttpClient } from "../http/HttpClient";
+import { HttpClient } from "../http/HttpClient";
 import { DependencyRequest, DependencyResponse, IDependencyClient } from "./IDependencyClient";
+import { ClientConfig } from "../interfaces/ClientConfig";
 
+/**
+ * HTTP client for dependency-related API operations.
+ * Provides methods to retrieve dependency information for files and components.
+ */
 export class DependencyHttpClient extends HttpClient implements IDependencyClient {
+  /**
+   * Creates a new DependencyHttpClient instance.
+   * @param clientConfig - Configuration for the HTTP client
+   */
   constructor(clientConfig: ClientConfig) {
     super(clientConfig);
   }
 
+  /**
+   * Retrieves dependency information for the specified files and components.
+   * @param req - Request containing files and their associated components/purls
+   * @returns Promise resolving to dependency information for each file
+   * @throws Error if the request fails
+   */
   public async getDependencies(req: DependencyRequest): Promise<DependencyResponse> {
     try{
-      const baseURL = this.hostURL();
-      const response = await this.post(`${baseURL}/v2/dependencies/dependencies`, req);
+      const URL = `${this.hostURL()}/v2/dependencies/dependencies`;
+      const response = await this.post(URL, req);
       if (response.ok) {
         return this.toDependencyResponse(await response.json());
       }
@@ -20,7 +35,12 @@ export class DependencyHttpClient extends HttpClient implements IDependencyClien
       throw this.handleError(error, 'Failed to get dependencies');
     }
   }
-  // TODO: Remove this adapter with new protobuf definition. This method keeps backward compatibility
+  /**
+   * Converts API response to DependencyResponse format.
+   * TODO: Remove this adapter with new protobuf definition. This method keeps backward compatibility
+   * @param dependencies - Raw API response
+   * @returns Formatted DependencyResponse
+   */
   private toDependencyResponse(dependencies: any): DependencyResponse{
     // Convert files array to filesList
     const filesList = dependencies.files.map(file => ({

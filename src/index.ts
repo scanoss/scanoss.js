@@ -1,6 +1,9 @@
 // *** Common exports *** //
 export * from './sdk/types/common/types';
 
+// *** Client interfaces *** //
+export * from './sdk/Clients/interfaces/ClientConfig';
+
 // *** Code scanner exports *** //
 export * from './sdk/scanner/Scanner';
 export * from './sdk/scanner/ScannerTypes';
