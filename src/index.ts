@@ -28,6 +28,13 @@ export * from './sdk/Vulnerability/VulnerabilityScanner';
 export * from './sdk/types/vulnerability/types'
 export * from './sdk/Vulnerability/VulnerabilityCfg'
 
+// *** Components scanner exports *** //
+export * from './sdk/Components/ComponentsScanner';
+export * from './sdk/Components/ComponentsScannerCfg';
+export * from './sdk/Clients/Components/IComponentsClient';
+export * from './sdk/Clients/Components/ComponentsHttpClient';
+export * from './sdk/Clients/Components/ComponentsGRPCClient';
+
 // *** Report export *** //
 export * from './sdk/Report/Report';
 export * from './sdk/Report/DataLayer/DataLayerTypes';
