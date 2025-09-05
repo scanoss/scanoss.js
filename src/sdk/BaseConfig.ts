@@ -17,7 +17,9 @@ export abstract class BaseConfig {
   /** API URL for service connections */
   private _API_URL: string = '';
 
-  /** gRPC proxy server URL */
+  /** gRPC proxy server URL
+   * @deprecated since v0.20.1 - Use HTTP_PROXY or HTTPS_PROXY instead. Will be removed in v1
+   * */
   private _GRPC_PROXY: string = '';
 
   /** Path to the CA certificate file for SSL/TLS connections */
@@ -118,6 +120,7 @@ export abstract class BaseConfig {
   /**
    * Sets the gRPC proxy server URL.
    * @param value - gRPC proxy URL
+   * @deprecated since v0.20.1 - Use HTTP_PROXY or HTTPS_PROXY instead. Will be removed in v1
    */
   set GRPC_PROXY(value: string) {
     this._GRPC_PROXY = value;
@@ -180,6 +183,7 @@ export abstract class BaseConfig {
 
   /**
    * Gets the gRPC proxy server URL.
+   * @deprecated since v0.20.1 - Use HTTP_PROXY or HTTPS_PROXY instead. Will be removed in v1
    * @returns gRPC proxy URL
    */
   get GRPC_PROXY(): string {

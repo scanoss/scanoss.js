@@ -178,9 +178,16 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
     if(options.key) cfg.API_KEY = options.key;
     if (options.caCert) cfg.CA_CERT = options.caCert;
     if (options.ignoreCertErrors) cfg.IGNORE_CERT_ERRORS = true;
+    if (options.proxy) {
+      cfg.HTTPS_PROXY = options.proxy;
+      cfg.HTTP_PROXY = options.proxy;
+    }
     if (options.apiurl) cfg.API_URL = options.apiurl;
-    if (options.api2url) cfg.API_URL = options.apiurl;
-    if(options.grpc_proxy) cfg.GRPC_PROXY = options.grpc_proxy;
+
+    //TODO: Deprecated. Remove gRPC config on v1 version.
+    if (options.api2url) cfg.API_URL = options.apiurl; //TODO: Deprecated. Remove on v1 version
+    if(options.grpc_proxy) cfg.GRPC_PROXY = options.grpc_proxy; //TODO: Deprecated. Remove on v1 version
+
     const cryptoScanner = new CryptographyScanner(cfg);
 
 

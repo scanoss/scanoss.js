@@ -4,7 +4,7 @@ import { Transport } from '../Transport/Transport';
 import { Utils } from '../../Utils/Utils';
 import FormData from 'form-data';
 
-export interface HttpProxyConfig {
+export interface ClientConfig {
     PAC_PROXY?: string;
     API_KEY?: string;
     NO_PROXY?: string;
@@ -17,9 +17,9 @@ export interface HttpProxyConfig {
 export class HttpClient extends Transport<Response>  {
 
     private readonly proxyAgent: ProxyAgent;
-    protected cfg: HttpProxyConfig;
+    protected cfg: ClientConfig;
 
-    constructor(cfg?: HttpProxyConfig){
+    constructor(cfg?: ClientConfig){
       super();
       this.cfg = cfg;
       this.init();
@@ -50,7 +50,7 @@ export class HttpClient extends Transport<Response>  {
       if (caCertPath) Utils.loadCaCertFromFile(caCertPath);
     }
 
-    async get(url: string): Promise<Response> {
+    protected async get(url: string): Promise<Response> {
         return await fetch(url, {
             agent: this.proxyAgent,
             method: 'get',
@@ -60,7 +60,7 @@ export class HttpClient extends Transport<Response>  {
         });
     }
 
-  async post(url: string, body: any): Promise<Response> {
+  protected async post(url: string, body: any): Promise<Response> {
     return await fetch(url, {
       agent: this.proxyAgent,
       method: 'post',
@@ -72,7 +72,7 @@ export class HttpClient extends Transport<Response>  {
     });
   }
 
-  async delete(url: string): Promise<Response> {
+  protected async delete(url: string): Promise<Response> {
     return await fetch(url, {
       agent: this.proxyAgent,
       method: 'delete',
@@ -82,7 +82,7 @@ export class HttpClient extends Transport<Response>  {
     });
   }
 
-  async put(url: string, body: FormData): Promise<Response> {
+  protected async put(url: string, body: FormData): Promise<Response> {
     return await fetch(url, {
       agent: this.proxyAgent,
       method: 'put',
@@ -98,5 +98,9 @@ export class HttpClient extends Transport<Response>  {
       return new Error(`${context}: ${error.message}`);
     }
     return new Error(`${context}: Unknown error occurred`);
+  }
+
+  protected hostURL():string {
+      return this.cfg.HOST_URL;
   }
 }
