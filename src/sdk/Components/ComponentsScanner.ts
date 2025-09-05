@@ -33,7 +33,12 @@ export class ComponentsScanner {
       logger.log('Using gRPC client for components service');
     } else {
       const clientCfg: ClientConfig = {
-        ...this.config,
+        API_KEY: this.config.API_KEY,
+        HTTP_PROXY: this.config.HTTP_PROXY,
+        HTTPS_PROXY: this.config.HTTPS_PROXY,
+        NO_PROXY: this.config.NO_PROXY,
+        CA_CERT: this.config.CA_CERT,
+        IGNORE_CERT_ERRORS: this.config.IGNORE_CERT_ERRORS,
         HOST_URL: this.config.API_URL, // Only map the one that differs. TODO: Migrate to HOST URL on v1 version
       };
       this.componentsClient = new ComponentsHttpClient(clientCfg);
