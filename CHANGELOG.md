@@ -4,10 +4,14 @@ All notable changes to this project will be documented in this file. See [standa
 
 
 ## [0.22.0] (2025-09-05)
+### Added
+- Added ComponentsClient SDK with gRPC and HTTP client implementations
+- Added components CLI command for component scanning functionality
 ### Changed
 - Removed `api` prefix from dependency and vulnerability API URLs
-### Fixed
-- Fixed license field mapping for dependency responses (spdx_id, is_spdx_approved)
+- Replaced gRPC client by HTTP client on cryptography scanner
+- Implemented client config on dependency HTTP client
+- Implemented client config on vulnerability HTTP client
 
 ## [0.21.1] (2025-09-03)
 ### Changed

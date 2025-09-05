@@ -6,6 +6,7 @@ import { depHandler } from "../commands/dep";
 import { scanHandler } from "../commands/scan";
 import { wfpHandler } from "../commands/wfp";
 import { cryptoHandler } from '../commands/crypto';
+import { componentsHandler } from '../commands/components';
 
 function CLIErrorHandler(e: Error) {
   console.error(" ");
@@ -111,6 +112,47 @@ async function main() {
     });
   });
 
+  // Components command
+  const components = new Command("components");
+  components.description("Component intelligence operations");
+  components.addArgument(new Argument("<action>", "Action to perform").choices(["search", "versions", "stats", "info"]));
+  
+  // Common options
+  components.addOption(new Option("-o, --output <filename>", "Output result file name (optional - default stdout)"));
+  components.addOption(new Option("    --apiurl <apiurl>", "SCANOSS API URL (optional - default: https://api.osskb.org)"));
+  components.addOption(new Option("-k, --key <key>", "SCANOSS API Key token (optional - not required for default OSSKB URL)"));
+  components.addOption(new Option("    --ignore-cert-errors", "Ignore self signed certificate errors"));
+  components.addOption(new Option("    --ca-cert <cert>", "Specify a path for a cert used in SSL/TLS connection"));
+  components.addOption(new Option("    --proxy <proxy>", "Proxy URL to use for connections (optional)"));
+  components.addOption(new Option("    --grpc", "Use gRPC instead of HTTP for API calls"));
+  components.addOption(new Option("    --debug", "Enables debugging"));
+  
+  // Search specific options
+  components.addOption(new Option("-q, --query <query>", "Search query string"));
+  components.addOption(new Option("    --vendor <vendor>", "Vendor name to search for"));
+  components.addOption(new Option("    --component <component>", "Component name to search for"));
+  components.addOption(new Option("    --package <package>", "Package type (github, maven, npm, etc.)"));
+  components.addOption(new Option("    --limit <limit>", "Maximum number of results to return"));
+  components.addOption(new Option("    --offset <offset>", "Offset for pagination"));
+  
+  // Versions specific options
+  components.addOption(new Option("    --purl <purl>", "Package URL for version lookup"));
+  
+  // Stats specific options
+  components.addOption(new Option("    --purls <purls>", "Comma-separated list of PURLs for statistics"));
+  components.addOption(new Option("    --purls-file <file>", "File containing PURLs (one per line)"));
+  
+  // Info specific options
+  components.addOption(new Option("    --name <name>", "Component name for info lookup"));
+  components.addOption(new Option("    --include-versions", "Include version information in info response"));
+  components.addOption(new Option("    --include-stats", "Include statistics in info response"));
+
+  components.action((action, options) => {
+    componentsHandler(action, options).catch((e) => {
+      CLIErrorHandler(e);
+    });
+  });
+
   const program = new Command();
   program.version(Utils.getPackageVersion());
   program.description("The SCANOSS JS package provides a simple, easy to consume module for interacting with SCANOSS APIs/Engine.");
@@ -118,6 +160,7 @@ async function main() {
   program.addCommand(dependencies);
   program.addCommand(fingerprint);
   program.addCommand(cryptography);
+  program.addCommand(components);
 
   await program.parseAsync(process.argv);
 

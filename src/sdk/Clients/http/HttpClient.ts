@@ -3,17 +3,9 @@ import { ProxyAgent } from 'proxy-agent';
 import { Transport } from '../Transport/Transport';
 import { Utils } from '../../Utils/Utils';
 import FormData from 'form-data';
+import { ClientConfig } from "../interfaces/ClientConfig";
 
-export interface ClientConfig {
-    PAC_PROXY?: string;
-    API_KEY?: string;
-    NO_PROXY?: string;
-    HTTP_PROXY?: string;
-    HTTPS_PROXY?: string;
-    IGNORE_CERT_ERRORS?: boolean;
-    CA_CERT?: string;
-    HOST_URL: string;
-}
+
 export class HttpClient extends Transport<Response>  {
 
     private readonly proxyAgent: ProxyAgent;

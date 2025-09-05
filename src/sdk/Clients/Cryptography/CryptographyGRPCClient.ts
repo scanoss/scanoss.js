@@ -8,6 +8,9 @@ import {
 import { logger } from '../../Logger';
 import { Component } from "../../types/common/types";
 
+/**
+ * @deprecated This gRPC client is deprecated. Use CryptographyHttpClient instead.
+ */
 export class CryptographyGRPCClient extends BaseGRPCClient implements ICryptographyClient {
   public static readonly clientName = 'Cryptography gRPC Client';
   private client: GrpcCryptographyClient;

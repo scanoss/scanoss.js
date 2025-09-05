@@ -1,12 +1,10 @@
-export enum Protocol {
-  REST = 'REST',
-  GRPC = 'GRPC'
-}
-
 export interface ClientConfig {
-  token?: string;
-  hostName: string;
-  proxyHost?: string;
-  caCertPath?: string;
-  protocol?: Protocol;
+  PAC_PROXY?: string;
+  API_KEY?: string;
+  NO_PROXY?: string;
+  HTTP_PROXY?: string;
+  HTTPS_PROXY?: string;
+  IGNORE_CERT_ERRORS?: boolean;
+  CA_CERT?: string;
+  HOST_URL: string;
 }

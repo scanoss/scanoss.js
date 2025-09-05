@@ -5,7 +5,8 @@ import { BaseCryptographyScanner } from "../../BaseCryptographyScanner";
 import { HintsInRangeResponse } from "../../../Clients/Cryptography/ICryptographyClient";
 import { Component } from "../../../types/common/types";
 import { CryptographyHttpClient } from "../../../Clients/Cryptography/CryptographyHttpClient";
-import { ClientConfig } from "../../../Clients/http/HttpClient";
+import { ClientConfig } from "../../../Clients/interfaces/ClientConfig";
+
 
 /**
  * Scanner for detecting cryptographic hints in software components.
@@ -27,7 +28,12 @@ export class ComponentHintScanner
    */
   public async scan(req: Component[]):Promise<HintsInRangeResponse> {
     const clientCfg: ClientConfig = {
-      ...this.config,
+      API_KEY: this.config.API_KEY,
+      HTTP_PROXY: this.config.HTTP_PROXY,
+      HTTPS_PROXY: this.config.HTTPS_PROXY,
+      NO_PROXY: this.config.NO_PROXY,
+      CA_CERT: this.config.CA_CERT,
+      IGNORE_CERT_ERRORS: this.config.IGNORE_CERT_ERRORS,
       HOST_URL: this.config.API_URL, // Only map the one that differs. TODO: Migrate to HOST URL on v1 version
     };
     const cryptographyClient = new CryptographyHttpClient(clientCfg);

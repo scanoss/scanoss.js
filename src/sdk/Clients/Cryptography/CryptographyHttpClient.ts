@@ -1,4 +1,4 @@
-import { ClientConfig, HttpClient } from "../http/HttpClient";
+import { HttpClient } from "../http/HttpClient";
 import { logger } from "../../Logger";
 import {
   ICryptographyClient,
@@ -7,17 +7,33 @@ import {
 } from "./ICryptographyClient";
 import { validateComponents } from "../helper/clientHelper";
 import { Component } from "../../types/common/types";
+import { ClientConfig } from "../interfaces/ClientConfig";
 
+/**
+ * HTTP client for cryptography-related API operations.
+ * Provides methods to retrieve cryptographic algorithms and encryption hints for components.
+ */
 export class CryptographyHttpClient extends HttpClient implements ICryptographyClient {
+  /**
+   * Creates a new CryptographyHttpClient instance.
+   * @param clientConfig - Configuration for the HTTP client
+   */
   constructor(clientConfig: ClientConfig) {
     super(clientConfig);
   }
 
+  /**
+   * Retrieves cryptographic algorithms for the specified components.
+   * @param components - Array of components to analyze for cryptographic algorithms
+   * @returns Promise resolving to algorithm information for each component
+   * @throws Error if the request fails or components validation fails
+   */
   public async getAlgorithms(components: Component[]): Promise<AlgorithmResponse> {
     try {
       const baseURL = this.hostURL();
       validateComponents(components);
-      const response = await this.post(`${baseURL}/v2/cryptography/algorithms`, { purls: components });
+      const URL = `${this.hostURL()}/v2/cryptography/algorithms`;
+      const response = await this.post(URL, { purls: components });
 
       if (response.ok) {
         const algorithms = await response.json();
@@ -34,11 +50,17 @@ export class CryptographyHttpClient extends HttpClient implements ICryptographyC
     }
   }
 
+  /**
+   * Retrieves encryption hints for the specified components.
+   * @param components - Array of components to analyze for encryption hints
+   * @returns Promise resolving to encryption hints information for each component
+   * @throws Error if the request fails or components validation fails
+   */
   public async getEncryptionHints(components: Component[]): Promise<HintsInRangeResponse> {
     try {
-      const baseURL = this.hostURL();
       validateComponents(components);
-      const response = await this.post(`${baseURL}/v2/cryptography/hintsInRange`, { purls: components });
+      const URL = `${this.hostURL()}/v2/cryptography/hintsInRange`;
+      const response = await this.post(URL, { purls: components });
 
       if (response.ok) {
         const hints = await response.json();

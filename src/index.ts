@@ -1,6 +1,9 @@
 // *** Common exports *** //
 export * from './sdk/types/common/types';
 
+// *** Client interfaces *** //
+export * from './sdk/Clients/interfaces/ClientConfig';
+
 // *** Code scanner exports *** //
 export * from './sdk/scanner/Scanner';
 export * from './sdk/scanner/ScannerTypes';
@@ -27,6 +30,13 @@ export * from './sdk/Cryptography/CryptographyTypes';
 export * from './sdk/Vulnerability/VulnerabilityScanner';
 export * from './sdk/types/vulnerability/types'
 export * from './sdk/Vulnerability/VulnerabilityCfg'
+
+// *** Components scanner exports *** //
+export * from './sdk/Components/ComponentsScanner';
+export * from './sdk/Components/ComponentsScannerCfg';
+export * from './sdk/Clients/Components/IComponentsClient';
+export * from './sdk/Clients/Components/ComponentsHttpClient';
+export * from './sdk/Clients/Components/ComponentsGRPCClient';
 
 // *** Report export *** //
 export * from './sdk/Report/Report';

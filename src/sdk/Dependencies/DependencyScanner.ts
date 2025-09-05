@@ -12,7 +12,8 @@ import {
   IDependencyClient,
   Status
 } from "../Clients/Dependency/IDependencyClient";
-import { ClientConfig } from "../Clients/http/HttpClient";
+import { ClientConfig } from "../Clients/interfaces/ClientConfig";
+
 
 export class DependencyScanner {
   private localDependency: LocalDependencies;
@@ -26,7 +27,12 @@ export class DependencyScanner {
     else this.config = new DependencyScannerCfg();
 
     const clientCfg: ClientConfig = {
-      ...this.config,
+      API_KEY: this.config.API_KEY,
+      HTTP_PROXY: this.config.HTTP_PROXY,
+      HTTPS_PROXY: this.config.HTTPS_PROXY,
+      NO_PROXY: this.config.NO_PROXY,
+      CA_CERT: this.config.CA_CERT,
+      IGNORE_CERT_ERRORS: this.config.IGNORE_CERT_ERRORS,
       HOST_URL: this.config.API_URL, // Only map the one that differs. TODO: Migrate to HOST URL on v1 version
     };
     this.dependencyClient = new DependencyHttpClient(clientCfg);
@@ -83,13 +89,13 @@ export class DependencyScanner {
         }
       } catch (e) {
         logger.debug(`Error while scanning dependencies: ${JSON.stringify(request, null, 2)}`);
-        err = e.message;
+        err = e;
         failedRequests.push(request);
       }
     }
 
     if (err) {
-      logger.error(`ERROR: ${err}`);
+      logger.error(err);
     }
 
     if (failedRequests.length > 0) {
