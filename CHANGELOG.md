@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+
+## [0.22.0] (2025-09-05)
+### Changed
+- Removed `api` prefix from dependency and vulnerability API URLs
+### Fixed
+- Fixed license field mapping for dependency responses (spdx_id, is_spdx_approved)
+
 ## [0.21.1] (2025-09-03)
 ### Changed
 - Keep basic compatability across all the scanners
@@ -18,12 +25,12 @@ All notable changes to this project will be documented in this file. See [standa
 ### Changed
 - switched cryptography scanner over to use cryptography http client
 
-
 ## [0.19.0] (2025-08-29)
 ### Changed
-- Removed `api` prefix from dependency and vulnerability API URLs
-### Fixed
-- Fixed license field mapping for dependency responses (spdx_id, is_spdx_approved)  
+- Used HTTP protocol for cryptography scanning
+- Implemented ´ClientConfig´ on ´VulnerabilityHttpClient.ts´, ´CryptographyHttpClient.ts´ and ´DependencyHttpClient.ts´files
+### Added
+- Added documentation about deprecated scanner configuration
 
 ## [0.18.0] (2025-08-28)
 ### Added 
@@ -137,3 +144,4 @@ All notable changes to this project will be documented in this file. See [standa
 ### [0.20.0](https://github.com/scanoss/scanoss.js/compare/v0.18.0...v0.19.0) (2025-09-02)
 ### [0.21.0](https://github.com/scanoss/scanoss.js/compare/v0.18.0...v0.19.0) (2025-09-03)
 ### [0.21.1](https://github.com/scanoss/scanoss.js/compare/v0.18.0...v0.19.0) (2025-09-03)
+### [0.22.0](https://github.com/scanoss/scanoss.js/compare/v0.18.0...v0.19.0) (2025-09-05)
