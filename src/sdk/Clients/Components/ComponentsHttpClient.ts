@@ -74,7 +74,7 @@ export class ComponentsHttpClient extends HttpClient implements IComponentsClien
       const response = await this.get(URL);
 
       if (response.ok) {
-        return await response.json() as ComponentVersionResponse;
+        return this.adaptToComponentVersionResponse(await response.json());
       }
 
       const errorText = await response.text();
@@ -112,4 +112,20 @@ export class ComponentsHttpClient extends HttpClient implements IComponentsClien
       throw this.handleError(error, 'Failed to get component statistics');
     }
   }
+
+  private adaptToComponentVersionResponse(response: any): ComponentVersionResponse {
+    response.component.versions = response.component.versions.map((version) => {
+      version.licenses = version.licenses.map((l) => {
+        return {
+          name: l.name,
+          spdxId: l.spdx_id,
+          isSpdxVersion: l.is_spdx_approved,
+          url: l.url,
+        }
+      });
+      return version;
+    });
+    return response;
+  }
+
 }
