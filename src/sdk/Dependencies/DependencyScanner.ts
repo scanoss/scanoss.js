@@ -89,13 +89,13 @@ export class DependencyScanner {
         }
       } catch (e) {
         logger.debug(`Error while scanning dependencies: ${JSON.stringify(request, null, 2)}`);
-        err = e.message;
+        err = e;
         failedRequests.push(request);
       }
     }
 
     if (err) {
-      logger.error(`ERROR: ${err}`);
+      logger.error(err);
     }
 
     if (failedRequests.length > 0) {
