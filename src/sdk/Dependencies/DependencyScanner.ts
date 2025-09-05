@@ -12,6 +12,7 @@ import {
   IDependencyClient,
   Status
 } from "../Clients/Dependency/IDependencyClient";
+import { ClientConfig } from "../Clients/http/HttpClient";
 
 export class DependencyScanner {
   private localDependency: LocalDependencies;
@@ -23,8 +24,12 @@ export class DependencyScanner {
   constructor(cfg?: DependencyScannerCfg) {
     if (cfg) this.config = cfg;
     else this.config = new DependencyScannerCfg();
-    this.dependencyClient = new DependencyHttpClient(this.config.API_KEY, this.config.API_URL,this.config.IGNORE_CERT_ERRORS,
-      this.config.HTTPS_PROXY, this.config.CA_CERT);
+
+    const clientCfg: ClientConfig = {
+      ...this.config,
+      HOST_URL: this.config.API_URL, // Only map the one that differs. TODO: Migrate to HOST URL on v1 version
+    };
+    this.dependencyClient = new DependencyHttpClient(clientCfg);
     this.localDependency = new LocalDependencies();
   }
 
