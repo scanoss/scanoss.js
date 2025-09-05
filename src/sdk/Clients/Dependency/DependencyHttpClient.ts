@@ -1,6 +1,7 @@
 import { HttpClient } from "../http/HttpClient";
 import { DependencyRequest, DependencyResponse, IDependencyClient } from "./IDependencyClient";
 import { ClientConfig } from "../interfaces/ClientConfig";
+import { logger } from "../../Logger";
 
 /**
  * HTTP client for dependency-related API operations.
@@ -24,6 +25,7 @@ export class DependencyHttpClient extends HttpClient implements IDependencyClien
   public async getDependencies(req: DependencyRequest): Promise<DependencyResponse> {
     try{
       const URL = `${this.hostURL()}/v2/dependencies/dependencies`;
+      logger.debug(`Get Dependencies for ${URL}`);
       const response = await this.post(URL, req);
       if (response.ok) {
         return this.toDependencyResponse(await response.json());
