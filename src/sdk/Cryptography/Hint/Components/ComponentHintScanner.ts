@@ -5,7 +5,8 @@ import { BaseCryptographyScanner } from "../../BaseCryptographyScanner";
 import { HintsInRangeResponse } from "../../../Clients/Cryptography/ICryptographyClient";
 import { Component } from "../../../types/common/types";
 import { CryptographyHttpClient } from "../../../Clients/Cryptography/CryptographyHttpClient";
-import { ClientConfig } from "../../../Clients/http/HttpClient";
+import { ClientConfig } from "../../../Clients/interfaces/ClientConfig";
+
 
 /**
  * Scanner for detecting cryptographic hints in software components.

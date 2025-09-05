@@ -6,7 +6,8 @@ import { BaseCryptographyScanner } from "../../BaseCryptographyScanner";
 import { AlgorithmResponse } from "../../../Clients/Cryptography/ICryptographyClient";
 import { Component } from "../../../types/common/types";
 import { CryptographyHttpClient } from "../../../Clients/Cryptography/CryptographyHttpClient";
-import { ClientConfig } from "../../../Clients/http/HttpClient";
+import { ClientConfig } from "../../../Clients/interfaces/ClientConfig";
+
 
 /**
  * Scanner for detecting cryptographic algorithms in software components.

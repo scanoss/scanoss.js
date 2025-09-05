@@ -3,6 +3,9 @@ import * as DependenciesMessages from '../Grpc/scanoss/api/dependencies/v2/scano
 import * as CommonMessages from '../Grpc/scanoss/api/common/v2/scanoss-common_pb';
 import { BaseGRPCClient } from "../Grpc/BaseGRPCClient";
 
+/**
+ * @deprecated This gRPC client is deprecated. Use DependencyHttpClient instead.
+ */
 export class DependencyGRPCClient extends BaseGRPCClient{
   public static readonly clientName = 'Dependency gRPC Client';
   private client: DependenciesClient;

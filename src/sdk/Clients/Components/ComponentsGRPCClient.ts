@@ -9,6 +9,9 @@ import {
 } from "./IComponentsClient";
 import { Component } from "../../types/common/types";
 
+/**
+ * @deprecated This gRPC client is deprecated. Use ComponentsHttpClient instead.
+ */
 export class ComponentsGRPCClient extends BaseGRPCClient implements IComponentsClient {
   public static readonly clientName = 'Components gRPC Client';
 

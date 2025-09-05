@@ -10,24 +10,27 @@ import {
 } from "./IComponentsClient";
 import { Component } from "../../types/common/types";
 import { validateComponents } from "../helper/clientHelper";
+import { ClientConfig } from "../interfaces/ClientConfig";
 
+/**
+ * HTTP client for components-related API operations.
+ * Provides methods to search components, get component versions, and retrieve component statistics.
+ */
 export class ComponentsHttpClient extends HttpClient implements IComponentsClient {
-
-  private client: HttpClient;
-  private readonly baseUrl: string;
-
-  constructor(token: string, hostName: string, ignoreCertErrors: boolean = false, proxyHost?: string, caCertPath?: string) {
-    super();
-    this.client = new HttpClient({
-      HOST_URL: hostName,
-      API_KEY: token,
-      HTTPS_PROXY: proxyHost,
-      CA_CERT: caCertPath,
-      IGNORE_CERT_ERRORS: ignoreCertErrors,
-    });
-    this.baseUrl = hostName;
+  /**
+   * Creates a new ComponentsHttpClient instance.
+   * @param clientConfig - Configuration for the HTTP client
+   */
+  constructor(clientConfig: ClientConfig) {
+    super(clientConfig);
   }
 
+  /**
+   * Searches for components based on specified criteria.
+   * @param req - Search request with optional search terms, vendor, component, package, limit, and offset
+   * @returns Promise resolving to search results containing matching components
+   * @throws Error if the request fails
+   */
   public async searchComponents(req: ComponentSearchRequest): Promise<ComponentSearchResponse> {
     try {
       const params = new URLSearchParams();
@@ -38,8 +41,8 @@ export class ComponentsHttpClient extends HttpClient implements IComponentsClien
       if (req.limit) params.append('limit', req.limit.toString());
       if (req.offset) params.append('offset', req.offset.toString());
 
-      const url = `${this.baseUrl}/v2/components/search?${params.toString()}`;
-      const response = await this.client.get(url);
+      const URL = `${this.hostURL()}/v2/components/search?${params.toString()}`;
+      const response = await this.get(URL);
 
       if (response.ok) {
         return await response.json() as ComponentSearchResponse;
@@ -55,14 +58,20 @@ export class ComponentsHttpClient extends HttpClient implements IComponentsClien
     }
   }
 
+  /**
+   * Retrieves available versions for a specific component.
+   * @param req - Request containing the component PURL and optional limit
+   * @returns Promise resolving to component version information
+   * @throws Error if the request fails
+   */
   public async getComponentVersions(req: ComponentVersionRequest): Promise<ComponentVersionResponse> {
     try {
       const params = new URLSearchParams();
       params.append('purl', req.purl);
       if (req.limit) params.append('limit', req.limit.toString());
 
-      const url = `${this.baseUrl}/v2/components/versions?${params.toString()}`;
-      const response = await this.client.get(url);
+      const URL = `${this.hostURL()}/v2/components/versions?${params.toString()}`;
+      const response = await this.get(URL);
 
       if (response.ok) {
         return await response.json() as ComponentVersionResponse;
@@ -78,10 +87,17 @@ export class ComponentsHttpClient extends HttpClient implements IComponentsClien
     }
   }
 
+  /**
+   * Retrieves statistical information for the specified components.
+   * @param components - Array of components to analyze for statistics
+   * @returns Promise resolving to statistical information for each component
+   * @throws Error if the request fails or components validation fails
+   */
   public async getComponentStatistics(components: Component[]): Promise<ComponentStatisticResponse> {
     try {
       validateComponents(components);
-      const response = await this.client.post(`${this.baseUrl}/v2/components/statistics`, { purls: components });
+      const URL = `${this.hostURL()}/v2/components/statistics`;
+      const response = await this.post(URL, { purls: components });
 
       if (response.ok) {
         return await response.json() as ComponentStatisticResponse;
