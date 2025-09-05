@@ -1,26 +1,15 @@
-import { HttpClient } from "../http/HttpClient";
+import { ClientConfig, HttpClient } from "../http/HttpClient";
 import { DependencyRequest, DependencyResponse, IDependencyClient } from "./IDependencyClient";
 
 export class DependencyHttpClient extends HttpClient implements IDependencyClient {
-
-  private client: HttpClient;
-  private readonly baseUrl: string;
-
-  constructor(token: string, hostName: string, ignoreCertErrors: boolean = false,proxyHost?: string, caCertPath?: string) {
-    super();
-    this.client = new HttpClient({
-      HOST_URL: hostName,
-      API_KEY: token,
-      HTTPS_PROXY: proxyHost,
-      CA_CERT: caCertPath,
-      IGNORE_CERT_ERRORS: ignoreCertErrors
-    });
-    this.baseUrl = hostName;
+  constructor(clientConfig: ClientConfig) {
+    super(clientConfig);
   }
 
   public async getDependencies(req: DependencyRequest): Promise<DependencyResponse> {
     try{
-      const response = await this.client.post(`${this.baseUrl}/v2/dependencies/dependencies`, req);
+      const baseURL = this.hostURL();
+      const response = await this.post(`${baseURL}/v2/dependencies/dependencies`, req);
       if (response.ok) {
         return this.toDependencyResponse(await response.json());
       }
