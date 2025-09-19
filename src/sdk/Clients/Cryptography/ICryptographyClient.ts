@@ -30,7 +30,7 @@ export interface Status {
 }
 
 export interface AlgorithmResponse {
-  purls: ComponentAlgorithm[];
+  components: ComponentAlgorithm[];
   status: Status;
 }
 
@@ -40,7 +40,7 @@ export interface ComponentHintResponse extends Purl {
 }
 
 export interface HintsInRangeResponse {
-  purls: ComponentHintResponse[];
+  components: ComponentHintResponse[];
   status: Status;
 }
 

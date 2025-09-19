@@ -120,7 +120,7 @@ export class CryptographyGRPCClient extends BaseGRPCClient implements ICryptogra
 
   private transformGrpcAlgorithmResponse(grpcResponse: any): AlgorithmResponse {
     return {
-      purls: grpcResponse.purlsList?.map((purl: any) => ({
+      components: grpcResponse.components?.map((purl: any) => ({
         purl: purl.purl,
         version: purl.version || '',
         algorithms: purl.algorithmsList?.map((algo: any) => ({
@@ -137,7 +137,7 @@ export class CryptographyGRPCClient extends BaseGRPCClient implements ICryptogra
 
   private transformGrpcHintsResponse(grpcResponse: any): HintsInRangeResponse {
     return {
-      purls: grpcResponse.purlsList?.map((purl: any) => ({
+      components: grpcResponse.components?.map((purl: any) => ({
         purl: purl.purl,
         version: purl.version || '',
         versions: purl.versionsList || [],

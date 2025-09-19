@@ -44,8 +44,6 @@ export class ComponentsScanner {
       this.componentsClient = new ComponentsHttpClient(clientCfg);
       logger.log('Using HTTP client for components service');
     }
-
-
   }
 
   /**
