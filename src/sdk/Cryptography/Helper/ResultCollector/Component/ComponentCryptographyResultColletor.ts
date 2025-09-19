@@ -43,11 +43,11 @@ export class ComponentCryptographyResultCollector {
    * @param algorithmResults The algorithm detection results to collect.
    */
   public collectAlgorithmResults(algorithmResults: AlgorithmResponse):void {
-    algorithmResults.purls.forEach((p) => {
-      if (p.version) {
-        const version = p.version.startsWith('v') ? p.version.slice(1) : p.version;
-        const result = this.getOrCreateResult(p.purl,version);
-        result.algorithms = p.algorithms;
+    algorithmResults.components.forEach((c) => {
+      if (c.version) {
+        const version = c.version.startsWith('v') ? c.version.slice(1) : c.version;
+        const result = this.getOrCreateResult(c.purl,version);
+        result.algorithms = c.algorithms;
       }
     });
   }
@@ -57,11 +57,11 @@ export class ComponentCryptographyResultCollector {
    * @param hintResults The hint detection results to collect.
    */
   public collectHintResults(hintResults: HintsInRangeResponse):void {
-    hintResults.purls.forEach((h) => {
-      if (h.versions.length > 0) {
-        const version = h.versions[0].startsWith('v') ? h.versions[0].slice(1) : h.versions[0];
-        const result = this.getOrCreateResult(h.purl, version);
-        result.hints = h.hints;
+    hintResults.components.forEach((c) => {
+      if (c.versions.length > 0) {
+        const version = c.versions[0].startsWith('v') ? c.versions[0].slice(1) : c.versions[0];
+        const result = this.getOrCreateResult(c.purl, version);
+        result.hints = c.hints;
       }
     });
   }

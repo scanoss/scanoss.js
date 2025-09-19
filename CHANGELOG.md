@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.23.0] (2025-09-19)
+### Bug
+- Fixed bug in the cryptography scanner
+### Changed
+- Enhance http error handling on cryptography client
 
 ## [0.22.0] (2025-09-05)
 ### Added

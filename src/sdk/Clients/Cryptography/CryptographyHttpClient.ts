@@ -30,14 +30,19 @@ export class CryptographyHttpClient extends HttpClient implements ICryptographyC
    */
   public async getAlgorithms(components: Component[]): Promise<AlgorithmResponse> {
     try {
-      const baseURL = this.hostURL();
       validateComponents(components);
-      const URL = `${this.hostURL()}/v2/cryptography/algorithms`;
-      const response = await this.post(URL, { purls: components });
-
+      const URL = `${this.hostURL()}/v2/cryptography/algorithms/components`;
+      const response = await this.post(URL, { components: components });
       if (response.ok) {
         const algorithms = await response.json();
         return algorithms as AlgorithmResponse;
+      }
+
+      if(response.status === 404){
+        const responseData = await response.json();
+        const errorMessage = `Failed to get algorithms: ${response.status} ${response.statusText} - ${JSON.stringify(responseData)}`;
+        logger.log(`Error getting algorithms: ${errorMessage}`);
+        return responseData as AlgorithmResponse;
       }
 
       const errorText = await response.text();
@@ -59,12 +64,25 @@ export class CryptographyHttpClient extends HttpClient implements ICryptographyC
   public async getEncryptionHints(components: Component[]): Promise<HintsInRangeResponse> {
     try {
       validateComponents(components);
-      const URL = `${this.hostURL()}/v2/cryptography/hintsInRange`;
-      const response = await this.post(URL, { purls: components });
+      const URL = `${this.hostURL()}/v2/cryptography/hints/range/components`;
+      const response = await this.post(URL, { components: components });
 
       if (response.ok) {
         const hints = await response.json();
         return hints as HintsInRangeResponse;
+      }
+      if(response.status === 400){
+        const errorText = await response.text();
+        const errorMessage = `Failed to get encryption hints: ${response.status} ${response.statusText} - ${errorText}`;
+        logger.log(`Error getting encryption hints: ${errorMessage}`);
+        throw new Error(errorMessage);
+      }
+
+      if(response.status === 404){
+        const responseData = await response.json();
+        const errorMessage = `Failed to get encryption hints: ${response.status} ${response.statusText} - ${JSON.stringify(responseData)}`;
+        logger.log(`Error getting encryption hints: ${errorMessage}`);
+        return responseData as HintsInRangeResponse;
       }
 
       const errorText = await response.text();
