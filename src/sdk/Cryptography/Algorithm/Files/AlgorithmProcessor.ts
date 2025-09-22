@@ -10,6 +10,7 @@ parentPort.on('message', async (job) => {
      const cryptoFound = new Array();
 
       let content =  fs.readFileSync(file, 'utf-8');
+      content = content.toLowerCase();
       rules.forEach((value, key) => {
       try {
         const matches = content.match(value);
