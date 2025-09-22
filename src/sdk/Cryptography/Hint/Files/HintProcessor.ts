@@ -8,10 +8,11 @@ parentPort.on('message', async (job) => {
     const { file, rules } = data;
 
     let content = fs.readFileSync(file, 'utf-8');
+    content = content.toLowerCase();
     const hints = [];
     rules.forEach((rule) => {
         for (const keyword of rule.keywords) {
-            if (content.includes(keyword)) {
+            if (content.includes(keyword.toLowerCase())) {
                 const {id, name, description, url , category, purl } = rule;
                 hints.push({ id, name, category, purl, description, url });
                 break;
