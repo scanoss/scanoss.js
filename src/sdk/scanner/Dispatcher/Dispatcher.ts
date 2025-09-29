@@ -182,7 +182,7 @@ export class Dispatcher extends EventEmitter {
           'User-Agent': this.scannerCfg.CLIENT_TIMESTAMP
             ? this.scannerCfg.CLIENT_TIMESTAMP
             : `scanoss-js/v${Utils.getPackageVersion()}`,
-          'X-Session': this.scannerCfg.API_KEY,
+          'X-Api-Key': this.scannerCfg.API_KEY,
           'x-request-id': item.uuid,
         },
         signal: timeoutController.signal,
