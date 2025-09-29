@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## Unreleased
+- Replace auth header from 'X-Session' to 'X-Api-Key' in Dispatcher requests
+
 ## [0.24.0] (2025-09-23)
 ### Bug
 - Fixed bug on local cryptography hints detection
