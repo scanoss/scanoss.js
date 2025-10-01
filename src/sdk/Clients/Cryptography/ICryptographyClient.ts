@@ -36,7 +36,7 @@ export interface AlgorithmResponse {
 
 export interface ComponentHintResponse extends Purl {
   hints: Hint[];
-  versions: string[];
+  requirement: string;
 }
 
 export interface HintsInRangeResponse {

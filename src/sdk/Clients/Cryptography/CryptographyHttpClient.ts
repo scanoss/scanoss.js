@@ -64,7 +64,7 @@ export class CryptographyHttpClient extends HttpClient implements ICryptographyC
   public async getEncryptionHints(components: Component[]): Promise<HintsInRangeResponse> {
     try {
       validateComponents(components);
-      const URL = `${this.hostURL()}/v2/cryptography/hints/range/components`;
+      const URL = `${this.hostURL()}/v2/cryptography/hints/components`;
       const response = await this.post(URL, { components: components });
 
       if (response.ok) {

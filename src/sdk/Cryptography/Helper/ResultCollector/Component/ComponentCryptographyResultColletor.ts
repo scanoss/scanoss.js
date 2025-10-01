@@ -58,11 +58,8 @@ export class ComponentCryptographyResultCollector {
    */
   public collectHintResults(hintResults: HintsInRangeResponse):void {
     hintResults.components.forEach((c) => {
-      if (c.versions.length > 0) {
-        const version = c.versions[0].startsWith('v') ? c.versions[0].slice(1) : c.versions[0];
-        const result = this.getOrCreateResult(c.purl, version);
-        result.hints = c.hints;
-      }
+      const result = this.getOrCreateResult(c.purl, c.requirement);
+      result.hints = c.hints;
     });
   }
 
