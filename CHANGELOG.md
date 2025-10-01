@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.25.0] (2025-10-01)
+### Changed
+- Replaced `/v2/cryptography/hints/range/components` by `/v2/cryptography/hints/components`
+
 ## [0.24.0] (2025-09-23)
 ### Bug
 - Fixed bug on local cryptography hints detection
@@ -160,3 +164,4 @@ All notable changes to this project will be documented in this file. See [standa
 ### [0.22.0](https://github.com/scanoss/scanoss.js/compare/v0.18.0...v0.19.0) (2025-09-05)
 ### [0.23.0](https://github.com/scanoss/scanoss.js/compare/v0.22.0...v0.23.0) (2025-09-19)
 ### [0.24.0](https://github.com/scanoss/scanoss.js/compare/v0.23.0...v0.24.0) (2025-09-23)
+### [0.25.0](https://github.com/scanoss/scanoss.js/compare/v0.24.0...v0.25.0) (2025-10-01)
