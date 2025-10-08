@@ -12,9 +12,12 @@
     "scanoss-js": "build/main/cli/bin/cli-bin.js"
   },
   "scripts": {
-    "build": "run-p build:*",
+    "build": "run-p build:main build:module && npm run copy-wasm-assets",
     "build:main": "tsc -p tsconfig.json",
     "build:module": "tsc -p tsconfig.module.json",
+    "build:wasm": "bash scripts/build-wasm.sh",
+    "build:all": "npm run build:wasm && npm run build",
+    "copy-wasm-assets": "cp src/sdk/Dependencies/SyftWasm/assets/syft.wasm build/main/sdk/Dependencies/SyftWasm/assets/ 2>/dev/null || true && cp src/sdk/Dependencies/SyftWasm/assets/syft.wasm build/module/sdk/Dependencies/SyftWasm/assets/ 2>/dev/null || true",
     "test": "nyc mocha -r ts-node/register 'tests/**/*.ts' 'src/**/*.spec.ts'",
     "install-dev": "npm run build && npm run test && npm install -g ."
   },

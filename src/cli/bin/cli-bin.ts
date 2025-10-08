@@ -7,6 +7,7 @@ import { scanHandler } from "../commands/scan";
 import { wfpHandler } from "../commands/wfp";
 import { cryptoHandler } from '../commands/crypto';
 import { componentsHandler } from '../commands/components';
+import { wasmTestHandler } from '../commands/wasm-test';
 
 function CLIErrorHandler(e: Error) {
   console.error(" ");
@@ -153,6 +154,20 @@ async function main() {
     });
   });
 
+  // WASM Test command
+  const wasmTest = new Command("wasm-test");
+  wasmTest.description("Scan dependencies using Syft WASM parser");
+  wasmTest.addArgument(new Argument("<source>", "Folder or file to scan"));
+
+  wasmTest.addOption(new Option("-o, --output <filename>", "Output result file name (optional - default stdout)"));
+  wasmTest.addOption(new Option("    --debug", "Enables debugging"));
+
+  wasmTest.action((source, options) => {
+    wasmTestHandler(source, options).catch((e) => {
+      CLIErrorHandler(e);
+    });
+  });
+
   const program = new Command();
   program.version(Utils.getPackageVersion());
   program.description("The SCANOSS JS package provides a simple, easy to consume module for interacting with SCANOSS APIs/Engine.");
@@ -161,6 +176,7 @@ async function main() {
   program.addCommand(fingerprint);
   program.addCommand(cryptography);
   program.addCommand(components);
+  program.addCommand(wasmTest);
 
   await program.parseAsync(process.argv);
 
