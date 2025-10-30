@@ -24,6 +24,7 @@ describe('Suit test for WfpCalculator Class', () => {
       };
 
       let wfpExpected = `file=736c0a4b4440e35baffc9378304ee588,907,file1.c
+fh2=839a41bc558987c4a110f7757167aa36
 8=c0e39912
 9=61eee030
 11=eff88a55
@@ -36,9 +37,19 @@ describe('Suit test for WfpCalculator Class', () => {
 39=8503d2f9
 40=0b62ff71
 `
-
+      let wfpResponse: FingerprintPackage;
       wfpCalculator.on(ScannerEvents.WINNOWING_FINISHED, () => {
-        done()
+        if (wfpResponse.getContent() === wfpExpected) {
+          done()
+        } else {
+          console.log("Expected: ", wfpExpected);
+          console.log("Got: ", wfpResponse.getContent());
+          done(new Error("Diferences in wfp generated and expected"))
+        }
+      });
+
+      wfpCalculator.on(ScannerEvents.WINNOWING_NEW_CONTENT, (c: FingerprintPackage) => {
+        wfpResponse = c;
       });
 
       wfpCalculator.on(ScannerEvents.ERROR, (err) => {
@@ -58,6 +69,7 @@ describe('Suit test for WfpCalculator Class', () => {
       };
 
       let wfpExpected = `file=736c0a4b4440e35baffc9378304ee588,907,file1.c
+fh2=839a41bc558987c4a110f7757167aa36
 hpsm=91ffe7ff989bffe7fcff91bdff2dff3d00a400ff9b00a400ffb6004c42ff9c004200ffc700ff62408b
 8=c0e39912
 9=61eee030

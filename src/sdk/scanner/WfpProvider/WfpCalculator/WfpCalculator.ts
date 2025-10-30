@@ -267,25 +267,24 @@ function calc_hpsm(content) {
  * Create a wfp_hpsm package joining wfp (with md5 line) and a hpsm.
  *
  * Example:
- * wfp = file=508cb9dfbe1c7dca5ed24f124473f33d,300,asd.c
- *         11=b19bdbfa
+ * wfp = file=33d2b65d852100b7fc5e6dae95f07bde,118,/external/inc/crc32c.h
+ *       fh2=91d5edea99e9cfcdeeb55e722d3aa67f
+ *       11=b19bdbfa
  *
- * hpsm = hpsm=1909ff06ff688630ff45a92b52f47eff3500ffff
+ * hpsm = hpsm=5ac65706ff2d
  *
- * wfp_hpsm = file=508cb9dfbe1c7dca5ed24f124473f33d,300,asd.c
- *             hpsm=1909ff06ff688630ff45a92b52f47eff3500ffff
- *             11=b19bdbfa
+ * wfp_hpsm = file=33d2b65d852100b7fc5e6dae95f07bde,118,/external/inc/crc32c.h
+ *            fh2=91d5edea99e9cfcdeeb55e722d3aa67f
+ *            hpsm=5ac65706ff2d
+ *            11=b19bdbfa
  *
  * @param {string} wfp Complete wfp string (with md5 line)
  * @param {string} hpsm
  * @returns {string}
  */
 function join_wfp_hpsm(wfp, hpsm) {
-  let header = wfp.match(/file=.*/);
-  header += String.fromCharCode(10);
-  header += hpsm;
-  wfp = wfp.replace(/file=.*/, "")
-  return header + wfp;
+  // Replace fh2= line with fh2= line + newline + hpsm line
+   return wfp.replace(/(fh2=.*)/, '$1' + String.fromCharCode(10) + hpsm);
 }
 
 /**
@@ -308,9 +307,121 @@ function wfp_for_content(content, contentSource, maxSize) {
   return wfp;
 }
 
+/**
+ * Detect line ending types in buffer contents.
+ *
+ * @param {Buffer} contents - File contents as buffer
+ * @returns {Object} Object with has_crlf, has_standalone_lf, has_standalone_cr flags
+ */
+function detect_line_endings(contents) {
+  let has_crlf = false;
+  let has_standalone_lf = false;
+  let has_standalone_cr = false;
+
+  for (let i = 0; i < contents.length; i++) {
+    const byte = contents[i];
+
+    // Check for CRLF (\\r\\n) // Windows (CRLF)
+    if (byte === 0x0D && i + 1 < contents.length && contents[i + 1] === 0x0A) {
+      has_crlf = true;
+      i++; // Skip the next byte since we've already checked it
+    }
+    // Check for standalone LF (\\n) // Unix (LF) Linux
+    else if (byte === 0x0A) {
+      has_standalone_lf = true;
+    }
+    // Check for standalone CR (\\r) // Unix (CR) old MacOS
+    else if (byte === 0x0D) {
+      has_standalone_cr = true;
+    }
+
+    if(has_crlf && has_standalone_lf && has_standalone_cr) {
+      break;
+    }
+  }
+
+  return { has_crlf: has_crlf, has_standalone_lf: has_standalone_lf, has_standalone_cr: has_standalone_cr };
+}
+
+/**
+ * Calculate hash for contents with opposite line endings.
+ * If the file is primarily Unix (LF), calculates Windows (CRLF) hash.
+ * If the file is primarily Windows (CRLF), calculates Unix (LF) hash.
+ *
+ * @param {Buffer} contents - File contents as buffer
+ * @returns {string|null} Hash with opposite line endings as hex string, or null if no line endings detected
+ */
+function calculate_opposite_line_ending_hash(contents) {
+  const line_endings = detect_line_endings(contents);
+  const has_crlf = line_endings.has_crlf;
+  const has_standalone_lf = line_endings.has_standalone_lf;
+  const has_standalone_cr = line_endings.has_standalone_cr;
+
+  if (!has_crlf && !has_standalone_lf && !has_standalone_cr) {
+    return null;
+  }
+
+  // First pass: normalize all line endings to LF
+  let normalized = [];
+  // Optimization: if file only has LF (no CR bytes at all), skip normalization
+  if (has_standalone_lf && !has_crlf && !has_standalone_cr) {
+    // File is pure Unix (LF only) - already normalized
+    normalized = Array.from(contents);
+  } else {
+    // File has CR bytes (CRLF or standalone CR) - need to normalize
+    normalized = [];
+    for (let i = 0; i < contents.length; i++) {
+      const byte = contents[i];
+      if (byte === 0x0D) {
+        // CR
+        if (i + 1 < contents.length && contents[i + 1] === 0x0A) {
+          // CRLF -> LF
+          normalized.push(0x0A);
+          i++; // Skip the LF
+        } else {
+          // Standalone CR -> LF
+          normalized.push(0x0A);
+        }
+      } else {
+        normalized.push(byte);
+      }
+    }
+}
+
+  let opposite_contents;
+
+  // Determine the dominant line ending type
+  if (has_crlf && !has_standalone_lf && !has_standalone_cr) {
+    // File is Windows (CRLF) - produce Unix (LF) hash
+    opposite_contents = Buffer.from(normalized);
+  } else {
+    // File is Unix (LF/CR) or mixed - produce Windows (CRLF) hash
+    const with_crlf = [];
+    for (let i = 0; i < normalized.length; i++) {
+      if (normalized[i] === 0x0A) {
+        // LF -> CRLF
+        with_crlf.push(0x0D);
+        with_crlf.push(0x0A);
+      } else {
+        with_crlf.push(normalized[i]);
+      }
+    }
+    opposite_contents = Buffer.from(with_crlf);
+  }
+
+  return crypto.createHash('md5').update(opposite_contents).digest('hex');
+}
+
 function wfp_only_md5(contents, contentSource) {
   const file_md5 = crypto.createHash('md5').update(contents).digest('hex');
   let wfp = 'file=' + String(file_md5) + ',' + String(contents.length) + ',' + String(contentSource)+ String.fromCharCode(10);
+
+  // Calculate and add opposite line ending hash if applicable
+  const opposite_hash = calculate_opposite_line_ending_hash(contents);
+  if (opposite_hash !== null) {
+    wfp += 'fh2=' + String(opposite_hash) + String.fromCharCode(10);
+  }
+
   return wfp;
 }
 
