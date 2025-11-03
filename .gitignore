@@ -8,3 +8,8 @@ src/**.js
 coverage
 *.log
 .DS_Store
+
+# WASM build artifacts
+wasm/syft.wasm
+wasm/go.sum
+src/sdk/Dependencies/SyftWasm/assets/
