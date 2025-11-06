@@ -61,4 +61,4 @@ export { PurlRequest, EchoRequest } from './sdk/Clients/Grpc/BaseGRPCClient';
 // *** Http ***//
 export * from './sdk/Clients/http/HttpClient'
 
-export { logger } from './sdk/Logger';
+export { logger } from './sdk/Logger/Logger';

@@ -4,7 +4,7 @@ import { DependencyScannerCfg } from "../../sdk/Dependencies/DependencyScannerCf
 import { Tree } from "../../sdk/tree/Tree";
 import { DependencyFilter } from '../../sdk/tree/Filters/DependencyFilter';
 import { isFolder } from "./helpers";
-import { Logger, logger } from "../../sdk/Logger";
+import { Logger, logger } from "../../sdk/Logger/Logger";
 
 export async function depHandler(rootPath: string, options: any): Promise<void> {
   logger.setLevel(Logger.Level.info);
