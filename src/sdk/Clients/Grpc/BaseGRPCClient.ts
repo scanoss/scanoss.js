@@ -1,6 +1,6 @@
 import * as grpc from '@grpc/grpc-js';
 import * as CommonMessages from './scanoss/api/common/v2/scanoss-common_pb';
-import { logger } from '../../Logger';
+import { logger } from '../../Logger/Logger';
 import { HEADER_NAME_API_TOKEN, SCANOSS_GRPC_ENDPOINT } from '../../Constants';
 import { ERROR_SERVICES_GRPC_API_TOKEN_REQUIRED } from '../../Errors';
 import fs from "fs";

@@ -1,5 +1,5 @@
 import { ComponentsScannerCfg } from './ComponentsScannerCfg';
-import { logger } from "../Logger";
+import { logger } from "../Logger/Logger";
 import { ComponentsHttpClient } from "../Clients/Components/ComponentsHttpClient";
 import { ComponentsGRPCClient } from "../Clients/Components/ComponentsGRPCClient";
 import {

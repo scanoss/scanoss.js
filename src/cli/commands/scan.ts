@@ -26,10 +26,9 @@ import { CryptoCfg } from "../../sdk/Cryptography/CryptoCfg";
 import { CryptographyScanner } from "../../sdk/Cryptography/CryptographyScanner";
 import { CryptographyResponse, LocalCryptography } from "../../sdk/Cryptography/CryptographyTypes";
 import { DependencyResponse } from "../../sdk/Clients/Dependency/IDependencyClient";
-import { Logger, logger } from "../../sdk/Logger";
+import { Logger, logger } from "../../sdk/Logger/Logger";
 
 export async function scanHandler(rootPath: string, options: any): Promise<void> {
-  logger.setLevel(Logger.Level.info);
   if(options.debug)
     logger.setLevel(Logger.Level.debug);
   rootPath = path.resolve(rootPath);

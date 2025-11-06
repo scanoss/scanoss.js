@@ -5,7 +5,7 @@ import {
   AlgorithmResponse,
   HintsInRangeResponse
 } from './ICryptographyClient';
-import { logger } from '../../Logger';
+import { logger } from '../../Logger/Logger';
 import { Component } from "../../types/common/types";
 
 /**

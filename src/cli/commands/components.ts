@@ -1,7 +1,7 @@
 import fs from "fs";
 import { ComponentsScanner } from "../../sdk/Components/ComponentsScanner";
 import { ComponentsScannerCfg } from "../../sdk/Components/ComponentsScannerCfg";
-import { Logger, logger } from "../../sdk/Logger";
+import { Logger, logger } from "../../sdk/Logger/Logger";
 
 export async function componentsHandler(action: string, options: any): Promise<void> {
   logger.setLevel(Logger.Level.info);

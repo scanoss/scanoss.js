@@ -1,7 +1,7 @@
 import { HttpClient } from "../http/HttpClient";
 import { DependencyRequest, DependencyResponse, IDependencyClient } from "./IDependencyClient";
 import { ClientConfig } from "../interfaces/ClientConfig";
-import { logger } from "../../Logger";
+import { logger } from "../../Logger/Logger";
 
 /**
  * HTTP client for dependency-related API operations.

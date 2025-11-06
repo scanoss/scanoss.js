@@ -1,5 +1,5 @@
 import { HttpClient } from "../http/HttpClient";
-import { logger } from "../../Logger";
+import { logger } from "../../Logger/Logger";
 import {
   IComponentsClient,
   ComponentSearchRequest,

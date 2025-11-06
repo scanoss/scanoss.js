@@ -4,7 +4,7 @@ import { DependencyScannerCfg } from './DependencyScannerCfg';
 import { PackageURL } from 'packageurl-js';
 import fs from 'fs';
 import { Tree } from '../tree/Tree';
-import { logger } from "../Logger";
+import { logger } from "../Logger/Logger";
 import { DependencyHttpClient } from "../Clients/Dependency/DependencyHttpClient";
 import {
   DependencyFile, DependencyRequest,
