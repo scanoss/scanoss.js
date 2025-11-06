@@ -36,11 +36,19 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
   const pathIsFolder = await isFolder(rootPath);
   const projectName = getProjectNameFromPath(rootPath);
 
+  if (options.apiurl) {
+    const url = new URL(options.apiurl);
+    if (url.pathname) {
+      logger.warn(`The entered URL "${options.apiurl}" contains a pathname "${url.pathname}", which is not supported. Setting URL to "${url.origin}".`)
+    }
+    options.apiurl = url.origin;
+  }
   // Create dependency scanner and set parameters
   let dependencyInput: Array<string> = [];
   const dependencyScannerCfg = new DependencyScannerCfg();
   if (options.caCert) dependencyScannerCfg.CA_CERT = options.caCert;
   if (options.apiurl) dependencyScannerCfg.API_URL = options.apiurl;
+  // TODO: Deprecated. Remove gRPC config on v1 version.
   if (options.api2url) dependencyScannerCfg.API_URL = options.api2url;
   if (options.proxy) {
     dependencyScannerCfg.HTTPS_PROXY = options.proxy;
