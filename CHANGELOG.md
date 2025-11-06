@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.27.0] (2025-11-11)
+### Added
+- Added validation to remove `/scan/direct` path name from api url
+### Changed
+- Enhanced logger output
+- Refactor on Logger. Allowed to pass logger instance to SDK
+
 ## [0.26.0] (2025-10-31)
 ### Added
 - Added fh2 opposite line ending hash calculation
@@ -170,3 +177,4 @@ All notable changes to this project will be documented in this file. See [standa
 ### [0.24.0](https://github.com/scanoss/scanoss.js/compare/v0.23.0...v0.24.0) (2025-09-23)
 ### [0.25.0](https://github.com/scanoss/scanoss.js/compare/v0.24.0...v0.25.0) (2025-10-01)
 ### [0.26.0](https://github.com/scanoss/scanoss.js/compare/v0.25.0...v0.26.0) (2025-10-30)
+### [0.27.0](https://github.com/scanoss/scanoss.js/compare/v0.26.0...v0.26.1) (2025-11-11)
