@@ -30,27 +30,6 @@ export class DependencyScannerCfg extends BaseConfig {
     this._API_KEY = value;
   }
 
-  /**
-   * Resolves the appropriate scanner URL based on API key presence and current URL.
-   * If an API key is provided and the current URL is the default, returns the premium
-   * scanner URL, otherwise appends '/scan/direct' to the current URL.
-   * @param apiKey - The API key (if any)
-   * @param currentUrl - The current API URL
-   * @returns The resolved scanner URL
-   */
-  protected resolveApiUrl(apiKey: string, currentUrl: string): string {
-    if(!apiKey) {
-      if (currentUrl !== BaseConfig.getDefaultURL()) {
-        return currentUrl;
-      }
-      return currentUrl;
-    }
-    if (currentUrl !== BaseConfig.getDefaultURL() && currentUrl !== BaseConfig.getPremiumURL()) {
-      return currentUrl;
-    }
-    return BaseConfig.getPremiumURL();
-  }
-
   get API_URL(): string {
     return this.resolveApiUrl(this.API_KEY, super.API_URL);
   }

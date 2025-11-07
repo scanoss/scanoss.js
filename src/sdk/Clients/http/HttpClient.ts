@@ -42,7 +42,7 @@ export class HttpClient extends Transport<Response>  {
       if (caCertPath) Utils.loadCaCertFromFile(caCertPath);
     }
 
-    protected async get(url: string): Promise<Response> {
+    public async get(url: string): Promise<Response> {
         return await fetch(url, {
             agent: this.proxyAgent,
             method: 'get',
@@ -52,7 +52,7 @@ export class HttpClient extends Transport<Response>  {
         });
     }
 
-  protected async post(url: string, body: any): Promise<Response> {
+  public async post(url: string, body: any): Promise<Response> {
     return await fetch(url, {
       agent: this.proxyAgent,
       method: 'post',
@@ -64,7 +64,7 @@ export class HttpClient extends Transport<Response>  {
     });
   }
 
-  protected async delete(url: string): Promise<Response> {
+  public async delete(url: string): Promise<Response> {
     return await fetch(url, {
       agent: this.proxyAgent,
       method: 'delete',
@@ -74,7 +74,7 @@ export class HttpClient extends Transport<Response>  {
     });
   }
 
-  protected async put(url: string, body: FormData): Promise<Response> {
+  public async put(url: string, body: FormData): Promise<Response> {
     return await fetch(url, {
       agent: this.proxyAgent,
       method: 'put',

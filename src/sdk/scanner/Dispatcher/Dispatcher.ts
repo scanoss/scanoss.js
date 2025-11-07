@@ -174,7 +174,8 @@ export class Dispatcher extends EventEmitter {
     let plain_response: string;
     try {
       this.emit(ScannerEvents.DISPATCHER_WFP_SENDED);
-      const response = await fetch(this.scannerCfg.API_URL, {
+      const scanURL = new URL('/scan/direct', this.scannerCfg.API_URL);
+      const response = await fetch(scanURL.href, {
         agent: this.proxyAgent,
         method: 'post',
         body: item.getForm(),
