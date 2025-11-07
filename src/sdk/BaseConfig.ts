@@ -1,4 +1,5 @@
 import fs from 'fs';
+import { logger } from "./Logger/Logger";
 
 /**
  * Base configuration class for SCANOSS SDK services.
@@ -42,7 +43,7 @@ export abstract class BaseConfig {
       this.IGNORE_CERT_ERRORS = config.IGNORE_CERT_ERRORS ?? false;
       this.API_URL = config.API_URL || BaseConfig.getDefaultURL();
     }
-    this.API_URL = this.API_URL || BaseConfig.getDefaultURL();
+    this.API_URL = BaseConfig.getDefaultURL();
   }
 
   /**
@@ -69,7 +70,31 @@ export abstract class BaseConfig {
    * @param currentUrl - The current API URL
    * @returns The resolved API URL
    */
-  protected abstract resolveApiUrl(apiKey: string, currentUrl: string): string;
+  /**
+   * Resolves the appropriate scanner URL based on API key presence and current URL.
+   * If an API key is provided and the current URL is the default, returns the premium
+   * scanner URL, otherwise appends '/scan/direct' to the current URL.
+   * @param apiKey - The API key (if any)
+   * @param currentUrl - The current API URL
+   * @returns The resolved scanner URL
+   */
+  protected resolveApiUrl(apiKey: string, currentUrl: string): string {
+    let url = new URL(currentUrl);
+    if (url.pathname !== '/') {
+      logger.warn(`Removing ${url.pathname} from ${currentUrl}`);
+      currentUrl = url.origin;
+    }
+    if(!apiKey) {
+      if (currentUrl !== BaseConfig.getDefaultURL()) {
+        return currentUrl;
+      }
+      return BaseConfig.getDefaultURL();
+    }
+    if (currentUrl !== BaseConfig.getDefaultURL() && currentUrl !== BaseConfig.getPremiumURL()) {
+      return currentUrl;
+    }
+    return BaseConfig.getPremiumURL();
+  }
 
   /**
    * Sets the HTTPS proxy server URL.
