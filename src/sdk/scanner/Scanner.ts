@@ -3,6 +3,7 @@
 import EventEmitter from 'eventemitter3';
 import os from 'os';
 import fs from 'fs';
+import readline from 'readline';
 
 import { Dispatcher } from './Dispatcher/Dispatcher';
 
@@ -31,6 +32,7 @@ import {
 } from "./ScannnerResultPostProcessor/rules/rule-factory";
 import { RemoveRule } from "./ScannnerResultPostProcessor/rules/remove-rule";
 import { validateSettingsFile } from "../../cli/commands/helpers";
+import { logger } from "../Logger/Logger";
 
 let finishPromiseResolve;
 let finishPromiseReject;
@@ -79,6 +81,10 @@ export class Scanner extends EventEmitter {
   private filesNotScanned;
 
   private settings: Settings;
+
+  private wfpWriteStream: fs.WriteStream;
+
+  private resultWriteStream: fs.WriteStream;
 
 
   constructor(scannerCfg = new ScannerCfg()) {
@@ -390,9 +396,7 @@ export class Scanner extends EventEmitter {
   }
 
   private bufferReachedLimit() {
-    if (this.responseBuffer.length >= this.scannerCfg.MAX_RESPONSES_IN_BUFFER)
-      return true;
-    return false;
+    return this.responseBuffer.length >= this.scannerCfg.MAX_RESPONSES_IN_BUFFER;
   }
 
   private deobfuscationResponses(
@@ -407,6 +411,7 @@ export class Scanner extends EventEmitter {
   }
 
   private bufferToFiles() {
+    logger.debug(`[ SCANNER ]: Buffer size: ${this.responseBuffer.length}`);
     let wfpContent = '';
     const serverResponse = {};
     // eslint-disable-next-line no-restricted-syntax
@@ -465,36 +470,12 @@ export class Scanner extends EventEmitter {
 
   private async finishScan() {
     if (!this.isBufferEmpty()) this.bufferToFiles();
-    let results = JSON.parse(
-      await fs.promises.readFile(this.resultFilePath, 'utf8')
-    );
-    if (this.settings) {
-      const scannerResultsRules = ScannerResultsRuleFactory.create(this.settings, results);
-      scannerResultsRules.forEach(r => {
-        results = r.run();
-      });
-    }
 
-    if (
-      this.scannerCfg.WFP_OBFUSCATION &&
-      this.scannerCfg.RESULTS_DEOBFUSCATION
-    ) {
-      for (const key of Object.keys(this.obfuscateMap)) {
-        const component = results[key];
-        const originalPath = this.obfuscateMap[key];
-        results[originalPath] = component;
-        delete results[key];
-      }
-    }
+    // Close write streams before reading the files
+    await this.closeWriteStreams();
 
-    const sortedPaths = sortPaths(Object.keys(results), '/');
-    const resultSorted = {};
-    // eslint-disable-next-line no-restricted-syntax
-    for (const key of sortedPaths) resultSorted[key] = results[key];
-    await fs.promises.writeFile(
-      this.resultFilePath,
-      JSON.stringify(resultSorted, null, 2)
-    );
+    // Convert NDJSON to JSON using streaming and write back to file
+    await this.convertNDJSONToJSON();
 
     await fs.promises.writeFile(
       this.obfuscateMapFilePath,
@@ -517,6 +498,84 @@ export class Scanner extends EventEmitter {
     finishPromiseResolve(this.resultFilePath);
   }
 
+  /**
+   * Convert NDJSON file to a single JSON object using streams
+   * Reads NDJSON line by line and writes formatted JSON
+   */
+  private async convertNDJSONToJSON(): Promise<void> {
+    const tempFilePath = `${this.resultFilePath}.tmp`;
+
+    return new Promise((resolve, reject) => {
+      const readStream = fs.createReadStream(this.resultFilePath, { encoding: 'utf8' });
+      const writeStream = fs.createWriteStream(tempFilePath);
+      const rl = readline.createInterface({
+        input: readStream,
+        crlfDelay: Infinity
+      });
+
+      let isFirstEntry = true;
+
+      // Write opening brace
+      writeStream.write('{\n');
+
+      rl.on('line', (line: string) => {
+        if (line.trim()) {
+          try {
+            const entry = JSON.parse(line);
+            // Each entry is an object with one key-value pair
+            Object.entries(entry).forEach(([filePath, result]) => {
+              if (!isFirstEntry) {
+                writeStream.write(',\n');
+              }
+              writeStream.write(`  ${JSON.stringify(filePath)}: ${JSON.stringify(result, null, 2).replace(/\n/g, '\n  ')}`);
+              isFirstEntry = false;
+            });
+          } catch (e) {
+            this.reportLog(`[ SCANNER ]: Error formatting JSON line: ${e}`);
+          }
+        }
+      });
+
+      rl.on('close', () => {
+        // Write closing brace
+        writeStream.write('\n}');
+        writeStream.end();
+      });
+
+      writeStream.on('finish', () => {
+        // Replace original file with temp file
+        fs.rename(tempFilePath, this.resultFilePath, (err) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve();
+          }
+        });
+      });
+
+      readStream.on('error', (error) => {
+        writeStream.destroy();
+        try {
+          fs.rmSync(tempFilePath);
+        } catch (cleanupError) {
+          this.reportLog(`[ SCANNER ]: Warning: Could not delete temp file ${tempFilePath}: ${cleanupError}`, 'warning');
+        }
+        reject(error);
+      });
+
+      writeStream.on('error', (error) => {
+        rl.close();
+        readStream.destroy();
+        try {
+          fs.rmSync(tempFilePath);
+        } catch (cleanupError) {
+          this.reportLog(`[ SCANNER ]: Warning: Could not delete temp file ${tempFilePath}: ${cleanupError}`, 'warning');
+        }
+        reject(error);
+      });
+    });
+  }
+
   private reportLog(txt, level = 'info') {
     this.emit(ScannerEvents.SCANNER_LOG, txt, level);
   }
@@ -537,26 +596,88 @@ export class Scanner extends EventEmitter {
   private createOutputFiles() {
     if (!fs.existsSync(this.wfpFilePath))
       fs.writeFileSync(this.wfpFilePath, '');
+    // Initialize result file as empty for NDJSON format
+    logger.debug(`[ SCANNER ]: Creating output files on ${this.resultFilePath}`);
     if (!fs.existsSync(this.resultFilePath))
-      fs.writeFileSync(this.resultFilePath, JSON.stringify({}));
+      fs.writeFileSync(this.resultFilePath, '');
 
     if (this.scannerCfg.WFP_OBFUSCATION) {
       if (!fs.existsSync(this.obfuscateMapFilePath))
         fs.writeFileSync(this.obfuscateMapFilePath, JSON.stringify({}));
     }
+
+    this.initializeWriteStreams();
+  }
+
+  private initializeWriteStreams() {
+    this.wfpWriteStream = fs.createWriteStream(this.wfpFilePath, { flags: 'a' });
+    this.resultWriteStream = fs.createWriteStream(this.resultFilePath, { flags: 'a' });
+  }
+
+  private closeWriteStreams(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      let wfpClosed = false;
+      let resultClosed = false;
+
+      const checkBothClosed = () => {
+        if (wfpClosed && resultClosed) {
+          resolve();
+        }
+      };
+
+      if (this.wfpWriteStream) {
+        this.wfpWriteStream.end(() => {
+          wfpClosed = true;
+          checkBothClosed();
+        });
+      } else {
+        wfpClosed = true;
+      }
+
+      if (this.resultWriteStream) {
+        this.resultWriteStream.end(() => {
+          resultClosed = true;
+          checkBothClosed();
+        });
+      } else {
+        resultClosed = true;
+      }
+
+      checkBothClosed();
+    });
   }
 
   private appendOutputFiles(
     wfpContent: string,
     serverResponse: ScannerResults
   ) {
-    fs.appendFileSync(this.wfpFilePath, wfpContent);
+    // Append WFP content using write stream
+    this.wfpWriteStream.write(wfpContent);
 
-    const storedResultStr = fs.readFileSync(this.resultFilePath, 'utf-8');
-    const storedResultObj = JSON.parse(storedResultStr);
-    Object.assign(storedResultObj, serverResponse);
-    const newResultStr = JSON.stringify(storedResultObj);
-    fs.writeFileSync(this.resultFilePath, newResultStr);
+    // Apply deobfuscation if needed
+    let processedResponse = serverResponse;
+    if (this.scannerCfg.WFP_OBFUSCATION && this.scannerCfg.RESULTS_DEOBFUSCATION) {
+      processedResponse = {};
+      Object.entries(serverResponse).forEach(([filePath, result]) => {
+        const originalPath = this.obfuscateMap[filePath] || filePath;
+        processedResponse[originalPath] = result;
+      });
+    }
+
+    // Apply settings rules if needed
+    if (this.settings) {
+      const scannerResultsRules = ScannerResultsRuleFactory.create(this.settings, processedResponse);
+      scannerResultsRules.forEach(r => {
+        processedResponse = r.run();
+      });
+    }
+
+    // Append each result entry as NDJSON (newline-delimited JSON)
+    // Each line contains a complete JSON object for a file result
+    Object.entries(processedResponse).forEach(([filePath, result]) => {
+      const entry = JSON.stringify({ [filePath]: result }) + '\n';
+      this.resultWriteStream.write(entry);
+    });
   }
 
   private isValidInput(scannerInput: Array<ScannerInput>): boolean {
@@ -594,5 +715,13 @@ export class Scanner extends EventEmitter {
     this.dispatcher.removeAllListeners();
     this.dispatcher.stop();
     this.wfpProvider.stop();
+
+    // Close write streams to prevent resource leaks
+    if (this.wfpWriteStream) {
+      this.wfpWriteStream.end();
+    }
+    if (this.resultWriteStream) {
+      this.resultWriteStream.end();
+    }
   }
 }

@@ -26,7 +26,104 @@ import { CryptoCfg } from "../../sdk/Cryptography/CryptoCfg";
 import { CryptographyScanner } from "../../sdk/Cryptography/CryptographyScanner";
 import { CryptographyResponse, LocalCryptography } from "../../sdk/Cryptography/CryptographyTypes";
 import { DependencyResponse } from "../../sdk/Clients/Dependency/IDependencyClient";
+import { parser } from "stream-json";
+import { streamObject } from "stream-json/streamers/StreamObject";
+import  { EOL } from 'os';
 import { Logger, logger } from "../../sdk/Logger/Logger";
+
+/**
+ * Stream JSON scanner results and transform into new structure
+ * @param resultPath Path to the scanner JSON results file
+ * @param depResults Dependency results to include
+ * @param cryptoFiles Cryptography files to include
+ * @param cryptoComponents Cryptography components to include
+ * @param outputPath Output file path (optional, writes to stdout if not provided)
+ */
+async function streamAndTransformResults(
+  resultPath: string,
+  depResults: DependencyResponse,
+  cryptoFiles: Array<LocalCryptography>,
+  cryptoComponents: Array<CryptographyResponse>,
+  outputPath?: string
+): Promise<void> {
+  const pipeline = fs.createReadStream(resultPath)
+    .pipe(parser())
+    .pipe(streamObject());
+
+  return new Promise((resolve, reject) => {
+    // Create write stream or use stdout
+    const writeStream = outputPath
+      ? fs.createWriteStream(outputPath)
+      : process.stdout;
+
+    let firstScannerKey = true;
+
+    // Helper to indent JSON output
+    // Note: JSON.stringify always uses \n, so we split on \n but join with EOL for platform consistency
+    const indentLines = (jsonStr: string, spaces: number): string => {
+      const indent = ' '.repeat(spaces);
+      return jsonStr.split('\n').map((line, idx) => idx === 0 ? line : indent + line).join(EOL);
+    };
+
+    // Start the result object
+    writeStream.write(`{${EOL}`);
+    writeStream.write(`  "scanner": {${EOL}`);
+
+    pipeline.on('data', (data: { key: string; value: any }) => {
+      // Stream each key-value pair from scanner results
+      if (!firstScannerKey) {
+        writeStream.write(`,${EOL}`);
+      }
+      const valueJson = JSON.stringify(data.value, null, 2);
+      const indentedValue = indentLines(valueJson, 4);
+      writeStream.write(`    ${JSON.stringify(data.key)}: ${indentedValue}`);
+      firstScannerKey = false;
+    });
+
+    pipeline.on('end', () => {
+      // Close scanner object and add other fields
+      writeStream.write(`${EOL}  },${EOL}`);
+
+      const depJson = JSON.stringify(depResults, null, 2);
+      const indentedDep = indentLines(depJson, 2);
+      writeStream.write(`  "dependencies": ${indentedDep},${EOL}`);
+
+      writeStream.write(`  "cryptography": {${EOL}`);
+
+      const filesJson = JSON.stringify(cryptoFiles, null, 2);
+      const indentedFiles = indentLines(filesJson, 4);
+      writeStream.write(`    "files": ${indentedFiles},${EOL}`);
+
+      const componentsJson = JSON.stringify(cryptoComponents, null, 2);
+      const indentedComponents = indentLines(componentsJson, 4);
+      writeStream.write(`    "components": ${indentedComponents}${EOL}`);
+
+      writeStream.write(`  }${EOL}`);
+      writeStream.write('}');
+
+      if (outputPath) {
+        writeStream.end(() => resolve());
+      } else {
+        writeStream.write(EOL);
+        resolve();
+      }
+    });
+
+    pipeline.on('error', (error) => {
+      if (outputPath && writeStream !== process.stdout) {
+        (writeStream as fs.WriteStream).destroy();
+      }
+      reject(error);
+    });
+
+    if (outputPath) {
+      writeStream.on('error', (error) => {
+        pipeline.destroy();
+        reject(error);
+      });
+    }
+  });
+}
 
 export async function scanHandler(rootPath: string, options: any): Promise<void> {
   if(options.debug)
@@ -174,9 +271,9 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
   const pScanner = scanner.scan([scannerInput]);
 
   const [scannerResultPath, depResults] = await Promise.all([pScanner, pDependencyScanner]);
-  results.scanner = JSON.parse(await fs.promises.readFile(scannerResultPath, "utf-8"));
   results.dependencies = depResults;
 
+  // Cryptography scanning
   if (options.cryptography) {
     const cfg = new CryptoCfg();
     if(options.algorithmRules) cfg.ALGORITHM_RULES_PATH = options.algorithmRules;
@@ -197,16 +294,31 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
 
     const cryptoScanner = new CryptographyScanner(cfg);
 
-
     let localCrypto = await cryptoScanner.scanFiles(scannerInput.fileList);
     localCrypto.fileList = localCrypto.fileList.map((c) => {
       return { ...c, file: c.file.replace(rootPath, "") };
     });
     results.cryptography.files = localCrypto.fileList;
 
-    // Component Cryptography
+    // Component Cryptography - need to load scanner results first
     if (options.key) {
-      let componentList: any = Object.values(results.scanner).flat();
+      // Stream load scanner results to get component list
+      const scannerData = await new Promise<any>((resolve, reject) => {
+        const pipeline = fs.createReadStream(scannerResultPath)
+          .pipe(parser())
+          .pipe(streamObject());
+
+        const scannerResults: any = {};
+
+        pipeline.on('data', (data: { key: string; value: any }) => {
+          scannerResults[data.key] = data.value;
+        });
+
+        pipeline.on('end', () => resolve(scannerResults));
+        pipeline.on('error', reject);
+      });
+
+      let componentList: any = Object.values(scannerData).flat();
       componentList = componentList.filter((component) => component.id !== "none");
       const cryptoRequest = componentList.map((c) => {
           return { purl: c.purl[0], requirement: c.version };
@@ -215,9 +327,22 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
     }
   }
 
-  let resultString = JSON.stringify(results, null, 2);
-
+  // Stream and transform results to avoid loading entire file in memory
   if (options.format && options.format.toLowerCase() === "html") {
+    // Check file size before loading into memory for HTML format
+    const MAX_FILE_SIZE_BYTES = 2 * 1024 * 1024 * 1024; // 2GB
+    const fileStats = await fs.promises.stat(scannerResultPath);
+    if (fileStats.size >= MAX_FILE_SIZE_BYTES) {
+      throw new Error(
+        `Scanner result file is too large (${(fileStats.size / (1024 * 1024 * 1024)).toFixed(2)} GB) for HTML output. ` +
+        `HTML format requires loading the entire file into memory, which is not supported for files >= 2GB. ` +
+        `Please use JSON format instead.`
+      );
+    }
+
+    // For HTML format, load scanner results into memory
+    results.scanner = JSON.parse(await fs.promises.readFile(scannerResultPath, 'utf-8'));
+
     const dataProviderManager = new DataProviderManager();
     dataProviderManager.addDataProvider(
       new ComponentDataProvider(results.scanner, results.dependencies)
@@ -235,9 +360,18 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
     );
 
     const report = new Report(dataProviderManager);
-    resultString = await report.getHTML();
-  }
+    const resultString = await report.getHTML();
 
-  if (options.output) await fs.promises.writeFile(options.output, resultString);
-  else console.log(resultString);
+    if (options.output) await fs.promises.writeFile(options.output, resultString);
+    else console.log(resultString);
+  } else {
+    // For JSON format, stream the transformation
+    await streamAndTransformResults(
+      scannerResultPath,
+      results.dependencies,
+      results.cryptography.files,
+      results.cryptography.components,
+      options.output
+    );
+  }
 }
