@@ -27,7 +27,7 @@ export class ScannerCfg extends BaseConfig {
   public ABORT_ON_MAX_RETRIES = true;
 
   // Persist results after [ X ] server responses
-  public MAX_RESPONSES_IN_BUFFER = 300;
+  public MAX_RESPONSES_IN_BUFFER = 50;
 
   public DISPATCHER_QUEUE_SIZE_MAX_LIMIT = 2000;
 
