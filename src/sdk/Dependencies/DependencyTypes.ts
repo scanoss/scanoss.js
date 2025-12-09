@@ -8,6 +8,7 @@ export interface DependenciesList {
     component: string;
     purl: string;
     version?: string;
+    requirement?: string;
     scope?: string;
     licensesList: LicensesList[];
 }
