@@ -53,6 +53,7 @@ export class DependencyHttpClient extends HttpClient implements IDependencyClien
         component: dep.component,
         purl: dep.purl,
         version: dep.version,
+        requirement: dep.requirement,
         licensesList: dep.licenses.map(license => ({
           name: license.name,
           spdxId: license.spdx_id,

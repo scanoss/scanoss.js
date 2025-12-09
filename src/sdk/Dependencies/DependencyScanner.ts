@@ -191,10 +191,8 @@ export class DependencyScanner {
       for (const dependency of file.dependenciesList) {
         const localDependencyData =
           localDependencyInfo[filename + dependency.purl];
-        if (localDependencyData?.scope)
-          dependency['scope'] = localDependencyData.scope;
-        if (localDependencyData?.requirement && dependency.version == '') {
-          dependency.version = localDependencyData.requirement;
+        if (localDependencyData?.scope){
+          dependency["scope"] = localDependencyData.scope;
         }
       }
     }

@@ -11,6 +11,7 @@ export interface Dependency {
   component: string;
   purl: string;
   version: string;
+  requirement: string;
   licensesList: License[];
   url: string;
   comment: string;
