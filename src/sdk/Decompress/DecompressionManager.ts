@@ -67,15 +67,18 @@ export class DecompressionManager {
       }
 
       await fs.promises.mkdir(newFolderPath, { recursive: true });
-
       //Search for decompressor and extract archive
       for (const d of this.decompressorList) {
         if (d.isSupported(archiveName)) {
-          await d.run(archivePath, newFolderPath);
+          try{
+            await d.run(archivePath, newFolderPath);
+          } catch(e) {
+            await fs.promises.rm(newFolderPath, {recursive: true, force: true});
+            throw new Error(e);
+          }
           break;
         }
       }
-
 
       //Search for new archives
       const tree = new Tree(newFolderPath);
