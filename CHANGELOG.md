@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+
+## [0.28.1] (2025-12-10)
+### Changed
+- Deleted zip folders on extraction failure
+
 ## [0.28.0] (2025-12-10)
 ### Added
 - Added `requirement` field in dependency response
@@ -183,3 +188,4 @@ All notable changes to this project will be documented in this file. See [standa
 ### [0.26.0](https://github.com/scanoss/scanoss.js/compare/v0.25.0...v0.26.0) (2025-10-30)
 ### [0.27.0](https://github.com/scanoss/scanoss.js/compare/v0.26.0...v0.26.1) (2025-11-11)
 ### [0.28.0](https://github.com/scanoss/scanoss.js/compare/v0.27.0...v0.28.1) (2025-12-10)
+### [0.28.1](https://github.com/scanoss/scanoss.js/compare/v0.28.0...v0.28.1) (2025-12-10)
