@@ -2,9 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-## [0.29.0-beta.1] (2025-12-16)
+## [Unreleased]
+- Upcoming changes...
 ### Changed
 - Used write and read streams to save scan responses
+- Include `requirement` in component crypto algorithm response
 
 ## [0.28.1] (2025-12-10)
 ### Changed
@@ -13,10 +15,6 @@ All notable changes to this project will be documented in this file. See [standa
 ## [0.28.0] (2025-12-10)
 ### Added
 - Added `requirement` field in dependency response
-
-## [0.28.0-beta.1] (2025-11-19)
-### Changed
-- Used write and read streams to save scan responses
 
 ## [0.27.0] (2025-11-11)
 ### Added
@@ -198,3 +196,4 @@ All notable changes to this project will be documented in this file. See [standa
 ### [0.28.0](https://github.com/scanoss/scanoss.js/compare/v0.27.0...v0.28.1) (2025-12-10)
 ### [0.28.1](https://github.com/scanoss/scanoss.js/compare/v0.28.0...v0.28.1) (2025-12-10)
 ### [0.29.0-beta.1](https://github.com/scanoss/scanoss.js/compare/v0.28.1...v0.29.0-beta.1) (2025-12-16)
+### [0.29.0-beta.2](https://github.com/scanoss/scanoss.js/compare/v0.29.0-beta.1...v0.29.0-beta.2) (2025-12-19)
