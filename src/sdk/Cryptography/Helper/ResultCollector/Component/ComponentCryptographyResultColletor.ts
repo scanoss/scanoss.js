@@ -15,6 +15,7 @@ export class ComponentCryptographyResultCollector {
   private resultMapper = new Map<string,{
     purl: string;
     version: string;
+    requirement: string;
     algorithms: Array<CryptoAlgorithmResponse>;
     hints: Array<CryptoHintResponse>;
   }>
@@ -23,14 +24,16 @@ export class ComponentCryptographyResultCollector {
    * Gets an existing result entry for a component or creates a new one if it doesn't exist.
    * @param purl The Package URL identifier for the component.
    * @param version The version of the component.
+   * @param requirement The version requirement for the component.
    * @returns The result entry for the specified component.
    */
-  private getOrCreateResult(purl: string, version:string) {
-    const key = `${purl}@${version}`;
+  private getOrCreateResult(purl: string, version:string, requirement: string) {
+    const key = `${purl}@${requirement}`;
     if (!this.resultMapper.has(key)) {
       this.resultMapper.set(key, {
         purl,
         version,
+        requirement,
         algorithms: [],
         hints: []
       });
@@ -44,9 +47,8 @@ export class ComponentCryptographyResultCollector {
    */
   public collectAlgorithmResults(algorithmResults: AlgorithmResponse):void {
     algorithmResults.components.forEach((c) => {
-      if (c.version) {
-        const version = c.version.startsWith('v') ? c.version.slice(1) : c.version;
-        const result = this.getOrCreateResult(c.purl,version);
+      if (c.requirement) {
+        const result = this.getOrCreateResult(c.purl,c.version, c.requirement);
         result.algorithms = c.algorithms;
       }
     });
@@ -58,7 +60,7 @@ export class ComponentCryptographyResultCollector {
    */
   public collectHintResults(hintResults: HintsInRangeResponse):void {
     hintResults.components.forEach((c) => {
-      const result = this.getOrCreateResult(c.purl, c.requirement);
+      const result = this.getOrCreateResult(c.purl,c.version,c.requirement);
       result.hints = c.hints;
     });
   }

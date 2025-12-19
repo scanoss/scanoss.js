@@ -22,6 +22,7 @@ export interface Purl {
 
 export interface ComponentAlgorithm extends Purl {
   algorithms: Algorithm[];
+  requirement: string;
 }
 
 export interface Status {
