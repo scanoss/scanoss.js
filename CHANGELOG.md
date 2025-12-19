@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file. See [standa
 
 ## [Unreleased]
 - Upcoming changes...
+
+## [0.29.0] (2025-12-22)
 ### Changed
 - Used write and read streams to save scan responses
 - Include `requirement` in component crypto algorithm response
@@ -192,8 +194,6 @@ All notable changes to this project will be documented in this file. See [standa
 ### [0.25.0](https://github.com/scanoss/scanoss.js/compare/v0.24.0...v0.25.0) (2025-10-01)
 ### [0.26.0](https://github.com/scanoss/scanoss.js/compare/v0.25.0...v0.26.0) (2025-10-30)
 ### [0.27.0](https://github.com/scanoss/scanoss.js/compare/v0.26.0...v0.26.1) (2025-11-11)
-### [0.28.0-beta.1]  https://github.com/scanoss/scanoss.js/compare/v0.27.0...v0.28.1-beta.1 (2025-11-19)
 ### [0.28.0](https://github.com/scanoss/scanoss.js/compare/v0.27.0...v0.28.1) (2025-12-10)
 ### [0.28.1](https://github.com/scanoss/scanoss.js/compare/v0.28.0...v0.28.1) (2025-12-10)
-### [0.29.0-beta.1](https://github.com/scanoss/scanoss.js/compare/v0.28.1...v0.29.0-beta.1) (2025-12-16)
-### [0.29.0-beta.2](https://github.com/scanoss/scanoss.js/compare/v0.29.0-beta.1...v0.29.0-beta.2) (2025-12-19)
+### [0.29.0](https://github.com/scanoss/scanoss.js/compare/v0.28.1...v0.29.0) (2025-12-22)
