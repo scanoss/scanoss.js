@@ -10,6 +10,8 @@ import { GlobalControllerAborter } from './GlobalControllerAborter';
 import { DispatchableItem } from './DispatchableItem';
 import { Utils } from '../../Utils/Utils';
 import { ProxyAgent } from "proxy-agent";
+import https from "node:https";
+import { logger } from "../../Logger/Logger";
 
 
 const MAX_CONCURRENT_REQUEST = 30;
@@ -44,19 +46,46 @@ export class Dispatcher extends EventEmitter {
 
   init() {
 
-    process.env.NO_PROXY = process.env.NO_PROXY || this.scannerCfg.NO_PROXY
-    process.env.HTTP_PROXY = process.env.HTTP_PROXY || this.scannerCfg.HTTP_PROXY
-    process.env.HTTPS_PROXY = process.env.HTTPS_PROXY ||this.scannerCfg.HTTPS_PROXY
-    this.proxyAgent = new ProxyAgent();
+    // Build TLS options with env fallbacks
+    const ignoreCertErrors = this.scannerCfg.IGNORE_CERT_ERRORS ?? process.env.NODE_TLS_REJECT_UNAUTHORIZED === '0';
+    const caCertPath = this.scannerCfg.CA_CERT || process.env.NODE_EXTRA_CA_CERTS;
+    const caCerts = caCertPath ? Utils.readCaCertsFromFile(caCertPath) : undefined;
 
+    logger.debug(`[Dispatcher] TLS Config:', {
+      ${ignoreCertErrors},
+      rejectUnauthorized: ${!ignoreCertErrors},
+      caCertPath: ${caCertPath || 'not set'},
+      hasCaCerts: ${!!caCerts}
+    }`);
 
-    const caCertPath =
-      this.scannerCfg.CA_CERT || process.env.NODE_EXTRA_CA_CERTS;
+    logger.debug(`[Dispatcher] Proxy Config:', {
+        HTTP_PROXY: ${this.scannerCfg.HTTP_PROXY || 'no set'},
+        HTTPS_PROXY: ${this.scannerCfg.HTTPS_PROXY || 'no set'},
+        ENV_HTTP_PROXY: ${process.env.HTTP_PROXY || 'no set'},
+        ENV_HTTPS_PROXY: ${process.env.HTTPS_PROXY || 'no set'}
+    }`);
 
-    if (caCertPath) Utils.loadCaCertFromFile(caCertPath);
+    // TLS options at root level are passed to proxy agents (http-proxy-agent, https-proxy-agent)
+    // httpsAgent is only used when NO proxy is configured
+    this.proxyAgent = new ProxyAgent({
+      rejectUnauthorized: !ignoreCertErrors,
+      ca: caCerts,
+      getProxyForUrl: (url) => {
+        const isHttps = url.startsWith('https');
+        let proxyUrl = isHttps
+          ? (this.scannerCfg?.HTTPS_PROXY || process.env.HTTPS_PROXY)
+          : (this.scannerCfg?.HTTP_PROXY || process.env.HTTP_PROXY);
 
-    if (this.scannerCfg.IGNORE_CERT_ERRORS )  process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
-    else process.env.NODE_TLS_REJECT_UNAUTHORIZED='1'
+        // Add http:// protocol if missing (required for URL parsing)
+        if (proxyUrl && !proxyUrl.startsWith('http://') && !proxyUrl.startsWith('https://')) {
+          proxyUrl = `http://${proxyUrl}`;
+        }
+
+        const result = proxyUrl || null;
+        console.log('[Dispatcher] getProxyForUrl:', { url, isHttps, proxyUrl: proxyUrl || 'empty', result: result || 'null' });
+        return result;
+      }
+    });
 
 
 
