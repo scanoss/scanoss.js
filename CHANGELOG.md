@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file. See [standa
 ## [Unreleased]
 - Upcoming changes...
 
+## [0.29.1] (2026-01-12)
+### Fixed
+- Reset proxy environment variables on each new HttpClient and Dispatcher instance
+
 ## [0.29.0] (2025-12-22)
 ### Changed
 - Used write and read streams to save scan responses
@@ -197,3 +201,4 @@ All notable changes to this project will be documented in this file. See [standa
 ### [0.28.0](https://github.com/scanoss/scanoss.js/compare/v0.27.0...v0.28.1) (2025-12-10)
 ### [0.28.1](https://github.com/scanoss/scanoss.js/compare/v0.28.0...v0.28.1) (2025-12-10)
 ### [0.29.0](https://github.com/scanoss/scanoss.js/compare/v0.28.1...v0.29.0) (2025-12-22)
+### [0.29.1](https://github.com/scanoss/scanoss.js/compare/v0.29.0...v0.29.1) (2026-01-12)
