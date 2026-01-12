@@ -11,6 +11,8 @@ All notable changes to this project will be documented in this file. See [standa
 ### Changed
 - Upgraded `form-data` dependency from ^4.0.0 to ^4.0.5
 - Upgraded `tar` dependency from ^6.1.11 to ^6.2.0
+- Refactored `DependencyTypes.ts` to extend interfaces from `IDependencyClient` instead of duplicating type definitions
+- Updated `DependencyScanner` return types to use extended `IDependencyResponse` interface
 
 ## [0.29.0] (2025-12-22)
 ### Changed

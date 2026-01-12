@@ -66,6 +66,7 @@ export interface License {
 export interface Dependency {
   purl: string;
   component: string;
+  url: string;
   version: string;
   licenses: License[];
 }
