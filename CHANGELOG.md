@@ -4,8 +4,10 @@ All notable changes to this project will be documented in this file. See [standa
 
 ## [Unreleased]
 - Upcoming changes...
+
 ### Fixed
 - Reset proxy environment variables on each new HttpClient and Dispatcher instance
+- Include file path in decompression error messages
 ### Changed
 - Upgraded `form-data` dependency from ^4.0.0 to ^4.0.5
 - Upgraded `tar` dependency from ^6.1.11 to ^6.2.0

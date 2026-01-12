@@ -74,7 +74,8 @@ export class DecompressionManager {
             await d.run(archivePath, newFolderPath);
           } catch(e) {
             await fs.promises.rm(newFolderPath, {recursive: true, force: true});
-            throw new Error(e);
+            const message = e instanceof Error ? e.message : String(e);
+            throw new Error(`${message}\n\nFailed to extract: "${archivePath}"`);
           }
           break;
         }
