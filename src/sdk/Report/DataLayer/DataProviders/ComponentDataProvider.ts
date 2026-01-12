@@ -74,7 +74,7 @@ export class ComponentDataProvider implements DataProvider {
         newComponent.key = dependency.purl;
         newComponent.purls = [dependency.purl];
         newComponent.name = dependency.component;
-        newComponent.url = null;
+        newComponent.url = dependency.url;
         newComponent.vendor = null;
         newComponent.health = null;
         newComponent.versions = [
