@@ -605,6 +605,7 @@
           {
             "component": "querystringify",
             "purl": "pkg:npm/querystringify",
+            "url": "https://www.npmjs.com/package/querystringify",
             "version": "2.2.0",
             "licensesList": [
               {
@@ -619,6 +620,7 @@
             "component": "requires-port",
             "purl": "pkg:npm/requires-port",
             "version": "1.0.0",
+            "url": "https://www.npmjs.com/package/requires-port",
             "licensesList": [
               {
                 "name": "MIT",
@@ -632,6 +634,7 @@
             "component": "assume",
             "purl": "pkg:npm/assume",
             "version": "2.3.0",
+            "url": "https://www.npmjs.com/package/assume",
             "licensesList": [
               {
                 "name": "MIT",
@@ -645,6 +648,7 @@
             "component": "browserify",
             "purl": "pkg:npm/browserify",
             "version": "17.0.0",
+            "url": "https://www.npmjs.com/package/browserify",
             "licensesList": [
               {
                 "name": "MIT",

@@ -66,48 +66,6 @@ export class ComponentDataProvider implements DataProvider {
     dependencies: DependencyResponse
   ): Array<ComponentDataLayer> {
     const componentLayer: Array<ComponentDataLayer> = [];
-    if (!dependencies) return componentLayer;
-
-    dependencies.filesList.forEach((file) => {
-      file.dependenciesList.forEach((dependency) => {
-        const newComponent: ComponentDataLayer = <ComponentDataLayer>{};
-        newComponent.key = dependency.purl;
-        newComponent.purls = [dependency.purl];
-        newComponent.name = dependency.component;
-        newComponent.url = dependency.url;
-        newComponent.vendor = null;
-        newComponent.health = null;
-        newComponent.versions = [
-          {
-            version: dependency.version,
-            licenses: dependency.licensesList.map((license) => license.spdxId),
-            copyrights: null,
-            cryptography: null,
-            quality: null,
-          },
-        ];
-
-        const existingComponent = componentLayer.find(
-          (component) => component.key === newComponent.key
-        );
-        if (existingComponent) {
-          const existingVersion = existingComponent.versions.find(
-            (version) => version.version === newComponent.versions[0].version
-          );
-          if (!existingVersion)
-            existingComponent.versions.push({
-              version: newComponent.versions[0].version,
-              licenses: newComponent.versions[0].licenses,
-              copyrights: newComponent.versions[0].copyrights,
-              quality: null,
-              cryptography: null,
-            });
-        } else {
-          //Component does not exist, insert as it is.
-          componentLayer.push(newComponent);
-        }
-      });
-    });
     return componentLayer;
   }
 
