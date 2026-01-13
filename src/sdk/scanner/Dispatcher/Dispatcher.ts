@@ -10,7 +10,6 @@ import { GlobalControllerAborter } from './GlobalControllerAborter';
 import { DispatchableItem } from './DispatchableItem';
 import { Utils } from '../../Utils/Utils';
 import { ProxyAgent } from "proxy-agent";
-import https from "node:https";
 import { logger } from "../../Logger/Logger";
 
 
@@ -81,9 +80,7 @@ export class Dispatcher extends EventEmitter {
           proxyUrl = `http://${proxyUrl}`;
         }
 
-        const result = proxyUrl || null;
-        console.log('[Dispatcher] getProxyForUrl:', { url, isHttps, proxyUrl: proxyUrl || 'empty', result: result || 'null' });
-        return result;
+        return  proxyUrl || null;
       }
     });
 
