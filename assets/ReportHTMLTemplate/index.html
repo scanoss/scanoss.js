@@ -618,6 +618,7 @@
               <th>PURL</th>
               <th>Version</th>
               <th>License</th>
+              <th>URL</th>
             </tr>
           </thead>
           <tbody>
@@ -626,6 +627,7 @@
 
         <template id="tpl-dependencies-row">
           <tr>
+            <td></td>
             <td></td>
             <td></td>
             <td></td>
@@ -1112,13 +1114,14 @@
         if (!dependencyData) return false;
 
         for (const depData of dependencyData) {
-          table.innerHTML += `<tr class="subheader"> <td colspan='4'> ${depData.dependencies?.length} ${depData.dependencies?.length == 1 ? 'dependency' : 'dependencies'} found in <span class="primary">${depData.file}</span> </td> </tr>`;
+          table.innerHTML += `<tr class="subheader"> <td colspan='5'> ${depData.dependencies?.length} ${depData.dependencies?.length == 1 ? 'dependency' : 'dependencies'} found in <span class="primary">${depData.file}</span> </td> </tr>`;
           for (const dependency of depData.dependencies) {
             const clon = template.content.cloneNode(true);
             clon.querySelector('td:nth-child(1)').innerHTML = dependency.component || '-';
             clon.querySelector('td:nth-child(2)').innerHTML = decodeURIComponent(dependency.purl);
             clon.querySelector('td:nth-child(3)').innerHTML = dependency.version;
             clon.querySelector('td:nth-child(4)').innerHTML = dependency.licenses?.map(item => item.name).join(', ');
+            clon.querySelector('td:nth-child(5)').innerHTML = dependency.url;
             table.appendChild(clon);
           }
         }

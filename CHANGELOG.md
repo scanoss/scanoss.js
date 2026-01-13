@@ -14,6 +14,8 @@ All notable changes to this project will be documented in this file. See [standa
 - Upgraded `tar` dependency from ^6.1.11 to ^6.2.0
 - Refactored `DependencyTypes.ts` to extend interfaces from `IDependencyClient` instead of duplicating type definitions
 - Updated `DependencyScanner` return types to use extended `IDependencyResponse` interface
+- Removed unused dependency component extraction logic from `ComponentDataProvider`
+- Added URL column to dependencies table in HTML report template
 
 ## [0.29.0] (2025-12-22)
 ### Changed
