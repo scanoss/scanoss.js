@@ -27,24 +27,28 @@ describe('Suit test for Dependency Data Provider', () => {
             purl: 'pkg:npm/querystringify',
             version: '2.2.0',
             licenses: [{ name: 'MIT', spdxid: 'MIT' }],
+            url: "https://www.npmjs.com/package/querystringify"
           },
           {
             component: 'requires-port',
             purl: 'pkg:npm/requires-port',
             version: '1.0.0',
             licenses: [{ name: 'MIT', spdxid: 'MIT' }],
+            url: "https://www.npmjs.com/package/requires-port"
           },
           {
             component: 'assume',
             purl: 'pkg:npm/assume',
             version: '2.3.0',
             licenses: [{ name: 'MIT', spdxid: 'MIT' }],
+            url: "https://www.npmjs.com/package/assume"
           },
           {
             component: 'browserify',
             purl: 'pkg:npm/browserify',
             version: '17.0.0',
             licenses: [{ name: 'MIT', spdxid: 'MIT' }],
+            url: "https://www.npmjs.com/package/browserify"
           },
         ],
       },

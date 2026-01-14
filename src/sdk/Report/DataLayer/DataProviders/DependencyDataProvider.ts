@@ -5,7 +5,6 @@ import {
   License,
   Dependency,
 } from '../DataLayerTypes';
-import { IDependencyResponse } from '../../../Dependencies/DependencyTypes';
 import { DependencyResponse } from "../../../Clients/Dependency/IDependencyClient";
 
 export class DependencyDataProvider implements DataProvider {
@@ -47,6 +46,7 @@ export class DependencyDataProvider implements DataProvider {
           licenses: newLicenses,
           version: dependency.version,
           component: dependency.component,
+          url: dependency.url
         });
       });
       dependencyLayer.push({ file: file.file, dependencies: newDependencies });

@@ -18,11 +18,9 @@ describe('Suit test for DataProvider', () => {
       )
     );
     const componentDataProvider = new ComponentDataProvider(
-      result.scanner,
-      result.dependencies
+      result.scanner
     );
     const componentData = await componentDataProvider.getData();
-
     const expectedOutput: ComponentDataLayer[] = [
       //First component
       {
@@ -112,75 +110,7 @@ describe('Suit test for DataProvider', () => {
           },
         ],
         health: null,
-      },
-      {
-        key: 'pkg:npm/querystringify',
-        purls: ['pkg:npm/querystringify'],
-        name: 'querystringify',
-        url: null,
-        versions: [
-          {
-            version: '2.2.0',
-            licenses: ['MIT'],
-            copyrights: null,
-            cryptography: null,
-            quality: null,
-          },
-        ],
-        vendor: null,
-        health: null,
-      },
-      {
-        key: 'pkg:npm/requires-port',
-        purls: ['pkg:npm/requires-port'],
-        name: 'requires-port',
-        url: null,
-        versions: [
-          {
-            version: '1.0.0',
-            licenses: ['MIT'],
-            copyrights: null,
-            cryptography: null,
-            quality: null,
-          },
-        ],
-        vendor: null,
-        health: null,
-      },
-      {
-        key: 'pkg:npm/assume',
-        purls: ['pkg:npm/assume'],
-        name: 'assume',
-        url: null,
-        versions: [
-          {
-            version: '2.3.0',
-            licenses: ['MIT'],
-            copyrights: null,
-            cryptography: null,
-            quality: null,
-          },
-        ],
-        health: null,
-        vendor: null,
-      },
-      {
-        key: 'pkg:npm/browserify',
-        purls: ['pkg:npm/browserify'],
-        name: 'browserify',
-        url: null,
-        versions: [
-          {
-            version: '17.0.0',
-            licenses: ['MIT'],
-            copyrights: null,
-            cryptography: null,
-            quality: null,
-          },
-        ],
-        vendor: null,
-        health: null,
-      },
+      }
     ];
 
     expect(componentData.component).to.deep.equalInAnyOrder(expectedOutput);

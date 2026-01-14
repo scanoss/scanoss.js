@@ -13,6 +13,7 @@ import {
   Status
 } from "../Clients/Dependency/IDependencyClient";
 import { ClientConfig } from "../Clients/interfaces/ClientConfig";
+import { IDependencyResponse } from "./DependencyTypes";
 
 
 export class DependencyScanner {
@@ -47,17 +48,17 @@ export class DependencyScanner {
     return await this.scan(tree.getFileList());
   }
 
-  public async scan(files: Array<string>): Promise<DependencyResponse> {
+  public async scan(files: Array<string>): Promise<IDependencyResponse> {
     let localDependencies = await this.localDependency.search(files);
     if (localDependencies.files.length === 0) return { filesList: [], status:{ status: 'success', message: 'No dependencies found' } };
     localDependencies = this.purlAdapter(localDependencies);
     const requests: DependencyRequest[] = this.buildRequests(localDependencies);
-    const response: DependencyResponse = await this.getDependencies(requests);
+    const response: IDependencyResponse = await this.getDependencies(requests);
     this.repairOutput(localDependencies, response);
     return response;
   }
 
-  private async getDependencies(requests: Array<DependencyRequest>): Promise<DependencyResponse> {
+  private async getDependencies(requests: Array<DependencyRequest>): Promise<IDependencyResponse> {
     const responseMapper = new Map<string, DependencyFile>();
     let overallStatus: Status = { status: 'success', message: 'Success' };
     const failedRequests = [];
@@ -168,7 +169,7 @@ export class DependencyScanner {
 
   private repairOutput(
     localdependency: ILocalDependencies,
-    serverResponse: DependencyResponse
+    serverResponse: IDependencyResponse
   ) {
     // Create a map with key = [filename + purl] and the value is an object containing:
     // * The scope of the local dependency

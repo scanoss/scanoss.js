@@ -11,6 +11,10 @@ import {
 import { IDependencyResponse } from '../../../Dependencies/DependencyTypes';
 import { DependencyResponse } from "../../../Clients/Dependency/IDependencyClient";
 
+/**
+ * @param scanRawResults - Raw results from scanner
+ * @param {DependencyResponse} [dependencies] - Deprecated: This parameter is no longer used
+ */
 export class ComponentDataProvider implements DataProvider {
   private scanRawResults: ScannerResults;
 
@@ -20,6 +24,7 @@ export class ComponentDataProvider implements DataProvider {
 
   constructor(
     scanRawResults: ScannerResults,
+    /** @deprecated No longer used */
     dependencies?: DependencyResponse
   ) {
     this.scanRawResults = scanRawResults;
@@ -44,14 +49,9 @@ export class ComponentDataProvider implements DataProvider {
     const scannerComponentLayer = this.parseComponentsFromScanner(
       this.componentList
     );
-    const dependenciesComponentLayer = this.parseComponentsFromDependencies(
-      this.dependencies
-    );
 
-    componentLayer.component = [
-      ...scannerComponentLayer,
-      ...dependenciesComponentLayer,
-    ].sort((itemA, itemB) => {
+
+    componentLayer.component = scannerComponentLayer.sort((itemA, itemB) => {
       if (itemA.name < itemB.name) return -1;
       else if (itemA.name > itemB.name) return 1;
       return 0;
@@ -59,55 +59,6 @@ export class ComponentDataProvider implements DataProvider {
 
     if (!componentLayer.component.length) componentLayer.component = null;
 
-    return componentLayer;
-  }
-
-  private parseComponentsFromDependencies(
-    dependencies: DependencyResponse
-  ): Array<ComponentDataLayer> {
-    const componentLayer: Array<ComponentDataLayer> = [];
-    if (!dependencies) return componentLayer;
-
-    dependencies.filesList.forEach((file) => {
-      file.dependenciesList.forEach((dependency) => {
-        const newComponent: ComponentDataLayer = <ComponentDataLayer>{};
-        newComponent.key = dependency.purl;
-        newComponent.purls = [dependency.purl];
-        newComponent.name = dependency.component;
-        newComponent.url = null;
-        newComponent.vendor = null;
-        newComponent.health = null;
-        newComponent.versions = [
-          {
-            version: dependency.version,
-            licenses: dependency.licensesList.map((license) => license.spdxId),
-            copyrights: null,
-            cryptography: null,
-            quality: null,
-          },
-        ];
-
-        const existingComponent = componentLayer.find(
-          (component) => component.key === newComponent.key
-        );
-        if (existingComponent) {
-          const existingVersion = existingComponent.versions.find(
-            (version) => version.version === newComponent.versions[0].version
-          );
-          if (!existingVersion)
-            existingComponent.versions.push({
-              version: newComponent.versions[0].version,
-              licenses: newComponent.versions[0].licenses,
-              copyrights: newComponent.versions[0].copyrights,
-              quality: null,
-              cryptography: null,
-            });
-        } else {
-          //Component does not exist, insert as it is.
-          componentLayer.push(newComponent);
-        }
-      });
-    });
     return componentLayer;
   }
 

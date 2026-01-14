@@ -8,9 +8,14 @@ All notable changes to this project will be documented in this file. See [standa
 ### Fixed
 - Reset proxy environment variables on each new HttpClient and Dispatcher instance
 - Include file path in decompression error messages
+- Added missing component URL to the HTML format
 ### Changed
 - Upgraded `form-data` dependency from ^4.0.0 to ^4.0.5
 - Upgraded `tar` dependency from ^6.1.11 to ^6.2.0
+- Refactored `DependencyTypes.ts` to extend interfaces from `IDependencyClient` instead of duplicating type definitions
+- Updated `DependencyScanner` return types to use extended `IDependencyResponse` interface
+- Removed unused dependency component extraction logic from `ComponentDataProvider`
+- Added URL column to dependencies table in HTML report template
 
 ## [0.29.0] (2025-12-22)
 ### Changed
