@@ -1,7 +1,10 @@
-import { Dependency, DependencyFile, DependencyResponse } from "../Clients/Dependency/IDependencyClient";
+import { Dependency, DependencyFile, DependencyResponse, License } from "../Clients/Dependency/IDependencyClient";
 
-export interface IDependency extends Dependency {
+export interface IDependencyLicense extends License {}
+
+export interface IDependency extends Omit<Dependency, 'licensesList'> {
   scope?: string;
+  licensesList: IDependencyLicense[];
 }
 
 export interface IDependencyFile extends Omit<DependencyFile, 'dependenciesList'> {
