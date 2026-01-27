@@ -59,8 +59,7 @@ export interface CryptoHintResponse{
   "purl"?: string;
 }
 
-export interface CryptoAlgorithmResponse extends CryptoAlgorithm {
-}
+export interface CryptoAlgorithmResponse extends CryptoAlgorithm {}
 
 export interface LocalCryptography {
   file: string;
@@ -75,6 +74,7 @@ export interface LocalCryptographyResponse {
 export interface CryptographyResponse {
   purl: string;
   version: string;
+  requirement: string;
   algorithms: Array<CryptoAlgorithmResponse>;
   hints: Array<CryptoHintResponse>;
 }

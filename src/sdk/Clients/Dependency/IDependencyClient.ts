@@ -1,6 +1,6 @@
 import { Component } from "../../types/common/types";
 
-interface License {
+export interface License {
   name: string;
   spdxId: string;
   isSpdxApproved: boolean;
