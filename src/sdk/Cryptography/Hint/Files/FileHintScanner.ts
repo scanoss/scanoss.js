@@ -60,6 +60,7 @@ export class FileHintScanner
    * @returns A promise that resolves to an ILocalCryptographyResponse.
    */
   public async scan(files: Array<string>): Promise<Array<CryptoHintJobResponse>> {
+    if (files.length <= 0) return [];
     const workerPool = new WorkerPool<LocalCryptoHintJob, CryptoHintJobResponse>(cryptographyHintProcessor, this.config.THREADS);
     const jobs = await this.buildJobs(files);
     workerPool.loadJobs(jobs)

@@ -68,6 +68,7 @@ export class FileAlgorithmScanner extends BaseCryptographyScanner<
    * @returns A promise that resolves to an ILocalCryptographyResponse.
    */
   public async scan(files: Array<string>): Promise<Array<CryptoAlgorithmJobResponse>> {
+    if (files.length <= 0) return [];
     const workerPool = new WorkerPool<LocalCryptoAlgorithmJob, CryptoAlgorithmJobResponse>(cryptographyAlgorithmProcessor, this.config.THREADS);
     const jobs = await this.buildJobs(files);
     workerPool.loadJobs(jobs)

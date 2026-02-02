@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file. See [standa
 ## [Unreleased]
 - Upcoming changes...
 
+## [0.31.2] (2026-02-03)
+### Fixed
+- Fixed CryptographyScanner hang when processing empty file list
+
 ## [0.31.1] (2026-02-02)
 ### Fixed
 - Polyfill global `File` for `libarchive.js` in environments where it is not available
@@ -230,3 +234,4 @@ All notable changes to this project will be documented in this file. See [standa
 ### [0.30.1](https://github.com/scanoss/scanoss.js/compare/v0.30.0...v0.30.1) (2026-01-27)
 ### [0.31.0](https://github.com/scanoss/scanoss.js/compare/v0.30.1...v0.31.0) (2026-02-02)
 ### [0.31.1](https://github.com/scanoss/scanoss.js/compare/v0.31.0...v0.31.1) (2026-02-02)
+### [0.31.2](https://github.com/scanoss/scanoss.js/compare/v0.31.1...v0.31.2) (2026-02-03)
