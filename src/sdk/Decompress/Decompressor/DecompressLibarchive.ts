@@ -38,9 +38,12 @@ export class DecompressLibarchive extends Decompressor {
     const buffer = fs.readFileSync(archivePath);
     const blob = new Blob([buffer]);
     const archive = await Archive.open(blob);
-    const filesObject = await archive.extractFiles();
-    await this.writeExtractedFiles(filesObject, destPath);
-    await archive.close();
+    try {
+      const filesObject = await archive.extractFiles();
+      await this.writeExtractedFiles(filesObject, destPath);
+    } finally {
+      await archive.close();
+    }
   }
 
   /**
@@ -48,16 +51,20 @@ export class DecompressLibarchive extends Decompressor {
    * to the filesystem. File entries are written as files, object entries as directories.
    */
   private async writeExtractedFiles(obj: any, destPath: string): Promise<void> {
+    const realDest = fs.realpathSync(destPath);
     for (const key of Object.keys(obj)) {
       const value = obj[key];
-      const fullPath = path.join(destPath, key);
+      const fullPath = path.resolve(destPath, key);
+      if (!fullPath.startsWith(realDest + path.sep) && fullPath !== realDest) {
+        continue;
+      }
       if (value instanceof Blob) {
         fs.mkdirSync(path.dirname(fullPath), { recursive: true });
         const arrayBuffer = await value.arrayBuffer();
         fs.writeFileSync(fullPath, Buffer.from(arrayBuffer));
       } else if (value !== null && typeof value === 'object') {
         fs.mkdirSync(fullPath, { recursive: true });
-        await this.writeExtractedFiles(value, destPath);
+        await this.writeExtractedFiles(value, fullPath);
       }
     }
   }

@@ -17,7 +17,8 @@ export class DecompressGz extends Decompressor {
   public async run(archivePath: string, destPath: string): Promise<void> {
     const buffer = fs.readFileSync(archivePath);
     const basename = path.basename(archivePath);
-    const outputName = basename.slice(0, basename.lastIndexOf('.'));
+    const dotIndex = basename.lastIndexOf('.');
+    const outputName = dotIndex > 0 ? basename.slice(0, dotIndex) : basename;
     const outputPath = path.join(destPath, outputName);
     const decompressed = zlib.gunzipSync(buffer);
     fs.writeFileSync(outputPath, decompressed);
