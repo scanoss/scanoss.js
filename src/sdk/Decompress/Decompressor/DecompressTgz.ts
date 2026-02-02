@@ -1,6 +1,6 @@
 import { Decompressor } from './Decompressor';
 import fs from 'fs';
-import tar from 'tar';
+import * as tar from 'tar';
 
 export class DecompressTgz extends Decompressor{
 

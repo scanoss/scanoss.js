@@ -3,7 +3,11 @@
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
 ## [Unreleased]
-- Upcoming changes...
+### Added
+- Added support for new archive decompression formats: `.rar`, `.rpm`, `.tar.bz2`, `.tar.lzma`, `.tar.xz`, `.tbz2`, `.txz`, `.7z` (via `libarchive.js`)
+- Added support for single-file `.gz` decompression (via Node.js `zlib`)
+### Changed
+- Upgraded `tar` dependency from ^6.2.1 to ^7.5.7
 
 ## [0.30.1] (2026-01-27)
 ### Fixed

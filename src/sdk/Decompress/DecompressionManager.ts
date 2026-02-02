@@ -5,6 +5,8 @@ import { DecompressionFilter } from '../tree/Filters/DecompressionFilter';
 import { Decompressor } from './Decompressor/Decompressor';
 import { DecompressZip } from './Decompressor/DecompressZips';
 import { DecompressTgz } from './Decompressor/DecompressTgz';
+import { DecompressLibarchive } from './Decompressor/DecompressLibarchive';
+import { DecompressGz } from './Decompressor/DecompressGz';
 
 export class DecompressionManager {
 
@@ -23,7 +25,9 @@ export class DecompressionManager {
     this.suffix = suffix;
     this.decompressorList = [
       new DecompressTgz(),
-      new DecompressZip()
+      new DecompressZip(),
+      new DecompressLibarchive(),
+      new DecompressGz()
     ];
 
   }
