@@ -1,6 +1,6 @@
 {
   "name": "scanoss",
-  "version": "0.31.0",
+  "version": "0.31.1",
   "description": "The SCANOSS JS package provides a simple, easy to consume module for interacting with SCANOSS APIs/Engine.",
   "main": "build/main/index.js",
   "typings": "build/main/index.d.ts",
@@ -19,7 +19,7 @@
     "install-dev": "npm run build && npm run test && npm install -g ."
   },
   "engines": {
-    "node": ">=10"
+    "node": ">=18"
   },
   "dependencies": {
     "@grpc/grpc-js": "^1.5.5",

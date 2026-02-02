@@ -4,7 +4,11 @@ All notable changes to this project will be documented in this file. See [standa
 
 ## [Unreleased]
 - Upcoming changes...
-- 
+
+## [0.31.1] (2026-02-02)
+### Fixed
+- Polyfill global `File` for `libarchive.js` in environments where it is not available
+
 ## [0.31.0] (2026-02-02)
 ### Added
 - Added support for new archive decompression formats: `.rar`, `.rpm`, `.tar.bz2`, `.tar.lzma`, `.tar.xz`, `.tbz2`, `.txz`, `.7z` (via `libarchive.js`)
@@ -225,4 +229,4 @@ All notable changes to this project will be documented in this file. See [standa
 ### [0.30.0](https://github.com/scanoss/scanoss.js/compare/v0.29.0...v0.30.0) (2026-01-14)
 ### [0.30.1](https://github.com/scanoss/scanoss.js/compare/v0.30.0...v0.30.1) (2026-01-27)
 ### [0.31.0](https://github.com/scanoss/scanoss.js/compare/v0.30.1...v0.31.0) (2026-02-02)
-
+### [0.31.1](https://github.com/scanoss/scanoss.js/compare/v0.31.0...v0.31.1) (2026-02-02)
