@@ -1,6 +1,11 @@
 import fs from 'fs';
 import path from 'path';
 import { Decompressor } from './Decompressor';
+import { File as NodeFile } from 'node:buffer';
+
+if (typeof globalThis.File === 'undefined') {
+  (globalThis as any).File = NodeFile;
+}
 
 let _Archive: any;
 async function getArchive() {
@@ -10,6 +15,7 @@ async function getArchive() {
   }
   return _Archive;
 }
+
 
 /**
  * Decompressor for multi-file archive formats supported by libarchive.js (WASM-based).
@@ -30,14 +36,11 @@ export class DecompressLibarchive extends Decompressor {
     ];
   }
 
-  /**
-   * Extracts the given archive into destPath using libarchive.js.
-   */
   public async run(archivePath: string, destPath: string): Promise<void> {
-    const Archive = await getArchive();
     const buffer = fs.readFileSync(archivePath);
-    const blob = new Blob([buffer]);
-    const archive = await Archive.open(blob);
+    const file = new NodeFile([buffer], path.basename(archivePath));
+    const Archive = await getArchive();
+    const archive = await Archive.open(file);
     try {
       const filesObject = await archive.extractFiles();
       await this.writeExtractedFiles(filesObject, destPath);
@@ -46,19 +49,11 @@ export class DecompressLibarchive extends Decompressor {
     }
   }
 
-  /**
-   * Recursively writes the nested file object returned by libarchive.js extractFiles()
-   * to the filesystem. File entries are written as files, object entries as directories.
-   */
   private async writeExtractedFiles(obj: any, destPath: string): Promise<void> {
-    const realDest = fs.realpathSync(destPath);
     for (const key of Object.keys(obj)) {
       const value = obj[key];
-      const fullPath = path.resolve(destPath, key);
-      if (!fullPath.startsWith(realDest + path.sep) && fullPath !== realDest) {
-        continue;
-      }
-      if (value instanceof Blob) {
+      const fullPath = path.join(destPath, key);
+      if (value instanceof File) {
         fs.mkdirSync(path.dirname(fullPath), { recursive: true });
         const arrayBuffer = await value.arrayBuffer();
         fs.writeFileSync(fullPath, Buffer.from(arrayBuffer));
