@@ -218,7 +218,13 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
             options.extractSuffix,
             options.extractOverwrite
           );
-          await decompressionManager.decompress(archives);
+          const { failedFiles } = await decompressionManager.decompress(archives);
+          if (failedFiles.length > 0) {
+            console.error(`Warning: ${failedFiles.length} archive(s) failed to extract:`);
+            for (const { path, error } of failedFiles) {
+              console.error(`  - ${path}: ${error}`);
+            }
+          }
           console.error("Reindexing files...");
           tree.build();
         } else console.error("No archives found.");
