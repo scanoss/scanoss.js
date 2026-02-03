@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file. See [standa
 ## [Unreleased]
 - Upcoming changes...
 
+## [0.32.0] (2026-02-04)
+### Changed
+- Improved decompression error handling: extraction failures are now collected and reported rather than stopping the entire process
+- CLI scan command displays warnings for archives that failed to extract while continuing with successful extractions
+
 ## [0.31.2] (2026-02-03)
 ### Fixed
 - Fixed CryptographyScanner hang when processing empty file list
@@ -235,3 +240,4 @@ All notable changes to this project will be documented in this file. See [standa
 ### [0.31.0](https://github.com/scanoss/scanoss.js/compare/v0.30.1...v0.31.0) (2026-02-02)
 ### [0.31.1](https://github.com/scanoss/scanoss.js/compare/v0.31.0...v0.31.1) (2026-02-02)
 ### [0.31.2](https://github.com/scanoss/scanoss.js/compare/v0.31.1...v0.31.2) (2026-02-03)
+### [0.32.0](https://github.com/scanoss/scanoss.js/compare/v0.31.2...v0.32.0) (2026-02-04)
