@@ -1,5 +1,7 @@
 import fs from 'fs';
 import path from 'path';
+import { pathToFileURL } from 'url';
+import { Worker } from 'worker_threads';
 import { Decompressor } from './Decompressor';
 import { File as NodeFile } from 'node:buffer';
 
@@ -8,10 +10,31 @@ if (typeof globalThis.File === 'undefined') {
 }
 
 let _Archive: any;
+// Use indirect import to prevent TypeScript/webpack from converting dynamic import() to require(),
+// which fails for ES Modules (.mjs files).
+const dynamicImport = new Function('specifier', 'return import(specifier)');
 async function getArchive() {
   if (!_Archive) {
-    const mod = await import('libarchive.js/dist/libarchive-node.mjs');
+    let specifier: string;
+    let workerPath: string | undefined;
+    try {
+      let modulePath = require.resolve('libarchive.js/dist/libarchive-node.mjs');
+      modulePath = modulePath.replace('app.asar', 'app.asar.unpacked');
+      specifier = pathToFileURL(modulePath).href;
+      workerPath = path.join(path.dirname(modulePath), 'worker-bundle-node.mjs');
+    } catch {
+      specifier = 'libarchive.js/dist/libarchive-node.mjs';
+    }
+    const mod = await dynamicImport(specifier);
     _Archive = mod.Archive;
+    // Patch only getWorker on existing options to fix URL-encoded paths with spaces,
+    // without resetting createClient and other options set by libarchive-node.mjs.
+    if (workerPath) {
+      const opts = _Archive._options;
+      if (opts) {
+        opts.getWorker = () => new Worker(workerPath);
+      }
+    }
   }
   return _Archive;
 }
