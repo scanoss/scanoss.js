@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file. See [standa
 
 ## [Unreleased]
 - Upcoming changes...
+### Fixed
+- Throttled file system operations in `excludeBinariesAndLargeFiles` using `PQueue` (concurrency: 10) to prevent EMFILE errors when processing large file lists
+- Switched from async `isBinaryFile` to sync `isBinaryFileSync` for more predictable concurrency behavior
 
 ## [0.32.0] (2026-02-09)
 ### Changed
