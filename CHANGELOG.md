@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file. See [standa
 
 ## [Unreleased]
 - Upcoming changes...
+### Added
+- Added support for Poetry dependency format in `pyproject.toml` parser (`[tool.poetry.dependencies]`, `[tool.poetry.dev-dependencies]`, `[tool.poetry.group.<name>.dependencies]`)
 ### Fixed
 - Throttled file system operations in `excludeBinariesAndLargeFiles` using `PQueue` (concurrency: 10) to prevent EMFILE errors when processing large file lists
 - Switched from async `isBinaryFile` to sync `isBinaryFileSync` for more predictable concurrency behavior

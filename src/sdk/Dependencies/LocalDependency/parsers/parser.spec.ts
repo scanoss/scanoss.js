@@ -301,6 +301,60 @@ const ParserSpec: ParserSpecI[] = [
     expect: { file: "pyproject.toml", purls: [] },
     parser: pyProjectToml
   },
+  {
+    test_name: "pyproject.toml example 8 - Poetry format with group dependencies",
+    source: "https://github.com/ARM-software/arm-trusted-firmware",
+    note: "Poetry format using [tool.poetry.dependencies] and [tool.poetry.group.<name>.dependencies]",
+    file_name: "pyproject.toml",
+    file_content: "[tool.poetry]\nname = \"trusted-firmware-a\"\nversion = \"2.9.0\"\ndescription = \"Trusted Firmware-A (TF-A) Python dependencies.\"\nauthors = [\"Arm Ltd.\"]\nlicense = \"BSD-3-Clause\"\nreadme = \"readme.rst\"\n\n[tool.poetry.dependencies]\npython = \"^3.8\"\n\n[tool.poetry.group.doc.dependencies]\nsphinx = \"^5.3.0\"\nmyst-parser = \"^0.18.1\"\nsphinxcontrib-plantuml = \"^0.24.1\"\nsphinx-rtd-theme = \"^1.1.1\"\npip-tools = \"^6.4.0\"\n\n[tool.poetry.group.ci.dependencies]\nclick = \"^8.1.3\"\n",
+    expect: { file: "pyproject.toml", purls: [
+      { purl: "pkg:pypi/sphinx", requirement: "^5.3.0" },
+      { purl: "pkg:pypi/myst-parser", requirement: "^0.18.1" },
+      { purl: "pkg:pypi/sphinxcontrib-plantuml", requirement: "^0.24.1" },
+      { purl: "pkg:pypi/sphinx-rtd-theme", requirement: "^1.1.1" },
+      { purl: "pkg:pypi/pip-tools", requirement: "^6.4.0" },
+      { purl: "pkg:pypi/click", requirement: "^8.1.3" },
+    ]},
+    parser: pyProjectToml
+  },
+  {
+    test_name: "pyproject.toml example 9 - Poetry format with simple dependencies",
+    source: "local",
+    note: "Poetry format with main dependencies only",
+    file_name: "pyproject.toml",
+    file_content: "[tool.poetry]\nname = \"my-project\"\nversion = \"1.0.0\"\n\n[tool.poetry.dependencies]\npython = \"^3.9\"\nrequests = \"^2.28.0\"\nflask = \"^2.3.0\"\n",
+    expect: { file: "pyproject.toml", purls: [
+      { purl: "pkg:pypi/requests", requirement: "^2.28.0" },
+      { purl: "pkg:pypi/flask", requirement: "^2.3.0" },
+    ]},
+    parser: pyProjectToml
+  },
+  {
+    test_name: "pyproject.toml example 10 - Poetry format with inline table dependencies",
+    source: "local",
+    note: "Poetry format using inline table syntax for version constraints",
+    file_name: "pyproject.toml",
+    file_content: "[tool.poetry]\nname = \"my-project\"\nversion = \"1.0.0\"\n\n[tool.poetry.dependencies]\npython = \"^3.9\"\nrequests = \"^2.28.0\"\nclick = {version = \"^8.1.3\", optional = true}\nmy-lib = {path = \"../my-lib\", develop = true}\n",
+    expect: { file: "pyproject.toml", purls: [
+      { purl: "pkg:pypi/requests", requirement: "^2.28.0" },
+      { purl: "pkg:pypi/click", requirement: "^8.1.3" },
+      { purl: "pkg:pypi/my-lib" },
+    ]},
+    parser: pyProjectToml
+  },
+  {
+    test_name: "pyproject.toml example 11 - Poetry dev-dependencies (legacy format)",
+    source: "local",
+    note: "Poetry legacy format using [tool.poetry.dev-dependencies]",
+    file_name: "pyproject.toml",
+    file_content: "[tool.poetry]\nname = \"my-project\"\nversion = \"1.0.0\"\n\n[tool.poetry.dependencies]\npython = \"^3.8\"\nrequests = \"^2.28.0\"\n\n[tool.poetry.dev-dependencies]\npytest = \"^7.0\"\nblack = \"^22.0\"\n",
+    expect: { file: "pyproject.toml", purls: [
+      { purl: "pkg:pypi/requests", requirement: "^2.28.0" },
+      { purl: "pkg:pypi/pytest", requirement: "^7.0" },
+      { purl: "pkg:pypi/black", requirement: "^22.0" },
+    ]},
+    parser: pyProjectToml
+  },
   /****************************************************************************/
   /*              package.json DEPENDENCY TEST DATA                      */
   /****************************************************************************/
