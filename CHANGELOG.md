@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file. See [standa
 
 ## [Unreleased]
 - Upcoming changes...
+- 
+## [0.33.0] (2026-02-11)
 ### Added
 - Added support for Poetry dependency format in `pyproject.toml` parser (`[tool.poetry.dependencies]`, `[tool.poetry.dev-dependencies]`, `[tool.poetry.group.<name>.dependencies]`)
 ### Fixed
