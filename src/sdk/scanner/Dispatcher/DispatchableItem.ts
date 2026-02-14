@@ -11,6 +11,10 @@ export class DispatchableItem {
 
   private engineFlags: number;
 
+  private sc: string;
+
+  private context: string;
+
   private sbom: string;
 
   private sbomMode: SbomMode;
@@ -39,6 +43,8 @@ export class DispatchableItem {
       'data.wfp'
     );
     if (this.engineFlags) this.form.append('flags', this.engineFlags);
+    if (this.sc) this.form.append('sc', this.sc);
+    if (this.context) this.form.append('context', this.context);
 
     if (this.sbomMode && this.sbom) {
       this.form.append('assets', this.sbom);
@@ -66,6 +72,14 @@ export class DispatchableItem {
 
   public setEngineFlags(engineFlags: number) {
     this.engineFlags = engineFlags;
+  }
+
+  public setSc(sc: string) {
+    this.sc = sc;
+  }
+
+  public setContext(context: string) {
+    this.context = context;
   }
 
   public setSbom(sbom: string, sbomMode: SbomMode) {

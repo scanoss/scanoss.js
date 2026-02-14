@@ -197,6 +197,8 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
 
   scannerInput.folderRoot = rootPath + path.sep; // This will remove the project root path from the results.
   if (options.flags) scannerInput.engineFlags = options.flags;
+  if (options.sc) scannerInput.sc = options.sc;
+  if (options.context) scannerInput.context = options.context;
   if (options.wfp) scannerInput.wfpPath = rootPath;
 
   const wfpMode = options.hpsm ? WinnowingMode.FULL_WINNOWING_HPSM : WinnowingMode.FULL_WINNOWING;

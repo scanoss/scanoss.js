@@ -32,6 +32,8 @@ async function main() {
   scan.addOption(new Option("-o, --output <filename>", "Output result file name (optional - default stdout)"));
   scan.addOption(new Option("-f, --format <format>", "Result output format").choices(["json", "html"]));
   scan.addOption(new Option("-F, --flags <flags>", "Scanning engine flags (1: disable snippet matching, 2 enable snippet ids, 4: disable dependencies, 8: disable licenses, 16: disable copyrights,32: disable vulnerabilities, 64: disable quality, 128: disable cryptography,256: disable best match, 512: Report identified files)"));
+  scan.addOption(new Option("    --sc <sc>", "Scan configuration (comma-separated key=value pairs, e.g., 'snippet_limit=1,snippet_cutoff=100')"));
+  scan.addOption(new Option("    --context <context>", "Context for the scan"));
   scan.addOption(new Option("-P, --post-size postsize>", "Number of kilobytes to limit the post to while scanning (optional - default 32)"));
   scan.addOption(new Option("-R, --max-retry <retry>", "Max number of retries for each POST (optional -default 5)"));
   scan.addOption(new Option("-M, --timeout <timeout>", "Timeout (in seconds) for API communication (optional -default 120)"));

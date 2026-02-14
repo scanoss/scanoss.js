@@ -285,6 +285,12 @@ export class Scanner extends EventEmitter {
         if (this.scannerInput[0]?.engineFlags)
           item.setEngineFlags(this.scannerInput[0]?.engineFlags);
 
+        if (this.scannerInput[0]?.sc)
+          item.setSc(this.scannerInput[0]?.sc);
+
+        if (this.scannerInput[0]?.context)
+          item.setContext(this.scannerInput[0]?.context);
+
         if (this.scannerInput[0]?.sbom && this.scannerInput[0]?.sbomMode)
           item.setSbom(
             this.scannerInput[0]?.sbom,

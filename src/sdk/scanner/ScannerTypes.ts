@@ -50,6 +50,8 @@ export interface BaseScannerInput {
   sbomMode?: SbomMode;
   settings?: Settings;
   engineFlags?: number;
+  sc?: string;
+  context?: string;
   winnowing?: {
     mode: WinnowingMode,
   }
