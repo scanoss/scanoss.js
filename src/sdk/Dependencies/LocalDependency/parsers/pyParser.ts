@@ -15,16 +15,8 @@ function parseDep (str: string) {
 
 const PURL_TYPE = 'pypi';
 
-// Parse a requirements.txt file from python projects
-// See reference on: https://pip.pypa.io/en/stable/reference/requirements-file-format/
-const MANIFEST_FILE = 'requirements.txt';
-export function requirementsParser(fileContent: string, filePath: string): Promise<ILocalDependency> {
-
-    // If the file is not a python manifest file, return an empty results
+function parseRequirementsContent(fileContent: string, filePath: string): ILocalDependency {
     const results: ILocalDependency = {file: filePath, purls: []};
-    if(path.basename(filePath) != MANIFEST_FILE)
-        return Promise.resolve(results);
-
     const lines: Array<string> = fileContent.split('\n');
 
     for (let line of lines) {
@@ -38,6 +30,7 @@ export function requirementsParser(fileContent: string, filePath: string): Promi
             }
             else if(isValidPath(line)) {continue;} // Do not parse local dependencies.
             else if(line.startsWith('-r')) {continue;} // Recursive dependencies (NOT SUPPORTED YET)
+            else if(line.startsWith('-')) {continue;} // Skip pip options (e.g. --hash, -i, -e, etc.)
             else {
 
                 const dep = parseDep(line);
@@ -54,5 +47,30 @@ export function requirementsParser(fileContent: string, filePath: string): Promi
             }
         }
     }
-  return Promise.resolve(results);
+  return results;
+}
+
+// Parse a requirements.txt file from python projects
+// See reference on: https://pip.pypa.io/en/stable/reference/requirements-file-format/
+const MANIFEST_FILE = 'requirements.txt';
+export function requirementsParser(fileContent: string, filePath: string): Promise<ILocalDependency> {
+
+    // If the file is not a python manifest file, return an empty results
+    const results: ILocalDependency = {file: filePath, purls: []};
+    if(path.basename(filePath) != MANIFEST_FILE)
+        return Promise.resolve(results);
+
+    return Promise.resolve(parseRequirementsContent(fileContent, filePath));
+}
+
+// Parse a pip_requirements_lock.txt file (pip-compile / pip-tools lock file)
+// Same format as requirements.txt but typically with pinned versions (==)
+const LOCK_MANIFEST_FILE = 'pip_requirements_lock.txt';
+export function pipRequirementsLockParser(fileContent: string, filePath: string): Promise<ILocalDependency> {
+
+    const results: ILocalDependency = {file: filePath, purls: []};
+    if(path.basename(filePath) != LOCK_MANIFEST_FILE)
+        return Promise.resolve(results);
+
+    return Promise.resolve(parseRequirementsContent(fileContent, filePath));
 }
