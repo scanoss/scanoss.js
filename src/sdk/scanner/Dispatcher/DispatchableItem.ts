@@ -1,6 +1,7 @@
 import { FingerprintPackage } from '../WfpProvider/FingerprintPackage';
 import FormData from 'form-data';
 import { SbomMode } from '../ScannerTypes';
+import { FileSnippetSettings } from "../ScannnerResultPostProcessor/interfaces/types";
 
 export class DispatchableItem {
   private form: FormData;
@@ -14,6 +15,8 @@ export class DispatchableItem {
   private sbom: string;
 
   private sbomMode: SbomMode;
+
+  private scanSettings: FileSnippetSettings;
 
   constructor() {
     this.errorCounter = 0;
@@ -48,6 +51,10 @@ export class DispatchableItem {
     return this.form;
   }
 
+  public getScanSettings(): FileSnippetSettings | undefined {
+    return this.scanSettings;
+  }
+
   public increaseErrorCounter() {
     this.errorCounter += 1;
   }
@@ -71,5 +78,9 @@ export class DispatchableItem {
   public setSbom(sbom: string, sbomMode: SbomMode) {
     this.sbom = sbom;
     this.sbomMode = sbomMode;
+  }
+
+  public setScanSettings(fileSnippetSettings: FileSnippetSettings) {
+    this.scanSettings = fileSnippetSettings;
   }
 }

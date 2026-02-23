@@ -10,12 +10,11 @@ import { Dispatcher } from './Dispatcher/Dispatcher';
 import { DispatchableItem } from './Dispatcher/DispatchableItem';
 import { DispatcherResponse } from './Dispatcher/DispatcherResponse';
 import { ScannerCfg } from './ScannerCfg';
-import { BaseConfig } from '../BaseConfig';
 import {
   ContentScannerInput, SbomMode, ScannerComponent,
   ScannerEvents,
   ScannerInput,
-  ScannerResults
+  ScannerResults,
 } from "./ScannerTypes";
 
 import { WfpProvider } from './WfpProvider/WfpProvider';
@@ -290,6 +289,9 @@ export class Scanner extends EventEmitter {
             this.scannerInput[0]?.sbom,
             this.scannerInput[0]?.sbomMode
           );
+
+        if (this.scannerInput[0]?.settings?.settings)
+          item.setScanSettings(this.scannerInput[0].settings.settings.file_snippet);
 
         this.dispatcher.dispatchItem(item);
       }

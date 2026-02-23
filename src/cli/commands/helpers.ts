@@ -38,8 +38,12 @@ export async function getSettingsFilePath(settingsFilePath: string | null, scanP
 }
 
 export function validateSettingsFile(settings: Settings) {
+  if (!settings.bom && !settings.settings) {
+    throw new Error("[ SETTINGS FILE ]: Missing required 'bom' or 'settings' key");
+  }
+
   if (!settings.bom) {
-    throw new Error("[ SETTINGS FILE ]: Missing required 'bom' key");
+    return true;
   }
 
   const { bom } = settings;
