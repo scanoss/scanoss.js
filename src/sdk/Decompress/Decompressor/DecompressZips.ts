@@ -9,7 +9,8 @@ export class DecompressZip extends Decompressor{
       ".zip",
       ".jar",
       ".ear",
-      ".war"
+      ".war",
+      ".mtar"
     ]
   }
 
