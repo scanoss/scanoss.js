@@ -3,8 +3,12 @@
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
 ## [Unreleased]
-- Upcoming changes...
-- 
+
+## [0.34.0] (2026-02-24)
+### Added
+- Added support for `pnpm-lock.yaml` dependency parsing (v5, v6, and v9+ lockfile formats with transitive dependency scope resolution)
+- Added support for `pip_requirements_lock.txt` (`pip-compile` / `pip-tools` lock file) dependency parsing
+
 ## [0.33.0] (2026-02-11)
 ### Added
 - Added support for Poetry dependency format in `pyproject.toml` parser (`[tool.poetry.dependencies]`, `[tool.poetry.dev-dependencies]`, `[tool.poetry.group.<name>.dependencies]`)
@@ -253,3 +257,5 @@ All notable changes to this project will be documented in this file. See [standa
 ### [0.31.1](https://github.com/scanoss/scanoss.js/compare/v0.31.0...v0.31.1) (2026-02-02)
 ### [0.31.2](https://github.com/scanoss/scanoss.js/compare/v0.31.1...v0.31.2) (2026-02-03)
 ### [0.32.0](https://github.com/scanoss/scanoss.js/compare/v0.31.2...v0.32.0) (2026-02-09)
+### [0.33.0](https://github.com/scanoss/scanoss.js/compare/v0.32.0...v0.33.0) (2026-02-11)
+### [0.34.0](https://github.com/scanoss/scanoss.js/compare/v0.33.0...v0.34.0) (2026-02-24)

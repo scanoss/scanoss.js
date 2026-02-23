@@ -1,13 +1,14 @@
 import path from 'path';
 import fs from 'fs';
 import { ParserFuncType, ILocalDependencies } from './DependencyTypes';
-import { requirementsParser } from './parsers/pyParser';
+import { requirementsParser, pipRequirementsLockParser } from './parsers/pyParser';
 import { pomParser } from './parsers/mavenParser';
 import {
   packagelockParser,
   packageParser,
   yarnLockParser,
 } from './parsers/npmParser';
+import { pnpmLockParser } from './parsers/pnpmParser';
 import { gemfilelockParser, gemfileParser } from './parsers/rubyParser';
 import { goModParser, goSumParser } from './parsers/golangParser';
 import { csprojParser, packagesConfigParser } from './parsers/nugetParser';
@@ -25,6 +26,7 @@ export class LocalDependencies {
       */
     this.parserMap = {
       'requirements.txt': requirementsParser,
+      'pip_requirements_lock.txt': pipRequirementsLockParser,
       'pom.xml': pomParser,
       'package.json': packageParser,
       'package-lock.json': packagelockParser,
@@ -33,6 +35,7 @@ export class LocalDependencies {
       'go.mod': goModParser,
       'go.sum': goSumParser,
       'yarn.lock': yarnLockParser,
+      'pnpm-lock.yaml': pnpmLockParser,
       '*.csproj': csprojParser,
       'packages.config': packagesConfigParser,
       'build.gradle': buildGradleParser,
