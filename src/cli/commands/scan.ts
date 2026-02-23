@@ -30,6 +30,7 @@ import { parser } from "stream-json";
 import { streamObject } from "stream-json/streamers/StreamObject";
 import  { EOL } from 'os';
 import { Logger, logger } from "../../sdk/Logger/Logger";
+import { ScanSettingsBuilder } from "../../sdk/scanner/ScanSettingsBuilder";
 
 /**
  * Stream JSON scanner results and transform into new structure
@@ -187,17 +188,35 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
     const settingsFilePath = await getSettingsFilePath(options.settings, rootPath);
     if (settingsFilePath) {
       try {
-        const scanossSettings = JSON.parse(fs.readFileSync(settingsFilePath, "utf-8")) as unknown as Settings;
-        scannerInput.settings = scanossSettings;
+        scannerInput.settings = JSON.parse(fs.readFileSync(settingsFilePath, "utf-8")) as unknown as Settings;
       } catch (e) {
         throw new Error(`SCANOSS Settings file cannot be found at: ${settingsFilePath}.`);
       }
     }
   }
-
   scannerInput.folderRoot = rootPath + path.sep; // This will remove the project root path from the results.
   if (options.flags) scannerInput.engineFlags = options.flags;
-  if (options.wfp) scannerInput.wfpPath = rootPath;
+
+  // Build scan settings from CLI options, merging with scanoss.json file_snippet settings
+  // Priority: scanoss.json file_snippet settings > CLI arguments
+  const fileSnippetSettings = new ScanSettingsBuilder(scannerInput?.settings?.settings?.file_snippet)
+    .withHonourFileExist(options.honourFileExts)
+    .withMinSnippetHits(options.minSnippetHits)
+    .withMinSnippetLines(options.minSnippetLines)
+    .withRanking(options.ranking)
+    .withRankingThreshold(options.rankingThreshold)
+    .withDependencyAnalysis(options.dependencies)
+    .build();
+  // When file snippet settings are produced (from CLI args or scanoss.json),
+  // ensure the settings hierarchy exists before assigning.
+  // scannerInput.settings may be undefined if no scanoss.json file was loaded.
+  if (fileSnippetSettings) {
+    if (!scannerInput.settings) scannerInput.settings = { settings:{} };
+    if (!scannerInput.settings.settings) scannerInput.settings.settings = {};
+    scannerInput.settings.settings.file_snippet = fileSnippetSettings;
+  }
+
+   if (options.wfp) scannerInput.wfpPath = rootPath;
 
   const wfpMode = options.hpsm ? WinnowingMode.FULL_WINNOWING_HPSM : WinnowingMode.FULL_WINNOWING;
   scannerInput.winnowing = { mode: wfpMode };
@@ -260,7 +279,7 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
 
   // Dependency scanner
   let pDependencyScanner = Promise.resolve(<DependencyResponse>{});
-  if (options.dependencies) {
+  if (options.dependencies || scannerInput?.settings?.settings?.file_snippet?.dependency_analysis) {
     pDependencyScanner = dependencyScanner.scan(dependencyInput);
   }
 

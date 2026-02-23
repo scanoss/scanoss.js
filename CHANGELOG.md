@@ -3,11 +3,19 @@
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
 ## [Unreleased]
+- Upcoming changes...
+
+## [0.35.0] (2026-02-26)
+### Added
+- Implemented scan tuning parameters via CLI options and `scanoss.json` settings file (`file_snippet` section)
+- Added `ScanSettingsBuilder` for constructing file snippet scan settings with priority: `scanoss.json` > CLI arguments
+- Supported settings: `min_snippet_hits`, `min_snippet_lines`, `ranking_enabled`, `ranking_threshold`, `honour_file_exts`, `dependency_analysis`
 
 ## [0.34.0] (2026-02-24)
 ### Added
 - Added support for `pnpm-lock.yaml` dependency parsing (v5, v6, and v9+ lockfile formats with transitive dependency scope resolution)
 - Added support for `pip_requirements_lock.txt` (`pip-compile` / `pip-tools` lock file) dependency parsing
+- Added support for new archive decompression format: `.mtar`
 
 ## [0.33.0] (2026-02-11)
 ### Added
@@ -24,7 +32,6 @@ All notable changes to this project will be documented in this file. See [standa
 - Fixed `libarchive.js` compatibility with Electron ASAR archives by resolving module paths through `app.asar.unpacked`
 - Used indirect dynamic import to prevent bundlers from converting ESM `import()` to `require()`
 - Fixed `libarchive.js` worker initialization for paths containing spaces
-
 
 ## [0.31.2] (2026-02-03)
 ### Fixed
@@ -259,3 +266,4 @@ All notable changes to this project will be documented in this file. See [standa
 ### [0.32.0](https://github.com/scanoss/scanoss.js/compare/v0.31.2...v0.32.0) (2026-02-09)
 ### [0.33.0](https://github.com/scanoss/scanoss.js/compare/v0.32.0...v0.33.0) (2026-02-11)
 ### [0.34.0](https://github.com/scanoss/scanoss.js/compare/v0.33.0...v0.34.0) (2026-02-24)
+### [0.35.0](https://github.com/scanoss/scanoss.js/compare/v0.34.0...v0.35.0) (2026-02-26)

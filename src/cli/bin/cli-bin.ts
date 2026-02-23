@@ -32,6 +32,11 @@ async function main() {
   scan.addOption(new Option("-o, --output <filename>", "Output result file name (optional - default stdout)"));
   scan.addOption(new Option("-f, --format <format>", "Result output format").choices(["json", "html"]));
   scan.addOption(new Option("-F, --flags <flags>", "Scanning engine flags (1: disable snippet matching, 2 enable snippet ids, 4: disable dependencies, 8: disable licenses, 16: disable copyrights,32: disable vulnerabilities, 64: disable quality, 128: disable cryptography,256: disable best match, 512: Report identified files)"));
+  scan.addOption(new Option("    --min-snippet-hits <number>", "Minimum snippet hits required. A value of 0 defers to server configuration (optional)"));
+  scan.addOption(new Option("    --min-snippet-lines <number>", "Minimum snippet lines required. A value of 0 defers to server configuration (optional)"));
+  scan.addOption(new Option("    --ranking <value>", "Enable or disable ranking (optional - default: server configuration)").choices(["true", "false"]));
+  scan.addOption(new Option("    --ranking-threshold <number>", "Ranking threshold value. Valid range: -1 to 10. A value of -1 defers to server configuration (optional)"));
+  scan.addOption(new Option("    --honour-file-exts <value>", "Honour file extensions during scanning. When not set, defers to server configuration (optional)").choices(["true", "false"]));
   scan.addOption(new Option("-P, --post-size postsize>", "Number of kilobytes to limit the post to while scanning (optional - default 32)"));
   scan.addOption(new Option("-R, --max-retry <retry>", "Max number of retries for each POST (optional -default 5)"));
   scan.addOption(new Option("-M, --timeout <timeout>", "Timeout (in seconds) for API communication (optional -default 120)"));

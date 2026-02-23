@@ -1,7 +1,7 @@
 /* eslint-disable guard-for-in */
 /* eslint-disable no-restricted-syntax */
 import EventEmitter from 'eventemitter3';
-import fetch, { Response } from 'node-fetch';
+import fetch from 'node-fetch';
 import PQueue from 'p-queue';
 import { ScannerEvents } from '../ScannerTypes';
 import { DispatcherResponse } from './DispatcherResponse';
@@ -11,6 +11,7 @@ import { DispatchableItem } from './DispatchableItem';
 import { Utils } from '../../Utils/Utils';
 import { ProxyAgent } from "proxy-agent";
 import { logger } from "../../Logger/Logger";
+import { FileSnippetSettings } from "../ScannnerResultPostProcessor/interfaces/types";
 
 
 const MAX_CONCURRENT_REQUEST = 30;
@@ -191,6 +192,14 @@ export class Dispatcher extends EventEmitter {
     }
   }
 
+  private buildScanSettingsHeader(fileSnippetSettings: FileSnippetSettings | undefined): string | undefined {
+    if (!fileSnippetSettings || Object.keys(fileSnippetSettings).length === 0) {
+      return undefined;
+    }
+    const jsonStr = JSON.stringify(fileSnippetSettings);
+    return Buffer.from(jsonStr).toString('base64');
+  }
+
   async dispatch(item: DispatchableItem) {
     const timeoutController = this.globalAbortController.getAbortController();
     const timeoutId = setTimeout(
@@ -201,17 +210,22 @@ export class Dispatcher extends EventEmitter {
     try {
       this.emit(ScannerEvents.DISPATCHER_WFP_SENDED);
       const scanURL = new URL('/scan/direct', this.scannerCfg.API_URL);
+      const headers: Record<string, string> = {
+        'User-Agent': this.scannerCfg.CLIENT_TIMESTAMP
+          ? this.scannerCfg.CLIENT_TIMESTAMP
+          : `scanoss-js/v${Utils.getPackageVersion()}`,
+        'X-Session': this.scannerCfg.API_KEY,
+        'x-request-id': item.uuid,
+      };
+      const scanSettingsHeader = this.buildScanSettingsHeader(item.getScanSettings());
+      if (scanSettingsHeader) {
+        headers['scanoss-settings'] = scanSettingsHeader;
+      }
       const response = await fetch(scanURL.href, {
         agent: this.proxyAgent,
         method: 'post',
         body: item.getForm(),
-        headers: {
-          'User-Agent': this.scannerCfg.CLIENT_TIMESTAMP
-            ? this.scannerCfg.CLIENT_TIMESTAMP
-            : `scanoss-js/v${Utils.getPackageVersion()}`,
-          'X-Session': this.scannerCfg.API_KEY,
-          'x-request-id': item.uuid,
-        },
+        headers,
         signal: timeoutController.signal,
       });
 
