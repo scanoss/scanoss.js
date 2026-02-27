@@ -89,6 +89,7 @@ export class Scanner extends EventEmitter {
   constructor(scannerCfg = new ScannerCfg()) {
     super();
     this.scannerCfg = scannerCfg;
+    this.settings = scannerCfg.SCANOSS_SETTINGS;
     this.scannerId = new Date().getTime().toString();
   }
 
@@ -104,6 +105,21 @@ export class Scanner extends EventEmitter {
     }
   }
 
+  private applyFileSnippetConfig() {
+    const fileSnippet = this.settings?.settings?.file_snippet;
+
+    if (fileSnippet?.proxy?.host) {
+      this.scannerCfg.HTTP_PROXY = fileSnippet.proxy.host;
+      this.scannerCfg.HTTPS_PROXY = fileSnippet.proxy.host;
+    }
+
+    if (fileSnippet?.http_config) {
+      const { base_uri, ignore_cert_errors } = fileSnippet.http_config;
+      if (base_uri) this.scannerCfg.API_URL = base_uri;
+      if (ignore_cert_errors) this.scannerCfg.IGNORE_CERT_ERRORS = ignore_cert_errors;
+    }
+  }
+
   public init() {
     this.scanFinished = false;
     this.processingNewData = false;
@@ -114,9 +130,7 @@ export class Scanner extends EventEmitter {
     this.filesNotScanned = {};
     this.obfuscateMap = {};
 
-    // Use premium URL if API KEY is set and not API URL was set.
-   // this.scannerCfg.API_URL = BaseConfig.resolveScannerUrl(this.scannerCfg.API_KEY, this.scannerCfg.API_URL);
-
+    this.applyFileSnippetConfig();
     this.wfpProvider = new WfpCalculator(this.scannerCfg);
     this.dispatcher = new Dispatcher(this.scannerCfg);
 
@@ -163,17 +177,15 @@ export class Scanner extends EventEmitter {
     this.init();
     this.createOutputFiles();
     this.scannerInput = scannerInput;
-    this.settings = scannerInput[0]?.settings ?  { ...scannerInput[0].settings } : null;
 
-    if (scannerInput[0]?.settings) {
+    if (this.settings) {
+      validateSettingsFile(this.settings);
       scannerInput.forEach((si)=>{
-        validateSettingsFile(si.settings);
         let components = [];
-        const { bom } = si.settings;
+        const { bom } = this.settings;
         const sbomMode = bom?.include && bom.include.length > 0
           ? SbomMode.SBOM_IDENTIFY : undefined;
 
-        // Only use ignore if include isn't present
         if (bom?.include?.length) {
           components = bom.include.map(item => ({ purl: item.purl }));
         }
@@ -182,7 +194,6 @@ export class Scanner extends EventEmitter {
         si.sbomMode = sbomMode;
       });
     }
-
     this.reportLog(`[ SCANNER ]: Scanner instance id ${this.getScannerId()}`);
 
     if (!this.isValidInput(scannerInput)) {
@@ -290,8 +301,8 @@ export class Scanner extends EventEmitter {
             this.scannerInput[0]?.sbomMode
           );
 
-        if (this.scannerInput[0]?.settings?.settings)
-          item.setScanSettings(this.scannerInput[0].settings.settings.file_snippet);
+        if (this.settings?.settings?.file_snippet)
+          item.setScanSettings(this.settings.settings.file_snippet);
 
         this.dispatcher.dispatchItem(item);
       }
@@ -434,11 +445,10 @@ export class Scanner extends EventEmitter {
       `[ SCANNER ]: Persisted results of ${responses.getNumberOfFilesScanned()} files...`
     );
 
-/*    if (this.settings) {
-      console.log("SERVER RESPONSE: ", responses.serverResponse);
+    if (this.settings) {
       const removeRule = new RemoveRule(responses.serverResponse, this.settings);
       responses.serverResponse = removeRule.run();
-    }*/
+    }
 
     this.emit(ScannerEvents.RESULTS_APPENDED, responses, this.filesNotScanned);
     return responses;

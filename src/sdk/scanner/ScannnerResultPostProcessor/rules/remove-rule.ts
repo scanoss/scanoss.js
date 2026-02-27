@@ -5,7 +5,7 @@ export class RemoveRule extends Rule {
     private removeBomItems: Array<BomItem>;
     constructor(scanResults: any, settings: Settings) {
         super(scanResults);
-        this.removeBomItems = settings.bom.remove;
+        this.removeBomItems = settings?.bom?.remove || [];
     }
 
     run(): any {

@@ -12,11 +12,14 @@ export class ScannableItem {
 
   private maxSizeWfp: any;
 
+  private lineOffset: number;
+
   constructor(content: Buffer, contentSource: string, winnowingMode: any, maxSizeWfp: number) {
     this.contentSource = contentSource;
     this.content = content;
     this.winnowingMode = winnowingMode;
     this.maxSizeWfp = maxSizeWfp;
+    this.lineOffset = 0;
   }
 
   public getContent() {
@@ -39,5 +42,11 @@ export class ScannableItem {
     return this.maxSizeWfp;
   }
 
+  public setLineOffset(offset: number) {
+    this.lineOffset = offset;
+  }
 
+  public getLineOffset(): number {
+    return this.lineOffset;
+  }
 }

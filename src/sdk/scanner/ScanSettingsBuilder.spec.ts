@@ -220,6 +220,72 @@ describe('ScanSettingsBuilder', () => {
     });
   });
 
+  describe('withSkipHeaders()', () => {
+    it('should set skip_headers to true', () => {
+      const result = new ScanSettingsBuilder().withSkipHeaders(true).build();
+      expect(result).to.deep.equal({ skip_headers: true });
+    });
+
+    it('should set skip_headers to false', () => {
+      const result = new ScanSettingsBuilder().withSkipHeaders(false).build();
+      expect(result).to.deep.equal({ skip_headers: false });
+    });
+
+    it('should not set when CLI value is undefined', () => {
+      const result = new ScanSettingsBuilder().withSkipHeaders(undefined).build();
+      expect(result).to.be.undefined;
+    });
+
+    it('should prefer settings file over CLI', () => {
+      const settingsFile = { skip_headers: true };
+      const result = new ScanSettingsBuilder(settingsFile).withSkipHeaders(false).build();
+      expect(result).to.deep.equal({ skip_headers: true });
+    });
+
+    it('should parse string "true" to boolean true', () => {
+      const result = new ScanSettingsBuilder().withSkipHeaders('true').build();
+      expect(result).to.deep.equal({ skip_headers: true });
+    });
+
+    it('should parse string "false" to boolean false', () => {
+      const result = new ScanSettingsBuilder().withSkipHeaders('false').build();
+      expect(result).to.deep.equal({ skip_headers: false });
+    });
+  });
+
+  describe('withSkipHeadersLimit()', () => {
+    it('should set skip_headers_limit from CLI value', () => {
+      const result = new ScanSettingsBuilder().withSkipHeadersLimit(50).build();
+      expect(result).to.deep.equal({ skip_headers_limit: 50 });
+    });
+
+    it('should set skip_headers_limit to 0 (no limit)', () => {
+      const result = new ScanSettingsBuilder().withSkipHeadersLimit(0).build();
+      expect(result).to.deep.equal({ skip_headers_limit: 0 });
+    });
+
+    it('should clamp negative values to 0', () => {
+      const result = new ScanSettingsBuilder().withSkipHeadersLimit(-5).build();
+      expect(result).to.deep.equal({ skip_headers_limit: 0 });
+    });
+
+    it('should not set when CLI value is undefined', () => {
+      const result = new ScanSettingsBuilder().withSkipHeadersLimit(undefined).build();
+      expect(result).to.be.undefined;
+    });
+
+    it('should prefer settings file over CLI', () => {
+      const settingsFile = { skip_headers_limit: 30 };
+      const result = new ScanSettingsBuilder(settingsFile).withSkipHeadersLimit(50).build();
+      expect(result).to.deep.equal({ skip_headers_limit: 30 });
+    });
+
+    it('should parse string CLI values to number', () => {
+      const result = new ScanSettingsBuilder().withSkipHeadersLimit('25').build();
+      expect(result).to.deep.equal({ skip_headers_limit: 25 });
+    });
+  });
+
   describe('Chaining all methods', () => {
     it('should build complete settings from all CLI values', () => {
       const result = new ScanSettingsBuilder()
