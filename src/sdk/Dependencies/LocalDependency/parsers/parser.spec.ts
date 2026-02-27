@@ -6,7 +6,7 @@ import { buildGradleParser } from "./buildGradleParser";
 import { goModParser, goSumParser } from "./golangParser";
 import { packagelockParser, packageParser, yarnLockParser } from "./npmParser";
 import { csprojParser, packagesConfigParser } from "./nugetParser";
-import { pipRequirementsLockParser } from "./pyParser";
+import { pipRequirementsLockParser, scopedRequirementsParser } from "./pyParser";
 import { pnpmLockParser } from "./pnpmParser";
 
 interface ParserSpecI {
@@ -442,6 +442,27 @@ const ParserSpec: ParserSpecI[] = [
     file_content: "lockfileVersion: '9.0'\n\nsettings:\n  autoInstallPeers: true\n\nimporters:\n  .:\n    dependencies:\n      express:\n        specifier: ^4.18.2\n        version: 4.18.2\n    devDependencies:\n      typescript:\n        specifier: ^5.0.2\n        version: 5.0.2\n\nsnapshots:\n\n  express@4.18.2:\n    dependencies:\n      accepts: 1.3.8\n\n  accepts@1.3.8:\n    dependencies:\n      mime-types: 2.1.35\n\n  mime-types@2.1.35: {}\n\n  typescript@5.0.2: {}\n\npackages:\n\n  express@4.18.2:\n    resolution: {integrity: sha512-fakeHash}\n    engines: {node: '>= 0.10.0'}\n\n  accepts@1.3.8:\n    resolution: {integrity: sha512-fakeHash}\n\n  mime-types@2.1.35:\n    resolution: {integrity: sha512-fakeHash}\n\n  typescript@5.0.2:\n    resolution: {integrity: sha512-fakeHash}\n    engines: {node: '>=14.17'}\n",
     expect: {file:"pnpm-lock.yaml",purls:[{purl:"pkg:npm/express@4.18.2",requirement:"4.18.2",scope:"dependencies"},{purl:"pkg:npm/accepts@1.3.8",requirement:"1.3.8",scope:"dependencies"},{purl:"pkg:npm/mime-types@2.1.35",requirement:"2.1.35",scope:"dependencies"},{purl:"pkg:npm/typescript@5.0.2",requirement:"5.0.2",scope:"devDependencies"}]},
     parser: pnpmLockParser
+  },
+  /****************************************************************************/
+  /*          scoped requirements.txt DEPENDENCY TEST DATA                    */
+  /****************************************************************************/
+  {
+    test_name: "dev-requirements.txt (prefix scope)",
+    source: "",
+    note: "Scoped requirements file with dev- prefix",
+    file_name: "dev-requirements.txt",
+    file_content: "pytest==7.4.0\nflake8>=6.0\ncoverage\n",
+    expect: {file:"dev-requirements.txt",purls:[{purl:"pkg:pypi/pytest@7.4.0",scope:"dev"},{purl:"pkg:pypi/flake8",requirement:">=6.0",scope:"dev"},{purl:"pkg:pypi/coverage",scope:"dev"}]},
+    parser: scopedRequirementsParser
+  },
+  {
+    test_name: "requirements-tox.txt (suffix scope)",
+    source: "",
+    note: "Scoped requirements file with -tox suffix",
+    file_name: "requirements-tox.txt",
+    file_content: "tox==4.6.0\nvirtualenv>=20.0\n",
+    expect: {file:"requirements-tox.txt",purls:[{purl:"pkg:pypi/tox@4.6.0",scope:"tox"},{purl:"pkg:pypi/virtualenv",requirement:">=20.0",scope:"tox"}]},
+    parser: scopedRequirementsParser
   }
 ];
 
