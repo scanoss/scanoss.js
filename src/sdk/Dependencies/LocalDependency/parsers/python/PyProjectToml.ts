@@ -100,11 +100,14 @@ const pyProjectToml = async (fileContent: string,filePath: string): Promise<ILoc
 
   // Fallback: Try Poetry format
   // Matches [tool.poetry.dependencies], [tool.poetry.dev-dependencies], [tool.poetry.group.<name>.dependencies]
-  const rPoetryDepsSection = /\[tool\.poetry(?:\.group\.[\w-]+)?\.(?:dev-)?dependencies\]\s*\n([\s\S]*?)(?=\n\s*\[|$)/g;
+  const rPoetryDepsSection = /\[tool\.poetry(?:\.group\.([\w-]+))?\.(?:(dev-)?)dependencies\]\s*\n([\s\S]*?)(?=\n\s*\[|$)/g;
   const poetryMatches = fileContent.matchAll(rPoetryDepsSection);
   for (const match of poetryMatches) {
-    const deps = parsePoetryDeps(match[1]);
-    result.purls.push(...deps);
+    const groupName = match[1];   // e.g. "dev", "test", "ci", "doc" (undefined for non-group sections)
+    const isLegacyDev = !!match[2]; // "dev-" prefix in [tool.poetry.dev-dependencies]
+    const scope = isLegacyDev ? 'dev' : groupName ?? 'dependency';
+    const deps = parsePoetryDeps(match[3]);
+    result.purls.push(...deps.map(d => ({ ...d, scope })));
   }
 
   return result;

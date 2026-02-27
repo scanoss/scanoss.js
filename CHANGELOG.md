@@ -3,7 +3,8 @@
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
 ## [Unreleased]
-- Upcoming changes...
+### Fixed
+- Fixed Poetry `pyproject.toml` parser to set scope `dev` for `[tool.poetry.group.dev.dependencies]` and `[tool.poetry.dev-dependencies]` sections instead of `dependency`
 
 ## [0.35.0] (2026-02-26)
 ### Added
