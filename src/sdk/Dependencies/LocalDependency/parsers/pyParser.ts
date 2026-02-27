@@ -74,3 +74,23 @@ export function pipRequirementsLockParser(fileContent: string, filePath: string)
 
     return Promise.resolve(parseRequirementsContent(fileContent, filePath));
 }
+
+// Parse scoped requirements files like dev-requirements.txt or requirements-dev.txt
+// Extracts scope from the filename prefix/suffix
+const SCOPED_REQ_PREFIX = /^(.+)-requirements\.txt$/;
+const SCOPED_REQ_SUFFIX = /^requirements-(.+)\.txt$/;
+export function scopedRequirementsParser(fileContent: string, filePath: string): Promise<ILocalDependency> {
+    const fileName = path.basename(filePath);
+    const prefixMatch = SCOPED_REQ_PREFIX.exec(fileName);
+    const suffixMatch = SCOPED_REQ_SUFFIX.exec(fileName);
+    const scope = prefixMatch?.[1] ?? suffixMatch?.[1];
+
+    const results: ILocalDependency = {file: filePath, purls: []};
+    if (!scope) return Promise.resolve(results);
+
+    const parsed = parseRequirementsContent(fileContent, filePath);
+    for (const purl of parsed.purls) {
+        purl.scope = scope;
+    }
+    return Promise.resolve(parsed);
+}

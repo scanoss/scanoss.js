@@ -1,7 +1,7 @@
 import path from 'path';
 import fs from 'fs';
 import { ParserFuncType, ILocalDependencies } from './DependencyTypes';
-import { requirementsParser, pipRequirementsLockParser } from './parsers/pyParser';
+import { requirementsParser, pipRequirementsLockParser, scopedRequirementsParser } from './parsers/pyParser';
 import { pomParser } from './parsers/mavenParser';
 import {
   packagelockParser,
@@ -27,6 +27,8 @@ export class LocalDependencies {
     this.parserMap = {
       'requirements.txt': requirementsParser,
       'pip_requirements_lock.txt': pipRequirementsLockParser,
+      '*-requirements.txt': scopedRequirementsParser,
+      'requirements-*.txt': scopedRequirementsParser,
       'pom.xml': pomParser,
       'package.json': packageParser,
       'package-lock.json': packagelockParser,

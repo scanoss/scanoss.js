@@ -3,6 +3,8 @@
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
 ## [Unreleased]
+### Added
+- Added support for scoped `requirements.txt` files (`dev-requirements.txt`, `requirements-tox.txt`, etc.) with automatic scope extraction from filename prefix/suffix
 ### Fixed
 - Fixed Poetry `pyproject.toml` parser to set scope `dev` for `[tool.poetry.group.dev.dependencies]` and `[tool.poetry.dev-dependencies]` sections instead of `dependency`
 
