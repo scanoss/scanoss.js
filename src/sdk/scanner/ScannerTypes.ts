@@ -48,6 +48,9 @@ export interface BaseScannerInput {
   wfpPath?: string;
   sbom?: string;
   sbomMode?: SbomMode;
+  /**
+   * @deprecated Use specific configuration properties instead. User
+   */
   settings?: Settings;
   engineFlags?: number;
   winnowing?: {

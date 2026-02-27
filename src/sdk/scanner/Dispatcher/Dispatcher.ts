@@ -85,9 +85,6 @@ export class Dispatcher extends EventEmitter {
       }
     });
 
-
-
-
     this.pQueue = new PQueue({
       concurrency: this.scannerCfg.CONCURRENCY_LIMIT,
     });
@@ -196,7 +193,8 @@ export class Dispatcher extends EventEmitter {
     if (!fileSnippetSettings || Object.keys(fileSnippetSettings).length === 0) {
       return undefined;
     }
-    const jsonStr = JSON.stringify(fileSnippetSettings);
+    const { skip_headers, skip_headers_limit , proxy, http_config, dependency_analysis, ...scanSettings } = fileSnippetSettings;
+    const jsonStr = JSON.stringify(scanSettings);
     return Buffer.from(jsonStr).toString('base64');
   }
 

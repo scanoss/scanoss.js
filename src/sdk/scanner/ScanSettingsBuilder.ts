@@ -1,4 +1,4 @@
-import { FileSnippetSettings } from "./ScannnerResultPostProcessor/interfaces/types";
+import { FileSnippetSettings, Proxy } from "./ScannnerResultPostProcessor/interfaces/types";
 
 function toBoolean(value: boolean | string): boolean {
   if (typeof value === 'string') return value === 'true';
@@ -75,6 +75,52 @@ export class ScanSettingsBuilder {
     return this;
   }
 
+  withProxy(cliValue?: Proxy): this {
+    const merged = this.settingsFileSnippet?.proxy ?? cliValue;
+    if (merged?.host) {
+      this.fileSnippetSettings.proxy = merged;
+    }
+    return this;
+  }
+
+  withBaseUri(cliValue?: string): this {
+    const merged = this.settingsFileSnippet?.http_config?.base_uri ?? cliValue;
+    if (merged) {
+      if (!this.fileSnippetSettings.http_config) this.fileSnippetSettings.http_config = {};
+      this.fileSnippetSettings.http_config.base_uri = merged;
+    }
+    return this;
+  }
+
+  withIgnoreCertErrors(cliValue?: boolean | string): this {
+    const cliIgnoreCert = cliValue != null ? toBoolean(cliValue) : undefined;
+    const merged = this.settingsFileSnippet?.http_config?.ignore_cert_errors ?? cliIgnoreCert;
+    if (merged != null) {
+      if (!this.fileSnippetSettings.http_config) this.fileSnippetSettings.http_config = {};
+      this.fileSnippetSettings.http_config.ignore_cert_errors = merged;
+    }
+    return this;
+  }
+
+  withSkipHeaders(cliValue?: boolean | string): this {
+    const cliSkipHeaders = cliValue != null ? toBoolean(cliValue) : undefined;
+    const merged = this.settingsFileSnippet?.skip_headers ?? cliSkipHeaders;
+    if (merged != null) {
+      this.fileSnippetSettings.skip_headers = merged;
+    }
+    return this;
+  }
+
+  // 0 means no limit (strip all detected header lines)
+  withSkipHeadersLimit(cliValue?: number | string): this {
+    const cliSkipHeadersLimit = cliValue != null ? Number(cliValue) : undefined;
+    const merged = this.settingsFileSnippet?.skip_headers_limit ?? cliSkipHeadersLimit;
+    if (merged != null) {
+      this.fileSnippetSettings.skip_headers_limit = Math.max(0, merged);
+    }
+    return this;
+  }
+
   // Only send if explicitly set
   withDependencyAnalysis(cliValue?: boolean | string): this {
     const cliDependencyAnalysis = cliValue != null ? toBoolean(cliValue) : undefined;
@@ -87,8 +133,8 @@ export class ScanSettingsBuilder {
 
   build(): FileSnippetSettings | undefined {
     if (Object.keys(this.fileSnippetSettings).length > 0) {
-      return this.fileSnippetSettings;
+      return { ...this.settingsFileSnippet, ...this.fileSnippetSettings };
     }
-    return undefined;
+    return this.settingsFileSnippet;
   }
 }

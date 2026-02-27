@@ -1,4 +1,5 @@
 import { BaseConfig } from '../BaseConfig';
+import { Settings } from "./ScannnerResultPostProcessor/interfaces/types";
 
 export class ScannerCfg extends BaseConfig {
   // Client Timestamp, default value is scanoss-js/${version}
@@ -32,6 +33,8 @@ export class ScannerCfg extends BaseConfig {
   public DISPATCHER_QUEUE_SIZE_MAX_LIMIT = 2000;
 
   public DISPATCHER_QUEUE_SIZE_MIN_LIMIT = 1000;
+
+  public SCANOSS_SETTINGS: Settings;
 
   constructor() {
     super();

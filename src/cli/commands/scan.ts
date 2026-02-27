@@ -133,6 +133,7 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
   const pathIsFolder = await isFolder(rootPath);
   const projectName = getProjectNameFromPath(rootPath);
 
+
   if (options.apiurl) {
     const url = new URL(options.apiurl);
     if (url.pathname) {
@@ -140,6 +141,20 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
     }
     options.apiurl = url.origin;
   }
+
+  let scanossSettings = null;
+  // Settings Ingestion
+  if (!options.skipSettingsFile) {
+    const settingsFilePath = await getSettingsFilePath(options.settings, rootPath);
+    if (settingsFilePath) {
+      try {
+        scanossSettings = JSON.parse(fs.readFileSync(settingsFilePath, "utf-8")) as unknown as Settings;
+      } catch (e) {
+        throw new Error(`SCANOSS Settings file cannot be found at: ${settingsFilePath}.`);
+      }
+    }
+  }
+
   // Create dependency scanner and set parameters
   let dependencyInput: Array<string> = [];
   const dependencyScannerCfg = new DependencyScannerCfg();
@@ -172,51 +187,38 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
   }
 
   if (options.obfuscate) scannerCfg.WFP_OBFUSCATION = true;
-
-  const scanner = new Scanner(scannerCfg);
-
   let scannerInput: ScannerInput = { fileList: [] };
-
   // SBOM Ingestion
   if (options.ignore) {
     scannerInput.sbom = fs.readFileSync(options.ignore, "utf-8");
     scannerInput.sbomMode = SbomMode.SBOM_IGNORE;
   }
 
-  // Settings Ingestion
-  if (!options.skipSettingsFile) {
-    const settingsFilePath = await getSettingsFilePath(options.settings, rootPath);
-    if (settingsFilePath) {
-      try {
-        scannerInput.settings = JSON.parse(fs.readFileSync(settingsFilePath, "utf-8")) as unknown as Settings;
-      } catch (e) {
-        throw new Error(`SCANOSS Settings file cannot be found at: ${settingsFilePath}.`);
-      }
-    }
-  }
   scannerInput.folderRoot = rootPath + path.sep; // This will remove the project root path from the results.
   if (options.flags) scannerInput.engineFlags = options.flags;
 
+  if(scanossSettings){
+    scannerCfg.SCANOSS_SETTINGS = scanossSettings || {};
   // Build scan settings from CLI options, merging with scanoss.json file_snippet settings
   // Priority: scanoss.json file_snippet settings > CLI arguments
-  const fileSnippetSettings = new ScanSettingsBuilder(scannerInput?.settings?.settings?.file_snippet)
+    scannerCfg.SCANOSS_SETTINGS.settings.file_snippet = new ScanSettingsBuilder(scanossSettings?.settings?.file_snippet)
     .withHonourFileExist(options.honourFileExts)
     .withMinSnippetHits(options.minSnippetHits)
     .withMinSnippetLines(options.minSnippetLines)
     .withRanking(options.ranking)
     .withRankingThreshold(options.rankingThreshold)
     .withDependencyAnalysis(options.dependencies)
+    .withSkipHeaders()
+    .withSkipHeadersLimit()
+    .withProxy(options.proxy)
+    .withIgnoreCertErrors(options.ignoreCertErrors)
+    .withBaseUri(options.apiurl)
     .build();
-  // When file snippet settings are produced (from CLI args or scanoss.json),
-  // ensure the settings hierarchy exists before assigning.
-  // scannerInput.settings may be undefined if no scanoss.json file was loaded.
-  if (fileSnippetSettings) {
-    if (!scannerInput.settings) scannerInput.settings = { settings:{} };
-    if (!scannerInput.settings.settings) scannerInput.settings.settings = {};
-    scannerInput.settings.settings.file_snippet = fileSnippetSettings;
   }
 
-   if (options.wfp) scannerInput.wfpPath = rootPath;
+  const scanner = new Scanner(scannerCfg);
+
+  if (options.wfp) scannerInput.wfpPath = rootPath;
 
   const wfpMode = options.hpsm ? WinnowingMode.FULL_WINNOWING_HPSM : WinnowingMode.FULL_WINNOWING;
   scannerInput.winnowing = { mode: wfpMode };

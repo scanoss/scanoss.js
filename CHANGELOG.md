@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file. See [standa
 
 ## [Unreleased]
 
+## [0.37.0] (2026-03-02)
+### Added
+- Added `skip_headers` and `skip_headers_limit` support in `scanoss.json` `file_snippet` settings to filter license headers, comments, and imports before snippet matching
+- Added `HeaderFilter` module for detecting and skipping file preambles (license blocks, comments, shebangs, imports) across 20+ programming languages
+- Added `proxy`, `http_config` (base_uri, ignore_cert_errors) support in `scanoss.json` `file_snippet` settings
+- Added `ScanSettingsBuilder` methods: `withSkipHeaders()`, `withSkipHeadersLimit()`, `withProxy()`, `withBaseUri()`, `withIgnoreCertErrors()`
+- Centralized scan settings into `ScannerCfg.SCANOSS_SETTINGS`
+
 ## [0.36.0] (2026-02-27)
 ### Added
 - Added support for scoped `requirements.txt` files (`dev-requirements.txt`, `requirements-tox.txt`, etc.) with automatic scope extraction from filename prefix/suffix
@@ -273,3 +281,4 @@ All notable changes to this project will be documented in this file. See [standa
 ### [0.34.0](https://github.com/scanoss/scanoss.js/compare/v0.33.0...v0.34.0) (2026-02-24)
 ### [0.35.0](https://github.com/scanoss/scanoss.js/compare/v0.34.0...v0.35.0) (2026-02-26)
 ### [0.36.0](https://github.com/scanoss/scanoss.js/compare/v0.35.0...v0.36.0) (2026-02-27)
+### [0.37.0](https://github.com/scanoss/scanoss.js/compare/v0.36.0...v0.37.0) (2026-03-02)

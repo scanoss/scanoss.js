@@ -7,6 +7,7 @@ import { ScannerEvents, ScannerInput, WinnowingMode } from '../../ScannerTypes';
 
 import { FingerprintPackage } from '../FingerprintPackage';
 import { IWfpProviderInput, WfpProvider } from '../WfpProvider';
+import { HeaderFilter, stripLinesUntilOffset } from './HeaderFilter';
 
 const stringWorker = `
 const { parentPort } = require('worker_threads');
@@ -507,9 +508,12 @@ export class WfpCalculator extends WfpProvider {
 
   private continue: boolean;
 
+  private headerFilter: HeaderFilter | null;
+
   constructor(scannerCfg = new ScannerCfg()) {
     super();
     this.scannerCfg = scannerCfg;
+    this.headerFilter = null;
   }
 
   init() {
@@ -522,7 +526,11 @@ export class WfpCalculator extends WfpProvider {
   prepareWorker() {
     this.worker = new Worker(stringWorker, { eval: true });
     this.worker.on('message', async (scannableItem) => {
-      this.fingerprintPacker(scannableItem.fingerprint);
+      let fingerprint = scannableItem.fingerprint;
+      if (scannableItem.lineOffset > 0) {
+        fingerprint = stripLinesUntilOffset(fingerprint, scannableItem.lineOffset);
+      }
+      this.fingerprintPacker(fingerprint);
       await this.nextStepMachine();
     });
   }
@@ -583,6 +591,12 @@ export class WfpCalculator extends WfpProvider {
         this.winnowingMode,
         this.scannerCfg.WFP_FILE_MAX_SIZE
       );
+
+      if (this.headerFilter && content.length > 0) {
+        const lineOffset = this.headerFilter.filter(path, content.toString('utf-8'));
+        scannable.setLineOffset(lineOffset);
+      }
+
       return scannable;
   }
 
@@ -621,6 +635,12 @@ export class WfpCalculator extends WfpProvider {
 
     this.init();
     this.prepareWorker();
+
+    const fileSnippet = this.scannerCfg?.SCANOSS_SETTINGS?.settings?.file_snippet;
+    if (fileSnippet?.skip_headers) {
+      this.headerFilter = new HeaderFilter(fileSnippet.skip_headers_limit);
+      this.sendLog('[ SCANNER ]: Header filter enabled');
+    }
 
     if (params.winnowingMode) this.setWinnowingMode(params.winnowingMode);
     if (params.obfuscate) this.obfuscate = params.obfuscate;
