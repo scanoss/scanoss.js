@@ -3,6 +3,8 @@
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
 ## [Unreleased]
+
+## [0.36.0] (2026-02-27)
 ### Added
 - Added support for scoped `requirements.txt` files (`dev-requirements.txt`, `requirements-tox.txt`, etc.) with automatic scope extraction from filename prefix/suffix
 ### Fixed
@@ -270,3 +272,4 @@ All notable changes to this project will be documented in this file. See [standa
 ### [0.33.0](https://github.com/scanoss/scanoss.js/compare/v0.32.0...v0.33.0) (2026-02-11)
 ### [0.34.0](https://github.com/scanoss/scanoss.js/compare/v0.33.0...v0.34.0) (2026-02-24)
 ### [0.35.0](https://github.com/scanoss/scanoss.js/compare/v0.34.0...v0.35.0) (2026-02-26)
+### [0.36.0](https://github.com/scanoss/scanoss.js/compare/v0.35.0...v0.36.0) (2026-02-27)
