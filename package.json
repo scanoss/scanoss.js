@@ -16,7 +16,8 @@
     "build:main": "tsc -p tsconfig.json",
     "build:module": "tsc -p tsconfig.module.json",
     "test": "nyc mocha -r ts-node/register 'tests/**/*.ts' 'src/**/*.spec.ts'",
-    "install-dev": "npm run build && npm run test && npm install -g ."
+    "install-dev": "npm run build && npm run test && npm install -g .",
+    "prepare": "npm run build"
   },
   "engines": {
     "node": ">=18"
