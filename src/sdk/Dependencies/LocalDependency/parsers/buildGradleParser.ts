@@ -3,7 +3,7 @@ import path from 'path';
 import { PackageURL } from 'packageurl-js';
 
 
-const MANIFEST_FILE = 'build.gradle';
+const MANIFEST_FILES = ['build.gradle', 'build.gradle.kts'];
 const depBlockRex = /dependencies\s*{\s*(?<dependencies>(.|\n)*?)}/gm;
 
 enum GRADLE_STATES {
@@ -16,10 +16,11 @@ export async function buildGradleParser(fileContent: string, filePath: string): 
 
   // If the file is not a manifest file, return an empty results
   const results: ILocalDependency = {file: filePath, purls: []};
-  if(path.basename(filePath) != MANIFEST_FILE)
+  if(!MANIFEST_FILES.includes(path.basename(filePath)))
     return results;
 
   //For each dependency block, generate purls
+  depBlockRex.lastIndex = 0;
   let gradle;
   while ((gradle = depBlockRex.exec(fileContent)) !== null) {
     let depBlock = gradle?.groups?.dependencies;
@@ -37,8 +38,8 @@ export async function buildGradleParser(fileContent: string, filePath: string): 
 
       current_config_name = getConfigNameFromLine(line);
 
-      //Multiline dependency
-      if(current_config_name && line.includes("(")) {
+      //Multiline dependency (only if line has '(' but not ')' on the same line)
+      if(current_config_name && line.includes("(") && !line.includes(")")) {
 
         while( i<lines.length && !lines[i].includes(")")) {
           const componentData = createPurlNameFromLine(lines[i]);
@@ -74,8 +75,8 @@ export async function buildGradleParser(fileContent: string, filePath: string): 
 function getConfigNameFromLine(line): string {
   let configName = ""
 
-  const dep = line.split(/\s/);
-  if (dep.length) configName = dep[0].replace("(", "").trim();
+  const dep = line.split(/[\s(]/);
+  if (dep.length) configName = dep[0].trim();
 
   return configName;
 }
@@ -100,9 +101,9 @@ function createPurlNameFromLine(line: string): componentData {
     name = dep.groups.name
     version = dep.groups.version
   } else if (line.includes("group") && line.includes("name") && line.includes("version")) {
-    version = line.match(/version:\s+['"](?<version>[\w\.\-\d]+)['"]/).groups.version
-    name = line.match(/name:\s+['"](?<name>[\w\.\-\d]+)['"]/).groups?.name
-    namespace = line.match(/group:\s+['"](?<group>[\w\.\-\d]+)['"]/).groups?.group
+    version = line.match(/version\s*[:=]\s*['"](?<version>[\w\.\-\d]+)['"]/)?.groups?.version
+    name = line.match(/name\s*[:=]\s*['"](?<name>[\w\.\-\d]+)['"]/)?.groups?.name
+    namespace = line.match(/group\s*[:=]\s*['"](?<group>[\w\.\-\d]+)['"]/)?.groups?.group
   }
 
   let purlName = "";

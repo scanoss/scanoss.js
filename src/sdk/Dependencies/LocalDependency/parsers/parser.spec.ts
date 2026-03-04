@@ -8,6 +8,7 @@ import { packagelockParser, packageParser, yarnLockParser } from "./npmParser";
 import { csprojParser, packagesConfigParser } from "./nugetParser";
 import { pipRequirementsLockParser, scopedRequirementsParser } from "./pyParser";
 import { pnpmLockParser } from "./pnpmParser";
+import { libsVersionsTomlParser } from "./gradle/libsVersionsTomlParser";
 
 interface ParserSpecI {
   test_name: string;
@@ -463,6 +464,126 @@ const ParserSpec: ParserSpecI[] = [
     file_content: "tox==4.6.0\nvirtualenv>=20.0\n",
     expect: {file:"requirements-tox.txt",purls:[{purl:"pkg:pypi/tox@4.6.0",scope:"tox"},{purl:"pkg:pypi/virtualenv",requirement:">=20.0",scope:"tox"}]},
     parser: scopedRequirementsParser
+  },
+  /****************************************************************************/
+  /*            libs.versions.toml DEPENDENCY TEST DATA                       */
+  /****************************************************************************/
+  {
+    test_name: "libs.versions.toml - module + version.ref",
+    source: "",
+    note: "Standard version catalog with module and version.ref",
+    file_name: "libs.versions.toml",
+    file_content: "[versions]\nhilt = \"2.51.1\"\n\n[libraries]\nhilt-android = { module = \"com.google.dagger:hilt-android\", version.ref = \"hilt\" }\n",
+    expect: {file:"libs.versions.toml",purls:[{purl:"pkg:maven/com.google.dagger/hilt-android",requirement:"2.51.1"}]},
+    parser: libsVersionsTomlParser
+  },
+  {
+    test_name: "libs.versions.toml - module + inline version",
+    source: "",
+    note: "Library with inline version instead of version.ref",
+    file_name: "libs.versions.toml",
+    file_content: "[versions]\n\n[libraries]\nandroidx-activity = { module = \"androidx.activity:activity-compose\", version = \"1.9.3\" }\n",
+    expect: {file:"libs.versions.toml",purls:[{purl:"pkg:maven/androidx.activity/activity-compose",requirement:"1.9.3"}]},
+    parser: libsVersionsTomlParser
+  },
+  {
+    test_name: "libs.versions.toml - group/name form",
+    source: "",
+    note: "Library using group/name/version.ref form",
+    file_name: "libs.versions.toml",
+    file_content: "[versions]\ngroovy = \"3.0.5\"\n\n[libraries]\ngroovy-core = { group = \"org.codehaus.groovy\", name = \"groovy\", version.ref = \"groovy\" }\n",
+    expect: {file:"libs.versions.toml",purls:[{purl:"pkg:maven/org.codehaus.groovy/groovy",requirement:"3.0.5"}]},
+    parser: libsVersionsTomlParser
+  },
+  {
+    test_name: "libs.versions.toml - simple string notation",
+    source: "",
+    note: "Library declared as a simple string",
+    file_name: "libs.versions.toml",
+    file_content: "[versions]\n\n[libraries]\ngroovy = \"org.codehaus.groovy:groovy:3.0.5\"\n",
+    expect: {file:"libs.versions.toml",purls:[{purl:"pkg:maven/org.codehaus.groovy/groovy",requirement:"3.0.5"}]},
+    parser: libsVersionsTomlParser
+  },
+  {
+    test_name: "libs.versions.toml - library without version (BOM-managed)",
+    source: "",
+    note: "Library with no version, managed by BOM",
+    file_name: "libs.versions.toml",
+    file_content: "[versions]\n\n[libraries]\nmy-lib = { module = \"com.example:my-lib\" }\n",
+    expect: {file:"libs.versions.toml",purls:[{purl:"pkg:maven/com.example/my-lib"}]},
+    parser: libsVersionsTomlParser
+  },
+  {
+    test_name: "libs.versions.toml - comments and blank lines ignored",
+    source: "",
+    note: "Ensures comments and blank lines are properly skipped",
+    file_name: "libs.versions.toml",
+    file_content: "# This is a comment\n[versions]\nkotlin = \"2.0.0\"\n\n# Another comment\n[libraries]\n# This library is important\nkotlin-stdlib = { module = \"org.jetbrains.kotlin:kotlin-stdlib\", version.ref = \"kotlin\" }\n\n[plugins]\nkotlin-jvm = { id = \"org.jetbrains.kotlin.jvm\", version.ref = \"kotlin\" }\n",
+    expect: {file:"libs.versions.toml",purls:[{purl:"pkg:maven/org.jetbrains.kotlin/kotlin-stdlib",requirement:"2.0.0"}]},
+    parser: libsVersionsTomlParser
+  },
+  {
+    test_name: "libs.versions.toml - multiple libraries with mixed forms",
+    source: "",
+    note: "Comprehensive test with multiple declaration styles",
+    file_name: "libs.versions.toml",
+    file_content: "[versions]\nhilt = \"2.51.1\"\nkotlin = \"2.0.0\"\n\n[libraries]\nhilt-android = { module = \"com.google.dagger:hilt-android\", version.ref = \"hilt\" }\nkotlin-stdlib = { module = \"org.jetbrains.kotlin:kotlin-stdlib\", version.ref = \"kotlin\" }\nandroidx-core = { module = \"androidx.core:core-ktx\", version = \"1.12.0\" }\nsimple-lib = \"com.example:simple:1.0.0\"\nbom-lib = { module = \"com.example:bom-managed\" }\n\n[bundles]\nkotlin = [\"kotlin-stdlib\"]\n\n[plugins]\nkotlin-jvm = { id = \"org.jetbrains.kotlin.jvm\", version.ref = \"kotlin\" }\n",
+    expect: {file:"libs.versions.toml",purls:[{purl:"pkg:maven/com.google.dagger/hilt-android",requirement:"2.51.1"},{purl:"pkg:maven/org.jetbrains.kotlin/kotlin-stdlib",requirement:"2.0.0"},{purl:"pkg:maven/androidx.core/core-ktx",requirement:"1.12.0"},{purl:"pkg:maven/com.example/simple",requirement:"1.0.0"},{purl:"pkg:maven/com.example/bom-managed"}]},
+    parser: libsVersionsTomlParser
+  },
+  /****************************************************************************/
+  /*              build.gradle.kts DEPENDENCY TEST DATA                       */
+  /****************************************************************************/
+  {
+    test_name: "build.gradle.kts - parenthesized string notation",
+    source: "",
+    note: "Kotlin DSL with parenthesized dependency declarations",
+    file_name: "build.gradle.kts",
+    file_content: "plugins {\n    kotlin(\"jvm\") version \"1.9.0\"\n}\n\ndependencies {\n    implementation(\"org.jetbrains.kotlin:kotlin-stdlib:1.9.0\")\n    testImplementation(\"junit:junit:4.13.2\")\n}\n",
+    expect: {file:"build.gradle.kts",purls:[{purl:"pkg:maven/org.jetbrains.kotlin/kotlin-stdlib",requirement:"1.9.0",scope:"implementation"},{purl:"pkg:maven/junit/junit",requirement:"4.13.2",scope:"testImplementation"}]},
+    parser: buildGradleParser
+  },
+  {
+    test_name: "build.gradle.kts - Kotlin named-argument notation",
+    source: "",
+    note: "Kotlin DSL with named argument syntax using = instead of :",
+    file_name: "build.gradle.kts",
+    file_content: "dependencies {\n    implementation(group = \"com.google\", name = \"guava\", version = \"31.1\")\n    api(group = \"org.apache\", name = \"commons-lang\", version = \"3.12.0\")\n}\n",
+    expect: {file:"build.gradle.kts",purls:[{purl:"pkg:maven/com.google/guava",requirement:"31.1",scope:"implementation"},{purl:"pkg:maven/org.apache/commons-lang",requirement:"3.12.0",scope:"api"}]},
+    parser: buildGradleParser
+  },
+  {
+    test_name: "build.gradle.kts - catalog references only (expects empty purls)",
+    source: "",
+    note: "When .kts file uses only version catalog references, no coordinates are extractable",
+    file_name: "build.gradle.kts",
+    file_content: "dependencies {\n    implementation(libs.hilt.android)\n    testImplementation(libs.junit)\n}\n",
+    expect: {file:"build.gradle.kts",purls:[]},
+    parser: buildGradleParser
+  },
+  /****************************************************************************/
+  /*     nowinandroid REAL-WORLD TEST DATA (libs.versions.toml)               */
+  /****************************************************************************/
+  {
+    test_name: "libs.versions.toml - nowinandroid representative subset",
+    source: "https://github.com/android/nowinandroid",
+    note: "Real-world subset covering all patterns: group/name/version.ref, module/version.ref, module/inline version, BOM-managed (no version), no-space formatting, bundles and plugins (ignored)",
+    file_name: "libs.versions.toml",
+    file_content: "[versions]\nhilt = \"2.59\"\nandroidxCore = \"1.15.0\"\ncoil = \"2.7.0\"\nkotlinxCoroutines = \"1.10.1\"\njunit4 = \"4.13.2\"\nkotlin = \"2.3.0\"\nandroidxComposeMaterial3Adaptive = \"1.1.0-rc01\"\nandroidxComposeMaterial3AdaptiveNavigation3 = \"1.3.0-alpha04\"\n\n[bundles]\nandroidx-compose-ui-test = [\"androidx-compose-ui-test\", \"androidx-compose-ui-testManifest\"]\n\n[libraries]\nhilt-android = { group = \"com.google.dagger\", name = \"hilt-android\", version.ref = \"hilt\" }\nandroidx-core-ktx = { group = \"androidx.core\", name = \"core-ktx\", version.ref = \"androidxCore\" }\ncoil-kt = { group = \"io.coil-kt\", name = \"coil\", version.ref = \"coil\" }\nkotlinx-coroutines-core = { group = \"org.jetbrains.kotlinx\", name = \"kotlinx-coroutines-core\", version.ref = \"kotlinxCoroutines\" }\njunit = { module = \"junit:junit\", version.ref = \"junit4\" }\nkotlin-metadata = { module = \"org.jetbrains.kotlin:kotlin-metadata-jvm\", version.ref = \"kotlin\" }\njavax-inject = { module = \"javax.inject:javax.inject\", version = \"1\" }\nfirebase-analytics = { group = \"com.google.firebase\", name = \"firebase-analytics\" }\nandroidx-compose-material3 = { group = \"androidx.compose.material3\", name = \"material3\" }\nandroidx-compose-material3-adaptive = { group = \"androidx.compose.material3.adaptive\", name = \"adaptive\", version.ref = \"androidxComposeMaterial3Adaptive\" }\nandroidx-compose-material3-adaptive-navigation3 = { group = \"androidx.compose.material3.adaptive\", name = \"adaptive-navigation3\",version.ref=\"androidxComposeMaterial3AdaptiveNavigation3\" }\n\n[plugins]\nhilt = { id = \"com.google.dagger.hilt.android\", version.ref = \"hilt\" }\nkotlin-jvm = { id = \"org.jetbrains.kotlin.jvm\", version.ref = \"kotlin\" }\n",
+    expect: {file:"libs.versions.toml",purls:[{purl:"pkg:maven/com.google.dagger/hilt-android",requirement:"2.59"},{purl:"pkg:maven/androidx.core/core-ktx",requirement:"1.15.0"},{purl:"pkg:maven/io.coil-kt/coil",requirement:"2.7.0"},{purl:"pkg:maven/org.jetbrains.kotlinx/kotlinx-coroutines-core",requirement:"1.10.1"},{purl:"pkg:maven/junit/junit",requirement:"4.13.2"},{purl:"pkg:maven/org.jetbrains.kotlin/kotlin-metadata-jvm",requirement:"2.3.0"},{purl:"pkg:maven/javax.inject/javax.inject",requirement:"1"},{purl:"pkg:maven/com.google.firebase/firebase-analytics"},{purl:"pkg:maven/androidx.compose.material3/material3"},{purl:"pkg:maven/androidx.compose.material3.adaptive/adaptive",requirement:"1.1.0-rc01"},{purl:"pkg:maven/androidx.compose.material3.adaptive/adaptive-navigation3",requirement:"1.3.0-alpha04"}]},
+    parser: libsVersionsTomlParser
+  },
+  /****************************************************************************/
+  /*     nowinandroid REAL-WORLD TEST DATA (build.gradle.kts)                 */
+  /****************************************************************************/
+  {
+    test_name: "build.gradle.kts - nowinandroid app (catalog + project refs only)",
+    source: "https://github.com/android/nowinandroid",
+    note: "Real-world build.gradle.kts using only libs.xxx catalog references and projects.xxx project references — produces 0 extractable purls",
+    file_name: "build.gradle.kts",
+    file_content: "plugins {\n    alias(libs.plugins.nowinandroid.android.application)\n    alias(libs.plugins.nowinandroid.android.application.compose)\n    alias(libs.plugins.nowinandroid.hilt)\n    alias(libs.plugins.kotlin.serialization)\n}\n\nandroid {\n    defaultConfig {\n        applicationId = \"com.google.samples.apps.nowinandroid\"\n        versionCode = 8\n        versionName = \"0.1.2\"\n    }\n    namespace = \"com.google.samples.apps.nowinandroid\"\n}\n\ndependencies {\n    implementation(projects.feature.interests.api)\n    implementation(projects.feature.interests.impl)\n    implementation(projects.feature.foryou.api)\n    implementation(projects.feature.foryou.impl)\n    implementation(projects.core.common)\n    implementation(projects.core.ui)\n    implementation(projects.core.designsystem)\n    implementation(projects.core.data)\n    implementation(projects.core.model)\n\n    implementation(libs.androidx.activity.compose)\n    implementation(libs.androidx.compose.material3)\n    implementation(libs.androidx.core.ktx)\n    implementation(libs.androidx.core.splashscreen)\n    implementation(libs.androidx.lifecycle.runtimeCompose)\n    implementation(libs.kotlinx.coroutines.guava)\n    implementation(libs.coil.kt)\n    implementation(libs.kotlinx.serialization.json)\n\n    ksp(libs.hilt.compiler)\n\n    debugImplementation(libs.androidx.compose.ui.testManifest)\n    debugImplementation(projects.uiTestHiltManifest)\n\n    testImplementation(projects.core.dataTest)\n    testImplementation(libs.hilt.android.testing)\n    testImplementation(libs.kotlin.test)\n\n    androidTestImplementation(projects.core.testing)\n    androidTestImplementation(libs.androidx.test.espresso.core)\n    androidTestImplementation(libs.hilt.android.testing)\n}\n",
+    expect: {file:"build.gradle.kts",purls:[]},
+    parser: buildGradleParser
   }
 ];
 
