@@ -13,6 +13,7 @@ import { gemfilelockParser, gemfileParser } from './parsers/rubyParser';
 import { goModParser, goSumParser } from './parsers/golangParser';
 import { csprojParser, packagesConfigParser } from './parsers/nugetParser';
 import { buildGradleParser } from './parsers/buildGradleParser';
+import { libsVersionsTomlParser } from './parsers/gradle/libsVersionsTomlParser';
 import pyprojectToml from './parsers/python/PyProjectToml';
 
 export class LocalDependencies {
@@ -41,6 +42,8 @@ export class LocalDependencies {
       '*.csproj': csprojParser,
       'packages.config': packagesConfigParser,
       'build.gradle': buildGradleParser,
+      'build.gradle.kts': buildGradleParser,
+      'libs.versions.toml': libsVersionsTomlParser,
       'pyproject.toml': pyprojectToml,
     };
 

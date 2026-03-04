@@ -23,11 +23,15 @@ describe('Suit test for LocalDependency Scanner', () => {
       "/home/user/go.sum",
       "/home/user/accept.csproj",
       "/home/user/ignore2.c",
+      "/home/user/app/build.gradle.kts",
+      "/home/user/gradle/libs.versions.toml",
     ];
 
     const expectedOut = [
       "/home/user/go.sum",
       "/home/user/accept.csproj",
+      "/home/user/app/build.gradle.kts",
+      "/home/user/gradle/libs.versions.toml",
     ];
 
     const result = localDependencyScanner.filterFiles(files);
