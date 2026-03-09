@@ -1,0 +1,5 @@
+[versions]
+hilt = "2.48"
+
+[libraries]
+hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
