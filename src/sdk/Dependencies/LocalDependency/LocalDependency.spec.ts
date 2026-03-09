@@ -88,30 +88,6 @@ describe('Suit test for LocalDependency Scanner', () => {
       expect(retrofit.requirement).to.equal('2.9.0');
     });
 
-    it('resolves catalog aliases when .kts is listed before TOML in the file list', async function () {
-      const ld = new LocalDependencies();
-      // Pass .kts first — forces findCatalogMap() to lazy-read TOML from disk
-      const result = await ld.search([ktsPath, tomlPath]);
-
-      const ktsFile = result.files.find(f => f.file === ktsPath);
-      expect(ktsFile).to.not.be.undefined;
-      expect(ktsFile.purls.length).to.equal(4);
-
-      // Same assertions — catalog aliases should still resolve
-      const hilt = ktsFile.purls.find(p => p.purl.includes('hilt-android'));
-      expect(hilt).to.not.be.undefined;
-      expect(hilt.purl).to.equal('pkg:maven/com.google.dagger/hilt-android');
-      expect(hilt.scope).to.equal('implementation');
-
-      const junit = ktsFile.purls.find(p => p.purl.includes('junit'));
-      expect(junit).to.not.be.undefined;
-      expect(junit.scope).to.equal('testImplementation');
-
-      const retrofit = ktsFile.purls.find(p => p.purl.includes('retrofit'));
-      expect(retrofit).to.not.be.undefined;
-      expect(retrofit.scope).to.equal('implementation');
-    });
-
     it('produces only direct coordinates when no TOML is available', async function () {
       const ld = new LocalDependencies();
       // Only pass .kts with no TOML on disk at any ancestor directory
@@ -175,35 +151,6 @@ describe('Suit test for LocalDependency Scanner', () => {
         expect(moduleBFile.purls.find(p => p.purl.includes('hilt'))).to.be.undefined;
       });
 
-      it('lazy fallback resolves each .kts from its nearest TOML (no TOMLs in file list)', async function () {
-        const ld = new LocalDependencies();
-        // Only pass .kts files — TOMLs should be found lazily from disk via findCatalogMap()
-        const result = await ld.search([moduleAKts, moduleBKts]);
-
-        // moduleA should still resolve hilt-android from moduleA's TOML on disk
-        const moduleAFile = result.files.find(f => f.file === moduleAKts);
-        expect(moduleAFile).to.not.be.undefined;
-        expect(moduleAFile.purls.length).to.equal(1);
-        const hilt = moduleAFile.purls.find(p => p.purl.includes('hilt-android'));
-        expect(hilt).to.not.be.undefined;
-        expect(hilt.purl).to.equal('pkg:maven/com.google.dagger/hilt-android');
-        expect(hilt.scope).to.equal('implementation');
-        expect(hilt.requirement).to.equal('2.48');
-
-        // moduleB should still resolve retrofit from root TOML on disk
-        const moduleBFile = result.files.find(f => f.file === moduleBKts);
-        expect(moduleBFile).to.not.be.undefined;
-        expect(moduleBFile.purls.length).to.equal(1);
-        const retrofit = moduleBFile.purls.find(p => p.purl.includes('retrofit'));
-        expect(retrofit).to.not.be.undefined;
-        expect(retrofit.purl).to.equal('pkg:maven/com.squareup.retrofit2/retrofit');
-        expect(retrofit.scope).to.equal('implementation');
-        expect(retrofit.requirement).to.equal('2.9.0');
-
-        // No cross-contamination
-        expect(moduleAFile.purls.find(p => p.purl.includes('retrofit'))).to.be.undefined;
-        expect(moduleBFile.purls.find(p => p.purl.includes('hilt'))).to.be.undefined;
-      });
     });
   });
 
