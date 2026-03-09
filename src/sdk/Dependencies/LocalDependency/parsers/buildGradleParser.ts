@@ -1,16 +1,40 @@
 import { ILocalDependency } from '../DependencyTypes';
 import path from 'path';
+import fs from 'fs';
 import { PackageURL } from 'packageurl-js';
+import { ICatalogEntry, buildCatalogAliasMap } from './gradle/libsVersionsTomlParser';
 
 
 const MANIFEST_FILES = ['build.gradle', 'build.gradle.kts'];
+const catalogCache = new Map<string, Map<string, ICatalogEntry>>();
 const depBlockRex = /dependencies\s*{\s*(?<dependencies>(.|\n)*?)}/gm;
 
-enum GRADLE_STATES {
-  WALKING,
-  SINGLELINE_DEPENDENCY,
-  MULTILINE_DEPENDENCY
+
+function resolveCatalogAlias(line: string, catalogMap: Map<string, ICatalogEntry>): ICatalogEntry | undefined {
+  const match = line.match(/\blibs\.([a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*)\b/);
+  if (match) return catalogMap.get(match[1]);
 }
+
+function findCatalogMap(gradleFilePath: string): Map<string, ICatalogEntry> {
+  let dir = path.dirname(gradleFilePath);
+  const root = path.parse(dir).root;
+
+  while (dir !== root) {
+    if (catalogCache.has(dir)) return catalogCache.get(dir);
+
+    const tomlPath = path.join(dir, 'gradle', 'libs.versions.toml');
+    if (fs.existsSync(tomlPath)) {
+      const content = fs.readFileSync(tomlPath, 'utf8');
+      const map = buildCatalogAliasMap(content);
+      catalogCache.set(dir, map);
+      return map;
+    }
+
+    dir = path.dirname(dir);
+  }
+  return new Map();
+}
+
 export async function buildGradleParser(fileContent: string, filePath: string): Promise<ILocalDependency> {
 
 
@@ -18,6 +42,8 @@ export async function buildGradleParser(fileContent: string, filePath: string): 
   const results: ILocalDependency = {file: filePath, purls: []};
   if(!MANIFEST_FILES.includes(path.basename(filePath)))
     return results;
+
+  const catalogMap = findCatalogMap(filePath);
 
   //For each dependency block, generate purls
   depBlockRex.lastIndex = 0;
@@ -49,6 +75,11 @@ export async function buildGradleParser(fileContent: string, filePath: string): 
               requirement: componentData.version,
               scope: current_config_name
             });
+          } else {
+            const entry = resolveCatalogAlias(lines[i], catalogMap);
+            if (entry) {
+              results.purls.push({ purl: entry.purl, requirement: entry.version, scope: current_config_name });
+            }
           }
           i++;
         }
@@ -56,6 +87,11 @@ export async function buildGradleParser(fileContent: string, filePath: string): 
       } else {  //Single line dependency
         const componentData = createPurlNameFromLine(line);
         if (componentData == null) {
+          // Try resolving via catalog alias
+          const entry = resolveCatalogAlias(line, catalogMap);
+          if (entry) {
+            results.purls.push({ purl: entry.purl, requirement: entry.version, scope: current_config_name });
+          }
           current_config_name = '';
           continue;
         }

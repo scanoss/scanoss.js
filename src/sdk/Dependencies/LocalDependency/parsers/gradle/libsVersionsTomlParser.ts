@@ -4,6 +4,48 @@ import { PackageURL } from 'packageurl-js';
 
 const MANIFEST_FILE = 'libs.versions.toml';
 
+export interface ICatalogEntry {
+  purl: string;
+  version?: string;
+}
+
+/**
+ * Normalizes a TOML alias key to match Gradle accessor notation.
+ * Replaces dashes and underscores with dots: "hilt-android" → "hilt.android"
+ */
+export function normalizeCatalogAlias(alias: string): string {
+  return alias.replace(/[-_]/g, '.');
+}
+
+/**
+ * Builds a map from normalized catalog alias to resolved Maven coordinates.
+ * Keys use dot-separated notation matching Kotlin DSL accessors (e.g., "hilt.android").
+ */
+export function buildCatalogAliasMap(fileContent: string): Map<string, ICatalogEntry> {
+  const map = new Map<string, ICatalogEntry>();
+  const versions = parseVersionsSection(fileContent);
+  const section = extractSection(fileContent, 'libraries');
+  if (!section) return map;
+
+  for (const line of section.split(/\r?\n/)) {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith('#')) continue;
+
+    const kvMatch = trimmed.match(/^([\w-]+)\s*=\s*(.*)/);
+    if (!kvMatch) continue;
+
+    const aliasKey = normalizeCatalogAlias(kvMatch[1]);
+    const value = kvMatch[2].trim();
+    const entry = parseLibraryValue(value, versions);
+    if (entry && entry.namespace && entry.name) {
+      const purlObj = new PackageURL('maven', entry.namespace, entry.name, undefined, undefined, undefined);
+      map.set(aliasKey, { purl: purlObj.toString(), version: entry.version });
+    }
+  }
+
+  return map;
+}
+
 /**
  * Parses a Gradle Version Catalog TOML file (libs.versions.toml) and extracts
  * Maven dependency coordinates as PURLs.

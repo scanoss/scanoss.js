@@ -8,7 +8,7 @@ import { packagelockParser, packageParser, yarnLockParser } from "./npmParser";
 import { csprojParser, packagesConfigParser } from "./nugetParser";
 import { pipRequirementsLockParser, scopedRequirementsParser } from "./pyParser";
 import { pnpmLockParser } from "./pnpmParser";
-import { libsVersionsTomlParser } from "./gradle/libsVersionsTomlParser";
+import { libsVersionsTomlParser, buildCatalogAliasMap, normalizeCatalogAlias } from "./gradle/libsVersionsTomlParser";
 
 interface ParserSpecI {
   test_name: string;
@@ -601,3 +601,47 @@ describe("Testing purl extractors", () => {
   if (OnlyTestWPriority.length) OnlyTestWPriority.forEach(async (ps) => await TestCase(ps));
   else ParserSpec.forEach(async (ps) => await TestCase(ps));
 });
+
+describe("normalizeCatalogAlias", () => {
+  it("replaces dashes with dots", () => {
+    expect(normalizeCatalogAlias("hilt-android")).to.equal("hilt.android");
+  });
+
+  it("replaces underscores with dots", () => {
+    expect(normalizeCatalogAlias("some_key")).to.equal("some.key");
+  });
+
+  it("replaces mixed dashes and underscores", () => {
+    expect(normalizeCatalogAlias("androidx-core-ktx")).to.equal("androidx.core.ktx");
+  });
+
+  it("returns plain alias unchanged", () => {
+    expect(normalizeCatalogAlias("junit")).to.equal("junit");
+  });
+});
+
+describe("buildCatalogAliasMap", () => {
+  it("builds alias map from TOML content", () => {
+    const toml = `[versions]\nhilt = "2.51.1"\n\n[libraries]\nhilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }\n`;
+    const map = buildCatalogAliasMap(toml);
+    expect(map.size).to.equal(1);
+    expect(map.get("hilt.android")).to.deep.equal({ purl: "pkg:maven/com.google.dagger/hilt-android", version: "2.51.1" });
+  });
+
+  it("handles multiple libraries with mixed forms", () => {
+    const toml = `[versions]\nkotlin = "2.0.0"\n\n[libraries]\nkotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }\njavax-inject = { module = "javax.inject:javax.inject", version = "1" }\nsimple = "com.example:simple:1.0.0"\nbom-managed = { module = "com.example:bom-managed" }\n`;
+    const map = buildCatalogAliasMap(toml);
+    expect(map.size).to.equal(4);
+    expect(map.get("kotlin.stdlib")).to.deep.equal({ purl: "pkg:maven/org.jetbrains.kotlin/kotlin-stdlib", version: "2.0.0" });
+    expect(map.get("javax.inject")).to.deep.equal({ purl: "pkg:maven/javax.inject/javax.inject", version: "1" });
+    expect(map.get("simple")).to.deep.equal({ purl: "pkg:maven/com.example/simple", version: "1.0.0" });
+    expect(map.get("bom.managed")).to.deep.equal({ purl: "pkg:maven/com.example/bom-managed", version: undefined });
+  });
+
+  it("returns empty map for content without libraries section", () => {
+    const toml = `[versions]\nhilt = "2.51.1"\n`;
+    const map = buildCatalogAliasMap(toml);
+    expect(map.size).to.equal(0);
+  });
+});
+
