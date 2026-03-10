@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file. See [standa
 
 ## [Unreleased]
 
+## [0.38.0] (2026-03-10)
+### Added
+- Added support for resolving Gradle dependencies from version catalog (`libs.versions.toml`)
+- Added support for Gradle Kotlin DSL (`build.gradle.kts`) dependency parsing
+
 ## [0.37.0] (2026-03-02)
 ### Added
 - Added `skip_headers` and `skip_headers_limit` support in `scanoss.json` `file_snippet` settings to filter license headers, comments, and imports before snippet matching
