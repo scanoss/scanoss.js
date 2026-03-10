@@ -6,6 +6,10 @@ import { ICatalogEntry, buildCatalogAliasMap } from './gradle/libsVersionsTomlPa
 
 
 const MANIFEST_FILES = ['build.gradle', 'build.gradle.kts'];
+// Per-project cache of parsed version catalog (libs.versions.toml) entries.
+// Outer key: project root directory path where gradle/libs.versions.toml was found
+// Inner map: normalized alias (e.g. "androidx.activity.compose") → resolved Maven coordinates
+// Example: { "/home/user/my-project" → { "hilt.android" → { purl: "pkg:maven/com.google.dagger/hilt-android", version: "2.59" } } }
 const catalogCache = new Map<string, Map<string, ICatalogEntry>>();
 const depBlockRex = /dependencies\s*{\s*(?<dependencies>(.|\n)*?)}/gm;
 
