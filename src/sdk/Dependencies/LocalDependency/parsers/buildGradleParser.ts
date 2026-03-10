@@ -19,8 +19,6 @@ function resolveCatalogAlias(line: string, catalogMap: Map<string, ICatalogEntry
   if (match) return catalogMap.get(match[1]);
 }
 
-// TODO: Consider limiting the directory walk to the scan root to avoid escaping the project boundary.
-// Currently walks up to filesystem root. To use the scan root requires changing ParserFuncType.
 function findCatalogMap(gradleFilePath: string): Map<string, ICatalogEntry> {
   let dir = path.dirname(gradleFilePath);
   const root = path.parse(dir).root;

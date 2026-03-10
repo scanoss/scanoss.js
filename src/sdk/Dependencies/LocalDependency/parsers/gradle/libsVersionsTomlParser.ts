@@ -2,12 +2,38 @@ import { ILocalDependency } from '../../DependencyTypes';
 import path from 'path';
 import { PackageURL } from 'packageurl-js';
 
+/**
+ * Known limitations:
+ * - Rich versions in [versions] (e.g. { strictly = "[4.0, 5.0[", prefer = "4.12.0" }) are not parsed.
+ *   Only simple key = "value" entries are supported.
+ * - The version catalog is expected at gradle/libs.versions.toml (Gradle default convention).
+ *   Custom catalog paths configured via settings.gradle.kts versionCatalogs block are not detected.
+ * - settings.gradle.kts is not parsed. Plugin declarations and catalog configuration in settings are ignored.
+ * - The directory walk in buildGradleParser.ts to find gradle/libs.versions.toml goes up to the
+ *   filesystem root. It does not stop at the scan root boundary.
+ * - Multi-line library entries are not supported. Each library must be declared on a single line.
+ *   e.g. `hilt-android = { module = "...", version.ref = "hilt" }` works, but splitting it
+ *   across multiple lines does not.
+ */
+
 const MANIFEST_FILE = 'libs.versions.toml';
 
 export interface ICatalogEntry {
   purl: string;
   version?: string;
 }
+
+interface LibraryCoordinates {
+  namespace: string;
+  name: string;
+  version?: string;
+}
+
+interface LibraryEntry extends LibraryCoordinates {
+  alias: string;
+}
+
+// --- Exported functions ---
 
 /**
  * Normalizes a TOML alias key to match Gradle accessor notation.
@@ -24,22 +50,13 @@ export function normalizeCatalogAlias(alias: string): string {
 export function buildCatalogAliasMap(fileContent: string): Map<string, ICatalogEntry> {
   const map = new Map<string, ICatalogEntry>();
   const versions = parseVersionsSection(fileContent);
-  const section = extractSection(fileContent, 'libraries');
-  if (!section) return map;
+  const libraries = parseLibrariesSection(fileContent, versions);
 
-  for (const line of section.split(/\r?\n/)) {
-    const trimmed = line.trim();
-    if (!trimmed || trimmed.startsWith('#')) continue;
-
-    const kvMatch = trimmed.match(/^([\w-]+)\s*=\s*(.*)/);
-    if (!kvMatch) continue;
-
-    const aliasKey = normalizeCatalogAlias(kvMatch[1]);
-    const value = kvMatch[2].trim();
-    const entry = parseLibraryValue(value, versions);
-    if (entry && entry.namespace && entry.name) {
-      const purlObj = new PackageURL('maven', entry.namespace, entry.name, undefined, undefined, undefined);
-      map.set(aliasKey, { purl: purlObj.toString(), version: entry.version });
+  for (const lib of libraries) {
+    if (lib.namespace && lib.name) {
+      const aliasKey = normalizeCatalogAlias(lib.alias);
+      const purlObj = new PackageURL('maven', lib.namespace, lib.name, undefined, undefined, undefined);
+      map.set(aliasKey, { purl: purlObj.toString(), version: lib.version });
     }
   }
 
@@ -75,11 +92,7 @@ export async function libsVersionsTomlParser(fileContent: string, filePath: stri
   return results;
 }
 
-interface LibraryEntry {
-  namespace: string;
-  name: string;
-  version?: string;
-}
+// --- Private helpers ---
 
 /**
  * Extracts the content of a TOML section by header name.
@@ -99,6 +112,13 @@ function extractSection(fileContent: string, sectionName: string): string | null
 
 /**
  * Parses the [versions] section into a map of key -> version string.
+ *
+ * Example input:
+ *   [versions]
+ *   hilt = "2.51.1"
+ *   kotlin = "2.0.0"
+ *
+ * Returns: Map { "hilt" → "2.51.1", "kotlin" → "2.0.0" }
  */
 function parseVersionsSection(fileContent: string): Map<string, string> {
   const versions = new Map<string, string>();
@@ -121,6 +141,16 @@ function parseVersionsSection(fileContent: string): Map<string, string> {
 
 /**
  * Parses the [libraries] section and resolves version references.
+ *
+ * Example input:
+ *   [libraries]
+ *   hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
+ *   simple = "com.example:simple:1.0.0"
+ *
+ * Returns: [
+ *   { alias: "hilt-android", namespace: "com.google.dagger", name: "hilt-android", version: "2.51.1" },
+ *   { alias: "simple", namespace: "com.example", name: "simple", version: "1.0.0" }
+ * ]
  */
 function parseLibrariesSection(fileContent: string, versions: Map<string, string>): LibraryEntry[] {
   const libraries: LibraryEntry[] = [];
@@ -132,12 +162,12 @@ function parseLibrariesSection(fileContent: string, versions: Map<string, string
     if (!trimmed || trimmed.startsWith('#')) continue;
 
     // Match the key = value pattern
-    const kvMatch = trimmed.match(/^[\w-]+\s*=\s*(.*)/);
+    const kvMatch = trimmed.match(/^([\w-]+)\s*=\s*(.*)/);
     if (!kvMatch) continue;
 
-    const value = kvMatch[1].trim();
+    const value = kvMatch[2].trim();
     const entry = parseLibraryValue(value, versions);
-    if (entry) libraries.push(entry);
+    if (entry) libraries.push({ alias: kvMatch[1], ...entry });
   }
 
   return libraries;
@@ -146,7 +176,7 @@ function parseLibrariesSection(fileContent: string, versions: Map<string, string
 /**
  * Parses a single library value from the TOML file.
  */
-function parseLibraryValue(value: string, versions: Map<string, string>): LibraryEntry | null {
+function parseLibraryValue(value: string, versions: Map<string, string>): LibraryCoordinates | null {
   // Simple string notation: "group:artifact:version"
   if (/^["']/.test(value)) {
     const strContent = value.replace(/^["']|["']$/g, '');
