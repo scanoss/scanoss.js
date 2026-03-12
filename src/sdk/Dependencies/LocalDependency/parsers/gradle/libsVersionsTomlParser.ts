@@ -9,8 +9,6 @@ import { PackageURL } from 'packageurl-js';
  * - The version catalog is expected at gradle/libs.versions.toml (Gradle default convention).
  *   Custom catalog paths configured via settings.gradle.kts versionCatalogs block are not detected.
  * - settings.gradle.kts is not parsed. Plugin declarations and catalog configuration in settings are ignored.
- * - The directory walk in buildGradleParser.ts to find gradle/libs.versions.toml goes up to the
- *   filesystem root. It does not stop at the scan root boundary.
  * - Multi-line library entries are not supported. Each library must be declared on a single line.
  *   e.g. `hilt-android = { module = "...", version.ref = "hilt" }` works, but splitting it
  *   across multiple lines does not.
@@ -178,8 +176,9 @@ function parseLibrariesSection(fileContent: string, versions: Map<string, string
  */
 function parseLibraryValue(value: string, versions: Map<string, string>): LibraryCoordinates | null {
   // Simple string notation: "group:artifact:version"
-  if (/^["']/.test(value)) {
-    const strContent = value.replace(/^["']|["']$/g, '');
+  const stringMatch = value.match(/^["']([^"']+)["']/);
+  if (stringMatch) {
+    const strContent = stringMatch[1];
     const parts = strContent.split(':');
     if (parts.length >= 2) {
       return {
