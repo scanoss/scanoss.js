@@ -83,7 +83,7 @@ export async function libsVersionsTomlParser(fileContent: string, filePath: stri
   for (const lib of libraries) {
     if (lib.namespace && lib.name) {
       const purlObj = new PackageURL('maven', lib.namespace, lib.name, undefined, undefined, undefined);
-      results.purls.push({ purl: purlObj.toString(), requirement: lib.version });
+      results.purls.push({ purl: purlObj.toString(), ...(lib.version && { requirement: lib.version }) });
     }
   }
 
