@@ -20,7 +20,7 @@ function resolveCatalogAlias(line: string, catalogMap: Map<string, ICatalogEntry
 }
 
 function findCatalogMap(gradleFilePath: string, basePath?: string): Map<string, ICatalogEntry> {
-  let dir = path.dirname(gradleFilePath);
+  let dir = path.dirname(path.resolve(gradleFilePath));
   const root = path.parse(dir).root;
   // Stop at basePath (scan root) to avoid searching outside the project scope.
   // Falls back to filesystem root when basePath is not provided.
