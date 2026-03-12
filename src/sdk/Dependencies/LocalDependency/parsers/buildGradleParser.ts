@@ -24,9 +24,9 @@ function findCatalogMap(gradleFilePath: string, basePath?: string): Map<string, 
   const root = path.parse(dir).root;
   // Stop at basePath (scan root) to avoid searching outside the project scope.
   // Falls back to filesystem root when basePath is not provided.
-  const boundary = basePath ?? root;
+  const boundary = basePath ? path.resolve(basePath) : root;
 
-  while (dir !== boundary && dir !== root) {
+  while (true) {
     if (catalogCache.has(dir)) return catalogCache.get(dir);
 
     const tomlPath = path.join(dir, 'gradle', 'libs.versions.toml');
@@ -37,6 +37,7 @@ function findCatalogMap(gradleFilePath: string, basePath?: string): Map<string, 
       return map;
     }
 
+    if (dir === boundary || dir === root) break;
     dir = path.dirname(dir);
   }
   return new Map();
