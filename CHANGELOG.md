@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 ## [Unreleased]
 
-## [0.38.0] (2026-03-10)
+## [0.38.0] (2026-03-12)
 ### Added
 - Added support for resolving Gradle dependencies from version catalog (`libs.versions.toml`)
 - Added support for Gradle Kotlin DSL (`build.gradle.kts`) dependency parsing
