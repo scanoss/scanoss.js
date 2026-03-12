@@ -34,7 +34,7 @@ export async function depHandler(rootPath: string, options: any): Promise<void> 
     fileList = tree.getFileList(new DependencyFilter(""));
   }
 
-  const results = await dependencyScanner.scan(fileList);
+  const results = await dependencyScanner.scan(fileList, rootPath);
 
   if(options.output) {
     fs.promises.writeFile(options.output, JSON.stringify(results, null, 2));

@@ -19,11 +19,14 @@ function resolveCatalogAlias(line: string, catalogMap: Map<string, ICatalogEntry
   if (match) return catalogMap.get(match[1]);
 }
 
-function findCatalogMap(gradleFilePath: string): Map<string, ICatalogEntry> {
+function findCatalogMap(gradleFilePath: string, basePath?: string): Map<string, ICatalogEntry> {
   let dir = path.dirname(gradleFilePath);
   const root = path.parse(dir).root;
+  // Stop at basePath (scan root) to avoid searching outside the project scope.
+  // Falls back to filesystem root when basePath is not provided.
+  const boundary = basePath ?? root;
 
-  while (dir !== root) {
+  while (dir !== boundary && dir !== root) {
     if (catalogCache.has(dir)) return catalogCache.get(dir);
 
     const tomlPath = path.join(dir, 'gradle', 'libs.versions.toml');
@@ -39,7 +42,7 @@ function findCatalogMap(gradleFilePath: string): Map<string, ICatalogEntry> {
   return new Map();
 }
 
-export async function buildGradleParser(fileContent: string, filePath: string): Promise<ILocalDependency> {
+export async function buildGradleParser(fileContent: string, filePath: string, basePath?: string): Promise<ILocalDependency> {
 
 
   // If the file is not a manifest file, return an empty results
@@ -47,7 +50,7 @@ export async function buildGradleParser(fileContent: string, filePath: string): 
   if(!MANIFEST_FILES.includes(path.basename(filePath)))
     return results;
 
-  const catalogMap = findCatalogMap(filePath);
+  const catalogMap = findCatalogMap(filePath, basePath);
 
   //For each dependency block, generate purls
   depBlockRex.lastIndex = 0;
