@@ -45,11 +45,16 @@ export class DependencyScanner {
       throw new Error('Specified path is not a directory');
     const tree = new Tree(path);
     tree.build();
-    return await this.scan(tree.getFileList());
+    return await this.scan(tree.getFileList(), path);
   }
 
-  public async scan(files: Array<string>): Promise<IDependencyResponse> {
-    let localDependencies = await this.localDependency.search(files);
+  /**
+   * @param basePath - Scan root directory. Limits the scope of upward directory searches
+   *                   performed by parsers (e.g., finding gradle/libs.versions.toml).
+   *                   When omitted, searches may walk up to the filesystem root.
+   */
+  public async scan(files: Array<string>, basePath?: string): Promise<IDependencyResponse> {
+    let localDependencies = await this.localDependency.search(files, basePath);
     if (localDependencies.files.length === 0) return { filesList: [], status:{ status: 'success', message: 'No dependencies found' } };
     localDependencies = this.purlAdapter(localDependencies);
     const requests: DependencyRequest[] = this.buildRequests(localDependencies);

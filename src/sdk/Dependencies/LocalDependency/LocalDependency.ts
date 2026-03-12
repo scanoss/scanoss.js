@@ -56,14 +56,17 @@ export class LocalDependencies {
     return files.filter((filepath) => this.getParserFunc(filepath));
   }
 
-  public async search(files: Array<string>): Promise<ILocalDependencies> {
+  /**
+   * @param basePath - Scan root directory. Limits the scope of upward directory searches within parsers.
+   */
+  public async search(files: Array<string>, basePath?: string): Promise<ILocalDependencies> {
     let results: ILocalDependencies = { files: [] };
     for (const filePath of files) {
       const parser: ParserFuncType = this.getParserFunc(filePath);
       if (parser != null) {
         try {
           const fileContent = await fs.promises.readFile(filePath, 'utf8');
-          const dependency = await parser(fileContent, filePath);
+          const dependency = await parser(fileContent, filePath, basePath);
           if (dependency.purls.length != 0) results.files.push(dependency);
         } catch (e) {
           console.error(e);

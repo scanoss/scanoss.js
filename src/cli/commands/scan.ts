@@ -282,7 +282,7 @@ export async function scanHandler(rootPath: string, options: any): Promise<void>
   // Dependency scanner
   let pDependencyScanner = Promise.resolve(<DependencyResponse>{});
   if (options.dependencies || scannerInput?.settings?.settings?.file_snippet?.dependency_analysis) {
-    pDependencyScanner = dependencyScanner.scan(dependencyInput);
+    pDependencyScanner = dependencyScanner.scan(dependencyInput, rootPath);
   }
 
   const results = {
