@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
 ## [Unreleased]
+### Added
+- `DecompressionManager.decompress()` now returns `skippedByDepth: Array<string>`, a list of supported archive paths encountered beyond `decompressionLevel` and therefore not expanded. Allows callers to report which nested archives were left unexpanded.
+### Changed
+- **BREAKING:** `DecompressionManager.decompressRecursive()` return type changed from `Array<{path, error}>` to `{ failedFiles: Array<{path, error}>, skippedByDepth: Array<string> }`. Callers consuming this method directly must update to read `.failedFiles`.
 
 ## [0.38.1] (2026-04-08)
 ### Fixed
