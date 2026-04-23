@@ -44,68 +44,74 @@ export class DecompressionManager {
     return supportedFormats;
   }
 
-  public async decompress(archivesPaths: Array<string>): Promise<{ parentFolders: Array<string>, failedFiles: Array<{ path: string, error: string }> }> {
+  public async decompress(archivesPaths: Array<string>): Promise<{ parentFolders: Array<string>, failedFiles: Array<{ path: string, error: string }>, skippedByDepth: Array<string> }> {
     const failedFiles: Array<{ path: string, error: string }> = [];
+    const skippedByDepth: Array<string> = [];
     for (const archivePath of archivesPaths) {
-      const failed = await this.decompressRecursive(archivePath, 0);
-      failedFiles.push(...failed);
+      const result = await this.decompressRecursive(archivePath, 0);
+      failedFiles.push(...result.failedFiles);
+      skippedByDepth.push(...result.skippedByDepth);
     }
     const parentFolders = archivesPaths.map(archivePath => `${archivePath}${this.suffix}`);
-    return { parentFolders, failedFiles };
+    return { parentFolders, failedFiles, skippedByDepth };
   }
 
 
-  public async decompressRecursive(archivePath: string, level: number): Promise<Array<{ path: string, error: string }>> {
+  public async decompressRecursive(archivePath: string, level: number): Promise<{ failedFiles: Array<{ path: string, error: string }>, skippedByDepth: Array<string> }> {
     const failedFiles: Array<{ path: string, error: string }> = [];
+    const skippedByDepth: Array<string> = [];
 
-    if(level>=this.decompressionLevel) return failedFiles;
+    const archiveName = path.basename(archivePath);
+    const isSupported = this.decompressorList.some((d) => d.isSupported(archiveName));
+    if (!isSupported) return { failedFiles, skippedByDepth };
+
+    // Supported archive but configured depth exceeded — record and stop
+    if (level >= this.decompressionLevel) {
+      skippedByDepth.push(archivePath);
+      return { failedFiles, skippedByDepth };
+    }
 
     const archiveRootPath = path.dirname(archivePath);
-    const archiveName = path.basename(archivePath);
     let newFolderPath = `${archiveRootPath}${path.sep}${archiveName}${this.suffix}`;
 
-    const isSupported = this.decompressorList.some((d) => d.isSupported(archiveName))
-    if(isSupported) {
+    let i = 0;
+    const r = new RegExp("(?<=" + this.suffix +")-\\d+$")  //Selects last -X where X is a number
+    while( !this.decompressOverride && fs.existsSync(newFolderPath) ) { //Search for a free name
+      newFolderPath = newFolderPath.replace(r, "");
+      newFolderPath += `-${i}`
+      i++;
+    }
 
-
-      let i = 0;
-      const r = new RegExp("(?<=" + this.suffix +")-\\d+$")  //Selects last -X where X is a number
-      while( !this.decompressOverride && fs.existsSync(newFolderPath) ) { //Search for a free name
-        newFolderPath = newFolderPath.replace(r, "");
-        newFolderPath += `-${i}`
-        i++;
-      }
-
-      await fs.promises.mkdir(newFolderPath, { recursive: true });
-      //Search for decompressor and extract archive
-      let extractionFailed = false;
-      for (const d of this.decompressorList) {
-        if (d.isSupported(archiveName)) {
-          try{
-            await d.run(archivePath, newFolderPath);
-          } catch(e) {
-            await fs.promises.rm(newFolderPath, {recursive: true, force: true});
-            const message = e instanceof Error ? e.message : String(e);
-            failedFiles.push({ path: archivePath, error: message });
-            extractionFailed = true;
-          }
-          break;
+    await fs.promises.mkdir(newFolderPath, { recursive: true });
+    //Search for decompressor and extract archive
+    let extractionFailed = false;
+    for (const d of this.decompressorList) {
+      if (d.isSupported(archiveName)) {
+        try{
+          await d.run(archivePath, newFolderPath);
+        } catch(e) {
+          await fs.promises.rm(newFolderPath, {recursive: true, force: true});
+          const message = e instanceof Error ? e.message : String(e);
+          failedFiles.push({ path: archivePath, error: message });
+          extractionFailed = true;
         }
-      }
-
-      //Search for new archives (only if extraction succeeded)
-      if (!extractionFailed) {
-        const tree = new Tree(newFolderPath);
-        tree.build()
-        const newFilesPath = tree.getFileList(new DecompressionFilter(""));
-        for (const newFilePath of newFilesPath) {
-          const nestedFailed = await this.decompressRecursive(newFilePath, level+1);
-          failedFiles.push(...nestedFailed);
-        }
+        break;
       }
     }
 
-    return failedFiles;
+    //Search for new archives (only if extraction succeeded)
+    if (!extractionFailed) {
+      const tree = new Tree(newFolderPath);
+      tree.build()
+      const newFilesPath = tree.getFileList(new DecompressionFilter(""));
+      for (const newFilePath of newFilesPath) {
+        const nested = await this.decompressRecursive(newFilePath, level+1);
+        failedFiles.push(...nested.failedFiles);
+        skippedByDepth.push(...nested.skippedByDepth);
+      }
+    }
+
+    return { failedFiles, skippedByDepth };
   }
 
 }
