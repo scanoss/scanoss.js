@@ -3,6 +3,7 @@
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
 ## [Unreleased]
+## [0.40.0] (2026-04-28)
 ### Fixed
 - `WfpCalculator` no longer crashes with `RangeError: Invalid array length` when fingerprinting large binary files.
 - `scanoss-js wfp` CLI now uses `ScanFilter` instead of `DependencyFilter` when building the file list
@@ -304,3 +305,5 @@ All notable changes to this project will be documented in this file. See [standa
 ### [0.37.0](https://github.com/scanoss/scanoss.js/compare/v0.36.0...v0.37.0) (2026-03-02)
 ### [0.38.0](https://github.com/scanoss/scanoss.js/compare/v0.37.0...v0.38.0) (2026-03-12)
 ### [0.38.1](https://github.com/scanoss/scanoss.js/compare/v0.38.0...v0.38.1) (2026-04-08)
+### [0.39.0](https://github.com/scanoss/scanoss.js/compare/v0.38.1...v0.39.0) (2026-04-23)
+### [0.40.0](https://github.com/scanoss/scanoss.js/compare/v0.39.0...v0.40.0) (2026-04-28)
