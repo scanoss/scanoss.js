@@ -14,12 +14,15 @@ export class ScannableItem {
 
   private lineOffset: number;
 
-  constructor(content: Buffer, contentSource: string, winnowingMode: any, maxSizeWfp: number) {
+  private isBinary: boolean;
+
+  constructor(content: Buffer, contentSource: string, winnowingMode: any, maxSizeWfp: number, isBinary = false) {
     this.contentSource = contentSource;
     this.content = content;
     this.winnowingMode = winnowingMode;
     this.maxSizeWfp = maxSizeWfp;
     this.lineOffset = 0;
+    this.isBinary = isBinary;
   }
 
   public getContent() {
