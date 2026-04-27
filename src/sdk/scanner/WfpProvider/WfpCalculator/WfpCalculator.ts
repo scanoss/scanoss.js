@@ -1,4 +1,5 @@
 import fs from 'fs';
+import { isBinaryFileSync } from 'isbinaryfile';
 import { Worker } from 'worker_threads';
 
 import { ScannableItem } from '../../Scannable/ScannableItem';
@@ -19,18 +20,21 @@ parentPort.on('message', async (scannableItem) => {
     fingerprint = wfp_for_content(
       scannableItem.content,
       scannableItem.contentSource,
-      scannableItem.maxSizeWfp
+      scannableItem.maxSizeWfp,
+      scannableItem.isBinary
     );
   } else if (scannableItem.winnowingMode === "FULL_WINNOWING_HPSM") {
     fingerprint = wfp_hpsm_for_content(
       scannableItem.content,
       scannableItem.contentSource,
-      scannableItem.maxSizeWfp
+      scannableItem.maxSizeWfp,
+      scannableItem.isBinary
     );
   } else if (scannableItem.winnowingMode === "WINNOWING_ONLY_MD5") {
     fingerprint = wfp_only_md5(
       scannableItem.content,
-      scannableItem.contentSource
+      scannableItem.contentSource,
+      scannableItem.isBinary
     );
   }
 
@@ -293,18 +297,25 @@ function join_wfp_hpsm(wfp, hpsm) {
  * @param {Buffer} content
  * @param {string} contentSource
  * @param {number} maxSize
+ * @param {boolean} isBinary When true, HPSM and snippet winnowing are skipped (binary content has no line/code semantics)
  * @returns {string}
  */
-function wfp_hpsm_for_content(content, contentSource, maxSize) {
-  let wfp = wfp_for_content(content, contentSource, maxSize)
+function wfp_hpsm_for_content(content, contentSource, maxSize, isBinary) {
+  let wfp = wfp_for_content(content, contentSource, maxSize, isBinary)
+  if (isBinary) return truncate_string(wfp, maxSize)
   let hpsm = calc_hpsm(content)   //Returns a string
   let wfp_hpsm_joined = join_wfp_hpsm(wfp, hpsm)
   return truncate_string(wfp_hpsm_joined, maxSize)
 }
 
-function wfp_for_content(content, contentSource, maxSize) {
-  let wfp = wfp_only_md5(content, contentSource);
-  wfp += calc_wfp(content, maxSize);
+// Snippet winnowing and HPSM are line/code semantics — meaningless on
+// binary content (random bytes produce noise grams). Binary files emit
+// only the file= MD5 line, matching the behavior of WINNOWING_ONLY_MD5.
+function wfp_for_content(content, contentSource, maxSize, isBinary) {
+  let wfp = wfp_only_md5(content, contentSource, isBinary);
+  if (!isBinary) {
+    wfp += calc_wfp(content, maxSize);
+  }
   return wfp;
 }
 
@@ -413,14 +424,17 @@ function calculate_opposite_line_ending_hash(contents) {
   return crypto.createHash('md5').update(opposite_contents).digest('hex');
 }
 
-function wfp_only_md5(contents, contentSource) {
+function wfp_only_md5(contents, contentSource, isBinary) {
   const file_md5 = crypto.createHash('md5').update(contents).digest('hex');
   let wfp = 'file=' + String(file_md5) + ',' + String(contents.length) + ',' + String(contentSource)+ String.fromCharCode(10);
 
-  // Calculate and add opposite line ending hash if applicable
-  const opposite_hash = calculate_opposite_line_ending_hash(contents);
-  if (opposite_hash !== null) {
-    wfp += 'fh2=' + String(opposite_hash) + String.fromCharCode(10);
+  // fh2 has no meaning on binary content (no line endings to flip) and the
+  // normalization loop blows past V8 limits on large buffers.
+  if (!isBinary) {
+    const opposite_hash = calculate_opposite_line_ending_hash(contents);
+    if (opposite_hash !== null) {
+      wfp += 'fh2=' + String(opposite_hash) + String.fromCharCode(10);
+    }
   }
 
   return wfp;
@@ -578,6 +592,7 @@ export class WfpCalculator extends WfpProvider {
     const path = this.fileList[this.fileListIndex];
     const contentSource = path.replace(`${this.folderRoot}`, '');
     const content = await this.readFile(path);
+    const isBinary = content.length > 0 && isBinaryFileSync(path);
       this.fileListIndex += 1;
       if (!(this.fileListIndex % this.scannerCfg.WINNOWING_REPORT_STATUS_AFTER_X))
         this.emit(
@@ -589,7 +604,8 @@ export class WfpCalculator extends WfpProvider {
         content,
         contentSource,
         this.winnowingMode,
-        this.scannerCfg.WFP_FILE_MAX_SIZE
+        this.scannerCfg.WFP_FILE_MAX_SIZE,
+        isBinary
       );
 
       if (this.headerFilter && content.length > 0) {

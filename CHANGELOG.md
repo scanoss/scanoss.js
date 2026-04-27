@@ -3,6 +3,11 @@
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
 ## [Unreleased]
+### Fixed
+- `WfpCalculator` no longer crashes with `RangeError: Invalid array length` when fingerprinting large binary files.
+- `scanoss-js wfp` CLI now uses `ScanFilter` instead of `DependencyFilter` when building the file list
+### Changed
+- `WfpCalculator` now detects binary files via `isBinaryFileSync`. Binary files emit only the `file=` MD5 line.
 
 ## [0.39.0] (2026-04-23)
 ### Added

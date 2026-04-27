@@ -8,7 +8,7 @@ import { IWfpProviderInput } from '../../sdk/scanner/WfpProvider/WfpProvider';
 import { WfpCalculator } from '../../sdk/scanner/WfpProvider/WfpCalculator/WfpCalculator';
 import { FingerprintPackage } from '../../sdk/scanner/WfpProvider/FingerprintPackage';
 import { Tree } from '../../sdk/tree/Tree';
-import { DependencyFilter } from '../../sdk/tree/Filters/DependencyFilter';
+import { ScanFilter } from '../../sdk/tree/Filters/ScanFilter';
 
 
 export async function wfpHandler(rootPath: string, options: any): Promise<void> {
@@ -22,7 +22,7 @@ export async function wfpHandler(rootPath: string, options: any): Promise<void> 
   if (pathIsFolder) {
     const tree = new Tree(rootPath);
     tree.build();
-    filesToFingerprint = tree.getFileList(new DependencyFilter(""));
+    filesToFingerprint = tree.getFileList(new ScanFilter(""));
   } else {
     filesToFingerprint.push(rootPath)
   }
