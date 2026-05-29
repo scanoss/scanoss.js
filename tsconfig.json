@@ -21,7 +21,7 @@
     // "listFiles": true /* Print names of files part of the compilation. */,
     "pretty": true /* Stylize errors and messages using color and context. */,
 
-    "lib": ["es2017"],
+    "lib": ["es2020"],
     "types": ["mocha","node"],
     "typeRoots": ["node_modules/@types", "src/types"]
   },
