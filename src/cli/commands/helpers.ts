@@ -30,6 +30,10 @@ export async function getSettingsFilePath(settingsFilePath: string | null, scanP
   if (settingsFilePath) {
     return settingsFilePath;
   }
+  const stats = await fs.promises.stat(scanPath);
+  if (!stats.isDirectory()) {
+    scanPath = path.dirname(scanPath);
+  }
   const files = await fs.promises.readdir(scanPath);
   if (files.some((f)=> f === DEFAULT_SETTINGS_FILE)) {
     return path.join(scanPath, DEFAULT_SETTINGS_FILE);
