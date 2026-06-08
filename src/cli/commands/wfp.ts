@@ -1,4 +1,5 @@
 import fs from 'fs';
+import path from 'path';
 
 import cliProgress from 'cli-progress';
 
@@ -19,12 +20,15 @@ export async function wfpHandler(rootPath: string, options: any): Promise<void> 
   const wfpCalculator = new WfpCalculator();
 
   let filesToFingerprint: string[] = [];
+  let folderRoot = rootPath;
   if (pathIsFolder) {
     const tree = new Tree(rootPath);
     tree.build();
     filesToFingerprint = tree.getFileList(new ScanFilter(""));
   } else {
-    filesToFingerprint.push(rootPath)
+    const absoluteFilePath = path.resolve(rootPath);
+    filesToFingerprint.push(absoluteFilePath);
+    folderRoot = path.dirname(absoluteFilePath);
   }
 
 
@@ -52,7 +56,7 @@ export async function wfpHandler(rootPath: string, options: any): Promise<void> 
     }
   });
 
-  const wfpInput: IWfpProviderInput = {fileList: filesToFingerprint, folderRoot: rootPath, obfuscate: options.obfuscate }
+  const wfpInput: IWfpProviderInput = {fileList: filesToFingerprint, folderRoot, obfuscate: options.obfuscate }
   if(options.hpsm) wfpInput.winnowingMode = WinnowingMode.FULL_WINNOWING_HPSM;
   await wfpCalculator.start(wfpInput);
 
