@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
 ## [Unreleased]
+## [0.40.2] (2026-06-08)
+### Fixed
+- `scanoss-js wfp <file>` no longer emits an empty path in the `file=` line when fingerprinting a single file. 
+
 ## [0.40.1] (2026-06-05)
 ### Fixed
 - `scanoss-js scan <file>` no longer fails with `ENOTDIR` when the scan target is a single file. The automatic `scanoss.json` settings lookup now resolves the file's parent directory instead of calling `readdir` on the file itself.
